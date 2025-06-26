@@ -62,7 +62,7 @@ export default function DynamicLabelInput({ label, secureTextEntry, onTextChange
                     <Ionicons
                         name={isPasswordVisible ? "eye" : "eye-off"}
                         size={18}
-                        color={Colors.light.tint}
+                        color={Colors.light.background}
                     />
                 </TouchableOpacity>
             )}
@@ -78,9 +78,9 @@ const styles = StyleSheet.create({
     label: {
         position: 'absolute',
         left: 18,
-        backgroundColor: Colors.light.background,
+        backgroundColor: Colors.light.tint,
         paddingHorizontal: 10,
-        color: Colors.light.tint,
+        color: 'white',
         zIndex: 2,
         fontSize: 12,
         fontWeight: 'bold',
@@ -88,10 +88,10 @@ const styles = StyleSheet.create({
         
     },
     input: {
-        color: Colors.light.tint,
+        color: Colors.light.background,
         borderWidth: 0.5,
         borderColor: Colors.light.border,
-        backgroundColor: Colors.light.background, 
+        backgroundColor: Colors.light.tint, 
         borderRadius: 3,
         paddingHorizontal: 12,
         paddingTop: 14,

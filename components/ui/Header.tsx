@@ -8,13 +8,30 @@ interface HeaderProps {
 }
 
 export default function Header({ onPress, children }: HeaderProps) {
-    return <View style={styles.container}>
+    return (
         <TouchableWithoutFeedback onPress={onPress}>
-            <View style={{ flex: 1 }}>
-                {children}
+            <View style={styles.container}>
+                {React.Children.count(children) === 2 ? (
+                    // Distribui dois elementos com espaço entre eles
+                    <>
+                        <View style={{ flex: 1, alignItems: 'flex-start' }}>
+                            {React.Children.toArray(children)[0]}
+                        </View>
+                        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                            {React.Children.toArray(children)[1]}
+                        </View>
+                    </>
+                ) : (
+                    // Para 3 ou mais, exibe lado a lado normalmente
+                    React.Children.map(children, (child, index) => (
+                        <View key={index} style={{ marginHorizontal: 5 }}>
+                            {child}
+                        </View>
+                    ))
+                )}
             </View>
         </TouchableWithoutFeedback>
-    </View>
+    );
 }
 
 const styles = StyleSheet.create({

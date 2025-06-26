@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/Colors";
-import { Platform, StyleSheet, ViewProps, useWindowDimensions } from "react-native";
+import { StyleSheet, ViewProps, useWindowDimensions } from "react-native";
+import { ThemedView } from "../ThemedView";
 import TransitionView from "./TransitionView";
 
 interface BoxInputsProps extends ViewProps {
@@ -11,18 +12,26 @@ export default function BoxInputs({ children, style, ...props }: BoxInputsProps)
     const { width } = useWindowDimensions();
 
     const dynamicStyle = {
-        width: Platform.OS === "web" ? width / 2 : width - 50,
+        width: width - 50,
         alignSelf: "center" as "auto" | "flex-start" | "flex-end" | "center" | "stretch" | "baseline",
     };
 
     return (
-        <TransitionView style={[styles.form, dynamicStyle, style]} {...props}>
-            {children}
-        </TransitionView>
+        <ThemedView darkColor="white" lightColor="black" style={styles.main}>
+            <TransitionView style={[styles.form, dynamicStyle, style]} {...props}>
+                {children}
+            </TransitionView>
+        </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
+    main: {
+        height: '100%', 
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },    
     form: {
         alignItems: "stretch",
         marginTop: 30,
@@ -34,6 +43,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 20,
         elevation: 2,
-        backgroundColor: Colors.light.background,
+        backgroundColor: Colors.light.tint,
     },
 });

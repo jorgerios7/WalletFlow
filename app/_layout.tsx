@@ -15,11 +15,6 @@ export default function MainLayout() {
       />
 
       <Stack.Screen
-        name= {RouteAddress.Signup}
-        options={{ headerShown: false }}
-      />
-
-      <Stack.Screen
         name='(painel)/home/appNavigator'
         options={{ headerShown: false }}
       />
