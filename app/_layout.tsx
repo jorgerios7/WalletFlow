@@ -1,3 +1,4 @@
+import RouteAddress from '@/components/RouteAdress'
 import { Stack } from 'expo-router'
 
 export default function MainLayout() {
@@ -9,12 +10,12 @@ export default function MainLayout() {
       />
 
       <Stack.Screen
-        name='(auth)/login/page'
+        name={RouteAddress.Login}
         options={{ headerShown: false }}
       />
 
       <Stack.Screen
-        name='(auth)/signup/page'
+        name= {RouteAddress.Signup}
         options={{ headerShown: false }}
       />
 
