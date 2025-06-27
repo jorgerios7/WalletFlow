@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 
 interface HeaderProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     onPress?: () => void;
 }
 
@@ -12,7 +12,6 @@ export default function Header({ onPress, children }: HeaderProps) {
         <TouchableWithoutFeedback onPress={onPress}>
             <View style={styles.container}>
                 {React.Children.count(children) === 2 ? (
-                    // Distribui dois elementos com espaço entre eles
                     <>
                         <View style={{ flex: 1, alignItems: 'flex-start' }}>
                             {React.Children.toArray(children)[0]}
@@ -22,7 +21,6 @@ export default function Header({ onPress, children }: HeaderProps) {
                         </View>
                     </>
                 ) : (
-                    // Para 3 ou mais, exibe lado a lado normalmente
                     React.Children.map(children, (child, index) => (
                         <View key={index} style={{ marginHorizontal: 5 }}>
                             {child}
