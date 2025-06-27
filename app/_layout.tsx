@@ -10,7 +10,7 @@ export default function MainLayout() {
       />
 
       <Stack.Screen
-        name={RouteAddress.Login}
+        name={RouteAddress.UserAccessScreen}
         options={{ headerShown: false }}
       />
 

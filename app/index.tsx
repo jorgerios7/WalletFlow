@@ -1,7 +1,7 @@
-import Login from "./pages/auth/Login";
+import UserAccessScreen from "./pages/auth/UserAccessScreen";
 export default function AppMain() {
 
     return (
-        <Login />
+        <UserAccessScreen />
     );
 }

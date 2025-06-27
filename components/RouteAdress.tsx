@@ -1,7 +1,6 @@
 
 const RouteAddress = {
-    Login: "/pages/auth/Login",
-    Signup: "/pages/auth/Signup",
+    UserAccessScreen: "/pages/auth/UserAccessScreen",
     Home: "/pages/Home",
 } as const;
 
