@@ -1,8 +1,8 @@
+import LoginScreen from "@/app/screens/LoginScreen";
+import SignupScreen from "@/app/screens/SignupScreen";
 import RouteAddress from "@/components/RouteAdress";
 import BoxInputs from "@/components/ui/BoxInputs";
 import HomeScreenContainer from "@/components/ui/HomeScreenContainer";
-import LoginScreen from "@/components/ui/LoginScreen";
-import SignupScreen from "@/components/ui/SignupScreen";
 import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
