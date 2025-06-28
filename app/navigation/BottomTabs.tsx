@@ -19,15 +19,17 @@ const BottomTabs = () => {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarShowLabel: false,
+          tabBarShowLabel: true, // ✅ Mostrar nome abaixo do ícone
+          tabBarActiveTintColor: Colors.light.tint, // cor ativa
+          tabBarInactiveTintColor: '#888',
           tabBarStyle: {
             height: 60 + insets.bottom,
             paddingBottom: insets.bottom,
             backgroundColor: Colors.light.background,
             position: 'absolute',
             borderTopWidth: 0,
-            elevation: 10,
-            
+            elevation: 0,
+            shadowColor: 'transparent'
           },
         }}
       >
@@ -35,6 +37,7 @@ const BottomTabs = () => {
           name="Home"
           component={HomeScreen}
           options={{
+            tabBarLabel: 'Início',
             tabBarIcon: ({ color, size }) => (
               <MaterialIcons name="home" size={size} color={color} />
             ),
@@ -53,6 +56,7 @@ const BottomTabs = () => {
           name="Settings"
           component={SettingsScreen}
           options={{
+            tabBarLabel: 'Configurações',
             tabBarIcon: ({ color, size }) => (
               <MaterialIcons name="settings" size={size} color={color} />
             ),
