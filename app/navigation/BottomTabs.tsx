@@ -1,10 +1,10 @@
 import AddButton from '@/components/ui/AddButton';
-import { Colors } from '@/constants/Colors';
-import { MaterialIcons } from '@expo/vector-icons';
+import TabButton from '@/components/ui/TabButton';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import AddScreen from '../screens/AddScreens';
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
@@ -19,17 +19,15 @@ const BottomTabs = () => {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarShowLabel: true, // ✅ Mostrar nome abaixo do ícone
-          tabBarActiveTintColor: Colors.light.tint, // cor ativa
-          tabBarInactiveTintColor: '#888',
+          tabBarShowLabel: false,
           tabBarStyle: {
             height: 60 + insets.bottom,
             paddingBottom: insets.bottom,
-            backgroundColor: Colors.light.background,
+            backgroundColor: '#fff',
             position: 'absolute',
             borderTopWidth: 0,
             elevation: 0,
-            shadowColor: 'transparent'
+            shadowColor: 'transparent',
           },
         }}
       >
@@ -37,9 +35,12 @@ const BottomTabs = () => {
           name="Home"
           component={HomeScreen}
           options={{
-            tabBarLabel: 'Início',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialIcons name="home" size={size} color={color} />
+            tabBarButton: (props) => (
+              <TabButton
+                {...props}
+                iconName="home"
+                label="Início"
+              />
             ),
           }}
         />
@@ -48,7 +49,9 @@ const BottomTabs = () => {
           component={AddScreen}
           options={{
             tabBarButton: () => (
-              <AddButton onPress={ () => console.log('More button pressed!')} /> // ✅ Correção: chamada direta da função
+              <AddButton
+                onPress={() => console.log('button more pressed')}
+              />
             ),
           }}
         />
@@ -56,9 +59,12 @@ const BottomTabs = () => {
           name="Settings"
           component={SettingsScreen}
           options={{
-            tabBarLabel: 'Configurações',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialIcons name="settings" size={size} color={color} />
+            tabBarButton: (props) => (
+              <TabButton
+                {...props}
+                iconName="settings"
+                label="Configurações"
+              />
             ),
           }}
         />

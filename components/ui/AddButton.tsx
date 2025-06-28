@@ -5,20 +5,20 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 const AddButton: React.FC<Props> = ({ onPress }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.addButton, {bottom: insets.bottom + -40 }]}>
+    <TouchableOpacity onPress={onPress} style={[styles.addButton, {bottom: insets.bottom + -25 }]}>
       <MaterialIcons name="add" size={30} color="#fff" />
     </TouchableOpacity>
   );
 };
 
-const BUTTON_SIZE = 60;
+const BUTTON_SIZE = 72;
 
 const styles = StyleSheet.create({
   addButton: {
