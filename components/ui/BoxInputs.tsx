@@ -1,11 +1,11 @@
 import { Colors } from "@/constants/Colors";
+import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, ViewProps, useWindowDimensions } from "react-native";
 import { ThemedView } from "../ThemedView";
 import TransitionView from "./TransitionView";
 
 interface BoxInputsProps extends ViewProps {
     children: React.ReactNode;
-    transparentBackground?: boolean;
 }
 
 export default function BoxInputs({ children, style, ...props }: BoxInputsProps) {
@@ -18,31 +18,34 @@ export default function BoxInputs({ children, style, ...props }: BoxInputsProps)
 
     return (
         <ThemedView darkColor="white" lightColor="black" style={styles.main}>
-            <TransitionView style={[styles.form, dynamicStyle, style]} {...props}>
-                {children}
-            </TransitionView>
+            <LinearGradient
+                colors={[Colors.light.highlightBackgroun_1, Colors.light.highlightBackgroun_2]} // Azul para roxo
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.container}
+            >
+                <TransitionView style={[styles.form, dynamicStyle, style]} {...props}>
+                    {children}
+                </TransitionView>
+            </LinearGradient>
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
     main: {
-        height: '100%', 
+        height: '100%',
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    },    
+    },
     form: {
         alignItems: "stretch",
-        marginTop: 30,
-        borderRadius: 5,
-        borderColor: Colors.light.tabIconSelected,
-        borderWidth: 0.5,
-        padding: 20,
-        shadowOffset: { width: 8, height: 20 },
-        shadowOpacity: 0.2,
-        shadowRadius: 20,
-        elevation: 2,
-        backgroundColor: Colors.light.tint,
     },
+    container: {
+        borderRadius: 5,
+        padding: 10,
+        borderColor: Colors.light.shadow,
+        borderWidth: 0.5,
+    }
 });

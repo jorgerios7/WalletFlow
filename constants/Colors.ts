@@ -5,6 +5,9 @@ export const Colors = {
   light: {
     text: '#11181C',
     background: '#fff',
+    highlightBackgroun_1: 'rgb(6, 11, 58)',
+    highlightBackgroun_2: 'rgba(29, 28, 109, 0.9)',
+    shadow: 'rgba(255, 255, 255, 0.1)',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',

@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     label: {
         position: 'absolute',
         left: 18,
-        backgroundColor: Colors.light.tint,
+        backgroundColor: Colors.light.highlightBackgroun_1,
         paddingHorizontal: 10,
         color: 'white',
         zIndex: 2,
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         color: Colors.light.background,
         borderWidth: 0.5,
         borderColor: Colors.light.border,
-        backgroundColor: Colors.light.tint, 
+        backgroundColor: 'transparent', 
         borderRadius: 3,
         paddingHorizontal: 12,
         paddingTop: 14,
