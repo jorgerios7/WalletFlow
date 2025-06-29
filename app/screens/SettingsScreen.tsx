@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import HorizontalCalendar from '../navigation/HorizontalCalendar';
 
 const SettingsScreen = () => (
-  <View style={styles.container}>
-    <Text>Settings Screen</Text>
-  </View>
+    <HorizontalCalendar>
+      
+    </HorizontalCalendar>
 );
 
 const styles = StyleSheet.create({
