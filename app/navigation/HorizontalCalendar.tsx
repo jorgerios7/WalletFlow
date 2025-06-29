@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import { Feather } from '@expo/vector-icons';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     Dimensions,
@@ -11,45 +11,62 @@ import {
     View,
 } from 'react-native';
 
-const ITEM_WIDTH = 70;
-const ITEM_SPACING = 1;
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const CENTER_OFFSET = (SCREEN_WIDTH - ITEM_WIDTH) / 4;
+interface Props {
+  onDateChange: (date: Date) => void;
+}
 
-const HorizontalCalendar = () => {
+const ITEM_WIDTH = 90;
+const ITEM_SPACING = 10;
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CENTER_OFFSET = (SCREEN_WIDTH - ITEM_WIDTH) / 3;
+
+const HorizontalCalendar: React.FC<Props> = ({onDateChange}) => {
     const scrollRef = useRef<ScrollView>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
 
-    const data = [
-        { dayNumber: '01', dayName: 'Segunda-feira' },
-        { dayNumber: '02', dayName: 'Terça-feira' },
-        { dayNumber: '03', dayName: 'Quarta-feira' },
-        { dayNumber: '04', dayName: 'Quinta-feira' },
-        { dayNumber: '05', dayName: 'Sexta-feira' },
-        { dayNumber: '06', dayName: 'Sábado' },
-        { dayNumber: '07', dayName: 'Domingo' },
+    const now = new Date();
+    const currentMonthIndex = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const months = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
     ];
 
-    const scrollToIndex = (index: number) => {
-        if (index < 0 || index >= data.length) return;
-        const x = index * (ITEM_WIDTH + ITEM_SPACING);
-        scrollRef.current?.scrollTo({ x, animated: true });
-        setCurrentIndex(index);
-    };
+    useEffect(() => {
+        setCurrentIndex(currentMonthIndex)
+        scrollToIndex(currentMonthIndex, true);
+        onDateChange(new Date(currentYear, currentMonthIndex, 1));
+    }, []);
 
-    const handleNext = () => scrollToIndex(currentIndex + 1);
-    const handlePrevious = () => scrollToIndex(currentIndex - 1);
+    const scrollToIndex = (index: number, isInit: boolean) => {
+    if (index < 0 || index >= months.length && !isInit) return;
+    const x = index * (ITEM_WIDTH + ITEM_SPACING);
+    scrollRef.current?.scrollTo({ x, animated: true });
+    setCurrentIndex(index);
+    onDateChange(new Date(currentYear, index, 1));
+};
+
+    const handleNext = () => {
+        console.log('button Next pressed!');
+        scrollToIndex(currentIndex + 1, false);
+    }
+    const handlePrevious = () => {
+        console.log('button previous pressed!');
+        scrollToIndex(currentIndex - 1, false);
+    }
 
     const onScrollEnd = (e: any) => {
         const x = e.nativeEvent.contentOffset.x;
         const index = Math.round(x / (ITEM_WIDTH + ITEM_SPACING));
         setCurrentIndex(index);
+        onDateChange(new Date(currentYear, index, 1));
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Junho de 2025</Text>
+            <Text style={styles.title}>{currentYear}</Text>
 
             <View style={styles.row}>
                 <TouchableOpacity style={styles.button} onPress={handlePrevious}>
@@ -61,7 +78,7 @@ const HorizontalCalendar = () => {
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     snapToInterval={ITEM_WIDTH + ITEM_SPACING}
-                    decelerationRate="normal"
+                    decelerationRate="fast"
                     contentContainerStyle={{ paddingHorizontal: CENTER_OFFSET }}
                     onMomentumScrollEnd={onScrollEnd}
                     onScroll={Animated.event(
@@ -70,7 +87,7 @@ const HorizontalCalendar = () => {
                     )}
                     scrollEventThrottle={16}
                 >
-                    {data.map((item, index) => (
+                    {months.map((month, index) => (
                         <Animated.View
                             key={index}
                             style={[
@@ -93,14 +110,10 @@ const HorizontalCalendar = () => {
                                 },
                             ]}
                         >
-                            <Text style={[styles.dayNumber, index === currentIndex && styles.activeText]}>
-                                {item.dayNumber}
-                            </Text>
-                            <Text style={[styles.dayName, index === currentIndex && styles.activeText]}>
-                                {item.dayName}
+                            <Text style={[styles.monthText, index === currentIndex && styles.activeText]}>
+                                {month}
                             </Text>
                         </Animated.View>
-
                     ))}
                 </Animated.ScrollView>
 
@@ -113,54 +126,45 @@ const HorizontalCalendar = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { padding: 10, borderBottomColor: 'black', borderBottomWidth: 1 },
+    container: { padding: 10, borderBottomColor: 'black', borderBottomWidth: 1, backgroundColor: Colors.light.background },
     title: { textAlign: 'center', fontSize: 20, marginBottom: 20 },
     row: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     button: {
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#eee',
-        
+        backgroundColor: Colors.light.background,
+        borderRadius: 30,
     },
     card: {
         width: ITEM_WIDTH,
-        height: 60,
-        marginHorizontal: ITEM_SPACING / 3,
-        backgroundColor: '#eee',
+        height: 80,
+        marginHorizontal: ITEM_SPACING / 2,
+        backgroundColor: Colors.light.background,
         justifyContent: 'center',
         alignItems: 'center',
-        alignSelf: 'center',
-        borderRadius: 16,
-    },
-    dayNumber: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#000',
-        textAlign: 'center',
-    },
-    dayName: {
-        fontSize: 12,
-        color: '#444',
-        textAlign: 'center',
-        marginTop: 4,
+        borderRadius: 12,
+        padding: 10,
     },
     activeCard: {
-        height: ITEM_WIDTH + 10,
-        width: ITEM_WIDTH + 10,
         backgroundColor: Colors.light.highlightBackgroun_1,
         borderColor: Colors.light.shadow,
         borderWidth: 1,
     },
-
+    monthText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#000',
+        textAlign: 'center',
+    },
     activeText: {
         color: '#fff',
+        fontWeight: 'bold',
     },
-
 });
 
 export default HorizontalCalendar;
