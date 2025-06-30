@@ -18,7 +18,7 @@ interface Props {
 const ITEM_WIDTH = 70;
 const ITEM_SPACING = 0;
 const SPACING_DEFAULT = 10;
-const DEFAULT_SIZE = 80;
+const DEFAULT_SIZE = 55;
 const RADIUS_DEFAULT = 16;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CENTER_OFFSET = (SCREEN_WIDTH - ITEM_WIDTH) / 4;
@@ -38,10 +38,15 @@ const HorizontalCalendar: React.FC<Props> = ({ onDateChange }) => {
     ];
 
     useEffect(() => {
-        setCurrentIndex(currentMonthIndex)
         scrollToIndex(currentMonthIndex, true);
+        setCurrentIndex(currentMonthIndex);
         onDateChange(new Date(currentYear, currentMonthIndex, 1));
     }, []);
+
+    const updateToCurrentDate = () => {
+        scrollToIndex(currentMonthIndex, false);
+        setCurrentIndex(currentMonthIndex);
+    }
 
     const scrollToIndex = (index: number, isInit: boolean) => {
         if (index < 0 || index >= months.length && !isInit) return;
@@ -69,14 +74,13 @@ const HorizontalCalendar: React.FC<Props> = ({ onDateChange }) => {
         <View style={styles.container}>
             <Text style={styles.title}>{currentYear}</Text>
 
-            <View style={styles.calendarContent}>
+            <View style={styles.ContainerContent}>
 
                 <TouchableOpacity style={styles.button} onPress={handlePrevious}>
                     <Feather name="chevron-left" size={24} color="black" />
                 </TouchableOpacity>
 
                 <View style={styles.row}>
-
                     <Animated.ScrollView
                         ref={scrollRef}
                         horizontal
@@ -127,14 +131,29 @@ const HorizontalCalendar: React.FC<Props> = ({ onDateChange }) => {
                     <Feather name="chevron-right" size={24} color="black" />
                 </TouchableOpacity>
             </View>
+
+            <View style={styles.menu}>
+
+                <TouchableOpacity style={styles.menuTab} onPress={handleNext}>
+                    <Feather name="filter" size={16} color="black" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.menuTab} onPress={updateToCurrentDate}>
+                    <Feather name="calendar" size={16} color="black" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.menuTab} onPress={handleNext}>
+                    <Feather name="search" size={16} color="black" />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { padding: SPACING_DEFAULT, borderBottomColor: 'black', borderBottomWidth: 1, backgroundColor: Colors.light.background },
+    container: { padding: SPACING_DEFAULT, backgroundColor: Colors.light.background },
     title: { textAlign: 'center', fontWeight: 'bold', fontSize: 16, marginBottom: SPACING_DEFAULT, backgroundColor: Colors.light.background },
-    calendarContent: {
+    ContainerContent: {
         flexDirection: 'row',
         backgroundColor: Colors.light.background,
         justifyContent: 'center',
@@ -152,6 +171,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: Colors.light.background,
         borderRadius: RADIUS_DEFAULT
+    },
+    menu: {
+        flexDirection: 'row',
+        backgroundColor: Colors.light.background,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    menuTab: {
+        padding: SPACING_DEFAULT,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: RADIUS_DEFAULT,
+        margin: 5,
+        backgroundColor: Colors.light.background
     },
     card: {
         width: ITEM_WIDTH,

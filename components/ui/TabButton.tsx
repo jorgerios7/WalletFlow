@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { GestureResponderEvent, Pressable, StyleSheet, Text } from "react-native";
 
@@ -31,10 +32,12 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: Colors.light.background
     },
     tabLabel: {
         fontSize: 12,
         marginTop: 2,
+        backgroundColor: Colors.light.background
     },
 });
 

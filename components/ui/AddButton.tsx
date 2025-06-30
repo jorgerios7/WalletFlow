@@ -23,7 +23,7 @@ const AddButton: React.FC<Props> = ({ onPress }) => {
   };
 
   return (
-    <View style={[styles.container, { bottom: insets.bottom + -25 }]}>
+    <View style={[styles.container, { bottom: insets.bottom + -35 }]}>
       {expanded && (
         <>
           <SmallButton

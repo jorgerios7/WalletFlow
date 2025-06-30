@@ -5,6 +5,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Colors } from '@/constants/Colors';
 import AddScreen from '../screens/AddScreens';
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
@@ -21,14 +22,12 @@ const BottomTabs = () => {
           headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: {
-            height: 60 + insets.bottom,
-            paddingBottom: insets.bottom,
-            paddingTop: insets.top,
-            backgroundColor: '#fff',
+            //height: 60 + insets.bottom,
+            //paddingBottom: insets.bottom,
+            //paddingTop: insets.top,
+            backgroundColor: Colors.light.background,
             position: 'absolute',
-            borderTopWidth: 0,
-            elevation: 0,
-            shadowColor: 'transparent',
+            elevation: 20,
           },
         }}
       >
