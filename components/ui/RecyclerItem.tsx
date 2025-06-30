@@ -1,4 +1,5 @@
 import FinancialItem from '@/app/layout/FinancialItem';
+import { Colors } from '@/constants/Colors';
 import { useEffect } from 'react';
 import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
 
@@ -22,6 +23,7 @@ interface ItemRecyclerProps {
     isStatusFilteringEnabled: boolean;
     statusFilter?: boolean;
     onTotalValueChange?: (total: number) => void;
+    adjustMarginBottom?: (number);
 }
 
 const RecyclerItem: React.FC<ItemRecyclerProps> = ({
@@ -29,7 +31,8 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
     dateFilter,
     isStatusFilteringEnabled,
     statusFilter,
-    onTotalValueChange
+    onTotalValueChange,
+    adjustMarginBottom,
 }) => {
     const { width } = useWindowDimensions();
 
@@ -38,7 +41,7 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
         const isDifferentDates = item.filterStartDate !== dateFilter;
         //const isDifferentStatuses = item.isPaid !== statusFilter;
         //const statusFilterIsEnabled = isDifferentStatuses && isStatusFilteringEnabled;
-        return (isDifferentDates);
+        return !(isDifferentDates);
     });
 
     // Somando os valores
@@ -50,7 +53,6 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
             onTotalValueChange(totalValue);
         }
 
-        console.log('FilteredList: ', list);
     }, [totalValue, onTotalValueChange]);
 
     const renderItem = ({ item }: { item: FinancialIte }) => (
@@ -66,6 +68,7 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
             data={filteredList}
             keyExtractor={(item) => item.uniqueId}
             renderItem={renderItem}
+            style={[styles.scrollContent, { marginBottom: adjustMarginBottom }]}
             ListHeaderComponent={<View style={styles.headerSpacer} />}
             ListFooterComponent={<View style={styles.footerSpacer} />}
         />
@@ -73,42 +76,14 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
 };
 
 const styles = StyleSheet.create({
-    scrollView: {
-        width: '100%',
-        height: 300,
-        flex: 1,
-        backgroundColor: 'orange',
-    },
     scrollContent: {
-        width: 400,
-        height: 200,
-        paddingHorizontal: 16,
-        paddingBottom: 24,
-
-        backgroundColor: 'grey'
-    },
-    card: {
-        width: '100%',
-
-        alignSelf: 'center',
-        backgroundColor: 'yellow',
-        padding: 16,
-        borderRadius: 8,
-        marginBottom: 12,
-        elevation: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-    },
-    bold: {
-        fontWeight: 'bold',
+        backgroundColor: Colors.light.shadow
     },
     headerSpacer: {
-        height: 8,
+        height: 10,
     },
     footerSpacer: {
-        height: 24,
+        height: 0,
     },
 });
 

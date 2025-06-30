@@ -30,7 +30,7 @@ const renderIsIncome = (y: boolean) => {
 }
 
 enum MarginScreen {
-    MARGIN_HORIZONTAL = 40
+    MARGIN_HORIZONTAL = 20
 }
 
 const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, itemWidth, height }) => {
@@ -56,14 +56,14 @@ const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, itemWidth, height })
 export default FinancialItem;
 
 const defaultStyles = StyleSheet.create({
-
     card: {
         alignSelf: 'center',
         backgroundColor: Colors.light.background,
-        padding: 16,
-        marginBottom: 12,
+        padding: 10,
+        marginBottom: 10,
         borderColor: Colors.light.shadow,
-        borderWidth: 1
+        borderWidth: 1,
+        borderRadius: 10
     },
     bold: {
         fontWeight: 'bold',

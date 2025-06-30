@@ -11,7 +11,7 @@ export default function AppMain() {
     const checkLogin = async () => {
       // Simulação de verificação 
       await new Promise(resolve => setTimeout(resolve, 2000));
-      const userIsLogged = false;
+      const userIsLogged = true;
 
       setIsAuthenticated(userIsLogged);
       setIsLoading(false);
