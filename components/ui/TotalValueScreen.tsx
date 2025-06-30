@@ -2,7 +2,7 @@ import { Colors } from "@/constants/Colors";
 import { StyleSheet, Text, View } from "react-native";
 
 interface Props {
-    value: string;
+    value: number;
 }
 
 const TotalValueScreen: React.FC<Props> = ({ value }) => {

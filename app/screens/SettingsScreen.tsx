@@ -1,10 +1,20 @@
+import FinanceData from '@/assets/database/financeData';
+import RecyclerItem from '@/components/ui/RecyclerItem';
 import TotalValueScreen from '@/components/ui/TotalValueScreen';
-import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
 import HorizontalCalendar from '../navigation/HorizontalCalendar';
 
 const SettingsScreen = () => {
   const [dateSelected, setDate] = useState('');
+  const [dataBase, setDataBase] = useState<any[]>([]);
+  const [totalValue, setTotalValue] = useState(0)
+
+  useEffect(() => {
+    const data = FinanceData();
+    setDataBase(data);
+
+  }, []);
 
   return (
     <View >
@@ -12,9 +22,16 @@ const SettingsScreen = () => {
         setDate(date.toLocaleDateString('pt-BR'));
       }} />
 
-      <TotalValueScreen value={'123,00'}/>
-      
-      <Text>{dateSelected}</Text>
+      <TotalValueScreen value={totalValue} />
+
+      <RecyclerItem
+        list={dataBase}
+        dateFilter={'02/06/2025'}
+        isStatusFilteringEnabled={false}
+        statusFilter={false}
+        onTotalValueChange={(total) => setTotalValue(total)}
+      />
+
     </View>
   );
 };
