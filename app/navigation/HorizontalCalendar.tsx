@@ -23,8 +23,6 @@ const RADIUS_DEFAULT = 16;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CENTER_OFFSET = (SCREEN_WIDTH - ITEM_WIDTH) / 4;
 
-
-
 const HorizontalCalendar: React.FC<Props> = ({ onDateChange }) => {
     const scrollRef = useRef<ScrollView>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -54,11 +52,9 @@ const HorizontalCalendar: React.FC<Props> = ({ onDateChange }) => {
     };
 
     const handleNext = () => {
-        console.log('button Next pressed!');
         scrollToIndex(currentIndex + 1, false);
     }
     const handlePrevious = () => {
-        console.log('button previous pressed!');
         scrollToIndex(currentIndex - 1, false);
     }
 
@@ -80,7 +76,6 @@ const HorizontalCalendar: React.FC<Props> = ({ onDateChange }) => {
                 </TouchableOpacity>
 
                 <View style={styles.row}>
-
 
                     <Animated.ScrollView
                         ref={scrollRef}
@@ -126,7 +121,6 @@ const HorizontalCalendar: React.FC<Props> = ({ onDateChange }) => {
                         ))}
                     </Animated.ScrollView>
 
-
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleNext}>
@@ -140,14 +134,12 @@ const HorizontalCalendar: React.FC<Props> = ({ onDateChange }) => {
 const styles = StyleSheet.create({
     container: { padding: SPACING_DEFAULT, borderBottomColor: 'black', borderBottomWidth: 1, backgroundColor: Colors.light.background },
     title: { textAlign: 'center', fontWeight: 'bold', fontSize: 16, marginBottom: SPACING_DEFAULT, backgroundColor: Colors.light.background },
-
     calendarContent: {
         flexDirection: 'row',
         backgroundColor: Colors.light.background,
         justifyContent: 'center',
         alignItems: 'center',
     },
-
     row: {
         width: '59%',
         height: DEFAULT_SIZE,
@@ -174,7 +166,6 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.light.highlightBackgroun_2,
         borderColor: Colors.light.shadow,
         borderWidth: 1,
-
     },
     monthText: {
         fontSize: 16,

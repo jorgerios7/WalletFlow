@@ -13,9 +13,9 @@ const Tab = createBottomTabNavigator();
 
 const BottomTabs = () => {
   const insets = useSafeAreaInsets();
-
+  
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -23,6 +23,7 @@ const BottomTabs = () => {
           tabBarStyle: {
             height: 60 + insets.bottom,
             paddingBottom: insets.bottom,
+            paddingTop: insets.top,
             backgroundColor: '#fff',
             position: 'absolute',
             borderTopWidth: 0,

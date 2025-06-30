@@ -1,18 +1,16 @@
 import LoginScreen from "@/app/screens/LoginScreen";
 import SignupScreen from "@/app/screens/SignupScreen";
-import RouteAddress from "@/components/RouteAdress";
 import BoxInputs from "@/components/ui/BoxInputs";
 import HomeScreenContainer from "@/components/ui/HomeScreenContainer";
 import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Provider as PaperProvider, Snackbar } from "react-native-paper";
 
-export default function UserAccessScreen() {
-    const router = useRouter();
+interface Props { onPress?: (isLoged: boolean) => void }
 
+const UserAccessScreen: React.FC<Props> = ({ onPress }) => {
     const [loginInputValue, setLoginInputValue] = useState({
         Email: "", Password: "",
     });
@@ -61,7 +59,8 @@ export default function UserAccessScreen() {
 
         console.log('Dados: ', loginInputValue);
 
-        router.push(RouteAddress.Home);
+        if (onPress) onPress(true);
+
         setLoginInputValue({
             Email: "",
             Password: "",
@@ -124,3 +123,5 @@ export default function UserAccessScreen() {
         </PaperProvider>
     );
 }
+
+export default UserAccessScreen;

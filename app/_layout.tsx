@@ -13,11 +13,6 @@ export default function MainLayout() {
         name={RouteAddress.UserAccessScreen}
         options={{ headerShown: false }}
       />
-
-      <Stack.Screen
-        name='(painel)/home/appNavigator'
-        options={{ headerShown: false }}
-      />
     </Stack>
   )
 }
