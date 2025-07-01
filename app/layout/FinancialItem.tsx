@@ -1,53 +1,57 @@
 import { Colors } from "@/constants/Colors";
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-interface FinancialItem {
-    uniqueId: string;
-    category: string;
-    dueDate: string;
-    filterDueDate: string;
-    filterStartDate: string;
-    packageID: string;
-    startDate: string;
-    isPaid: boolean;
-    studentName: string;
-    isIncome: boolean;
-    value: number;
-}
+import { MaterialIcons } from "@expo/vector-icons";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Finance from "../types/Finance";
 
 interface ItemRecyclerProps {
-    item: FinancialItem
-    itemWidth: number,
-    height: number,
+    item: Finance,
+    onPress: (selectedItem: Finance) => void;
 }
 
 const renderStatus = (status: boolean) => {
     return status ? 'Concluído' : 'Pendente';
-}
+};
 
 const renderIsIncome = (y: boolean) => {
     return y ? 'Receita Financeira' : 'Pendência Financeira';
-}
+};
 
-enum MarginScreen {
-    MARGIN_HORIZONTAL = 20
-}
+const renderImage = (isIncome: boolean) => {
+    return isIncome ? 'add' : 'remove';
+};
 
-const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, itemWidth, height }) => {
-    const isWeb = Platform.OS === "web";
-    const dynamicWidth = isWeb ? itemWidth - 150 : itemWidth;
-
+const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, onPress }) => {
     return (
-        <TouchableOpacity>
-            <View style={[defaultStyles.card, { width: dynamicWidth, maxWidth: dynamicWidth - MarginScreen.MARGIN_HORIZONTAL }]}>
+        <TouchableOpacity
+            style={defaultStyles.container}
+            onPress={() => onPress?.(item)}
+        >
+            <View style={defaultStyles.card}>
+                <View style={defaultStyles.cardContent}>
 
-                <Text><Text style={defaultStyles.bold}>Estudante:</Text> {item.studentName}</Text>
-                <Text><Text style={defaultStyles.bold}>Tipo:</Text> {renderIsIncome(item.isIncome)}</Text>
-                <Text><Text style={defaultStyles.bold}>Categoria:</Text> {item.category}</Text>
-                <Text><Text style={defaultStyles.bold}>Valor:</Text> R$ {item.value.toFixed(2)}</Text>
-                <Text><Text style={defaultStyles.bold}>Status:</Text> {renderStatus(item.isPaid)}</Text>
-                <Text><Text style={defaultStyles.bold}>Vencimento:</Text> {item.dueDate}</Text>
+                    <View style={defaultStyles.image}>
+                        <MaterialIcons
+                            name={renderImage(item.isIncome)}
+                            size={16}
+                            color={Colors.light.background}
+                        />
+                    </View>
 
+                    <View style={defaultStyles.textContainer}>
+                        <Text style={defaultStyles.text}>
+                            {renderIsIncome(item.isIncome)}
+                        </Text>
+                        <Text style={defaultStyles.text}>
+                            Status: {renderStatus(item.isPaid)}
+                        </Text>
+                    </View>
+
+                    <View style={defaultStyles.textContainer}>
+                        <Text style={[defaultStyles.text, { fontWeight: 'bold' }]}>
+                            R$ {item.value.toFixed(2)}
+                        </Text>
+                    </View>
+                </View>
             </View>
         </TouchableOpacity>
     );
@@ -56,16 +60,40 @@ const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, itemWidth, height })
 export default FinancialItem;
 
 const defaultStyles = StyleSheet.create({
+    container: {
+        marginHorizontal: 10,
+        backgroundColor: 'transparent',
+        marginBottom: 10,
+    },
     card: {
+        width: '100%',
         alignSelf: 'center',
         backgroundColor: Colors.light.background,
         padding: 10,
-        marginBottom: 10,
+        borderRadius: 11,
         borderColor: Colors.light.shadow,
         borderWidth: 1,
-        borderRadius: 10
     },
-    bold: {
-        fontWeight: 'bold',
+    cardContent: {
+        flexDirection: 'row',
+        backgroundColor: Colors.light.background,
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
+    text: {
+        marginEnd: 10,
+    },
+    textContainer: {
+        width: '35%',
+    },
+    image: {
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: Colors.light.shadow,
+        borderWidth: 0.5,
+        borderRadius: 5,
+        backgroundColor: Colors.light.highlightBackgroun_2,
+    }
 });

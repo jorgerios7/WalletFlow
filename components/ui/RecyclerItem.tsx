@@ -1,30 +1,17 @@
 import FinancialItem from '@/app/layout/FinancialItem';
+import Finance from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import { useEffect } from 'react';
-import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
-
-interface FinancialIte {
-    uniqueId: string;
-    category: string;
-    dueDate: string;
-    filterDueDate: string;
-    filterStartDate: string;
-    packageID: string;
-    startDate: string;
-    isPaid: boolean;
-    studentName: string;
-    isIncome: boolean;
-    value: number;
-}
+import { FlatList, StyleSheet, View } from 'react-native';
 
 interface ItemRecyclerProps {
-    list: FinancialIte[];
+    list: Finance[];
     dateFilter?: string;
     isStatusFilteringEnabled: boolean;
     statusFilter?: boolean;
     onTotalValueChange?: (total: number) => void;
     adjustMarginBottom?: (number);
-}
+};
 
 const RecyclerItem: React.FC<ItemRecyclerProps> = ({
     list,
@@ -34,11 +21,10 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
     onTotalValueChange,
     adjustMarginBottom,
 }) => {
-    const { width } = useWindowDimensions();
 
     // Filtrando os itens
     const filteredList = list.filter(item => {
-        const isDifferentDates = item.filterStartDate !== dateFilter;
+        const isDifferentDates = item.startDate !== dateFilter;
         //const isDifferentStatuses = item.isPaid !== statusFilter;
         //const statusFilterIsEnabled = isDifferentStatuses && isStatusFilteringEnabled;
         return !(isDifferentDates);
@@ -55,23 +41,22 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
 
     }, [totalValue, onTotalValueChange]);
 
-    const renderItem = ({ item }: { item: FinancialIte }) => (
+    const renderItem = ({ item }: { item: Finance }) => (
         <FinancialItem
             item={item}
-            itemWidth={width}
-            height={100}
+            onPress={(selectedItem) => (console.log('selectedItem: ', selectedItem))}
         />
     );
 
     return (
         <FlatList
             data={filteredList}
-            keyExtractor={(item) => item.uniqueId}
+            keyExtractor={(item) => item.id}
             renderItem={renderItem}
             style={[styles.scrollContent, { marginBottom: adjustMarginBottom }]}
             ListHeaderComponent={<View style={styles.headerSpacer} />}
             ListFooterComponent={<View style={styles.footerSpacer} />}
-        />
+        />  
     );
 };
 
