@@ -22,9 +22,6 @@ const BottomTabs = () => {
           headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: {
-            //height: 60 + insets.bottom,
-            //paddingBottom: insets.bottom,
-            //paddingTop: insets.top,
             backgroundColor: Colors.light.background,
             position: 'absolute',
             elevation: 20,

@@ -10,8 +10,9 @@ interface ItemRecyclerProps {
     isStatusFilteringEnabled: boolean;
     statusFilter?: boolean;
     onTotalValueChange?: (total: number) => void;
-    adjustMarginBottom?: (number);
-};
+    bottomMargin?: number;
+    onPressingItem: (datas: Finance) => void;
+}
 
 const RecyclerItem: React.FC<ItemRecyclerProps> = ({
     list,
@@ -19,50 +20,45 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
     isStatusFilteringEnabled,
     statusFilter,
     onTotalValueChange,
-    adjustMarginBottom,
+    bottomMargin = 0,
+    onPressingItem,
 }) => {
 
-    // Filtrando os itens
     const filteredList = list.filter(item => {
         const isDifferentDates = item.startDate !== dateFilter;
-        //const isDifferentStatuses = item.isPaid !== statusFilter;
-        //const statusFilterIsEnabled = isDifferentStatuses && isStatusFilteringEnabled;
-        return !(isDifferentDates);
+        return !isDifferentDates;
     });
 
-    // Somando os valores
     const totalValue = filteredList.reduce((sum, item) => sum + item.value, 0);
 
-    // Enviando o valor somado para o componente pai
     useEffect(() => {
-        if (onTotalValueChange) {
-            onTotalValueChange(totalValue);
-        }
-
+        onTotalValueChange?.(totalValue);
     }, [totalValue, onTotalValueChange]);
 
     const renderItem = ({ item }: { item: Finance }) => (
         <FinancialItem
             item={item}
-            onPress={(selectedItem) => (console.log('selectedItem: ', selectedItem))}
+            onPress={(selectedItem) => onPressingItem(selectedItem)} // <- corrigido
         />
     );
 
     return (
-        <FlatList
-            data={filteredList}
-            keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            style={[styles.scrollContent, { marginBottom: adjustMarginBottom }]}
-            ListHeaderComponent={<View style={styles.headerSpacer} />}
-            ListFooterComponent={<View style={styles.footerSpacer} />}
-        />  
+        <View style={{ flex: 1 }}>
+            <FlatList
+                data={filteredList}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+                style={[styles.scrollContent, { marginBottom: bottomMargin }]}
+                ListHeaderComponent={<View style={styles.headerSpacer} />}
+                ListFooterComponent={<View style={styles.footerSpacer} />}
+            />
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     scrollContent: {
-        backgroundColor: Colors.light.shadow
+        backgroundColor: Colors.light.shadow,
     },
     headerSpacer: {
         height: 10,
@@ -73,3 +69,7 @@ const styles = StyleSheet.create({
 });
 
 export default RecyclerItem;
+
+
+
+
