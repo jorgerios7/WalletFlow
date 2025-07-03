@@ -50,7 +50,12 @@ const SettingsScreen = () => {
         }}
       />
       <SafeAreaView style={styles.sheetWrapper}>
-        <BottomSheet visible={showBottomSheet} onClose={() => setShowBottomSheet(false)}>
+        <BottomSheet 
+        isFullHeight={true}
+        visible={showBottomSheet} 
+        onClose={() => setShowBottomSheet(false)}
+        isDragHandleVisible={false}
+        >
           {selectedItemData && (
             <FinancialReportScreen data={selectedItemData} />
           )}

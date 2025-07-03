@@ -1,3 +1,4 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
 import {
     Animated,
@@ -6,6 +7,7 @@ import {
     PanResponder,
     Pressable,
     StyleSheet,
+    TouchableOpacity,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
@@ -16,16 +18,23 @@ interface BottomSheetProps {
     visible: boolean;
     onClose: () => void;
     children: React.ReactNode;
+    isDragHandleVisible: boolean;
+    isFullHeight: boolean;
 }
 
 export const BottomSheet: React.FC<BottomSheetProps> = ({
     visible,
     onClose,
     children,
+    isDragHandleVisible,
+    isFullHeight,
 }) => {
+
     const FULL_HEIGHT = 0;
-    const PARTIAL_HEIGHT = SCREEN_HEIGHT * 0.5; // 80% visível
+    const PARTIAL_HEIGHT = SCREEN_HEIGHT * 0.5;
     const CLOSED = SCREEN_HEIGHT;
+    const INITIAL_PARTIAL_HEIGHT = PARTIAL_HEIGHT;
+    const INITIAL_FULL_HEIGHT = FULL_HEIGHT;
 
     const translateY = useRef(new Animated.Value(CLOSED)).current;
     const lastTranslateY = useRef(CLOSED);
@@ -43,7 +52,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         const currentPosition = lastTranslateY.current + dy;
 
         if (currentPosition > SCREEN_HEIGHT * 0.6) {
-            animateTo(CLOSED, onClose); // fechar
+            animateTo(CLOSED, onClose);
         } else if (currentPosition > SCREEN_HEIGHT * 0.3) {
             animateTo(PARTIAL_HEIGHT);
         } else {
@@ -68,11 +77,29 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
     useEffect(() => {
         if (visible) {
-            animateTo(PARTIAL_HEIGHT);
+            animateTo(
+                isFullHeight ?
+                    INITIAL_FULL_HEIGHT
+                    :
+                    INITIAL_PARTIAL_HEIGHT
+            );
         }
     }, [visible]);
 
     if (!visible) return null;
+
+    const Header = () => {
+        return (
+            isDragHandleVisible ?
+                <Pressable style={styles.dragHandle} />
+                :
+                <View style={styles.butonReturnHeader}>
+                    <TouchableOpacity style={styles.buttonReturn} onPress={() => animateTo(CLOSED, onClose)}>
+                        <MaterialIcons style={{ marginTop: '20%' }} activeOpacity={0.8} name={'arrow-back'} size={24} color={'black'} />
+                    </TouchableOpacity>
+                </View>
+        );
+    }
 
     return (
         <Modal visible={visible} transparent animationType="fade">
@@ -83,8 +110,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             <Animated.View {...panResponder.panHandlers}
                 style={[styles.sheetContainer, { transform: [{ translateY },] }]}
             >
-                <Pressable style={styles.dragHandle} />
-                
+                <Header />
+
                 {children}
             </Animated.View>
         </Modal>
@@ -114,6 +141,25 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginVertical: 10,
     },
+    butonReturnHeader: {
+        width: '100%',
+        backgroundColor: 'white',
+        borderBottomColor: 'grey',
+        borderBottomWidth: 0.5,
+        marginBottom: 10
+    },
+    buttonReturn: {
+        width: 40,
+        height: 40,
+        backgroundColor: 'white',
+        borderRadius: 30,
+        alignContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        marginVertical: 10
+
+    }
+
 
 });
 
