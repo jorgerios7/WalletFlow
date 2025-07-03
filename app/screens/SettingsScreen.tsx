@@ -3,14 +3,17 @@ import RecyclerItem from '@/components/ui/RecyclerItem';
 import { BottomSheet } from '@/components/ui/sheet/BottomSheet';
 import TotalValueScreen from '@/components/ui/TotalValueScreen';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+import FinancialReportScreen from '../layout/FinancialReportScreen';
 import HorizontalCalendar from '../navigation/HorizontalCalendar';
+import Finance from '../types/Finance';
 
 const SettingsScreen = () => {
   const [dateSelected, setDate] = useState('');
   const [dataBase, setDataBase] = useState<any[]>([]);
   const [totalValue, setTotalValue] = useState(0);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
+  const [selectedItemData, setSelectedItemData] = useState<Finance | null>(null);
 
   const loadData = () => {
     return FinanceData();
@@ -39,16 +42,18 @@ const SettingsScreen = () => {
         statusFilter={false}
         onTotalValueChange={(total) => setTotalValue(total)}
         bottomMargin={96}
-        onPressingItem={() => setShowBottomSheet(true)}
-      />
+        onPressingItem={(selectedItem) => {
+          setSelectedItemData(selectedItem)
+          setShowBottomSheet(true)
 
+          console.log(selectedItemData)
+        }}
+      />
       <SafeAreaView style={styles.sheetWrapper}>
         <BottomSheet visible={showBottomSheet} onClose={() => setShowBottomSheet(false)}>
-
-          
-        <Text> OIiii</Text>
-       
-
+          {selectedItemData && (
+            <FinancialReportScreen data={selectedItemData} />
+          )}
         </BottomSheet>
       </SafeAreaView>
     </View>

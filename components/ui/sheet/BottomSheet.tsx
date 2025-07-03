@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import {
     Animated,
-    Button,
     Dimensions,
     Modal,
     PanResponder,
+    Pressable,
     StyleSheet,
     TouchableWithoutFeedback,
-    View,
+    View
 } from 'react-native';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -68,7 +68,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
     useEffect(() => {
         if (visible) {
-            animateTo(FULL_HEIGHT);
+            animateTo(PARTIAL_HEIGHT);
         }
     }, [visible]);
 
@@ -80,18 +80,15 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                 <View style={styles.background} />
             </TouchableWithoutFeedback>
 
-            <Animated.View  {...panResponder.panHandlers}
+            <Animated.View {...panResponder.panHandlers}
                 style={[styles.sheetContainer, { transform: [{ translateY },] }]}
             >
-                {/* Gesto só aqui */}
-                <Button title='' ></Button>
-
-                {/* Conteúdo livre, não interfere no gesto */}
+                <Pressable style={styles.dragHandle} />
+                
                 {children}
             </Animated.View>
         </Modal>
     );
-
 };
 
 const styles = StyleSheet.create({
@@ -110,12 +107,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
     },
     dragHandle: {
-        width: 60,
-        height: 8,
+        width: 100,
+        height: 10,
         backgroundColor: '#ccc',
         borderRadius: 4,
         alignSelf: 'center',
         marginVertical: 10,
     },
+
 });
 

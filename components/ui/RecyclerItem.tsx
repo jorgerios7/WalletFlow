@@ -38,7 +38,7 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
     const renderItem = ({ item }: { item: Finance }) => (
         <FinancialItem
             item={item}
-            onPress={(selectedItem) => onPressingItem(selectedItem)} // <- corrigido
+            onPress={(selectedItem) => onPressingItem(selectedItem)}
         />
     );
 
