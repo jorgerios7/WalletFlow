@@ -1,5 +1,5 @@
 import FinancialItem from '@/app/layout/FinancialItem';
-import Finance from '@/app/types/Finance';
+import Finance, { FinanceType, PaymentStatus } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import { useEffect } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
@@ -25,11 +25,14 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
 }) => {
 
     const filteredList = list.filter(item => {
-        const isDifferentDates = item.startDate !== dateFilter;
+        const isDifferentDates = item.dueDate !== dateFilter;
         return !isDifferentDates;
     });
 
-    const totalValue = filteredList.reduce((sum, item) => sum + item.value, 0);
+    const totalValue = filteredList.reduce((sum, item) => {
+        const valor = item.type === FinanceType.FINANCIAL_PENDING && PaymentStatus.NotPaid ? -item.value : item.value;
+        return sum + valor;
+    }, 0);
 
     useEffect(() => {
         onTotalValueChange?.(totalValue);

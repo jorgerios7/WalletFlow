@@ -1,316 +1,109 @@
 export default function FinanceData() {
-
-    enum dates {
-        date1 = '01/06/2025',
-        date2 = '01/06/2025',
-        date3 = '01/07/2025',
-        date4 = '01/07/2025',
-        date6 = '01/08/2025',
-        date7 = '01/08/2025',
-        date8 = '01/09/2025',
-        date9 = '01/09/2025',
+    function getDate(day: number, month: number, year: number) {
+        return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
     }
 
-    return ([
-        {
-            id: '1',
-            category: 'Mensalidade',
-            dueDate: dates.date3,
-            packageID: 'pkg01',
-            startDate: dates.date4,
-            isPaid: false,
-            isIncome: true,
-            value: 100.0,
-        },
-        {
-            id: '2',
-            category: 'Material',
-            dueDate: dates.date1,
-            packageID: 'pkg01',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: false,
-            value: 120.0,
-        },
-        {
-            id: '3',
-            category: 'Mensalidade',
-            dueDate: dates.date1,
-            packageID: 'pkg02',
-            startDate: dates.date9,
-            isPaid: true,
-            isIncome: true,
-            value: 500.0,
-        },
-        {
-            id: '4',
-            category: 'Uniforme',
-            dueDate: dates.date2,
-            packageID: 'pkg03',
-            startDate: dates.date9,
-            isPaid: false,
-            isIncome: false,
-            value: 150.0,
-        },
-        {
-            id: '5',
-            category: 'Mensalidade',
-            dueDate: dates.date6,
-            packageID: 'pkg04',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: true,
-            value: 350.0,
-        },
-        {
-            id: '6',
-            category: 'Atividade Extra',
-            dueDate: dates.date7,
-            packageID: 'pkg05',
-            startDate: dates.date1,
-            isPaid: true,
-            isIncome: false,
-            value: 80.0,
-        },
-        {
-            id: '7',
-            category: 'Mensalidade',
-            dueDate: dates.date9,
-            packageID: 'pkg06',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: false,
-            value: 420.0,
-        },
-        {
-            id: '8',
-            category: 'Material',
-            dueDate: dates.date2,
-            packageID: 'pkg07',
-            startDate: dates.date9,
-            isPaid: false,
-            isIncome: true,
-            value: 95.0,
-        },
-        {
-            id: '9',
-            category: 'Mensalidade',
-            dueDate: dates.date3,
-            packageID: 'pkg08',
-            startDate: dates.date4,
-            isPaid: true,
-            isIncome: false,
-            value: 380.0,
-        },
-        {
-            id: '10',
+    const recurringItems = [];
+
+    // Grupo 1: 12 parcelas - Mensalidade
+    for (let i = 0; i < 3000; i++) {
+        const date = getDate(1, 1 + i, 2025);
+        recurringItems.push({
+            id: `${i + 1}`,
+            category: 'Salário Mensal',
+            dueDate: date,
+            packageID: 'pkgR1',
+            startDate: '01/01/2025',
+            isPaid: 0, // metade paga
+            type: 2,
+            value: 3450.0,
+            description: `Parcela mensal de Mensalidade - ${date}`,
+            method: 'Pix',
+            isRecurrence: false
+        });
+    }
+
+    // Grupo 2: 6 parcelas - Transporte
+    for (let i = 0; i < 500; i++) {
+        const date = getDate(1, 3 + i, 2025);
+        recurringItems.push({
+            id: `${12 + i + 1}`,
             category: 'Transporte',
-            dueDate: dates.date4,
-            packageID: 'pkg09',
-            startDate: dates.date1,
-            isPaid: false,
-            isIncome: true,
-            value: 200.0,
-        },
-        {
-            id: '11',
-            category: 'Mensalidade',
-            dueDate: dates.date2,
-            packageID: 'pkg10',
-            startDate: dates.date9,
-            isPaid: false,
-            isIncome: false,
-            value: 450.0,
-        },
-        {
-            id: '12',
-            category: 'Atividade Extra',
-            dueDate: dates.date6,
-            packageID: 'pkg11',
-            startDate: dates.date8,
-            isPaid: true,
-            isIncome: true,
-            value: 60.0,
-        },
-        {
-            id: '13',
-            category: 'Mensalidade',
-            dueDate: dates.date1,
-            packageID: 'pkg12',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: false,
-            value: 400.0,
-        },
-        {
-            id: '14',
-            category: 'Uniforme',
-            dueDate: dates.date8,
-            packageID: 'pkg13',
-            startDate: dates.date9,
-            isPaid: false,
-            isIncome: false,
+            dueDate: date,
+            packageID: 'pkgR2',
+            startDate: '01/03/2025',
+            isPaid: 1,
+            type: 3,
             value: 180.0,
-        },
-        {
-            id: '15',
-            category: 'Mensalidade',
-            dueDate: dates.date2,
-            packageID: 'pkg14',
-            startDate: dates.date8,
-            isPaid: true,
-            isIncome: true,
-            value: 480.0,
-        },
-        {
-            id: '16',
-            category: 'Material',
-            dueDate: dates.date7,
-            packageID: 'pkg15',
-            startDate: dates.date1,
-            isPaid: false,
-            isIncome: false,
-            value: 45.0,
-        },
-        {
-            id: '17',
-            category: 'Mensalidade',
-            dueDate: dates.date9,
-            packageID: 'pkg16',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: true,
-            value: 520.0,
-        },
-        {
-            id: '18',
-            category: 'Transporte',
-            dueDate: dates.date1,
-            packageID: 'pkg17',
-            startDate: dates.date8,
-            isPaid: true,
-            isIncome: true,
-            value: 210.0,
-        },
-        {
-            id: '19',
-            category: 'Mensalidade',
-            dueDate: dates.date6,
-            packageID: 'pkg18',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: false,
-            value: 390.0,
-        },
-        {
-            id: '20',
+            description: `Parcela de Transporte escolar - ${date}`,
+            method: 'Débito automático',
+            isRecurrence: true
+        });
+    }
+
+    // Grupo 3: 9 parcelas - Atividade Extra
+    for (let i = 0; i < 300; i++) {
+        const date = getDate(1, 4 + i, 2025);
+        recurringItems.push({
+            id: `${18 + i + 1}`,
             category: 'Atividade Extra',
-            dueDate: dates.date4,
-            packageID: 'pkg19',
-            startDate: dates.date3,
-            isPaid: false,
-            isIncome: true,
+            dueDate: date,
+            packageID: 'pkgR3',
+            startDate: '01/04/2025',
+            isPaid: 1,
+            type: 3,
             value: 90.0,
-        },
-        {
-            id: '21',
-            category: 'Mensalidade',
-            dueDate: dates.date7,
-            packageID: 'pkg20',
-            startDate: dates.date1,
-            isPaid: true,
-            isIncome: false,
-            value: 550.0,
-        },
-        {
-            id: '22',
-            category: 'Material',
-            dueDate: dates.date6,
-            packageID: 'pkg21',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: true,
-            value: 75.0,
-        },
-        {
-            id: '23',
-            category: 'Mensalidade',
-            dueDate: dates.date8,
-            packageID: 'pkg22',
-            startDate: dates.date9,
-            isPaid: false,
-            isIncome: false,
-            value: 420.0,
-        },
-        {
-            id: '24',
-            category: 'Uniforme',
-            dueDate: dates.date3,
-            packageID: 'pkg23',
-            startDate: dates.date4,
-            isPaid: true,
-            isIncome: true,
-            value: 120.0,
-        },
-        {
-            id: '25',
-            category: 'Mensalidade',
-            dueDate: dates.date6,
-            packageID: 'pkg24',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: true,
-            value: 380.0,
-        },
-        {
-            id: '26',
-            category: 'Transporte',
-            dueDate: dates.date4,
-            packageID: 'pkg25',
-            startDate: dates.date1,
-            isPaid: false,
-            isIncome: false,
-            value: 190.0,
-        },
-        {
-            id: '27',
-            category: 'Mensalidade',
-            dueDate: dates.date4,
-            packageID: 'pkg26',
-            startDate: dates.date3,
-            isPaid: true,
-            isIncome: true,
-            value: 410.0,
-        },
-        {
-            id: '28',
-            category: 'Atividade Extra',
-            dueDate: dates.date9,
-            packageID: 'pkg27',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: false,
-            value: 65.0,
-        },
-        {
-            id: '29',
-            category: 'Mensalidade',
-            dueDate: dates.date7,
-            packageID: 'pkg28',
-            startDate: dates.date1,
-            isPaid: false,
-            isIncome: true,
-            value: 470.0,
-        },
-        {
-            id: '30',
-            category: 'Material',
-            dueDate: dates.date2,
-            packageID: 'pkg29',
-            startDate: dates.date8,
-            isPaid: false,
-            isIncome: false,
-            value: 85.0,
-        }
-    ])
+            description: `Parcela de Atividade Extra - ${date}`,
+            method: 'Pix',
+            isRecurrence: true
+        });
+    }
+
+    const baseId = 28;
+    const randomItems = [];
+
+    const categories = [
+        { category: 'Uniforme', method: 'Boleto bancário', valueRange: [100, 200] },
+        { category: 'Material', method: 'Dinheiro', valueRange: [50, 120] },
+        { category: 'Mensalidade', method: 'Cartão de crédito', valueRange: [300, 500] },
+        { category: 'Transporte', method: 'Débito automático', valueRange: [150, 250] },
+        { category: 'Atividade Extra', method: 'Pix', valueRange: [60, 110] }
+    ];
+
+    function randomDate(): string {
+        const day = 1;
+        const month = Math.floor(Math.random() * 12) + 1;
+        const year = 2025;
+        return getDate(day, month, year);
+    }
+
+    function randomBool() {
+        return Math.random() < 0.5;
+    }
+
+    function randomValue(min: number, max: number) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    for (let i = 0; i < 1000; i++) {
+        const id = baseId + i;
+        const cat = categories[i % categories.length];
+        const dueDate = randomDate();
+
+        randomItems.push({
+            id: `${id}`,
+            category: cat.category,
+            dueDate,
+            packageID: `pkg${id}`,
+            startDate: dueDate,
+            isPaid: 0,
+            type: 1,
+            value: randomValue(cat.valueRange[0], cat.valueRange[1]),
+            description: `Pagamento referente a ${cat.category.toLowerCase()} - ${dueDate}`,
+            method: cat.method,
+            isRecurrence: false
+        });
+    }
+
+    return [...recurringItems, ...randomItems];
 }

@@ -1,23 +1,32 @@
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Finance from "../types/Finance";
+import Finance, { FinanceType, PaymentStatus } from "../types/Finance";
 
 interface ItemRecyclerProps {
     item: Finance,
     onPress: (selectedItem: Finance) => void;
-}
-
-const renderStatus = (status: boolean) => {
-    return status ? 'Concluído' : 'Pendente';
 };
 
-const renderIsIncome = (y: boolean) => {
-    return y ? 'Receita Financeira' : 'Pendência Financeira';
+const typeStatus: Record<PaymentStatus, string> = {
+  [PaymentStatus.Paid]: 'Concluído',
+  [PaymentStatus.NotPaid]: 'Pendente',
 };
 
-const renderImage = (isIncome: boolean) => {
-    return isIncome ? 'add' : 'remove';
+const typeLabels: Record<FinanceType, string> = {
+  [FinanceType.FINANCIAL_INCOME]: 'Entrada',
+  [FinanceType.FINANCIAL_PROFIT]: 'Lucro',
+  [FinanceType.FINANCIAL_PENDING]: 'Saída',
+};
+
+const renderImage = (type: number) => {
+    if (type === 1) {
+        return 'monetization-on'
+    } else if (type === 2) {
+        return 'trending-up'
+    } else {
+        return 'remove-circle'
+    }
 };
 
 const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, onPress }) => {
@@ -28,22 +37,28 @@ const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, onPress }) => {
         >
             <View style={defaultStyles.card}>
                 <View style={defaultStyles.cardContent}>
-
                     <View style={defaultStyles.image}>
                         <MaterialIcons
-                            name={renderImage(item.isIncome)}
+                            name={renderImage(item.type)}
                             size={16}
                             color={Colors.light.background}
                         />
                     </View>
 
                     <View style={defaultStyles.textContainer}>
-                        <Text style={defaultStyles.text}>
-                            {renderIsIncome(item.isIncome)}
+                        <Text style={[defaultStyles.text, {fontSize: 16 ,fontWeight: 'bold'}]}>
+                            {typeLabels[item.type] ?? 'Invalid type'}
                         </Text>
                         <Text style={defaultStyles.text}>
-                            Status: {renderStatus(item.isPaid)}
+                            Categoria: {item.category}
                         </Text>
+                        <Text style={defaultStyles.text}>
+                            Status: {typeStatus[item.isPaid] ?? 'Invalid type'}
+                        </Text>
+                        <Text style={defaultStyles.text}>
+                            Data: {item.startDate}
+                        </Text>
+
                     </View>
 
                     <View style={defaultStyles.textContainer}>
@@ -84,7 +99,7 @@ const defaultStyles = StyleSheet.create({
         marginEnd: 10,
     },
     textContainer: {
-        width: '35%',
+        width: '40%',
     },
     image: {
         width: 30,

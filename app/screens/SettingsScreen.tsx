@@ -43,18 +43,16 @@ const SettingsScreen = () => {
         onTotalValueChange={(total) => setTotalValue(total)}
         bottomMargin={96}
         onPressingItem={(selectedItem) => {
-          setSelectedItemData(selectedItem)
-          setShowBottomSheet(true)
-
-          console.log(selectedItemData)
+          setSelectedItemData(selectedItem);
+          setShowBottomSheet(true);
         }}
       />
       <SafeAreaView style={styles.sheetWrapper}>
-        <BottomSheet 
-        isFullHeight={true}
-        visible={showBottomSheet} 
-        onClose={() => setShowBottomSheet(false)}
-        isDragHandleVisible={false}
+        <BottomSheet
+          isFullHeight={true}
+          visible={showBottomSheet}
+          onClose={() => setShowBottomSheet(false)}
+          isDragHandleVisible={false}
         >
           {selectedItemData && (
             <FinancialReportScreen data={selectedItemData} />
