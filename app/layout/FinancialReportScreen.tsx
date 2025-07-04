@@ -5,21 +5,18 @@ interface Props {
     data?: Finance
 }
 
+const typeLabels: Record<FinanceType, string> = {
+    [FinanceType.FINANCIAL_INCOME]: 'Entrada',
+    [FinanceType.FINANCIAL_PROFIT]: 'Lucro',
+    [FinanceType.FINANCIAL_PENDING]: 'Saída',
+};
 
+const typeStatus: Record<PaymentStatus, string> = {
+    [PaymentStatus.Paid]: 'Concluído',
+    [PaymentStatus.NotPaid]: 'Pendente',
+};
 
 const FinancialReportScreen = ({ data }: Props) => {
-
-    const typeLabels: Record<FinanceType, string> = {
-        [FinanceType.FINANCIAL_INCOME]: 'Entrada',
-        [FinanceType.FINANCIAL_PROFIT]: 'Lucro',
-        [FinanceType.FINANCIAL_PENDING]: 'Saída',
-    };
-
-    const typeStatus: Record<PaymentStatus, string> = {
-        [PaymentStatus.Paid]: 'Concluído',
-        [PaymentStatus.NotPaid]: 'Pendente',
-    };
-
     return (
         <View>
             {/* Cabeçalho */}
@@ -84,13 +81,14 @@ const FinancialReportScreen = ({ data }: Props) => {
                     </Text>
                 </View>
 
-                {data?.isPaid && (
+                {data?.isPaid !== undefined && data?.isPaid !== 0 && (
                     <View style={styles.row}>
                         <Text style={styles.label}>Método de Pagamento:</Text>
                         <Text style={styles.value}>
                             {data?.method || "N/A"}
                         </Text>
-                    </View>)}
+                    </View>
+                )}
 
                 <View style={styles.row}>
                     <Text style={styles.label}>Valor:</Text>

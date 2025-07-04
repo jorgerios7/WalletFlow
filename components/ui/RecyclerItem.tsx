@@ -1,78 +1,124 @@
 import FinancialItem from '@/app/layout/FinancialItem';
 import Finance, { FinanceType, PaymentStatus } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
-import { useEffect } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { SectionList, StyleSheet, Text, View } from 'react-native';
 
 interface ItemRecyclerProps {
-    list: Finance[];
-    dateFilter?: string;
-    isStatusFilteringEnabled: boolean;
-    statusFilter?: boolean;
-    onTotalValueChange?: (total: number) => void;
-    bottomMargin?: number;
-    onPressingItem: (datas: Finance) => void;
+  list: Finance[];
+  dateFilter?: string;
+  isStatusFilteringEnabled: boolean;
+  statusFilter?: boolean;
+  onTotalValueChange?: (total: number) => void;
+  bottomMargin?: number;
+  onPressingItem: (datas: Finance) => void;
 }
 
+interface Section {
+  title: string; // Data
+  data: Finance[];
+}
+
+const groupByDate = (list: Finance[]): Section[] => {
+  const grouped: { [key: string]: Finance[] } = {};
+
+  for (const item of list) {
+    if (!grouped[item.dueDate]) {
+      grouped[item.dueDate] = [];
+    }
+    grouped[item.dueDate].push(item);
+  }
+
+  return Object.keys(grouped)
+    .sort((a, b) => {
+      const [da, ma, ya] = a.split('/').map(Number);
+      const [db, mb, yb] = b.split('/').map(Number);
+      const dateA = new Date(ya, ma - 1, da);
+      const dateB = new Date(yb, mb - 1, db);
+      return dateA.getTime() - dateB.getTime();
+    })
+    .map((date) => ({
+      title: date,
+      data: grouped[date],
+    }));
+};
+
 const RecyclerItem: React.FC<ItemRecyclerProps> = ({
-    list,
-    dateFilter,
-    isStatusFilteringEnabled,
-    statusFilter,
-    onTotalValueChange,
-    bottomMargin = 0,
-    onPressingItem,
+  list,
+  dateFilter,
+  isStatusFilteringEnabled,
+  statusFilter,
+  onTotalValueChange,
+  bottomMargin = 0,
+  onPressingItem,
 }) => {
 
-    const filteredList = list.filter(item => {
-        const isDifferentDates = item.dueDate !== dateFilter;
-        return !isDifferentDates;
-    });
+ const filteredList = list.filter((item) => {
+  if (!dateFilter) return true;
 
-    const totalValue = filteredList.reduce((sum, item) => {
-        const valor = item.type === FinanceType.FINANCIAL_PENDING && PaymentStatus.NotPaid ? -item.value : item.value;
-        return sum + valor;
+  const [itemDay, itemMonth, itemYear] = item.dueDate.split('/');
+  const [filterDay, filterMonth, filterYear] = dateFilter.split('/');
+
+  return itemMonth === filterMonth && itemYear === filterYear;
+});
+
+
+  const totalValue = filteredList
+    .filter((item) => item.isPaid === PaymentStatus.Paid)
+    .reduce((sum, item) => {
+      const value =
+        item.type === FinanceType.FINANCIAL_PENDING ? -item.value : item.value;
+      return sum + value;
     }, 0);
 
-    useEffect(() => {
-        onTotalValueChange?.(totalValue);
-    }, [totalValue, onTotalValueChange]);
+  useEffect(() => {
+    onTotalValueChange?.(totalValue);
+  }, [totalValue, onTotalValueChange]);
 
-    const renderItem = ({ item }: { item: Finance }) => (
-        <FinancialItem
-            item={item}
-            onPress={(selectedItem) => onPressingItem(selectedItem)}
-        />
-    );
+  const sections = groupByDate(filteredList);
 
-    return (
-        <View style={{ flex: 1 }}>
-            <FlatList
-                data={filteredList}
-                keyExtractor={(item) => item.id}
-                renderItem={renderItem}
-                style={[styles.scrollContent, { marginBottom: bottomMargin }]}
-                ListHeaderComponent={<View style={styles.headerSpacer} />}
-                ListFooterComponent={<View style={styles.footerSpacer} />}
-            />
-        </View>
-    );
+  return (
+    <View style={{ flex: 1 }}>
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <FinancialItem item={item} onPress={onPressingItem} />
+        )}
+        renderSectionHeader={({ section }) => (
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionHeaderText}>{section.title}</Text>
+          </View>
+        )}
+        style={[styles.scrollContent, { marginBottom: bottomMargin }]}
+        ListHeaderComponent={<View style={styles.headerSpacer} />}
+        ListFooterComponent={<View style={styles.footerSpacer} />}
+        stickySectionHeadersEnabled
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    scrollContent: {
-        backgroundColor: Colors.light.shadow,
-    },
-    headerSpacer: {
-        height: 10,
-    },
-    footerSpacer: {
-        height: 0,
-    },
+  scrollContent: {
+    backgroundColor: Colors.light.shadow,
+  },
+  headerSpacer: {
+    height: 10,
+  },
+  footerSpacer: {
+    height: 0,
+  },
+  sectionHeader: {
+    backgroundColor: Colors.light.shadow,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  sectionHeaderText: {
+    fontSize: 12,
+    color: Colors.light.text,
+    alignSelf: 'center'
+  },
 });
 
 export default RecyclerItem;
-
-
-
-

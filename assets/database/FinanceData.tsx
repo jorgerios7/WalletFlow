@@ -6,8 +6,8 @@ export default function FinanceData() {
     const recurringItems = [];
 
     // Grupo 1: 12 parcelas - Mensalidade
-    for (let i = 0; i < 3000; i++) {
-        const date = getDate(1, 1 + i, 2025);
+    for (let i = 0; i < 30; i++) {
+        const date = getDate(1 + i, 1 + i, 2025);
         recurringItems.push({
             id: `${i + 1}`,
             category: 'Salário Mensal',
@@ -24,8 +24,8 @@ export default function FinanceData() {
     }
 
     // Grupo 2: 6 parcelas - Transporte
-    for (let i = 0; i < 500; i++) {
-        const date = getDate(1, 3 + i, 2025);
+    for (let i = 0; i < 30; i++) {
+        const date = getDate(1 + i, 3 + i, 2025);
         recurringItems.push({
             id: `${12 + i + 1}`,
             category: 'Transporte',
@@ -42,15 +42,15 @@ export default function FinanceData() {
     }
 
     // Grupo 3: 9 parcelas - Atividade Extra
-    for (let i = 0; i < 300; i++) {
-        const date = getDate(1, 4 + i, 2025);
+    for (let i = 0; i < 10; i++) {
+        const date = getDate(1 + i, 4 + i, 2025);
         recurringItems.push({
             id: `${18 + i + 1}`,
             category: 'Atividade Extra',
             dueDate: date,
             packageID: 'pkgR3',
             startDate: '01/04/2025',
-            isPaid: 1,
+            isPaid: 0,
             type: 3,
             value: 90.0,
             description: `Parcela de Atividade Extra - ${date}`,
@@ -71,7 +71,7 @@ export default function FinanceData() {
     ];
 
     function randomDate(): string {
-        const day = 1;
+        const day = Math.floor(Math.random() * 30) + 1;
         const month = Math.floor(Math.random() * 12) + 1;
         const year = 2025;
         return getDate(day, month, year);
@@ -85,7 +85,7 @@ export default function FinanceData() {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 10; i++) {
         const id = baseId + i;
         const cat = categories[i % categories.length];
         const dueDate = randomDate();
@@ -96,7 +96,7 @@ export default function FinanceData() {
             dueDate,
             packageID: `pkg${id}`,
             startDate: dueDate,
-            isPaid: 0,
+            isPaid: 1,
             type: 1,
             value: randomValue(cat.valueRange[0], cat.valueRange[1]),
             description: `Pagamento referente a ${cat.category.toLowerCase()} - ${dueDate}`,
