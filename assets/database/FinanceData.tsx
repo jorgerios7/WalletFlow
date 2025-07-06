@@ -14,11 +14,11 @@ export default function FinanceData() {
             dueDate: date,
             packageID: 'pkgR1',
             startDate: '01/01/2025',
-            isPaid: 0, // metade paga
+            isPaid: 0,
             type: 2,
             value: 3450.0,
             description: `Parcela mensal de Mensalidade - ${date}`,
-            method: 'Pix',
+            method: 'Cartão de Crédito',
             isRecurrence: false
         });
     }

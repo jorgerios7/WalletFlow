@@ -1,14 +1,177 @@
+import FinanceData from '@/assets/database/FinanceData';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { BarChart, PieChart } from 'react-native-chart-kit';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const AnalysisScreen = () => (
-  <View style={styles.container}>
-    <Text>Home Screen</Text>
-  </View>
-);
+const screenWidth = Dimensions.get('window').width;
+
+const chartConfig = {
+  backgroundGradientFrom: 'rgb(206, 206, 206)',
+  backgroundGradientTo: 'rgb(248, 249, 255)',
+  decimalPlaces: 0,
+  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+};
+
+export default function AnalysisScreen() {
+  const insets = useSafeAreaInsets();
+  const rawData = FinanceData();
+
+  // Função utilitária para extrair mês/ano
+  function extractMonth(dateStr: string) {
+    const [day, month, year] = dateStr.split('/');
+    return `${month}/${year}`;
+  }
+
+  // Gráfico 1 – Entradas vs Saídas por mês
+  const monthlyMap: Record<string, { income: number; expense: number }> = {};
+  rawData.forEach((item) => {
+    const month = extractMonth(item.startDate);
+    if (!monthlyMap[month]) {
+      monthlyMap[month] = { income: 0, expense: 0 };
+    }
+    if (item.type === 2) {
+      monthlyMap[month].income += item.value;
+    } else if (item.type === 3) {
+      monthlyMap[month].expense += item.value;
+    }
+  });
+
+  const months = Object.keys(monthlyMap);
+  const incomeValues = months.map((m) => monthlyMap[m].income);
+  const expenseValues = months.map((m) => monthlyMap[m].expense);
+
+  // Gráfico 2 – Gastos por categoria
+  const categoryMap: Record<string, number> = {};
+  rawData.forEach((item) => {
+    if (item.type === 3) {
+      categoryMap[item.category] = (categoryMap[item.category] || 0) + item.value;
+    }
+  });
+  const pieData = Object.entries(categoryMap).map(([name, amount], i) => ({
+    name,
+    amount,
+    color: ['#f54242', '#f5a142', '#42f5aa', '#4287f5', '#9b59b6', '#10b981'][i % 6],
+    legendFontColor: '#333',
+    legendFontSize: 14,
+  }));
+
+  // Gráfico 3 – Gastos por método de pagamento
+  const methodMap: Record<string, number> = {};
+  rawData.forEach((item) => {
+    if (item.type === 3) {
+      methodMap[item.method] = (methodMap[item.method] || 0) + item.value;
+    }
+  });
+  const methods = Object.keys(methodMap);
+  const methodValues = methods.map((m) => methodMap[m]);
+
+  return (
+    <ScrollView contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 60 }]}>
+      <Text style={styles.title}>
+        Entradas por Mês
+      </Text>
+      <View style={{ borderRadius: 10 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <BarChart
+            style={styles.containerContent}
+            data={{
+              labels: months,
+              datasets: [{ data: incomeValues }],
+            }}
+            width={months.length * 60} // Largura proporcional à quantidade de meses
+            height={250}
+            yAxisLabel="R$"
+            yAxisSuffix=""
+            chartConfig={{
+              ...chartConfig,
+              color: () => 'green',
+            }}
+            fromZero
+          />
+
+        </ScrollView>
+      </View>
+
+      <Text style={styles.title}>
+        Saídas por Mês
+      </Text>
+      <View style={{ borderRadius: 10 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <BarChart
+            style={styles.containerContent}
+            data={{
+              labels: months,
+              datasets: [{ data: expenseValues }],
+            }}
+            width={months.length * 60}
+            height={250}
+            yAxisLabel="R$"
+            yAxisSuffix=""
+            chartConfig={{
+              ...chartConfig,
+              color: () => 'red',
+            }}
+            fromZero
+          />
+        </ScrollView>
+      </View>
+
+
+      {/* Gráfico 2 */}
+      <Text style={styles.title}>
+        Gastos por Categoria
+      </Text>
+      <View style={{ borderRadius: 10 }}>
+        <PieChart
+          style={styles.containerContent}
+          data={pieData}
+          width={screenWidth - 32}
+          height={220}
+          chartConfig={chartConfig}
+          accessor="amount"
+          backgroundColor="transparent"
+          paddingLeft='0'
+          absolute
+        />
+      </View>
+
+      {/* Gráfico 3 */}
+      <Text style={styles.title}>
+        Gastos por Método de Pagamento
+      </Text>
+      <View style={{ borderRadius: 10 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <BarChart
+            style={styles.containerContent}
+            data={{
+              labels: methods,
+              datasets: [{ data: methodValues }],
+            }}
+            width={methods.length * 100}
+            height={250}
+            yAxisLabel="R$"
+            yAxisSuffix=""
+            chartConfig={chartConfig}
+            fromZero
+          />
+
+        </ScrollView>
+      </View>
+    </ScrollView>
+  );
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-});
+  container: { padding: 12 },
 
-export default AnalysisScreen;
+  containerContent: { borderRadius: 10},
+
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 24,
+    marginBottom: 12
+  }
+});
