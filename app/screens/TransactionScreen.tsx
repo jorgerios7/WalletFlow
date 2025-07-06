@@ -8,7 +8,7 @@ import FinancialReportScreen from '../layout/FinancialReportScreen';
 import HorizontalCalendar from '../navigation/HorizontalCalendar';
 import Finance from '../types/Finance';
 
-const SettingsScreen = () => {
+const TransactionScreen = () => {
   const [dateSelected, setDate] = useState('');
   const [dataBase, setDataBase] = useState<any[]>([]);
   const [totalValue, setTotalValue] = useState(0);
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SettingsScreen;
+export default TransactionScreen;

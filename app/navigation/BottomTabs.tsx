@@ -7,8 +7,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Colors } from '@/constants/Colors';
 import AddScreen from '../screens/AddScreens';
-import HomeScreen from '../screens/HomeScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import AnalysisScreen from '../screens/AnalysisScreen';
+import TransactionScreen from '../screens/TransactionScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -29,14 +29,14 @@ const BottomTabs = () => {
         }}
       >
         <Tab.Screen
-          name="Home"
-          component={HomeScreen}
+          name="Análise"
+          component={AnalysisScreen}
           options={{
             tabBarButton: (props) => (
               <TabButton
                 {...props}
-                iconName="home"
-                label="Início"
+                iconName="bar-chart"
+                label="Análise"
               />
             ),
           }}
@@ -53,14 +53,14 @@ const BottomTabs = () => {
           }}
         />
         <Tab.Screen
-          name="Settings"
-          component={SettingsScreen}
+          name="Transações"
+          component={TransactionScreen}
           options={{
             tabBarButton: (props) => (
               <TabButton
                 {...props}
-                iconName="settings"
-                label="Configurações"
+                iconName="list-alt"
+                label="Transações"
               />
             ),
           }}
