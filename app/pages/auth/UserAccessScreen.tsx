@@ -1,3 +1,4 @@
+import { auth } from "@/app/config/firebaseConfig";
 import LoginScreen from "@/app/screens/LoginScreen";
 import SignupScreen from "@/app/screens/SignupScreen";
 import BoxInputs from "@/components/ui/BoxInputs";
@@ -5,8 +6,10 @@ import HomeScreenContainer from "@/components/ui/HomeScreenContainer";
 import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from "react";
 import { Provider as PaperProvider, Snackbar } from "react-native-paper";
+
 
 interface Props { onPress?: (isLoged: boolean) => void }
 
@@ -42,10 +45,24 @@ const UserAccessScreen: React.FC<Props> = ({ onPress }) => {
             return;
         }
 
-        console.log('Dados: ', signupInputValue);
+        if (signupInputValue.Password !== signupInputValue.PasswordRepeat) {
+            setMsg("As senhas não coincidem.");
+            setSnackbarVisible(true);
+            return;
+        }
 
-        setFunctionSignup(true);
-        setLoginCreation(true);
+        createUserWithEmailAndPassword(auth, signupInputValue.Email, signupInputValue.Password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                console.log('Usuário criado com sucesso:', user.uid);
+                setFunctionSignup(true);
+                setLoginCreation(true);
+            })
+            .catch((error) => {
+                console.error('Erro ao criar usuário:', error);
+                setMsg("Erro ao criar usuário: " + error.message);
+                setSnackbarVisible(true);
+            });
     };
 
     const handleEnterButton = () => {
@@ -57,9 +74,21 @@ const UserAccessScreen: React.FC<Props> = ({ onPress }) => {
             return;
         }
 
-        console.log('Dados: ', loginInputValue);
+        signInWithEmailAndPassword(auth, loginInputValue.Email, loginInputValue.Password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                console.log('Login bem-sucedido:', user.uid);
 
-        if (onPress) onPress(true);
+                if (onPress) onPress(true);
+
+                setLoginInputValue({ Email: "", Password: "" });
+            })
+            .catch((error) => {
+                console.error('Erro ao fazer login:', error);
+                setMsg("Erro ao fazer login: " + error.message);
+                setSnackbarVisible(true);
+            });
+
 
         setLoginInputValue({
             Email: "",
