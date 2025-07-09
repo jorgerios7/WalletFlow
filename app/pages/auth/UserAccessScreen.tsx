@@ -11,9 +11,12 @@ import { useState } from "react";
 import { Provider as PaperProvider, Snackbar } from "react-native-paper";
 
 
-interface Props { onPress?: (isLoged: boolean) => void }
+interface Props {
+    onPress?: (isLoged: boolean) => void,
+    getUId?: (id: string) => void
+}
 
-const UserAccessScreen: React.FC<Props> = ({ onPress }) => {
+const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
     const [loginInputValue, setLoginInputValue] = useState({
         Email: "", Password: "",
     });
@@ -77,8 +80,8 @@ const UserAccessScreen: React.FC<Props> = ({ onPress }) => {
         signInWithEmailAndPassword(auth, loginInputValue.Email, loginInputValue.Password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                console.log('Login bem-sucedido:', user.uid);
 
+                if (getUId) getUId(user.uid)
                 if (onPress) onPress(true);
 
                 setLoginInputValue({ Email: "", Password: "" });
