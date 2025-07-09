@@ -1,26 +1,46 @@
 export enum FinanceType {
-  FINANCIAL_INCOME = 1,
-  FINANCIAL_PROFIT = 2,
-  FINANCIAL_PENDING = 3,
+  INCOME = 1,
+  PROFIT = 2,
+  PENDING = 3,
 }
 
-export enum PaymentStatus {
-  Paid = 0,
-  NotPaid = 1
-}
+export type Type = 'Income' | 'Profit' | 'Pending';
 
-interface Finance {
+export interface Transactions {
   id: string;
   category: string;
   dueDate: string;
-  packageID: string;
+  createdAt: string;
+  createdBy: string;
   startDate: string;
-  isPaid: PaymentStatus;
+  isPaid: boolean;
   type: FinanceType;
-  value: number;
+  totalValue: number;
   description: string;
   method: string;
+  accountId: string;
   isRecurrence: boolean;
+  purpose: string;
+  currentInstallment: number;
 }
 
-export default Finance;
+export interface Installments {
+  title: string;
+  category: string;
+  method: string;
+  cardId: string;
+  purpose: string;
+  type: FinanceType;
+  createdBy: string;
+  createdAt: string;
+  startDate: string;
+  totalValue: number;
+}
+
+export interface Parcels {
+  currentInstallment: number;
+  dueDate: string;
+  value: number;
+  isPaid: boolean;
+}
+

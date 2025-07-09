@@ -32,9 +32,9 @@ export default function AnalysisScreen() {
       monthlyMap[month] = { income: 0, expense: 0 };
     }
     if (item.type === 2) {
-      monthlyMap[month].income += item.value;
+      monthlyMap[month].income += item.totalValue;
     } else if (item.type === 3) {
-      monthlyMap[month].expense += item.value;
+      monthlyMap[month].expense += item.totalValue;
     }
   });
 
@@ -46,7 +46,7 @@ export default function AnalysisScreen() {
   const categoryMap: Record<string, number> = {};
   rawData.forEach((item) => {
     if (item.type === 3) {
-      categoryMap[item.category] = (categoryMap[item.category] || 0) + item.value;
+      categoryMap[item.category] = (categoryMap[item.category] || 0) + item.totalValue;
     }
   });
   const pieData = Object.entries(categoryMap).map(([name, amount], i) => ({
@@ -61,7 +61,7 @@ export default function AnalysisScreen() {
   const methodMap: Record<string, number> = {};
   rawData.forEach((item) => {
     if (item.type === 3) {
-      methodMap[item.method] = (methodMap[item.method] || 0) + item.value;
+      methodMap[item.method] = (methodMap[item.method] || 0) + item.totalValue;
     }
   });
   const methods = Object.keys(methodMap);

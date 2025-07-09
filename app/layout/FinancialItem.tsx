@@ -1,22 +1,21 @@
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Finance, { FinanceType, PaymentStatus } from "../types/Finance";
+import { FinanceType, Transactions } from "../types/Finance";
 
 interface ItemRecyclerProps {
-    item: Finance,
-    onPress: (selectedItem: Finance) => void;
+    item: Transactions,
+    onPress: (selectedItem: Transactions) => void;
 };
 
-const typeStatus: Record<PaymentStatus, string> = {
-  [PaymentStatus.Paid]: 'Concluído',
-  [PaymentStatus.NotPaid]: 'Pendente',
+const typeStatus = (status: boolean) => {
+    return status ? 'Concluído' : 'Pendente'
 };
 
 const typeLabels: Record<FinanceType, string> = {
-  [FinanceType.FINANCIAL_INCOME]: 'Entrada',
-  [FinanceType.FINANCIAL_PROFIT]: 'Lucro',
-  [FinanceType.FINANCIAL_PENDING]: 'Saída',
+  [FinanceType.INCOME]: 'Entrada',
+  [FinanceType.PROFIT]: 'Lucro',
+  [FinanceType.PENDING]: 'Saída',
 };
 
 const renderImage = (type: number) => {
@@ -53,7 +52,7 @@ const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, onPress }) => {
                             Categoria: {item.category}
                         </Text>
                         <Text style={defaultStyles.text}>
-                            Status: {typeStatus[item.isPaid] ?? 'Invalid type'}
+                            Status: {typeStatus(item.isPaid)}
                         </Text>
                         <Text style={defaultStyles.text}>
                             Data: {item.startDate}
@@ -63,7 +62,7 @@ const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, onPress }) => {
 
                     <View style={defaultStyles.textContainer}>
                         <Text style={[defaultStyles.text, { fontWeight: 'bold' }]}>
-                            R$ {item.value.toFixed(2)}
+                            R$ {item.totalValue.toFixed(2)}
                         </Text>
                     </View>
                 </View>

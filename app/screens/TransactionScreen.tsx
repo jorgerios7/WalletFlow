@@ -1,28 +1,35 @@
-import FinanceData from '@/assets/database/FinanceData';
 import RecyclerItem from '@/components/ui/RecyclerItem';
 import { BottomSheet } from '@/components/ui/sheet/BottomSheet';
 import TotalValueScreen from '@/components/ui/TotalValueScreen';
+import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { db } from '../config/firebaseConfig';
 import FinancialReportScreen from '../layout/FinancialReportScreen';
 import HorizontalCalendar from '../navigation/HorizontalCalendar';
-import Finance from '../types/Finance';
+import { Transactions } from '../types/Finance';
+
+const HOME_ID = 'n1EUTJbnyA5CijICUVFm'; // 🔐 Substitua por variável dinâmica se necessário
 
 const TransactionScreen = () => {
   const [dateSelected, setDate] = useState('');
-  const [dataBase, setDataBase] = useState<any[]>([]);
+  const [dataBase, setDataBase] = useState<Transactions[]>([]);
   const [totalValue, setTotalValue] = useState(0);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
-  const [selectedItemData, setSelectedItemData] = useState<Finance | null>(null);
+  const [selectedItemData, setSelectedItemData] = useState<Transactions | null>(null);
 
-  const loadData = () => {
-    return FinanceData();
+  // 🔄 Busca dados do Firestore
+  const loadData = async () => {
+    const snapshot = await getDocs(collection(db, `homes/${HOME_ID}/transactions`));
+    const data: Transactions[] = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Transactions[];
+    setDataBase(data);
   };
 
   useEffect(() => {
-    const data = loadData();
-    setDataBase(data);
-
+    loadData();
   }, [dateSelected]);
 
   return (
@@ -68,10 +75,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-  },
-  sheetText: {
-    fontSize: 18,
-    textAlign: 'center',
   },
 });
 

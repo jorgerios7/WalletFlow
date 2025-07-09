@@ -1,0 +1,113 @@
+{
+  "users": {
+    "g1zJRdKTYSOwt5IP0yTS": {
+      "bankAccounts": {
+        "acc_santander_01": {
+          "bank": "Santander",
+          "accountNumber": "01031997-2"
+        },
+        "acc_nubank_02": {
+          "bank": "Nubank",
+          "accountNumber": "25241118-8"
+        }
+      },
+      "bankCards": {
+        "card_visa_01": {
+          "accountId": "acc_santander_01",
+          "brand": "Visa",
+          "lastDigits": "5255"
+        },
+        "card_master_02": {
+          "accountId": "acc_nubank_02",
+          "brand": "Master",
+          "lastDigits": "4585"
+        }
+      },
+      "contacts": {
+        "email": "maria.pereira@gmail.com",
+        "phone": "+5567982434750"
+      },
+      "createdAt": "2025-07-07T19:46:52-03:00",
+      "homeId": "n1EUTJbnyA5CijICUVFm",
+      "identification": {
+        "birthDate": "22/05/1989",
+        "name": "Maria",
+        "surname": "Pereira da Silva"
+      }
+    }
+  },
+
+  "homes": {
+    "n1EUTJbnyA5CijICUVFm": {
+      "name": "Casa dos Rios",
+      "createdBy": "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73",
+      "members": {
+        "jFdtYoBE8aQ4rubZ8ScngdyiJ73": "member",
+        "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73": "owner"
+      }
+    }
+  },
+
+  "homes/n1EUTJbnyA5CijICUVFm/transactions": {
+    "vCAxjSkdB7zcq1rJw6up": {
+      "category": "Salário Mensal",
+      "createdAt": "2025-07-07T19:46:52-03:00",
+      "createdBy": "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73",
+      "startDate": "01/07/2025",
+      "description": "Empresa",
+      "dueDate": "20/07/2025",
+      "isPaid": true,
+      "isRecurrence": true,
+      "method": "Débito em conta",
+      "accountId": "acc_santander_01",
+      "purpose": "Pagar contas",
+      "type": 2,
+      "totalValue": 455700
+    },
+    "kosokdfor943oedpdp0": {
+      "category": "Supermercado",
+      "createdAt": "2025-07-08T19:46:52-03:00",
+      "createdBy": "jFdtYoBE8aQ4rubZ8ScngdyiJ73",
+      "startDate": "02/07/2025",
+      "description": "Compras do mês",
+      "dueDate": "05/07/2025",
+      "isPaid": false,
+      "isRecurrence": false,
+      "method": "Cartão de crédito",
+      "cardId": "card_visa_01",
+      "purpose": "Alimentação",
+      "type": 1,
+      "totalValue": 125889
+    }
+  },
+
+  "homes/n1EUTJbnyA5CijICUVFm/installments": {
+    "sdapcje9fwefwoef": {
+      "title": "Compra de celular",
+      "category": "Financiamento",
+      "method": "Cartão de crédito",
+      "cardId": "card_master_02",
+      "purpose": "Necessidades tecnológicas",
+      "type": 1,
+      "createdBy": "jFdtYoBE8aQ4rubZ8ScngdyiJ73",
+      "createdAt": "2025-09-08T12:46:52-03:00",
+      "startDate": "09/07/2025",
+      "totalValue": 116531
+    }
+  },
+
+  "homes/n1EUTJbnyA5CijICUVFm/installments/sdapcje9fwefwoef/parcels": {
+    "installment_1": {
+      "currentInstallment": 1,
+      "dueDate": "05/07/2025",
+      "value": 58265,
+      "isPaid": false
+    },
+    "installment_2": {
+      "currentInstallment": 2,
+      "dueDate": "05/08/2025",
+      "value": 58266,
+      "isPaid": false
+    }
+  }
+}

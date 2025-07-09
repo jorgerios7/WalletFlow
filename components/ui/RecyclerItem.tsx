@@ -1,26 +1,26 @@
 import FinancialItem from '@/app/layout/FinancialItem';
-import Finance, { FinanceType, PaymentStatus } from '@/app/types/Finance';
+import { FinanceType, Transactions } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import React, { useEffect } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
 
 interface ItemRecyclerProps {
-  list: Finance[];
+  list: Transactions[];
   dateFilter?: string;
   isStatusFilteringEnabled: boolean;
   statusFilter?: boolean;
   onTotalValueChange?: (total: number) => void;
   bottomMargin?: number;
-  onPressingItem: (datas: Finance) => void;
+  onPressingItem: (datas: Transactions) => void;
 }
 
 interface Section {
   title: string; // Data
-  data: Finance[];
+  data: Transactions[];
 }
 
-const groupByDate = (list: Finance[]): Section[] => {
-  const grouped: { [key: string]: Finance[] } = {};
+const groupByDate = (list: Transactions[]): Section[] => {
+  const grouped: { [key: string]: Transactions[] } = {};
 
   for (const item of list) {
     if (!grouped[item.dueDate]) {
@@ -53,23 +53,25 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
   onPressingItem,
 }) => {
 
- const filteredList = list.filter((item) => {
-  if (!dateFilter) return true;
+  const filteredList = list.filter((item) => {
+    if (!dateFilter) return true;
 
-  const [itemDay, itemMonth, itemYear] = item.dueDate.split('/');
-  const [filterDay, filterMonth, filterYear] = dateFilter.split('/');
+    const [itemDay, itemMonth, itemYear] = item.dueDate.split('/');
+    const [filterDay, filterMonth, filterYear] = dateFilter.split('/');
 
-  return itemMonth === filterMonth && itemYear === filterYear;
-});
+    return itemMonth === filterMonth && itemYear === filterYear;
+  });
 
+  const filteredPaidList = filteredList.filter((item) => {
+    if (!isStatusFilteringEnabled) return true;
+    return item.isPaid === statusFilter;
+  });
 
-  const totalValue = filteredList
-    .filter((item) => item.isPaid === PaymentStatus.Paid)
-    .reduce((sum, item) => {
-      const value =
-        item.type === FinanceType.FINANCIAL_PENDING ? -item.value : item.value;
-      return sum + value;
-    }, 0);
+  const totalValue = filteredPaidList.reduce((sum, item) => {
+    const signedValue =
+      item.type === FinanceType.PENDING ? -item.totalValue : item.totalValue;
+    return sum + signedValue;
+  }, 0);
 
   useEffect(() => {
     onTotalValueChange?.(totalValue);

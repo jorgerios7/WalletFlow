@@ -1,20 +1,20 @@
 import { StyleSheet, Text, View } from "react-native";
-import Finance, { FinanceType, PaymentStatus } from "../types/Finance";
+import { FinanceType, Transactions } from "../types/Finance";
 
 interface Props {
-    data?: Finance
+    data?: Transactions
 }
 
 const typeLabels: Record<FinanceType, string> = {
-    [FinanceType.FINANCIAL_INCOME]: 'Entrada',
-    [FinanceType.FINANCIAL_PROFIT]: 'Lucro',
-    [FinanceType.FINANCIAL_PENDING]: 'Saída',
+    [FinanceType.INCOME]: 'Entrada',
+    [FinanceType.PROFIT]: 'Lucro',
+    [FinanceType.PENDING]: 'Saída',
 };
 
-const typeStatus: Record<PaymentStatus, string> = {
-    [PaymentStatus.Paid]: 'Concluído',
-    [PaymentStatus.NotPaid]: 'Pendente',
+const typeStatus = (status: boolean) => {
+    return status ? 'Concluído' : 'Pendente'
 };
+
 
 const FinancialReportScreen = ({ data }: Props) => {
     return (
@@ -28,13 +28,6 @@ const FinancialReportScreen = ({ data }: Props) => {
             {/* Dados da Transação */}
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Detalhes da Transação</Text>
-
-                <View style={styles.row}>
-                    <Text style={styles.label}>Pacote (ID):</Text>
-                    <Text style={styles.value}>
-                        {data?.packageID || "N/A"}
-                    </Text>
-                </View>
 
                 <View style={styles.row}>
                     <Text style={styles.label}>ID da Transação:</Text>
@@ -77,11 +70,11 @@ const FinancialReportScreen = ({ data }: Props) => {
                 <View style={styles.row}>
                     <Text style={styles.label}>Status:</Text>
                     <Text style={styles.value}>
-                        {typeof data?.isPaid === "number" ? typeStatus[data.isPaid] : "N/A"}
+                        {data?.isPaid ? typeStatus(data.isPaid) : "N/A"}
                     </Text>
                 </View>
 
-                {data?.isPaid !== undefined && data?.isPaid !== 0 && (
+                {data?.isPaid && (
                     <View style={styles.row}>
                         <Text style={styles.label}>Método de Pagamento:</Text>
                         <Text style={styles.value}>
@@ -93,8 +86,8 @@ const FinancialReportScreen = ({ data }: Props) => {
                 <View style={styles.row}>
                     <Text style={styles.label}>Valor:</Text>
                     <Text style={styles.value}>
-                        {data?.value
-                            ? `R$ ${Number(data.value).toFixed(2)}`
+                        {data?.totalValue
+                            ? `R$ ${Number(data.totalValue).toFixed(2)}`
                             : "N/A"}
                     </Text>
                 </View>
