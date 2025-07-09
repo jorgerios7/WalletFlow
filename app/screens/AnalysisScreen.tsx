@@ -83,6 +83,8 @@ export default function AnalysisScreen() {
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 60 }]}>
+      
+
       <Text style={styles.title}>Entradas por Mês</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <BarChart
@@ -91,7 +93,7 @@ export default function AnalysisScreen() {
           width={months.length * 60}
           height={250}
           yAxisLabel="R$"
-           yAxisSuffix=""
+          yAxisSuffix=""
           chartConfig={{ ...chartConfig, color: () => 'green' }}
           fromZero
         />
@@ -105,7 +107,7 @@ export default function AnalysisScreen() {
           width={months.length * 60}
           height={250}
           yAxisLabel="R$"
-           yAxisSuffix=""
+          yAxisSuffix=""
           chartConfig={{ ...chartConfig, color: () => 'red' }}
           fromZero
         />
@@ -132,7 +134,7 @@ export default function AnalysisScreen() {
           width={methods.length * 100}
           height={250}
           yAxisLabel="R$"
-           yAxisSuffix=""
+          yAxisSuffix=""
           chartConfig={chartConfig}
           fromZero
         />

@@ -34,7 +34,7 @@ export default function Header({ onPress, children }: HeaderProps) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: Colors.light.tint,
+        backgroundColor: Colors.light.background,
         height: 50,
         width: "100%",
         flexDirection: 'row',
@@ -42,6 +42,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 10,
         borderBottomWidth: 0.5,
-        borderBottomColor: Colors.light.tint,
+        borderBottomColor: Colors.light.shadow,
     },
 });

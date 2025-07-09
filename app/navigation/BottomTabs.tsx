@@ -1,20 +1,28 @@
 import AddButton from '@/components/ui/AddButton';
 import TabButton from '@/components/ui/TabButton';
+import { Colors } from '@/constants/Colors';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { Colors } from '@/constants/Colors';
 import AddScreen from '../screens/AddScreens';
 import AnalysisScreen from '../screens/AnalysisScreen';
+import MenuScreen from '../screens/MenuScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import TransactionScreen from '../screens/TransactionScreen';
+import { User } from '../types/User';
+
+interface Props {
+  data: User;
+}
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabs = () => {
+const BottomTabs: React.FC<Props> = ({ data }) => {
   const insets = useSafeAreaInsets();
-  
+
+  console.log('userDatas: ', data);
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Tab.Navigator
@@ -41,6 +49,21 @@ const BottomTabs = () => {
             ),
           }}
         />
+
+        <Tab.Screen
+          name="Transações"
+          component={TransactionScreen}
+          options={{
+            tabBarButton: (props) => (
+              <TabButton
+                {...props}
+                iconName="list-alt"
+                label="Transações"
+              />
+            ),
+          }}
+        />
+
         <Tab.Screen
           name="Add"
           component={AddScreen}
@@ -52,15 +75,31 @@ const BottomTabs = () => {
             ),
           }}
         />
+
         <Tab.Screen
-          name="Transações"
-          component={TransactionScreen}
+          name="Perfil"
+          component={ProfileScreen}
+          initialParams={{ user: data }}
           options={{
             tabBarButton: (props) => (
               <TabButton
                 {...props}
-                iconName="list-alt"
-                label="Transações"
+                iconName="person"
+                label="Perfil"
+              />
+            ),
+          }}
+        />
+
+        <Tab.Screen
+          name="Menu"
+          component={MenuScreen}
+          options={{
+            tabBarButton: (props) => (
+              <TabButton
+                {...props}
+                iconName="menu"
+                label="Menu"
               />
             ),
           }}

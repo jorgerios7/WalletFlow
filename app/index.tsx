@@ -11,6 +11,7 @@ export default function AppMain() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [uid, setUId] = useState('');
+  const [userData, setUserData] = useState<User | null>(null);
 
   const loadData = async () => {
     if (!uid) return;
@@ -18,10 +19,9 @@ export default function AppMain() {
     const userDoc = await getDoc(doc(db, "users", uid));
     if (userDoc.exists()) {
       const data = userDoc.data() as User;
-      
-      setIsReady(true);
 
-      console.log("userData: ", data);
+      setIsReady(true);
+      setUserData(data);
     }
   };
 
@@ -47,5 +47,9 @@ export default function AppMain() {
   if (!isAuthenticated)
     return <UserAccessScreen onPress={setIsAuthenticated} getUId={setUId} />;
 
-  return isReady ? <BottomTabs /> : <SplashScreen />;
+  return isReady && userData ? (
+    <BottomTabs data={userData} />
+  ) : (
+    <SplashScreen />
+  );
 }
