@@ -1,6 +1,7 @@
 import RecyclerItem from '@/components/ui/RecyclerItem';
 import { BottomSheet } from '@/components/ui/sheet/BottomSheet';
 import TotalValueScreen from '@/components/ui/TotalValueScreen';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
@@ -8,10 +9,14 @@ import { db } from '../config/firebaseConfig';
 import FinancialReportScreen from '../layout/FinancialReportScreen';
 import HorizontalCalendar from '../navigation/HorizontalCalendar';
 import { Transactions } from '../types/Finance';
+import { User } from '../types/User';
 
-const HOME_ID = 'n1EUTJbnyA5CijICUVFm'; // 🔐 Substitua por variável dinâmica se necessário
+type TransactionScreenRouteProp = RouteProp<{ Transactions: { user: User } }, 'Transactions'>;
 
 const TransactionScreen = () => {
+  const route = useRoute<TransactionScreenRouteProp>();
+  const { user } = route.params;
+  const HOME_ID = user.homeId;
   const [dateSelected, setDate] = useState('');
   const [dataBase, setDataBase] = useState<Transactions[]>([]);
   const [totalValue, setTotalValue] = useState(0);

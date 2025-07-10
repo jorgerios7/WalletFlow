@@ -1,4 +1,5 @@
 import { auth } from "@/app/config/firebaseConfig";
+import AddHomeIdScreen from "@/app/screens/AddHomeIdScreen";
 import LoginScreen from "@/app/screens/LoginScreen";
 import SignupScreen from "@/app/screens/SignupScreen";
 import BoxInputs from "@/components/ui/BoxInputs";
@@ -6,10 +7,9 @@ import HomeScreenContainer from "@/components/ui/HomeScreenContainer";
 import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from "react";
 import { Provider as PaperProvider, Snackbar } from "react-native-paper";
-
 
 interface Props {
     onPress?: (isLoged: boolean) => void,
@@ -26,20 +26,25 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
     };
 
     const [signupInputValue, setSignupInputValue] = useState({
-        FirstName: "", Surname: "", Email: "", Password: "", PasswordRepeat: "",
+        FirstName: "", Surname: "", Email: "", BirthDate: "", Password: "", PasswordRepeat: "",
+    });
+
+    const [idHomeInputValue, setIdHomeInputValue] = useState({
+        Id_Home: "", HouseName: ""
     });
 
     const signupFormLabels = {
         FirstName: "Primeiro nome", Surname: "Sobrenome",
-        Email: "Email", Password: "Senha", PasswordRepeat: "Repetir senha",
+        Email: "Email", BirthDate: "Data de nascimento", Password: "Senha", PasswordRepeat: "Repetir senha",
     };
 
     const [snackbarVisible, setSnackbarVisible] = useState(false);
     const [msg, setMsg] = useState("");
     const [isSignup, setFunctionSignup] = useState(false);
     const [isLoginCreatedSuccessfully, setLoginCreation] = useState(false);
+    const [isHouseAccountCreated, setIsHouseAccountCreated] = useState(false);
 
-    const handleLoginButtons = () => {
+    const handleCreateLoginButton = () => {
         const validationMsg = ValidateEmptyFields(signupInputValue, signupFormLabels);
 
         if (validationMsg) {
@@ -54,7 +59,10 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
             return;
         }
 
-        createUserWithEmailAndPassword(auth, signupInputValue.Email, signupInputValue.Password)
+        setLoginCreation(true);
+
+        {/** 
+            createUserWithEmailAndPassword(auth, signupInputValue.Email, signupInputValue.Password)
             .then((userCredential) => {
                 const user = userCredential.user;
                 console.log('Usuário criado com sucesso:', user.uid);
@@ -66,6 +74,7 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
                 setMsg("Erro ao criar usuário: " + error.message);
                 setSnackbarVisible(true);
             });
+        */}
     };
 
     const handleEnterButton = () => {
@@ -106,6 +115,7 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
             FirstName: "",
             Surname: "",
             Email: "",
+            BirthDate: "",
             Password: "",
             PasswordRepeat: "",
         });
@@ -131,13 +141,22 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
                         onChange={(field, value) =>
                             setSignupInputValue((prev) => ({ ...prev, [field]: value }))
                         }
-                        onPressingEnterButton={handleLoginButtons}
+                        onPressingEnterButton={handleCreateLoginButton}
                         onPressingReturnButton={handleReturnToLogin}
                     />
 
+                    <AddHomeIdScreen
+                        shouldRender={isSignup && isLoginCreatedSuccessfully && !isHouseAccountCreated}
+                        values={idHomeInputValue}
+                        onChange={(field, value) => {console.log('Field: ', field, 'Value: ', value)}}
+                    />
+
+
+
+
                     <WelcomeAfterSignup
                         onPressingReturnToLoginButton={handleReturnToLogin}
-                        shouldRender={isSignup && isLoginCreatedSuccessfully}
+                        shouldRender={isSignup && isLoginCreatedSuccessfully && isHouseAccountCreated}
                     />
                 </BoxInputs>
                 <Snackbar

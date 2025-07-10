@@ -1,10 +1,13 @@
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text } from 'react-native';
 import { BarChart, PieChart } from 'react-native-chart-kit';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { db } from '../config/firebaseConfig';
+import { User } from '../types/User';
 
+type AnalysisScreenRouteProp = RouteProp<{ Analysis: { user: User } }, 'Analysis'>;
 const screenWidth = Dimensions.get('window').width;
 
 const chartConfig = {
@@ -15,9 +18,10 @@ const chartConfig = {
   labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
 };
 
-const HOME_ID = 'n1EUTJbnyA5CijICUVFm';
-
 export default function AnalysisScreen() {
+  const route = useRoute<AnalysisScreenRouteProp>();
+    const { user } = route.params;
+    const HOME_ID = user.homeId;
   const insets = useSafeAreaInsets();
   const [rawData, setRawData] = useState<any[]>([]);
 

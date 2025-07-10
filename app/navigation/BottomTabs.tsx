@@ -39,6 +39,7 @@ const BottomTabs: React.FC<Props> = ({ data }) => {
         <Tab.Screen
           name="Análise"
           component={AnalysisScreen}
+          initialParams={{ user: data }}
           options={{
             tabBarButton: (props) => (
               <TabButton
@@ -53,6 +54,7 @@ const BottomTabs: React.FC<Props> = ({ data }) => {
         <Tab.Screen
           name="Transações"
           component={TransactionScreen}
+          initialParams={{ user: data }}
           options={{
             tabBarButton: (props) => (
               <TabButton

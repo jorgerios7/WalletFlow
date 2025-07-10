@@ -5,7 +5,7 @@ import React from 'react';
 import { View } from "react-native";
 
 interface Props {
-    values: { FirstName: string; Surname: string; Email: string; Password: string; PasswordRepeat: string };
+    values: { FirstName: string; Surname: string; Email: string; BirthDate: string; Password: string; PasswordRepeat: string };
     onChange: (field: keyof Props["values"], value: string) => void;
     onPressingEnterButton?: () => void;
     onPressingReturnButton?: () => void;
@@ -37,6 +37,11 @@ const SignupScreen: React.FC<Props> = ({
                 label="E-mail"
                 value={values.Email}
                 onTextChange={(text) => onChange("Email", text)}
+            />
+            <DynamicLabelInput
+                label="Data de Nascimento"
+                value={values.BirthDate}
+                onTextChange={(text) => onChange("BirthDate", text)}
             />
             <DynamicLabelInput
                 label="Senha"
