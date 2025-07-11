@@ -2,23 +2,25 @@ import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 interface Props {
     shouldRender: boolean;
     values: { Id_Home: string, HouseName: string };
     onChange: (field: keyof Props["values"], value: string) => void;
+    onReturn?: () => void;
 }
 
 const AddHomeIdScreen: React.FC<Props> = ({
     shouldRender = true,
     values,
     onChange,
+    onReturn
 }) => {
     if (!shouldRender) return null;
 
     const [isQuestionScreen, setIsQuestionScreen] = useState(true);
-    const [isCreateHome, setIdCreateHome] = useState(false);
+    const [isCreateHome, setCreateHome] = useState(false);
 
     return (
         isQuestionScreen ?
@@ -34,7 +36,7 @@ const AddHomeIdScreen: React.FC<Props> = ({
                             adjustPaddingBottom={16}
                             onPress={() => {
                                 setIsQuestionScreen(false)
-                                setIdCreateHome(false);
+                                setCreateHome(false);
                             }}
                         />
 
@@ -43,7 +45,7 @@ const AddHomeIdScreen: React.FC<Props> = ({
                             adjustPaddingBottom={16}
                             onPress={() => {
                                 setIsQuestionScreen(false)
-                                setIdCreateHome(true);
+                                setCreateHome(true);
                             }}
                         />
 
@@ -54,7 +56,7 @@ const AddHomeIdScreen: React.FC<Props> = ({
                         adjustPaddingBottom={16}
                         onPress={() => {
                             setIsQuestionScreen(true);
-
+                            onReturn?.();
                         }}
                     />
 
@@ -63,6 +65,9 @@ const AddHomeIdScreen: React.FC<Props> = ({
                 isCreateHome ?
                     (
                         <View>
+
+                            <Text style={styles.title}> Criar ID_Home </Text>
+
                             <DynamicLabelInput
                                 label="Nome da Casa"
                                 value={values.HouseName}
@@ -74,26 +79,25 @@ const AddHomeIdScreen: React.FC<Props> = ({
                                 adjustPaddingBottom={16}
                                 onPress={() => {
                                     setIsQuestionScreen(true);
-
                                 }}
                             />
                         </View>
                     ) : (
                         <View>
-                         
+
+                            <Text style={styles.title}> Adicionar ID_Home </Text>
+
                             <DynamicLabelInput
                                 label="ID_Home"
                                 value={values.Id_Home}
                                 onTextChange={(text) => onChange("Id_Home", text)}
                             />
-                    
 
                             <TextButton
                                 text={'Voltar'}
                                 adjustPaddingBottom={16}
                                 onPress={() => {
                                     setIsQuestionScreen(true);
-
                                 }}
                             />
                         </View>
@@ -101,5 +105,15 @@ const AddHomeIdScreen: React.FC<Props> = ({
             )
     );
 }
+
+const styles = StyleSheet.create({
+    title: {
+        color: Colors.light.background,
+        fontSize: 16,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        padding: 20
+    }
+});
 
 export default AddHomeIdScreen;

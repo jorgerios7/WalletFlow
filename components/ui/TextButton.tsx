@@ -19,7 +19,7 @@ export default function TextButton({ address, text, onPress, adjustPaddingBottom
     );
 
     return (
-        <Pressable onPress={onPress}>
+        <Pressable style={{ padding: 15, alignSelf: 'center' }} onPress={onPress}>
             <Text style={styles.text}>
                 {text}
             </Text>
@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
         padding: 0.1,
     },
     text: {
-        marginTop: 16,
         textAlign: 'center',
+        alignSelf: 'center',
         color: Colors.light.background,
         fontSize: 16,
         fontWeight: "bold",

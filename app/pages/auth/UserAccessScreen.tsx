@@ -149,6 +149,7 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
                         shouldRender={isSignup && isLoginCreatedSuccessfully && !isHouseAccountCreated}
                         values={idHomeInputValue}
                         onChange={(field, value) => {console.log('Field: ', field, 'Value: ', value)}}
+                        onReturn={() => console.log('return id called!')}
                     />
 
 
