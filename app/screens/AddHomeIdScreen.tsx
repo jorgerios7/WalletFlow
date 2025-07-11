@@ -1,38 +1,73 @@
+import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
+import { doc, getDoc } from "firebase/firestore";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { db } from "../config/firebaseConfig";
 
 interface Props {
     shouldRender: boolean;
-    values: { Id_Home: string, HouseName: string };
-    onChange: (field: keyof Props["values"], value: string) => void;
-    onReturn?: () => void;
+    values: { Id_Home: string, Name: string };
+    whenIsReady: (values: Partial<Props["values"]>) => void;
+    onPressingReturnButton?: () => void;
+    errorMessage?: (message: string) => void;
 }
 
 const AddHomeIdScreen: React.FC<Props> = ({
     shouldRender = true,
     values,
-    onChange,
-    onReturn
+    whenIsReady,
+    onPressingReturnButton,
+    errorMessage
 }) => {
     if (!shouldRender) return null;
 
     const [isQuestionScreen, setIsQuestionScreen] = useState(true);
     const [isCreateHome, setCreateHome] = useState(false);
+    const [data, setData] = useState({ id: '', name: '' })
+
+    const handleCheckingIdExistence = async () => {
+        const homeId = data.id.trim();
+
+        if (!homeId) {
+            
+            errorMessage?.("Opa! Preencha o campo")
+            return;
+        }
+
+        try {
+            const docRef = doc(db, "publicHomes", homeId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+
+                whenIsReady({ Id_Home: data.id, Name: '' });
+            } else {
+
+                errorMessage?.("ID não encontrado. ")
+            }
+        } catch (error) {
+
+            errorMessage?.("Algo deu errado na busca")
+        }
+    };
+
+    const handleCreateId = () => {
+        whenIsReady({ Id_Home: '', Name: data.name });
+    };
 
     return (
         isQuestionScreen ?
             (
                 <View>
                     <Text style={{ alignSelf: 'center', color: Colors.light.background, fontSize: 20, fontWeight: 'bold' }}>
-                        Possui um ID_Home?
+                        Já tem um ID da casa?
                     </Text>
                     <View style={{ marginVertical: 80, alignSelf: 'center', flexDirection: 'column' }}>
-
                         <TextButton
-                            text={'Sim! possuo um ID_Home'}
+                            text={'Sim, já tenho'}
                             adjustPaddingBottom={16}
                             onPress={() => {
                                 setIsQuestionScreen(false)
@@ -41,22 +76,22 @@ const AddHomeIdScreen: React.FC<Props> = ({
                         />
 
                         <TextButton
-                            text={'Não! quero criar um ID_Home!'}
+                            text={'Não, quero criar um'}
                             adjustPaddingBottom={16}
                             onPress={() => {
                                 setIsQuestionScreen(false)
                                 setCreateHome(true);
                             }}
                         />
-
                     </View>
 
                     <TextButton
-                        text={'Voltar'}
+                        text={'Cancelar'}
                         adjustPaddingBottom={16}
                         onPress={() => {
                             setIsQuestionScreen(true);
-                            onReturn?.();
+                            onPressingReturnButton?.();
+                            setData({ id: '', name: '' })
                         }}
                     />
 
@@ -65,13 +100,19 @@ const AddHomeIdScreen: React.FC<Props> = ({
                 isCreateHome ?
                     (
                         <View>
-
                             <Text style={styles.title}> Criar ID_Home </Text>
 
                             <DynamicLabelInput
-                                label="Nome da Casa"
-                                value={values.HouseName}
-                                onTextChange={(text) => onChange("HouseName", text)}
+                                label="Nome da casa"
+                                value={values.Name}
+                                onTextChange={(text) => setData({
+                                    id: '', name: text
+                                })}
+                            />
+
+                            <CustomButton
+                                text={'Criar conta'}
+                                onPress={handleCreateId}
                             />
 
                             <TextButton
@@ -79,18 +120,26 @@ const AddHomeIdScreen: React.FC<Props> = ({
                                 adjustPaddingBottom={16}
                                 onPress={() => {
                                     setIsQuestionScreen(true);
+                                    setData({ id: '', name: '' })
                                 }}
                             />
                         </View>
                     ) : (
                         <View>
-
                             <Text style={styles.title}> Adicionar ID_Home </Text>
 
                             <DynamicLabelInput
-                                label="ID_Home"
+                                label="ID da casa"
                                 value={values.Id_Home}
-                                onTextChange={(text) => onChange("Id_Home", text)}
+                                onTextChange={(text) => setData({
+                                    id: text,
+                                    name: '',
+                                })}
+                            />
+
+                            <CustomButton
+                                text={'Criar conta'}
+                                onPress={handleCheckingIdExistence}
                             />
 
                             <TextButton
@@ -98,6 +147,7 @@ const AddHomeIdScreen: React.FC<Props> = ({
                                 adjustPaddingBottom={16}
                                 onPress={() => {
                                     setIsQuestionScreen(true);
+                                    setData({ id: '', name: '' })
                                 }}
                             />
                         </View>

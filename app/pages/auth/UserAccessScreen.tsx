@@ -30,12 +30,12 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
     });
 
     const [idHomeInputValue, setIdHomeInputValue] = useState({
-        Id_Home: "", HouseName: ""
+        Id_Home: "", Name: ""
     });
 
     const signupFormLabels = {
-        FirstName: "Primeiro nome", Surname: "Sobrenome",
-        Email: "Email", BirthDate: "Data de nascimento", Password: "Senha", PasswordRepeat: "Repetir senha",
+        FirstName: "Primeiro nome", Surname: "Sobrenome", Email: "Email",
+        BirthDate: "Data de nascimento", Password: "Senha", PasswordRepeat: "Repetir senha",
     };
 
     const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -111,6 +111,7 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
     const handleReturnToLogin = () => {
         setFunctionSignup(false);
         setLoginCreation(false);
+         setIsHouseAccountCreated(false)
         setSignupInputValue({
             FirstName: "",
             Surname: "",
@@ -148,12 +149,17 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
                     <AddHomeIdScreen
                         shouldRender={isSignup && isLoginCreatedSuccessfully && !isHouseAccountCreated}
                         values={idHomeInputValue}
-                        onChange={(field, value) => {console.log('Field: ', field, 'Value: ', value)}}
-                        onReturn={() => console.log('return id called!')}
+                        whenIsReady={(values) => {
+                            setIdHomeInputValue((prev) => ({ ...prev, ...values }));
+                            setIsHouseAccountCreated(true);
+                            console.log('values: ', values);
+                        }}
+                        errorMessage={(messsage) => {
+                            setMsg(messsage);
+                            setSnackbarVisible(true);
+                        }}
+                        onPressingReturnButton={() => console.log("return id called!")}
                     />
-
-
-
 
                     <WelcomeAfterSignup
                         onPressingReturnToLoginButton={handleReturnToLogin}
