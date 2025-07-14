@@ -89,7 +89,6 @@ const AddHomeIdScreen: React.FC<Props> = ({
                         text={'Cancelar'}
                         adjustPaddingBottom={16}
                         onPress={() => {
-                            setIsQuestionScreen(true);
                             onPressingReturnButton?.();
                             setData({ id: '', name: '' })
                         }}
@@ -100,7 +99,7 @@ const AddHomeIdScreen: React.FC<Props> = ({
                 isCreateHome ?
                     (
                         <View>
-                            <Text style={styles.title}> Criar ID_Home </Text>
+                            <Text style={styles.title}> Criar nova casa </Text>
 
                             <DynamicLabelInput
                                 label="Nome da casa"

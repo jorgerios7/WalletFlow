@@ -19,6 +19,11 @@ export interface Identification {
   surname: string;
 }
 
+export interface Credentials {
+  password: string;
+  passwordRepeat: string;
+}
+
 export interface User {
   bankAccounts: Record<string, BankAccount>;
   bankCards: Record<string, BankCard>;
