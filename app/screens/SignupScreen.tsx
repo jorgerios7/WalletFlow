@@ -16,7 +16,7 @@ interface Values {
 
 interface Props {
     values: Values;
-    onPressingReturnButton?: () => void;
+    onPressingReturnButton: () => void;
     shouldRender?: boolean;
     whenIsReady: (values: Partial<Props["values"]>) => void;
     erroMessage: (message: string) => void;
@@ -92,7 +92,7 @@ const SignupScreen: React.FC<Props> = ({
                 />
 
                 <CustomButton
-                    text="Próximo"
+                    text="Criar conta"
                     onPress={validateData}
                 />
 

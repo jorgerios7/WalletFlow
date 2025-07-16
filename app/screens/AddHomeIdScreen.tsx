@@ -1,3 +1,4 @@
+import BoxInputs from "@/components/ui/BoxInputs";
 import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
@@ -11,14 +12,16 @@ interface Props {
     shouldRender: boolean;
     values: { Id_Home: string, Name: string };
     whenIsReady: (values: Partial<Props["values"]>) => void;
-    onPressingReturnButton?: () => void;
-    errorMessage?: (message: string) => void;
+    isCreateNewHome: (action: boolean) => void
+    onPressingReturnButton: () => void;
+    errorMessage: (message: string) => void;
 }
 
 const AddHomeIdScreen: React.FC<Props> = ({
     shouldRender = true,
     values,
     whenIsReady,
+    isCreateNewHome,
     onPressingReturnButton,
     errorMessage
 }) => {
@@ -28,14 +31,18 @@ const AddHomeIdScreen: React.FC<Props> = ({
     const [isCreateHome, setCreateHome] = useState(false);
     const [data, setData] = useState({ id: '', name: '' })
 
-    const handleCheckingIdExistence = async () => {
-        const homeId = data.id.trim();
+    const handleFieldCheck = (field: string) => {
+        if (!field) {
 
-        if (!homeId) {
-            
             errorMessage?.("Opa! Preencha o campo")
             return;
         }
+    }
+
+    const handleCheckingIdExistence = async () => {
+        const homeId = data.id.trim();
+
+        handleFieldCheck(homeId);
 
         try {
             const docRef = doc(db, "publicHomes", homeId);
@@ -43,74 +50,79 @@ const AddHomeIdScreen: React.FC<Props> = ({
 
             if (docSnap.exists()) {
 
-                whenIsReady({ Id_Home: data.id, Name: '' });
+                whenIsReady({ Id_Home: homeId, Name: '' });
             } else {
+                homeId
 
                 errorMessage?.("ID não encontrado. ")
             }
         } catch (error) {
-
-            errorMessage?.("Algo deu errado na busca")
+            console.log('error: ', error);
+            errorMessage?.("Algo deu errado na busca");
         }
     };
 
     const handleCreateId = () => {
+        const name = data.name.trim();
+
+        handleFieldCheck(name);
+
         whenIsReady({ Id_Home: '', Name: data.name });
     };
 
     return (
-        isQuestionScreen ?
-            (
-                <View>
-                    <Text style={{ alignSelf: 'center', color: Colors.light.background, fontSize: 20, fontWeight: 'bold' }}>
-                        Já tem um ID da casa?
-                    </Text>
-                    <View style={{ marginVertical: 80, alignSelf: 'center', flexDirection: 'column' }}>
-                        <TextButton
-                            text={'Sim, já tenho'}
-                            adjustPaddingBottom={16}
-                            onPress={() => {
-                                setIsQuestionScreen(false)
-                                setCreateHome(false);
-                            }}
-                        />
+        <BoxInputs>
+            {
+                isQuestionScreen ? (
+                    <View>
+                        <Text style={{ alignSelf: 'center', color: Colors.light.background, fontSize: 20, fontWeight: 'bold' }}>
+                            Já tem um ID da casa?
+                        </Text>
+                        <View style={{ marginVertical: 80, alignSelf: 'center', flexDirection: 'column' }}>
+                            <TextButton
+                                text={'Sim, já tenho'}
+                                adjustPaddingBottom={16}
+                                onPress={() => {
+                                    setIsQuestionScreen(false)
+                                    setCreateHome(false);
+                                    isCreateNewHome(false);
+                                }}
+                            />
+
+                            <TextButton
+                                text={'Não, quero criar um'}
+                                adjustPaddingBottom={16}
+                                onPress={() => {
+                                    setIsQuestionScreen(false)
+                                    setCreateHome(true);
+                                    isCreateNewHome(true);
+                                }}
+                            />
+                        </View>
 
                         <TextButton
-                            text={'Não, quero criar um'}
+                            text={'Sair'}
                             adjustPaddingBottom={16}
                             onPress={() => {
-                                setIsQuestionScreen(false)
-                                setCreateHome(true);
+                                onPressingReturnButton?.();
+                                isCreateNewHome(true);
+                                setData({ id: '', name: '' });
                             }}
                         />
                     </View>
-
-                    <TextButton
-                        text={'Cancelar'}
-                        adjustPaddingBottom={16}
-                        onPress={() => {
-                            onPressingReturnButton?.();
-                            setData({ id: '', name: '' })
-                        }}
-                    />
-
-                </View>
-            ) : (
-                isCreateHome ?
-                    (
+                ) : (
+                    isCreateHome ? (
                         <View>
                             <Text style={styles.title}> Criar nova casa </Text>
 
                             <DynamicLabelInput
                                 label="Nome da casa"
                                 value={values.Name}
-                                onTextChange={(text) => setData({
-                                    id: '', name: text
-                                })}
+                                onTextChange={(text) => setData({ id: '', name: text })}
                             />
 
                             <CustomButton
-                                text={'Criar conta'}
+                                text={'Continuar'}
                                 onPress={handleCreateId}
                             />
 
@@ -119,6 +131,7 @@ const AddHomeIdScreen: React.FC<Props> = ({
                                 adjustPaddingBottom={16}
                                 onPress={() => {
                                     setIsQuestionScreen(true);
+                                    isCreateNewHome(true);
                                     setData({ id: '', name: '' })
                                 }}
                             />
@@ -130,14 +143,11 @@ const AddHomeIdScreen: React.FC<Props> = ({
                             <DynamicLabelInput
                                 label="ID da casa"
                                 value={values.Id_Home}
-                                onTextChange={(text) => setData({
-                                    id: text,
-                                    name: '',
-                                })}
+                                onTextChange={(text) => setData({ id: text, name: '' })}
                             />
 
                             <CustomButton
-                                text={'Criar conta'}
+                                text={'Continuar'}
                                 onPress={handleCheckingIdExistence}
                             />
 
@@ -146,12 +156,15 @@ const AddHomeIdScreen: React.FC<Props> = ({
                                 adjustPaddingBottom={16}
                                 onPress={() => {
                                     setIsQuestionScreen(true);
+                                    isCreateNewHome(true);
                                     setData({ id: '', name: '' })
                                 }}
                             />
                         </View>
                     )
-            )
+                )
+            }
+        </BoxInputs>
     );
 }
 

@@ -1,5 +1,4 @@
-import { auth } from "@/app/config/firebaseConfig";
-import AddHomeIdScreen from "@/app/screens/AddHomeIdScreen";
+import { auth, db } from "@/app/config/firebaseConfig";
 import LoginScreen from "@/app/screens/LoginScreen";
 import SignupScreen from "@/app/screens/SignupScreen";
 import BoxInputs from "@/components/ui/BoxInputs";
@@ -8,46 +7,33 @@ import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { Provider as PaperProvider, Snackbar } from "react-native-paper";
 
 interface Props {
-    onPress?: (isLoged: boolean) => void,
-    getUId?: (id: string) => void
+    onPress: (isLoged: boolean) => void,
+    getUId: (id: string) => void
 }
 
 const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
-    const [loginInputValue, setLoginInputValue] = useState({
-        Email: "", Password: "",
-    });
+    const [loginInputValue, setLoginInputValue] = useState({ Email: "", Password: "" });
 
-    const loginFormLabels = {
-        Email: "Email", Password: "Senha",
-    };
+    const loginFormLabels = { Email: "Email", Password: "Senha" };
 
     const [signupInputValue, setSignupInputValue] = useState({
         FirstName: "", Surname: "", Email: "", BirthDate: "", Password: "", PasswordRepeat: "",
-    });
-
-    const [idHomeInputValue, setIdHomeInputValue] = useState({
-        Id_Home: "", Name: ""
     });
 
     const [snackbarVisible, setSnackbarVisible] = useState(false);
     const [msg, setMsg] = useState("");
     const [isSignup, setFunctionSignup] = useState(false);
     const [isLoginCreatedSuccessfully, setLoginCreation] = useState(false);
-    const [isHouseAccountCreated, setIsHouseAccountCreated] = useState(false);
 
     const handleCreateLogin = () => {
-        console.log('Signup Data: ', signupInputValue);
-        console.log('values: ', idHomeInputValue);
-
-
         createUserWithEmailAndPassword(auth, signupInputValue.Email, signupInputValue.Password)
             .then((userCredential) => {
                 const user = userCredential.user;
-
                 handleCreateUserBankData(user.uid);
             })
             .catch((error) => {
@@ -57,26 +43,25 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
             });
     };
 
-    const handleCreateUserBankData = (user: string) => {
-        console.log('Usuário criado com sucesso:', user);
-        handleCreateUserHome();
-        
-    }
-
-    const handleCreateUserHome = () => {
-        console.log('Home criado com sucesso:', idHomeInputValue);
-
-        setFunctionSignup(true);
-        setLoginCreation(true);
-        setIsHouseAccountCreated(true);
-    }
-
-
-
-
-
-
-
+    const handleCreateUserBankData = async (uid: string) => {
+        try {
+            await setDoc(doc(db, "users", uid), {
+                identification: {
+                    name: signupInputValue.FirstName,
+                    surname: signupInputValue.Surname,
+                    birthDate: signupInputValue.BirthDate,
+                    email: signupInputValue.Email
+                },
+                createdAt: new Date().toISOString()
+            });
+            getUId(uid);
+            setLoginCreation(true);
+        } catch (error) {
+            console.error("Erro:", error);
+            setMsg("Erro ao salvar dados do usuário.");
+            setSnackbarVisible(true);
+        }
+    };
 
     const handleEnterButton = () => {
         const validationMsg = ValidateEmptyFields(loginInputValue, loginFormLabels);
@@ -112,7 +97,6 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
     const handleReturnToLogin = () => {
         setFunctionSignup(false);
         setLoginCreation(false);
-        setIsHouseAccountCreated(false)
         setSignupInputValue({
             FirstName: "",
             Surname: "",
@@ -142,7 +126,8 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
                         values={signupInputValue}
                         whenIsReady={(data) => {
                             setSignupInputValue((prev) => ({ ...prev, ...data }));
-                            setLoginCreation(true);
+                            handleCreateLogin();
+
                         }}
                         erroMessage={(message) => {
                             setMsg(message);
@@ -151,23 +136,9 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
                         onPressingReturnButton={handleReturnToLogin}
                     />
 
-                    <AddHomeIdScreen
-                        shouldRender={isSignup && isLoginCreatedSuccessfully && !isHouseAccountCreated}
-                        values={idHomeInputValue}
-                        whenIsReady={(values) => {
-                            setIdHomeInputValue((prev) => ({ ...prev, ...values }));
-                            handleCreateLogin();
-                        }}
-                        errorMessage={(messsage) => {
-                            setMsg(messsage);
-                            setSnackbarVisible(true);
-                        }}
-                        onPressingReturnButton={handleReturnToLogin}
-                    />
-
                     <WelcomeAfterSignup
                         onPressingReturnToLoginButton={handleReturnToLogin}
-                        shouldRender={isSignup && isLoginCreatedSuccessfully && isHouseAccountCreated}
+                        shouldRender={isSignup && isLoginCreatedSuccessfully}
                     />
                 </BoxInputs>
                 <Snackbar
