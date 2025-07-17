@@ -2,7 +2,6 @@ import { auth, db } from "@/app/config/firebaseConfig";
 import LoginScreen from "@/app/screens/LoginScreen";
 import SignupScreen from "@/app/screens/SignupScreen";
 import BoxInputs from "@/components/ui/BoxInputs";
-import HomeScreenContainer from "@/components/ui/HomeScreenContainer";
 import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
@@ -109,50 +108,48 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
 
     return (
         <PaperProvider>
-            <HomeScreenContainer>
-                <BoxInputs>
-                    <LoginScreen
-                        shouldRender={!isSignup}
-                        values={loginInputValue}
-                        onChange={(field, value) =>
-                            setLoginInputValue((prev) => ({ ...prev, [field]: value }))
-                        }
-                        onPressingEnterButton={handleEnterButton}
-                        onPressingRegisterButton={() => [setFunctionSignup(true), setLoginCreation(false)]}
-                    />
+            <BoxInputs>
+                <LoginScreen
+                    shouldRender={!isSignup}
+                    values={loginInputValue}
+                    onChange={(field, value) =>
+                        setLoginInputValue((prev) => ({ ...prev, [field]: value }))
+                    }
+                    onPressingEnterButton={handleEnterButton}
+                    onPressingRegisterButton={() => [setFunctionSignup(true), setLoginCreation(false)]}
+                />
 
-                    <SignupScreen
-                        shouldRender={isSignup && !isLoginCreatedSuccessfully}
-                        values={signupInputValue}
-                        whenIsReady={(data) => {
-                            setSignupInputValue((prev) => ({ ...prev, ...data }));
-                            handleCreateLogin();
+                <SignupScreen
+                    shouldRender={isSignup && !isLoginCreatedSuccessfully}
+                    values={signupInputValue}
+                    whenIsReady={(data) => {
+                        setSignupInputValue((prev) => ({ ...prev, ...data }));
+                        handleCreateLogin();
 
-                        }}
-                        erroMessage={(message) => {
-                            setMsg(message);
-                            setSnackbarVisible(true);
-                        }}
-                        onPressingReturnButton={handleReturnToLogin}
-                    />
+                    }}
+                    erroMessage={(message) => {
+                        setMsg(message);
+                        setSnackbarVisible(true);
+                    }}
+                    onPressingReturnButton={handleReturnToLogin}
+                />
 
-                    <WelcomeAfterSignup
-                        onPressingReturnToLoginButton={handleReturnToLogin}
-                        shouldRender={isSignup && isLoginCreatedSuccessfully}
-                    />
-                </BoxInputs>
-                <Snackbar
-                    visible={snackbarVisible}
-                    onDismiss={() => setSnackbarVisible(false)}
-                    style={{ backgroundColor: Colors.light.tint }}
-                    action={{
-                        label: "Fechar",
-                        onPress: () => setSnackbarVisible(false),
-                    }}>
+                <WelcomeAfterSignup
+                    onPressingReturnToLoginButton={handleReturnToLogin}
+                    shouldRender={isSignup && isLoginCreatedSuccessfully}
+                />
+            </BoxInputs>
+            <Snackbar
+                visible={snackbarVisible}
+                onDismiss={() => setSnackbarVisible(false)}
+                style={{ backgroundColor: Colors.light.tint }}
+                action={{
+                    label: "Fechar",
+                    onPress: () => setSnackbarVisible(false),
+                }}>
 
-                    {msg}
-                </Snackbar>
-            </HomeScreenContainer>
+                {msg}
+            </Snackbar>
         </PaperProvider>
     );
 }

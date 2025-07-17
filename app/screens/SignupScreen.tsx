@@ -99,8 +99,10 @@ const SignupScreen: React.FC<Props> = ({
                 <TextButton
                     onPress={onPressingReturnButton}
                     text="Voltar"
-                    adjustPaddingBottom={15}
+                    adjustPadding={15}
+                    adjustMargin={15}
                 />
+
             </View>
         );
     };

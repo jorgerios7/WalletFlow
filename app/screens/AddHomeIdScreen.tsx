@@ -75,68 +75,54 @@ const AddHomeIdScreen: React.FC<Props> = ({
             {
                 isQuestionScreen ? (
                     <View>
-                        <Text style={{ alignSelf: 'center', color: Colors.light.background, fontSize: 20, fontWeight: 'bold' }}>
-                            Já tem um ID da casa?
-                        </Text>
-                        <View style={{ marginVertical: 80, alignSelf: 'center', flexDirection: 'column' }}>
-                            <TextButton
-                                text={'Sim, já tenho'}
-                                adjustPaddingBottom={16}
-                                onPress={() => {
-                                    setIsQuestionScreen(false)
-                                    setCreateHome(false);
-                                    isCreateNewHome(false);
-                                }}
-                            />
+                        <View style={styles.container}>
+                            <Text style={styles.title}>
+                                Configurar casa
+                            </Text>
 
+                            <View>
+
+                                <DynamicLabelInput
+                                    label="Nome da casa"
+                                    value={values.Name}
+                                    onTextChange={(text) => setData({ id: '', name: text })}
+                                />
+
+                                <CustomButton
+                                    text={'Continuar'}
+                                    onPress={handleCreateId}
+                                />
+                            </View>
+
+                            <View style={{ padding: 10, flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'center' }}>
+                                <Text style={styles.text}>
+                                    Se possui um ID_Home
+                                </Text>
+                                <TextButton
+                                    text={'clique aqui'}
+                                    adjustPadding={5}
+                                    textColor={Colors.light.tint}
+                                    onPress={() => {
+                                        setIsQuestionScreen(false)
+                                        setCreateHome(false);
+                                        isCreateNewHome(false);
+                                    }}
+                                />
+                            </View>
                             <TextButton
-                                text={'Não, quero criar um'}
-                                adjustPaddingBottom={16}
+                                text={'Sair'}
+                                adjustPadding={5}
+                                adjustMargin={5}
                                 onPress={() => {
-                                    setIsQuestionScreen(false)
-                                    setCreateHome(true);
+                                    onPressingReturnButton?.();
                                     isCreateNewHome(true);
+                                    setData({ id: '', name: '' });
                                 }}
                             />
                         </View>
-
-                        <TextButton
-                            text={'Sair'}
-                            adjustPaddingBottom={16}
-                            onPress={() => {
-                                onPressingReturnButton?.();
-                                isCreateNewHome(true);
-                                setData({ id: '', name: '' });
-                            }}
-                        />
                     </View>
                 ) : (
-                    isCreateHome ? (
-                        <View>
-                            <Text style={styles.title}> Criar nova casa </Text>
-
-                            <DynamicLabelInput
-                                label="Nome da casa"
-                                value={values.Name}
-                                onTextChange={(text) => setData({ id: '', name: text })}
-                            />
-
-                            <CustomButton
-                                text={'Continuar'}
-                                onPress={handleCreateId}
-                            />
-
-                            <TextButton
-                                text={'Voltar'}
-                                adjustPaddingBottom={16}
-                                onPress={() => {
-                                    setIsQuestionScreen(true);
-                                    isCreateNewHome(true);
-                                    setData({ id: '', name: '' })
-                                }}
-                            />
-                        </View>
-                    ) : (
+                    !isCreateHome && (
                         <View>
                             <Text style={styles.title}> Adicionar ID_Home </Text>
 
@@ -153,7 +139,8 @@ const AddHomeIdScreen: React.FC<Props> = ({
 
                             <TextButton
                                 text={'Voltar'}
-                                adjustPaddingBottom={16}
+                                adjustMargin={15}
+                                adjustPadding={15}
                                 onPress={() => {
                                     setIsQuestionScreen(true);
                                     isCreateNewHome(true);
@@ -170,11 +157,25 @@ const AddHomeIdScreen: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
     title: {
-        color: Colors.light.background,
-        fontSize: 16,
+        color: Colors.light.highlightBackgroun_1,
+        fontSize: 20,
         fontWeight: 'bold',
         alignSelf: 'center',
         padding: 20
+    },
+    text: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: Colors.light.highlightBackgroun_1,
+        alignSelf: 'center',
+        backgroundColor: 'transparent'
+    },
+    container: {
+        width: '100%',
+        gap: 10,
+        alignSelf: 'center',
+        flexDirection: 'column',
+        backgroundColor: 'transparent'
     }
 });
 

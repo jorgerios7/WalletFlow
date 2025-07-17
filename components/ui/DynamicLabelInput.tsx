@@ -6,7 +6,7 @@ import { Animated, StyleSheet, TextInput, TouchableOpacity, View } from "react-n
 interface LabelProps {
     label: string;
     secureTextEntry?: boolean;
-    value?: string;
+    value: string;
     onTextChange?: (text: string) => void;
 }
 
@@ -63,7 +63,7 @@ export default function DynamicLabelInput({ label, secureTextEntry, onTextChange
                     <Ionicons
                         name={isPasswordVisible ? "eye" : "eye-off"}
                         size={18}
-                        color={Colors.light.background}
+                        color={Colors.light.highlightBackgroun_1}
                     />
                 </TouchableOpacity>
             )}
@@ -79,28 +79,27 @@ const styles = StyleSheet.create({
     label: {
         position: 'absolute',
         left: 18,
-        backgroundColor: Colors.light.highlightBackgroun_1,
+        backgroundColor: Colors.light.background,
         paddingHorizontal: 10,
-        color: 'white',
+        color: Colors.light.highlightBackgroun_1,
         zIndex: 2,
         fontSize: 12,
         fontWeight: 'bold',
         padding: 2,
-        
     },
     input: {
-        color: Colors.light.background,
+        color: Colors.light.highlightBackgroun_1,
         borderWidth: 0.5,
-        borderColor: Colors.light.border,
+        borderColor: Colors.light.highlightBackgroun_1,
         backgroundColor: 'transparent', 
-        borderRadius: 3,
-        paddingHorizontal: 12,
-        paddingTop: 14,
-        paddingBottom: 14,
+        fontWeight: 'bold',
+        borderRadius: 10,
+        paddingHorizontal: 14,
+        paddingVertical: 14,
         zIndex: 0, 
     },
     inputFocused: {
-        outlineColor: Colors.light.background,
+        outlineColor: 'transparent',
     },
     eyeButton: {
         position: "absolute",

@@ -41,7 +41,8 @@ const LoginScreen: React.FC<Props> = ({
             <TextButton
                 onPress={onPressingRegisterButton}
                 text="Cadastre-se"
-                adjustPaddingBottom={15}
+                adjustMargin={15}
+                adjustPadding={15}
             />
         </View>
     );

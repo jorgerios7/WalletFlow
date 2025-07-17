@@ -3,7 +3,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface ButtonProps {
-    text?: string;
+    text: string;
     onPress?: () => void;
 }
 
@@ -25,15 +25,14 @@ export default function CustomButton({ text, onPress }: ButtonProps) {
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
         justifyContent: 'center',
     },
     button: {
-        backgroundColor: Colors.light.background,
+        backgroundColor: Colors.light.highlightBackgroun_1,
         borderWidth: 0.5,
-        borderColor: Colors.light.tint,
-        borderRadius: 8,
-        paddingHorizontal: 12,
+        borderColor: Colors.light.shadow,
+        borderRadius: 10,
+        paddingHorizontal: 14,
         paddingVertical: 14,
         alignItems: 'center',
         justifyContent: 'center',
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.light.tabIconDefault,
     },
     buttonText: {
-        color: Colors.light.tint,
+        color: Colors.light.background,
         fontSize: 14,
         fontWeight: 'bold',
     },
