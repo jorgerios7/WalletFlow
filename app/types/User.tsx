@@ -17,6 +17,7 @@ export interface Identification {
   birthDate: string; // formato: "dd/MM/yyyy"
   name: string;
   surname: string;
+  email: string;
 }
 
 export interface Credentials {

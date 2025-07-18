@@ -56,7 +56,7 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
             getUId(uid);
             setLoginCreation(true);
         } catch (error) {
-            console.error("Erro:", error);
+            console.error("(UserAccessScreen) Erro:", error);
             setMsg("Erro ao salvar dados do usuário.");
             setSnackbarVisible(true);
         }
@@ -81,7 +81,7 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
                 setLoginInputValue({ Email: "", Password: "" });
             })
             .catch((error) => {
-                console.error('Erro ao fazer login:', error);
+                console.error('(UserAccessScreen) Erro ao fazer login:', error);
                 setMsg("Erro ao fazer login: " + error.message);
                 setSnackbarVisible(true);
             });

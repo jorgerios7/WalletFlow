@@ -17,7 +17,7 @@ interface Props {
     errorMessage: (message: string) => void;
 }
 
-const AddHomeIdScreen: React.FC<Props> = ({
+const HomeSetupScreen: React.FC<Props> = ({
     shouldRender = true,
     values,
     whenIsReady,
@@ -52,12 +52,11 @@ const AddHomeIdScreen: React.FC<Props> = ({
 
                 whenIsReady({ Id_Home: homeId, Name: '' });
             } else {
-                homeId
 
                 errorMessage?.("ID não encontrado. ")
             }
         } catch (error) {
-            console.log('error: ', error);
+            console.log('(HomeSetupScreen) error: ', error);
             errorMessage?.("Algo deu errado na busca");
         }
     };
@@ -124,7 +123,7 @@ const AddHomeIdScreen: React.FC<Props> = ({
                 ) : (
                     !isCreateHome && (
                         <View>
-                            <Text style={styles.title}> Adicionar ID_Home </Text>
+                            <Text style={styles.title}> Configurar casa </Text>
 
                             <DynamicLabelInput
                                 label="ID da casa"
@@ -179,4 +178,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default AddHomeIdScreen;
+export default HomeSetupScreen;

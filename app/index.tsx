@@ -6,7 +6,8 @@ import { db } from "./config/firebaseConfig";
 import BottomTabs from "./navigation/BottomTabs";
 import UserAccessScreen from "./pages/auth/UserAccessScreen";
 import SplashScreen from "./pages/SplashScreen";
-import AddHomeIdScreen from "./screens/AddHomeIdScreen";
+import HomeSetupScreen from "./screens/HomeSetupScreen";
+import { Home } from "./types/Home";
 import { User } from "./types/User";
 
 export default function AppMain() {
@@ -15,11 +16,13 @@ export default function AppMain() {
   const [isReady, setIsReady] = useState(false);
   const [uid, setUId] = useState('');
   const [userData, setUserData] = useState<User | null>(null);
-  const [isFirstAcces, setIsFirstAcces] = useState(true);
+  const [homeData, setHomeData] = useState<Home | null>(null);
+  const [isShowHomeSetupScreen, setIsShowHomeSetupScreen] = useState(false);
   const [isSnackbackVisible, setIsSnackbarVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isCreateNewHome, setIsCreateNewHome] = useState(true);
-  const [idHomeInputValue, setIdHomeInputValue] = useState({ Id_Home: "", Name: "" });
+  const [homeSetupInputValues, setHomeSetupInputValues] = useState({ Id_Home: "", Name: "" });
+  const [isFetchingUser, setIsFetchingUser] = useState(true);
 
   const handleCreateUserHome = async (data: { Id_Home: string; Name: string }) => {
     try {
@@ -40,6 +43,7 @@ export default function AppMain() {
         await updateDoc(doc(db, "users", uid), { homeId: homeRef.id });
 
       } else {
+
         await updateDoc(doc(db, "users", uid), { homeId: data.Id_Home });
 
         await setDoc(doc(db, "homes", data.Id_Home), {
@@ -48,42 +52,56 @@ export default function AppMain() {
           }
         }, { merge: true });
       }
-
-      setIsFirstAcces(false);
-
     } catch (error) {
-      console.error("Erro ao criar ou vincular ID_Home:", error);
+
+      console.error("(Index.tsx) Erro ao criar ou vincular ID_Home:", error);
       setErrorMessage("Erro ao configurar a Home.");
       setIsSnackbarVisible(true);
+    } finally {
+
+      fetchUserData();
     }
   };
 
-  const loadData = async () => {
+  const fetchUserData = async () => {
     if (!uid) return;
 
-    const userDoc = await getDoc(doc(db, "users", uid));
-    if (userDoc.exists()) {
-      const data = userDoc.data() as User;
+    let user: User | null = null;
+    let home: Home | null = null;
 
-      setIsReady(true);
-      setUserData(data);
-    }
-  };
+    setIsFetchingUser(true);
 
-  const checkHIdExistence = async () => {
-    if (!uid) return;
+    try {
+      const userRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userRef);
 
-    const userDoc = await getDoc(doc(db, "users", uid));
-    if (userDoc.exists()) {
-      const data = userDoc.data() as User;
+      if (userDoc.exists()) {
+        user = userDoc.data() as User;
 
-      if (!data.homeId || data.homeId.trim() === "") {
-        setIsFirstAcces(true);
+        if (!user.homeId || user.homeId.trim() === "") {
 
-      } else {
+          setIsShowHomeSetupScreen(true);
+        } else {
 
-        setIsFirstAcces(false);
+          const homeRef = doc(db, "homes", user.homeId);
+          const homeDoc = await getDoc(homeRef);
+
+          if (homeDoc.exists()) {
+            home = homeDoc.data() as Home;
+
+            setIsShowHomeSetupScreen(false);
+          }
+        }
       }
+    } catch (error) {
+
+      console.error("(Index.tsx) Erro ao buscar dados do usuário:", error);
+    } finally {
+
+      setUserData(user);
+      setHomeData(home);
+      setIsReady(true);
+      setIsFetchingUser(false);
     }
   };
 
@@ -100,8 +118,7 @@ export default function AppMain() {
 
   useEffect(() => {
     if (uid) {
-      checkHIdExistence();
-      loadData();
+      fetchUserData();
     }
   }, [uid]);
 
@@ -110,37 +127,46 @@ export default function AppMain() {
   if (!isAuthenticated)
     return <UserAccessScreen onPress={setIsAuthenticated} getUId={setUId} />;
 
+  if (!isReady || !userData || isFetchingUser) return <SplashScreen />;
+
+  const renderMainContent = () => {
+    return (
+      <>
+        <HomeSetupScreen
+          shouldRender={isShowHomeSetupScreen}
+          onPressingReturnButton={() => setIsAuthenticated(false)}
+          values={homeSetupInputValues}
+          isCreateNewHome={(action) => setIsCreateNewHome(action)}
+          errorMessage={(message) => {
+            setErrorMessage(message);
+            setIsSnackbarVisible(true);
+          }}
+          whenIsReady={(values) => {
+            if (!uid) {
+              setErrorMessage("(Index.tsx) Usuário não autenticado.");
+              setIsSnackbarVisible(true);
+              return;
+            }
+            const updatedData = { ...homeSetupInputValues, ...values };
+
+            setHomeSetupInputValues(updatedData);
+            handleCreateUserHome(updatedData);
+          }}
+        />
+
+        {!isShowHomeSetupScreen && homeData && (
+          <BottomTabs
+            homeData={homeData}
+            userData={userData}
+          />
+        )}
+      </>
+    );
+  }
+
   return (
     <>
-      {isReady && userData ? (
-        isFirstAcces ? (
-          <AddHomeIdScreen
-            shouldRender={isFirstAcces}
-            onPressingReturnButton={() => setIsAuthenticated(false)}
-            values={idHomeInputValue}
-            isCreateNewHome={(action) => setIsCreateNewHome(action)}
-            errorMessage={(message) => {
-              setErrorMessage(message);
-              setIsSnackbarVisible(true);
-            }}
-            whenIsReady={(values) => {
-              if (!uid) {
-                setErrorMessage("Usuário não autenticado.");
-                setIsSnackbarVisible(true);
-                return;
-              }
-              const updatedData = { ...idHomeInputValue, ...values };
-
-              setIdHomeInputValue(updatedData);
-              handleCreateUserHome(updatedData);
-            }}
-          />
-        ) : (
-          <BottomTabs data={userData} />
-        )
-      ) : (
-        <SplashScreen />
-      )}
+      {renderMainContent()}
 
       <Snackbar
         visible={isSnackbackVisible}

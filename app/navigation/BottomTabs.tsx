@@ -10,18 +10,18 @@ import AnalysisScreen from '../screens/AnalysisScreen';
 import MenuScreen from '../screens/MenuScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TransactionScreen from '../screens/TransactionScreen';
+import { Home } from '../types/Home';
 import { User } from '../types/User';
 
 interface Props {
-  data: User;
+  userData: User;
+  homeData: Home;
 }
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabs: React.FC<Props> = ({ data }) => {
+const BottomTabs: React.FC<Props> = ({ userData, homeData }) => {
   const insets = useSafeAreaInsets();
-
-  console.log('userDatas: ', data);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -39,7 +39,7 @@ const BottomTabs: React.FC<Props> = ({ data }) => {
         <Tab.Screen
           name="Análise"
           component={AnalysisScreen}
-          initialParams={{ user: data }}
+          initialParams={{ user: userData }}
           options={{
             tabBarButton: (props) => (
               <TabButton
@@ -54,7 +54,7 @@ const BottomTabs: React.FC<Props> = ({ data }) => {
         <Tab.Screen
           name="Transações"
           component={TransactionScreen}
-          initialParams={{ user: data }}
+          initialParams={{ user: userData }}
           options={{
             tabBarButton: (props) => (
               <TabButton
@@ -81,7 +81,7 @@ const BottomTabs: React.FC<Props> = ({ data }) => {
         <Tab.Screen
           name="Perfil"
           component={ProfileScreen}
-          initialParams={{ user: data }}
+          initialParams={{ user: userData, home: homeData }}
           options={{
             tabBarButton: (props) => (
               <TabButton
