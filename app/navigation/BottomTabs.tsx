@@ -1,4 +1,3 @@
-import AddButton from '@/components/ui/AddButton';
 import TabButton from '@/components/ui/TabButton';
 import { Colors } from '@/constants/Colors';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,16 +6,12 @@ import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddScreen from '../screens/AddScreens';
 import AnalysisScreen from '../screens/AnalysisScreen';
-import MenuScreen from '../screens/MenuScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TransactionScreen from '../screens/TransactionScreen';
 import { Home } from '../types/Home';
 import { User } from '../types/User';
 
-interface Props {
-  userData: User;
-  homeData: Home;
-}
+interface Props { userData: User; homeData: Home }
 
 const Tab = createBottomTabNavigator();
 
@@ -70,9 +65,11 @@ const BottomTabs: React.FC<Props> = ({ userData, homeData }) => {
           name="Add"
           component={AddScreen}
           options={{
-            tabBarButton: () => (
-              <AddButton
-                onPress={() => console.log('button more pressed')}
+            tabBarButton: (props) => (
+              <TabButton
+                {...props}
+                iconName="add"
+                label="Adicionar"
               />
             ),
           }}
@@ -88,20 +85,6 @@ const BottomTabs: React.FC<Props> = ({ userData, homeData }) => {
                 {...props}
                 iconName="person"
                 label="Perfil"
-              />
-            ),
-          }}
-        />
-
-        <Tab.Screen
-          name="Menu"
-          component={MenuScreen}
-          options={{
-            tabBarButton: (props) => (
-              <TabButton
-                {...props}
-                iconName="menu"
-                label="Menu"
               />
             ),
           }}

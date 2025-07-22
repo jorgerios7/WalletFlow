@@ -5,19 +5,28 @@ import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 interface HeaderProps {
     children?: React.ReactNode;
     onPress?: () => void;
+    backgroundColor?: string;
 }
 
-export default function Header({ onPress, children }: HeaderProps) {
+export default function Header({ onPress, children, backgroundColor }: HeaderProps) {
+
+    const styleDynamic = {
+        backgroundColor: backgroundColor ? backgroundColor : Colors.light.shadow
+    }
+
     return (
         <TouchableWithoutFeedback onPress={onPress}>
-            <View style={styles.container}>
+            <View style={[styles.container, styleDynamic]}>
                 {React.Children.count(children) === 2 ? (
                     <>
                         <View style={{ flex: 1, alignItems: 'flex-start' }}>
                             {React.Children.toArray(children)[0]}
                         </View>
-                        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                         <View style={{ flex: 1, alignItems: 'center' }}>
                             {React.Children.toArray(children)[1]}
+                        </View>
+                        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                            {React.Children.toArray(children)[2]}
                         </View>
                     </>
                 ) : (
@@ -34,14 +43,11 @@ export default function Header({ onPress, children }: HeaderProps) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: Colors.light.background,
         height: 50,
         width: "100%",
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 10,
-        borderBottomWidth: 0.5,
-        borderBottomColor: Colors.light.shadow,
+        paddingHorizontal: 10
     },
 });
