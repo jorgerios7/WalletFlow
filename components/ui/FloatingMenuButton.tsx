@@ -3,10 +3,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 import React, { useRef, useState } from 'react';
 import {
   Animated,
+  Image,
   PanResponder,
   Pressable,
   StyleSheet
 } from 'react-native';
+import ProfilePhotoUploader from './ProfilePhotoUploader';
 
 interface Props {
   children?: React.ReactNode;
@@ -15,8 +17,9 @@ interface Props {
   rightPosition: number;
   buttonSize: number;
   buttonLabel: string;
-  menuWidth: number
-  menuHeight: number
+  menuWidth: number;
+  menuHeight: number;
+  profilePhoto?: string;
 }
 
 const FloatingMenuButton: React.FC<Props> = ({
@@ -27,11 +30,11 @@ const FloatingMenuButton: React.FC<Props> = ({
   buttonSize,
   buttonLabel,
   menuWidth,
-  menuHeight
+  menuHeight,
+  profilePhoto
 }) => {
 
   const [expanded, setExpanded] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
   const smallIconSize = buttonSize / 30;
@@ -40,19 +43,21 @@ const FloatingMenuButton: React.FC<Props> = ({
   const animatedMenuHeight = useRef(new Animated.Value(buttonSize)).current;
 
   const animatedContainerUserWidth = useRef(new Animated.Value(buttonSize)).current;
-  const animatedContainerUserHeight = useRef(new Animated.Value(buttonSize)).current;
+  const animatedMainContentHeight = useRef(new Animated.Value(buttonSize)).current;
 
   const animatedProfilePhotoWidth = useRef(new Animated.Value(buttonSize)).current;
   const animatedProfilePhotoHeight = useRef(new Animated.Value(buttonSize)).current;
   const animatedIconScale = useRef(new Animated.Value(smallIconSize)).current;
 
-  const animatedContainerHeaderWidth = useRef(new Animated.Value(0)).current;
-  const animatedContainerHeaderHeight = useRef(new Animated.Value(0)).current;
+  const animatedHeaderWidth = useRef(new Animated.Value(0)).current;
+  const animatedHeaderHeight = useRef(new Animated.Value(0)).current;
 
-  const animatedContainerPadding = useRef(new Animated.Value(0)).current;
+  const animatedPadding = useRef(new Animated.Value(0)).current;
   const animatedBackground = useRef(new Animated.Value(0)).current;
 
   const panY = useRef(new Animated.Value(0)).current;
+
+  const [showUploader, setShowUploader] = useState(false);
 
   const contentOpacity = animatedBackground.interpolate({
     inputRange: [0, 1],
@@ -67,22 +72,22 @@ const FloatingMenuButton: React.FC<Props> = ({
   const dynamicContainerStyle = {
     top: topPosition,
     right: rightPosition,
-    padding: animatedContainerPadding,
+    padding: animatedPadding,
     backgroundColor: Colors.light.highlightBackgroun_1,
     borderRadius: buttonSize / 2,
     width: animatedMenuWidth,
     height: animatedMenuHeight,
   };
 
-  const dynamicProfilePhotoContainerStyle = {
-    height: animatedContainerUserHeight,
+  const dynamicMainContentStyle = {
+    height: animatedMainContentHeight,
     borderRadius: buttonSize,
-    padding: animatedContainerPadding
+    padding: animatedPadding
   }
 
   const dynamicContainerHeaderStyle = {
-    width: animatedContainerHeaderWidth,
-    height: animatedContainerHeaderHeight,
+    width: animatedHeaderWidth,
+    height: animatedHeaderHeight,
   }
 
   const panResponder = useRef(
@@ -104,7 +109,7 @@ const FloatingMenuButton: React.FC<Props> = ({
             duration: 150,
             useNativeDriver: true,
           }).start(() => {
-            toggleExpanded();
+            animateMenu(false);
             panY.setValue(0);
           });
         } else {
@@ -118,25 +123,41 @@ const FloatingMenuButton: React.FC<Props> = ({
     })
   ).current;
 
-  const toggleExpanded = () => {
+  const openMenu = () => {
+    if (expanded) {
+      setShowUploader(true);
+
+      return;
+    }
+
+    animateMenu(true);
+  };
+
+  const closeMenu = () => {
+    if (!expanded) return;
+
+    animateMenu(false);
+  };
+
+  const animateMenu = (open: boolean) => {
     const targetValues = {
-      MENU_WIDTH: expanded ? buttonSize : menuWidth,
-      MENU_HEIGHT: expanded ? buttonSize : menuHeight,
-      CONTAINER_USER_WIDTH: expanded ? buttonSize : menuWidth - 20,
-      CONTAINER_USER_HEIGHT: expanded ? buttonSize : 350,
-      CONTAINER_PADDING: expanded ? 0 : 10,
-      PROFILE_PHOTO_WIDTH: expanded ? buttonSize : 200,
-      PROFILE_PHOTO_HEIGHT: expanded ? buttonSize : 200,
-      ICON_SCALE: expanded ? smallIconSize : 5,
-      CONTAINER_HEADER_WIDTH: expanded ? 0 : menuWidth - 40,
-      CONTAINER_HEADER_HEIGHT: expanded ? 0 : 80,
-      OPACITY: expanded ? 0 : 1,
+      MENU_WIDTH: open ? menuWidth : buttonSize,
+      MENU_HEIGHT: open ? menuHeight : buttonSize,
+      MAIN_CONTENT_WIDTH: open ? menuWidth - 20 : buttonSize,
+      MAIN_CONTENT_HEIGHT: open ? 350 : buttonSize,
+      PADDING: open ? 10 : 0,
+      PROFILE_PHOTO_WIDTH: open ? 200 : buttonSize,
+      PROFILE_PHOTO_HEIGHT: open ? 200 : buttonSize,
+      ICON_SCALE: open ? 5 : smallIconSize,
+      HEADER_WIDTH: open ? menuWidth - 40 : 0,
+      HEADER_HEIGHT: open ? 80 : 0,
+      OPACITY: open ? 1 : 0,
     };
 
     const durationValues = {
-      FADE: expanded ? 40 : 500,
-      EXPAND: expanded ? 150 : 100
-    }
+      FADE: open ? 500 : 40,
+      EXPAND: open ? 100 : 150
+    };
 
     Animated.parallel([
       Animated.timing(animatedMenuWidth, {
@@ -150,12 +171,12 @@ const FloatingMenuButton: React.FC<Props> = ({
         useNativeDriver: false,
       }),
       Animated.timing(animatedContainerUserWidth, {
-        toValue: targetValues.CONTAINER_USER_WIDTH,
+        toValue: targetValues.MAIN_CONTENT_WIDTH,
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
-      Animated.timing(animatedContainerUserHeight, {
-        toValue: targetValues.CONTAINER_USER_HEIGHT,
+      Animated.timing(animatedMainContentHeight, {
+        toValue: targetValues.MAIN_CONTENT_HEIGHT,
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
@@ -174,18 +195,18 @@ const FloatingMenuButton: React.FC<Props> = ({
         duration: durationValues.EXPAND,
         useNativeDriver: true,
       }),
-      Animated.timing(animatedContainerHeaderWidth, {
-        toValue: targetValues.CONTAINER_HEADER_WIDTH,
+      Animated.timing(animatedHeaderWidth, {
+        toValue: targetValues.HEADER_WIDTH,
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
-      Animated.timing(animatedContainerHeaderHeight, {
-        toValue: targetValues.CONTAINER_HEADER_HEIGHT,
+      Animated.timing(animatedHeaderHeight, {
+        toValue: targetValues.HEADER_HEIGHT,
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
-      Animated.timing(animatedContainerPadding, {
-        toValue: targetValues.CONTAINER_PADDING,
+      Animated.timing(animatedPadding, {
+        toValue: targetValues.PADDING,
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
@@ -195,24 +216,58 @@ const FloatingMenuButton: React.FC<Props> = ({
         useNativeDriver: false,
       }),
     ]).start(() => {
-      setExpanded(!expanded);
-
+      setExpanded(open);
     });
   };
 
+  const ProfilePhotoContent = () => {
+    return (
+      <Animated.View style={[
+        styles.profilePhotoContent,
+        { transform: [{ scale: animatedIconScale }] }
+      ]}>
+        {!profilePhoto ? (
+          <Image
+            source={{
+              //uri: profilePhoto
+            }}
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: 999,
+              resizeMode: 'cover'
+            }}
+          />
+        ) : (
+          <MaterialIcons name="person" size={28} color={Colors.light.highlightBackgroun_1} />
+        )}
+      </Animated.View>
+    );
+  }
+
   const ButtonContent = () => {
     return (
-      <AnimatedPressable onPress={toggleExpanded}>
+      <AnimatedPressable onPress={openMenu}>
         <Animated.View style={[styles.button, dynamicButtonStyle]}>
-          <Animated.View style={[
-            styles.profilePhotoContent,
-            { transform: [{ scale: animatedIconScale }] }]}>
-            <MaterialIcons name="person" size={28} color={Colors.light.highlightBackgroun_1} />
-          </Animated.View>
+          <ProfilePhotoContent />
         </Animated.View>
       </AnimatedPressable>
     );
-  }
+  };
+
+  const ButtonClose = () => {
+    return (
+      <Pressable
+        style={styles.buttonClose}
+        onPress={closeMenu}>
+        <MaterialIcons
+          name={'close'}
+          size={28}
+          color={'white'}
+        />
+      </Pressable>
+    );
+  };
 
   const UserNameContent = () => {
     return (
@@ -230,12 +285,12 @@ const FloatingMenuButton: React.FC<Props> = ({
     );
   }
 
-  const ProfilePhotoContainer = () => {
+  const MainContent = () => {
     return (
       <Animated.View
         style={[
-          styles.profilePhotoContainer,
-          dynamicProfilePhotoContainerStyle
+          styles.mainContent,
+          dynamicMainContentStyle
         ]}>
         <HeaderContent />
         <ButtonContent />
@@ -249,22 +304,13 @@ const FloatingMenuButton: React.FC<Props> = ({
       <Animated.View style={{
         opacity: contentOpacity,
       }}>
+        {showUploader && (
+          <ProfilePhotoUploader
+            onDismiss={() => setShowUploader(false)}
+          />
+        )}
         {children}
       </Animated.View>
-    );
-  }
-
-  const ButtonClose = () => {
-    return (
-      <Pressable
-        style={styles.buttonClose}
-        onPress={toggleExpanded}>
-        <MaterialIcons
-          name={'close'}
-          size={28}
-          color={'white'}
-        />
-      </Pressable>
     );
   }
 
@@ -285,7 +331,7 @@ const FloatingMenuButton: React.FC<Props> = ({
       <Animated.View style={[styles.container, dynamicContainerStyle]}
         {...panResponder.panHandlers}
       >
-        <ProfilePhotoContainer />
+        <MainContent />
         <ChildrenContent />
       </Animated.View>
     );
@@ -317,7 +363,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexWrap: 'nowrap',
   },
-  profilePhotoContainer: {
+  mainContent: {
     backgroundColor: 'transparent',
     alignItems: 'center',
     flexDirection: 'column',
@@ -327,7 +373,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   buttonClose: {
-    padding: 15, 
+    padding: 15,
     alignSelf: 'flex-end',
     backgroundColor: 'transparent',
     margin: 10,

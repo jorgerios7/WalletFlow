@@ -18,6 +18,7 @@ export interface Identification {
   name: string;
   surname: string;
   email: string;
+  profilePhoto: string;
 }
 
 export interface Credentials {

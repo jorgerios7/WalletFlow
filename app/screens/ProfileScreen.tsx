@@ -13,7 +13,7 @@ export default function ProfileScreen() {
     const route = useRoute<ProfileScreenRouteProp>();
     const { user, home } = route.params;
     const insets = useSafeAreaInsets();
-    const { width, height } = useWindowDimensions();
+    const { width, height } = useWindowDimensions(); 
 
     return (
         <View style={{
@@ -26,7 +26,7 @@ export default function ProfileScreen() {
         }}>
 
             <Header backgroundColor={Colors.light.shadow}>
-                <Text>Olá, Jorge!</Text>
+                <Text>Olá, {user.identification.name} {user.identification.surname}!</Text>
             </Header>
 
             <FloatingMenuButton
@@ -36,21 +36,15 @@ export default function ProfileScreen() {
                 buttonLabel={'Olá usuário!'}
                 topPosition={37}
                 rightPosition={10}
+                profilePhoto={user.identification.profilePhoto}
+
             >
-                <View style={{alignSelf: 'center'}}>
+                <View style={{ alignSelf: 'center' }}>
                     <Text style={{ fontSize: 50, fontWeight: 'bold', color: 'black', flexWrap: 'wrap', flexShrink: 1, }}>
                         Conteúdo aqui
                     </Text>
                 </View>
             </FloatingMenuButton>
-
-            <Text style={{
-                fontSize: 18,
-                fontWeight: 'bold',
-                alignSelf: 'center'
-            }}>
-                {user.identification.name} {user.identification.surname}
-            </Text>
 
             <View style={{
                 gap: 10
