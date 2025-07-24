@@ -6,7 +6,7 @@ export const Colors = {
     text: '#11181C',
     background: '#fff',
     highlightBackgroun_1: 'rgb(6, 11, 58)',
-    highlightBackgroun_2: 'rgba(63, 62, 143, 0.9)',
+    highlightBackgroun_2: 'rgba(173, 218, 219, 0.9)',
     shadow: 'rgba(255, 255, 255, 0.1)',
     tint: tintColorLight,
     icon: '#687076',

@@ -1,19 +1,23 @@
 import { User } from '@/app/types/User';
 import FloatingMenuButton from '@/components/ui/FloatingMenuButton';
 import Header from '@/components/ui/Header';
+import MenuButton from '@/components/ui/MenuButton';
 import { Colors } from '@/constants/Colors';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { useState } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Home } from '../types/Home';
 
-type ProfileScreenRouteProp = RouteProp<{ Data: { user: User, home: Home } }, 'Data'>;
+interface Props {
+    user: User,
+    home: Home,
+    onLogout: () => void
+}
 
-export default function ProfileScreen() {
-    const route = useRoute<ProfileScreenRouteProp>();
-    const { user, home } = route.params;
+export default function ProfileScreen({ user, home, onLogout }: Props) {
     const insets = useSafeAreaInsets();
-    const { width, height } = useWindowDimensions(); 
+    const { width, height } = useWindowDimensions();
+    const [collapseMenu, setCollapseMenu] = useState(false);
 
     return (
         <View style={{
@@ -30,19 +34,70 @@ export default function ProfileScreen() {
             </Header>
 
             <FloatingMenuButton
-                buttonSize={45}
+                closedSize={45}
                 menuHeight={height - insets.bottom - 42}
                 menuWidth={width - 20}
-                buttonLabel={'Olá usuário!'}
+                title={user.identification.name}
                 topPosition={37}
                 rightPosition={10}
                 profilePhoto={user.identification.profilePhoto}
-
+                collapseMenu={collapseMenu}
             >
-                <View style={{ alignSelf: 'center' }}>
-                    <Text style={{ fontSize: 50, fontWeight: 'bold', color: 'black', flexWrap: 'wrap', flexShrink: 1, }}>
-                        Conteúdo aqui
-                    </Text>
+                <View style={{
+                    width: '100%',
+                    gap: 5,
+                }}>
+                    <MenuButton
+                        onPress={() => console.log('edit name pressed!')}
+                        text={'Editar nome'}
+                        iconName={'arrow-right'}
+                        isHighlightText={false}
+                        fontSize={14}
+                    />
+
+                    <MenuButton
+                        onPress={() => console.log('edit name pressed!')}
+                        text={'Alterar email'}
+                        iconName={'arrow-right'}
+                        isHighlightText={false}
+                        fontSize={14}
+                    />
+
+                    <MenuButton
+                        onPress={() => console.log('edit name pressed!')}
+                        text={'Mudar senha'}
+                        iconName={'arrow-right'}
+                        isHighlightText={false}
+                        fontSize={14}
+                    />
+
+                    <MenuButton
+                        onPress={() => {
+                            setCollapseMenu(true);
+
+                            console.log('menuClose pressed');
+                            setTimeout(() => {
+                                onLogout(); // <- executando a função corretamente
+                                setCollapseMenu(false);
+
+                                console.log('timeOut is terminted!');
+                            }, 300);
+                        }}
+                        text={'Sair'}
+                        iconName={'exit-to-app'}
+                        isHighlightText={false}
+                        iconSize={24}
+                        fontSize={14}
+                    />
+
+
+                    <MenuButton
+                        onPress={onLogout}
+                        text={'Excluir conta'}
+                        isHighlightText={true}
+                        fontSize={14}
+                        borderBottomColor={'transparent'}
+                    />
                 </View>
             </FloatingMenuButton>
 

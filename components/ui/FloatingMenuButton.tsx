@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Image,
@@ -12,11 +12,11 @@ import ProfilePhotoUploader from './ProfilePhotoUploader';
 
 interface Props {
   children?: React.ReactNode;
-  onPress?: () => void;
+  collapseMenu: boolean;
   topPosition: number;
   rightPosition: number;
-  buttonSize: number;
-  buttonLabel: string;
+  closedSize: number;
+  title: string;
   menuWidth: number;
   menuHeight: number;
   profilePhoto?: string;
@@ -26,9 +26,9 @@ const FloatingMenuButton: React.FC<Props> = ({
   topPosition,
   rightPosition,
   children,
-  onPress,
-  buttonSize,
-  buttonLabel,
+  collapseMenu,
+  closedSize,
+  title,
   menuWidth,
   menuHeight,
   profilePhoto
@@ -37,20 +37,23 @@ const FloatingMenuButton: React.FC<Props> = ({
   const [expanded, setExpanded] = useState(false);
 
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-  const smallIconSize = buttonSize / 30;
+  const smallIconSize = (closedSize / 30);
 
-  const animatedMenuWidth = useRef(new Animated.Value(buttonSize)).current;
-  const animatedMenuHeight = useRef(new Animated.Value(buttonSize)).current;
+  const animatedMenuWidth = useRef(new Animated.Value(closedSize)).current;
+  const animatedMenuHeight = useRef(new Animated.Value(closedSize)).current;
 
-  const animatedContainerUserWidth = useRef(new Animated.Value(buttonSize)).current;
-  const animatedMainContentHeight = useRef(new Animated.Value(buttonSize)).current;
+  const animatedGap = useRef(new Animated.Value(0)).current;
 
-  const animatedProfilePhotoWidth = useRef(new Animated.Value(buttonSize)).current;
-  const animatedProfilePhotoHeight = useRef(new Animated.Value(buttonSize)).current;
+  const animatedContainerUserWidth = useRef(new Animated.Value(closedSize)).current;
+  const animatedMainContentHeight = useRef(new Animated.Value(closedSize)).current;
+
+  const animatedProfileButtonWidth = useRef(new Animated.Value(closedSize)).current;
+  const animatedProfileButtonHeight = useRef(new Animated.Value(closedSize)).current;
+
   const animatedIconScale = useRef(new Animated.Value(smallIconSize)).current;
 
-  const animatedHeaderWidth = useRef(new Animated.Value(0)).current;
-  const animatedHeaderHeight = useRef(new Animated.Value(0)).current;
+  const animatedButtonCloseWidth = useRef(new Animated.Value(0)).current;
+  const animatedButtonCloseHeight = useRef(new Animated.Value(0)).current;
 
   const animatedPadding = useRef(new Animated.Value(0)).current;
   const animatedBackground = useRef(new Animated.Value(0)).current;
@@ -64,9 +67,9 @@ const FloatingMenuButton: React.FC<Props> = ({
     outputRange: [0, 1]
   });
 
-  const dynamicButtonStyle = {
-    width: animatedProfilePhotoWidth,
-    height: animatedProfilePhotoHeight,
+  const dynamicProfileButtonStyle = {
+    width: animatedProfileButtonWidth,
+    height: animatedProfileButtonHeight,
   };
 
   const dynamicContainerStyle = {
@@ -74,21 +77,25 @@ const FloatingMenuButton: React.FC<Props> = ({
     right: rightPosition,
     padding: animatedPadding,
     backgroundColor: Colors.light.highlightBackgroun_1,
-    borderRadius: buttonSize / 2,
+    borderRadius: closedSize / 2,
     width: animatedMenuWidth,
     height: animatedMenuHeight,
   };
 
   const dynamicMainContentStyle = {
     height: animatedMainContentHeight,
-    borderRadius: buttonSize,
-    padding: animatedPadding
+    padding: animatedPadding,
+    gap: animatedGap
   }
 
-  const dynamicContainerHeaderStyle = {
-    width: animatedHeaderWidth,
-    height: animatedHeaderHeight,
+  const dynamicButtonCloseStyle = {
+    width: animatedButtonCloseWidth,
+    height: animatedButtonCloseHeight,
   }
+
+  useEffect(() => {
+    if (collapseMenu) { animateMenu(false) }
+  }, [collapseMenu]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -141,16 +148,17 @@ const FloatingMenuButton: React.FC<Props> = ({
 
   const animateMenu = (open: boolean) => {
     const targetValues = {
-      MENU_WIDTH: open ? menuWidth : buttonSize,
-      MENU_HEIGHT: open ? menuHeight : buttonSize,
-      MAIN_CONTENT_WIDTH: open ? menuWidth - 20 : buttonSize,
-      MAIN_CONTENT_HEIGHT: open ? 350 : buttonSize,
+      MENU_WIDTH: open ? menuWidth : closedSize,
+      MENU_HEIGHT: open ? menuHeight : closedSize,
+      GAP: open ? 30 : 0,
+      MAIN_CONTENT_WIDTH: open ? menuWidth - 20 : closedSize,
+      MAIN_CONTENT_HEIGHT: open ? 340 : closedSize,
       PADDING: open ? 10 : 0,
-      PROFILE_PHOTO_WIDTH: open ? 200 : buttonSize,
-      PROFILE_PHOTO_HEIGHT: open ? 200 : buttonSize,
+      PROFILE_BUTTON_WIDTH: open ? 160 : closedSize,
+      PROFILE_BUTTON_HEIGHT: open ? 160 : closedSize,
       ICON_SCALE: open ? 5 : smallIconSize,
-      HEADER_WIDTH: open ? menuWidth - 40 : 0,
-      HEADER_HEIGHT: open ? 80 : 0,
+      BUTTON_CLOSE_WIDTH: open ? 50 : 0,
+      BUTTON_CLOSE_HEIGHT: open ? 50 : 0,
       OPACITY: open ? 1 : 0,
     };
 
@@ -170,6 +178,11 @@ const FloatingMenuButton: React.FC<Props> = ({
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
+      Animated.timing(animatedGap, {
+        toValue: targetValues.GAP,
+        duration: durationValues.EXPAND,
+        useNativeDriver: false,
+      }),
       Animated.timing(animatedContainerUserWidth, {
         toValue: targetValues.MAIN_CONTENT_WIDTH,
         duration: durationValues.EXPAND,
@@ -180,13 +193,13 @@ const FloatingMenuButton: React.FC<Props> = ({
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
-      Animated.timing(animatedProfilePhotoWidth, {
-        toValue: targetValues.PROFILE_PHOTO_WIDTH,
+      Animated.timing(animatedProfileButtonWidth, {
+        toValue: targetValues.PROFILE_BUTTON_WIDTH,
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
-      Animated.timing(animatedProfilePhotoHeight, {
-        toValue: targetValues.PROFILE_PHOTO_HEIGHT,
+      Animated.timing(animatedProfileButtonHeight, {
+        toValue: targetValues.PROFILE_BUTTON_HEIGHT,
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
@@ -195,13 +208,13 @@ const FloatingMenuButton: React.FC<Props> = ({
         duration: durationValues.EXPAND,
         useNativeDriver: true,
       }),
-      Animated.timing(animatedHeaderWidth, {
-        toValue: targetValues.HEADER_WIDTH,
+      Animated.timing(animatedButtonCloseWidth, {
+        toValue: targetValues.BUTTON_CLOSE_WIDTH,
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
-      Animated.timing(animatedHeaderHeight, {
-        toValue: targetValues.HEADER_HEIGHT,
+      Animated.timing(animatedButtonCloseHeight, {
+        toValue: targetValues.BUTTON_CLOSE_HEIGHT,
         duration: durationValues.EXPAND,
         useNativeDriver: false,
       }),
@@ -226,10 +239,10 @@ const FloatingMenuButton: React.FC<Props> = ({
         styles.profilePhotoContent,
         { transform: [{ scale: animatedIconScale }] }
       ]}>
-        {!profilePhoto ? (
+        {profilePhoto ? (
           <Image
             source={{
-              //uri: profilePhoto
+              uri: profilePhoto
             }}
             style={{
               width: '100%',
@@ -245,10 +258,10 @@ const FloatingMenuButton: React.FC<Props> = ({
     );
   }
 
-  const ButtonContent = () => {
+  const ProfileButtonContent = () => {
     return (
       <AnimatedPressable onPress={openMenu}>
-        <Animated.View style={[styles.button, dynamicButtonStyle]}>
+        <Animated.View style={[styles.button, dynamicProfileButtonStyle]}>
           <ProfilePhotoContent />
         </Animated.View>
       </AnimatedPressable>
@@ -257,15 +270,20 @@ const FloatingMenuButton: React.FC<Props> = ({
 
   const ButtonClose = () => {
     return (
-      <Pressable
-        style={styles.buttonClose}
+      <AnimatedPressable
+        style={[
+          styles.buttonClose,
+          dynamicButtonCloseStyle,
+          { opacity: contentOpacity }
+        ]}
         onPress={closeMenu}>
         <MaterialIcons
+          style={{ top: 10 }}
           name={'close'}
           size={28}
           color={'white'}
         />
-      </Pressable>
+      </AnimatedPressable>
     );
   };
 
@@ -280,7 +298,7 @@ const FloatingMenuButton: React.FC<Props> = ({
           opacity: contentOpacity
         }}
       >
-        {buttonLabel}
+        {title}
       </Animated.Text>
     );
   }
@@ -292,8 +310,8 @@ const FloatingMenuButton: React.FC<Props> = ({
           styles.mainContent,
           dynamicMainContentStyle
         ]}>
-        <HeaderContent />
-        <ButtonContent />
+        <ButtonClose />
+        <ProfileButtonContent />
         <UserNameContent />
       </Animated.View>
     );
@@ -310,18 +328,6 @@ const FloatingMenuButton: React.FC<Props> = ({
           />
         )}
         {children}
-      </Animated.View>
-    );
-  }
-
-  const HeaderContent = () => {
-    return (
-      <Animated.View style={[
-        styles.containerHeader,
-        dynamicContainerHeaderStyle,
-        { opacity: contentOpacity }
-      ]}>
-        <ButtonClose />
       </Animated.View>
     );
   }
@@ -346,22 +352,11 @@ const styles = StyleSheet.create({
     zIndex: 100,
     gap: 10,
   },
-  containerHeader: {
-    backgroundColor: 'transparent',
-    alignSelf: 'center',
-    borderRadius: 999,
-  },
   button: {
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 6,
     backgroundColor: 'transparent'
-  },
-  contentContainer: {
-    width: '100%',
-    paddingHorizontal: 16,
-    flexShrink: 1,
-    flexWrap: 'nowrap',
   },
   mainContent: {
     backgroundColor: 'transparent',
@@ -373,11 +368,9 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   buttonClose: {
-    padding: 15,
+    alignItems: 'center',
     alignSelf: 'flex-end',
     backgroundColor: 'transparent',
-    margin: 10,
-    borderRadius: 20
   }
 });
 

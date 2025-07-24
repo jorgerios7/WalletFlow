@@ -96,7 +96,7 @@ const ProfilePhotoUploader: React.FC<Props> = ({ onDismiss }) => {
 
           <CustomButton
             text={uploading ? 'Enviando...' : 'Selecionar nova foto de perfil'}
-            onPress={pickImage}
+            onPress={() => !uploading ? pickImage() : null}
           />
 
           <TextButton
