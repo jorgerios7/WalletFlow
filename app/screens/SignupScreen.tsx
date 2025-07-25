@@ -56,55 +56,49 @@ const SignupScreen: React.FC<Props> = ({
         whenIsReady(inputValue);
     }
 
-        return (
-            <View>
-                <DynamicLabelInput
-                    label="Primeiro nome"
-                    value={values.FirstName}
-                    onTextChange={(text) => setInputValue(prev => ({ ...prev, FirstName: text }))}
-                />
-                <DynamicLabelInput
-                    label="Sobrenome"
-                    value={values.Surname}
-                    onTextChange={(text) => setInputValue(prev => ({ ...prev, Surname: text }))}
-                />
-                <DynamicLabelInput
-                    label="E-mail"
-                    value={values.Email}
-                    onTextChange={(text) => setInputValue(prev => ({ ...prev, Email: text }))}
-                />
-                <DynamicLabelInput
-                    label="Data de Nascimento"
-                    value={values.BirthDate}
-                    onTextChange={(text) => setInputValue(prev => ({ ...prev, BirthDate: text }))}
-                />
-                <DynamicLabelInput
-                    label="Senha"
-                    value={values.Password}
-                    secureTextEntry
-                    onTextChange={(text) => setInputValue(prev => ({ ...prev, Password: text }))}
-                />
-                <DynamicLabelInput
-                    label="Repetir senha"
-                    value={values.PasswordRepeat}
-                    secureTextEntry
-                    onTextChange={(text) => setInputValue(prev => ({ ...prev, PasswordRepeat: text }))}
-                />
+    return (
+        <View style={{ gap: 10 }}>
+            <DynamicLabelInput
+                label="Primeiro nome"
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, FirstName: text }))}
+            />
+            <DynamicLabelInput
+                label="Sobrenome"
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, Surname: text }))}
+            />
+            <DynamicLabelInput
+                label="E-mail"
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, Email: text }))}
+            />
+            <DynamicLabelInput
+                label="Data de Nascimento"
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, BirthDate: text }))}
+            />
+            <DynamicLabelInput
+                label="Senha"
+                secureTextEntry
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, Password: text }))}
+            />
+            <DynamicLabelInput
+                label="Repetir senha"
+                secureTextEntry
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, PasswordRepeat: text }))}
+            />
 
-                <CustomButton
-                    text="Criar conta"
-                    onPress={validateData}
-                />
+            <CustomButton
+                text="Criar conta"
+                onPress={validateData}
+            />
 
-                <TextButton
-                    onPress={onPressingReturnButton}
-                    text="Voltar"
-                    adjustPadding={15}
-                    adjustMargin={15}
-                />
+            <TextButton
+                onPress={onPressingReturnButton}
+                text="Voltar"
+                adjustPadding={15}
+                adjustMargin={15}
+            />
 
-            </View>
-        );
-    };
+        </View>
+    );
+};
 
-    export default SignupScreen;
+export default SignupScreen;

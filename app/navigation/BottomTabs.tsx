@@ -1,10 +1,9 @@
-import CustomButton from '@/components/ui/CustomButton';
+import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import TabButton from '@/components/ui/TabButton';
-import TextButton from '@/components/ui/TextButton';
 import { Colors } from '@/constants/Colors';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useState } from 'react';
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddScreen from '../screens/AddScreens';
 import AnalysisScreen from '../screens/AnalysisScreen';
@@ -19,7 +18,7 @@ const Tab = createBottomTabNavigator();
 
 const BottomTabs: React.FC<Props> = ({ userData, homeData }) => {
   const insets = useSafeAreaInsets();
-  const [logoutVisible, setLogoutVisible] = useState(false);
+  const [confirmationScreenVisibility, setConfirmationScreenVisibility] = useState(false);
 
   const ProfileWrapper = () => (
     <ProfileScreen
@@ -30,11 +29,11 @@ const BottomTabs: React.FC<Props> = ({ userData, homeData }) => {
   );
 
   const handleLogout = () => {
-    setLogoutVisible(true);
+    setConfirmationScreenVisibility(true);
   };
 
   const confirmLogout = () => {
-    setLogoutVisible(false);
+    setConfirmationScreenVisibility(false);
     console.log('Usuário deslogado!');
     // Aqui você pode colocar o signOut do Firebase ou outra lógica
   };
@@ -42,17 +41,12 @@ const BottomTabs: React.FC<Props> = ({ userData, homeData }) => {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
 
-      <Modal visible={logoutVisible} animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={{ color: 'black', fontSize: 16, textAlign: 'center', fontWeight: 'bold' }}>
-              Deseja realmente sair?
-            </Text>
-            <CustomButton text={'Sim'} onPress={confirmLogout} />
-            <TextButton text={'Cancelar'} onPress={() => setLogoutVisible(false)} />
-          </View>
-        </View>
-      </Modal>
+      <ConfirmationScreen
+        isVisible={confirmationScreenVisibility}
+        message={'Deseja realmente sair?'}
+        onConfirm={confirmLogout}
+        onCancel={() => setConfirmationScreenVisibility(false)}
+      />
 
       <Tab.Navigator
         screenOptions={{

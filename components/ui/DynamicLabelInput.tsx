@@ -6,7 +6,6 @@ import { Animated, StyleSheet, TextInput, TouchableOpacity, View } from "react-n
 interface LabelProps {
     label: string;
     secureTextEntry?: boolean;
-    value: string;
     onTextChange?: (text: string) => void;
 }
 
@@ -74,7 +73,6 @@ export default function DynamicLabelInput({ label, secureTextEntry, onTextChange
 const styles = StyleSheet.create({
     container: {
         position: 'relative',
-        marginBottom: 16,
     },
     label: {
         position: 'absolute',

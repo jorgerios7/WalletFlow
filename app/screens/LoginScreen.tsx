@@ -22,15 +22,13 @@ const LoginScreen: React.FC<Props> = ({
     if (!shouldRender) return null;
 
     return (
-        <View>
+        <View style={{ gap: 10 }}>
             <DynamicLabelInput
                 label="Email"
-                value={values.Email}
                 onTextChange={(text) => onChange("Email", text)}
             />
             <DynamicLabelInput
                 label="Senha"
-                value={values.Password}
                 secureTextEntry
                 onTextChange={(text) => onChange("Password", text)}
             />
