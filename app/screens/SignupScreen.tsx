@@ -23,7 +23,6 @@ interface Props {
 }
 
 const SignupScreen: React.FC<Props> = ({
-    values,
     onPressingReturnButton,
     shouldRender = true,
     whenIsReady,

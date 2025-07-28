@@ -34,7 +34,10 @@ export default function AppMain() {
           createdBy: uid,
           createdAt: new Date().toISOString(),
           members: {
-            [uid]: 'owner',
+            [uid]: {
+              'name': `${userData?.identification.name} ${userData?.identification.surname}`,
+              'type': 'owner'
+            }
           },
         });
 
@@ -48,13 +51,16 @@ export default function AppMain() {
 
         await setDoc(doc(db, "homes", data.Id_Home), {
           members: {
-            [uid]: 'member'
+            [uid]: {
+              'name': `${userData?.identification.name} ${userData?.identification.surname}`,
+              'type': 'member'
+            }
           }
         }, { merge: true });
       }
     } catch (error) {
 
-      console.error("(Index.tsx) Erro ao criar ou vincular ID_Home:", error);
+      console.error("(Index.tsx) Erro:", error);
       setErrorMessage("Erro ao configurar a Home.");
       setIsSnackbarVisible(true);
     } finally {

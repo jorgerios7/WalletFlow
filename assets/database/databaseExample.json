@@ -36,22 +36,25 @@
       }
     }
   },
-
   "publicHomes": {
     "n1EUTJbnyA5CijICUVFm": {}
   },
-
   "homes": {
     "n1EUTJbnyA5CijICUVFm": {
       "name": "Casa dos Rios",
       "createdBy": "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73",
       "members": {
-        "jFdtYoBE8aQ4rubZ8ScngdyiJ73": "member",
-        "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73": "owner"
+        "jFdtYoBE8aQ4rubZ8ScngdyiJ73": {
+          "name": "Maria Pereira da Silva",
+          "type": "member"
+        },
+        "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73": {
+          "name": "Jorge Rios", 
+          "type": "owner"
+        }
       }
     }
   },
-
   "homes/n1EUTJbnyA5CijICUVFm/transactions": {
     "vCAxjSkdB7zcq1rJw6up": {
       "category": "Salário Mensal",
@@ -84,7 +87,6 @@
       "totalValue": 125889
     }
   },
-
   "homes/n1EUTJbnyA5CijICUVFm/installments": {
     "sdapcje9fwefwoef": {
       "title": "Compra de celular",
@@ -99,7 +101,6 @@
       "totalValue": 116531
     }
   },
-
   "homes/n1EUTJbnyA5CijICUVFm/installments/sdapcje9fwefwoef/parcels": {
     "installment_1": {
       "currentInstallment": 1,

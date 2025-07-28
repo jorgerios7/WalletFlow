@@ -6,11 +6,9 @@ import MenuButton from '@/components/ui/MenuButton';
 import PersonalDataChange, { Function } from '@/components/ui/PersonalDataChange'; // Corrigido nome do enum
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { doc, getDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { db } from '../config/firebaseConfig';
 import { Home } from '../types/Home';
 
 interface Props {
@@ -69,39 +67,11 @@ export default function ProfileScreen({ user, home, onLogout }: Props) {
         );
     }
 
-    const fetchHomedata = async () => {
-        try {
-            const homeRef = doc(db, "homes", user.homeId);
-            const homeDoc = await getDoc(homeRef);
-
-            if (homeDoc.exists()) {
-                const homeData = homeDoc.data();
-                const memberIds: string[] = homeData.members; // assume que members é um array de UIDs
-                console.log("Membros:", memberIds);
-                return memberIds;
-            } else {
-                console.warn("Documento da casa não encontrado.");
-                return [];
-            }
-
-        } catch (error) {
-            console.error("Erro ao buscar dados da casa:", error);
-            return [];
-        }
-    };
-
     const menuItems = [
         { text: 'Editar nome', action: Function.ChangeName },
         { text: 'Alterar email', action: Function.ChangeEmail },
         { text: 'Mudar senha', action: Function.ChangePassword },
     ];
-
-    const members = [
-        { name: 'Evelin Rios', type: 'adm' },
-        { name: 'Kauana Rios', type: 'member' },
-        { name: 'Ragnar Rios', type: 'member' },
-        { name: 'Jorge Rios', type: 'member' }
-    ]
 
     return (
         <View
