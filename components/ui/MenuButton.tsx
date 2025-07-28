@@ -6,7 +6,7 @@ const MenuButton: React.FC<{
     onPress: () => void,
     text: string,
     iconName?: keyof typeof MaterialIcons.glyphMap;
-    isHighlightText: boolean;
+    isHighlightText?: boolean;
     fontSize: number,
     iconSize?: number,
     borderBottomColor?: string

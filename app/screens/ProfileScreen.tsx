@@ -1,13 +1,16 @@
 import { User } from '@/app/types/User';
 import FloatingMenuButton from '@/components/ui/FloatingMenuButton';
 import Header from '@/components/ui/Header';
+import HouseInformationScreen from '@/components/ui/HomeInformationScreen';
 import MenuButton from '@/components/ui/MenuButton';
 import PersonalDataChange, { Function } from '@/components/ui/PersonalDataChange'; // Corrigido nome do enum
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
+import { doc, getDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { db } from '../config/firebaseConfig';
 import { Home } from '../types/Home';
 
 interface Props {
@@ -47,7 +50,7 @@ export default function ProfileScreen({ user, home, onLogout }: Props) {
                     gap: 20,
                     backgroundColor: Colors.light.border,
                     flexDirection: 'row',
-                    padding: 10, 
+                    padding: 10,
                     borderBottomColor: Colors.light.highlightBackgroun_1,
                     borderBottomWidth: 0.5,
 
@@ -66,7 +69,39 @@ export default function ProfileScreen({ user, home, onLogout }: Props) {
         );
     }
 
+    const fetchHomedata = async () => {
+        try {
+            const homeRef = doc(db, "homes", user.homeId);
+            const homeDoc = await getDoc(homeRef);
 
+            if (homeDoc.exists()) {
+                const homeData = homeDoc.data();
+                const memberIds: string[] = homeData.members; // assume que members é um array de UIDs
+                console.log("Membros:", memberIds);
+                return memberIds;
+            } else {
+                console.warn("Documento da casa não encontrado.");
+                return [];
+            }
+
+        } catch (error) {
+            console.error("Erro ao buscar dados da casa:", error);
+            return [];
+        }
+    };
+
+    const menuItems = [
+        { text: 'Editar nome', action: Function.ChangeName },
+        { text: 'Alterar email', action: Function.ChangeEmail },
+        { text: 'Mudar senha', action: Function.ChangePassword },
+    ];
+
+    const members = [
+        { name: 'Evelin Rios', type: 'adm' },
+        { name: 'Kauana Rios', type: 'member' },
+        { name: 'Ragnar Rios', type: 'member' },
+        { name: 'Jorge Rios', type: 'member' }
+    ]
 
     return (
         <View
@@ -99,44 +134,23 @@ export default function ProfileScreen({ user, home, onLogout }: Props) {
                 collapseMenu={collapseMenu}
             >
                 <View style={{ width: '100%', gap: 5 }}>
-                    <MenuButton
-                        onPress={() => {
-                            setEditField(Function.ChangeName);
-                            setIsDataChange(true);
-                        }}
-                        text="Editar nome"
-                        iconName="arrow-right"
-                        isHighlightText={false}
-                        fontSize={14}
-                    />
-
-                    <MenuButton
-                        onPress={() => {
-                            setEditField(Function.ChangeEmail);
-                            setIsDataChange(true);
-                        }}
-                        text="Alterar email"
-                        iconName="arrow-right"
-                        isHighlightText={false}
-                        fontSize={14}
-                    />
-
-                    <MenuButton
-                        onPress={() => {
-                            setEditField(Function.ChangePassword);
-                            setIsDataChange(true);
-                        }}
-                        text="Mudar senha"
-                        iconName="arrow-right"
-                        isHighlightText={false}
-                        fontSize={14}
-                    />
+                    {menuItems.map((item, index) => (
+                        <MenuButton
+                            key={index}
+                            onPress={() => {
+                                setEditField(item.action);
+                                setIsDataChange(true);
+                            }}
+                            text={item.text}
+                            iconName='arrow-right'
+                            fontSize={14}
+                        />
+                    ))}
 
                     <MenuButton
                         onPress={() => onClose(true)}
                         text="Sair"
                         iconName="exit-to-app"
-                        isHighlightText={false}
                         iconSize={24}
                         fontSize={14}
                     />
@@ -144,7 +158,7 @@ export default function ProfileScreen({ user, home, onLogout }: Props) {
                     <MenuButton
                         onPress={() => onClose(true)}
                         text="Excluir conta"
-                        isHighlightText={true}
+                        isHighlightText
                         fontSize={14}
                         borderBottomColor="transparent"
                     />
@@ -162,34 +176,20 @@ export default function ProfileScreen({ user, home, onLogout }: Props) {
 
             <View style={{ gap: 10 }}>
 
+                <HouseInformationScreen
+                    createdAt={home.createdAt}
+                    createdBy={home.createdBy}
+                    homeName={home.name}
+                    memberList={home.members}
+                />
 
-                <Text style={{ fontSize: 18, fontWeight: 'bold', alignSelf: 'center' }}>
-                    Informações da Casa
-                </Text>
-
-                <Text>Nome: {home.name}</Text>
-                <Text>Membros</Text>
-
-                <View style={{ gap: 10, flexDirection: 'row' }}>
-                    <Text>Nome: Evelin Rios</Text>
-                    <Text>Administrador</Text>
-                </View>
-
-                <View style={{ width: '100%', height: 0.5, backgroundColor: 'black', marginVertical: 10}}/>
+                <View style={{ width: '100%', height: 0.5, backgroundColor: 'black', marginVertical: 10 }} />
 
                 <ItemMenu2
                     name={'Configuraçõs'}
                     iconName={'settings'}
                     onPress={() => console.log('item pressed!')}
                 />
-
-                <ItemMenu2
-                    name={'Aparência'}
-                    iconName={'style'}
-                    onPress={() => console.log('item pressed!')}
-                />
-
-                <View style={{ width: '100%', height: 0.5, backgroundColor: 'black', marginVertical: 10}}/>
 
                 <ItemMenu2
                     name={'Ajuda'}

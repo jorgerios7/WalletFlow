@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Image,
-  PanResponder,
   Pressable,
   StyleSheet
 } from 'react-native';
@@ -58,8 +57,6 @@ const FloatingMenuButton: React.FC<Props> = ({
   const animatedPadding = useRef(new Animated.Value(0)).current;
   const animatedBackground = useRef(new Animated.Value(0)).current;
 
-  const panY = useRef(new Animated.Value(0)).current;
-
   const [showUploader, setShowUploader] = useState(false);
 
   const contentOpacity = animatedBackground.interpolate({
@@ -76,7 +73,6 @@ const FloatingMenuButton: React.FC<Props> = ({
     top: topPosition,
     right: rightPosition,
     padding: animatedPadding,
-    backgroundColor: Colors.light.highlightBackgroun_1,
     borderRadius: closedSize / 2,
     width: animatedMenuWidth,
     height: animatedMenuHeight,
@@ -96,39 +92,6 @@ const FloatingMenuButton: React.FC<Props> = ({
   useEffect(() => {
     if (collapseMenu) { animateMenu(false) }
   }, [collapseMenu]);
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => expanded,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Só ativa se for um movimento vertical para cima
-        return gestureState.dy < -5 && Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
-      },
-      onPanResponderMove: Animated.event(
-        [null, { dy: panY }],
-        { useNativeDriver: false }
-      ),
-      onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dy < -50 && gestureState.vy < -0.5) {
-          // Se o gesto foi rápido o suficiente para cima
-          Animated.timing(panY, {
-            toValue: -100,
-            duration: 150,
-            useNativeDriver: true,
-          }).start(() => {
-            animateMenu(false);
-            panY.setValue(0);
-          });
-        } else {
-          // Retorna à posição original
-          Animated.spring(panY, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-        }
-      },
-    })
-  ).current;
 
   const openMenu = () => {
     if (expanded) {
@@ -327,15 +290,15 @@ const FloatingMenuButton: React.FC<Props> = ({
             onDismiss={() => setShowUploader(false)}
           />
         )}
-        {children}
+        {expanded && (children)}
       </Animated.View>
     );
   }
 
   const MenuContent = () => {
     return (
-      <Animated.View style={[styles.container, dynamicContainerStyle]}
-        {...panResponder.panHandlers}
+      <Animated.View
+        style={[styles.container, dynamicContainerStyle]}
       >
         <MainContent />
         <ChildrenContent />
@@ -348,6 +311,7 @@ const FloatingMenuButton: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: Colors.light.highlightBackgroun_1,
     position: 'absolute',
     zIndex: 100,
     gap: 10,

@@ -4,4 +4,5 @@ export interface Home {
   name: string;
   createdBy: string;
   members: Record<string, MemberRole>;
+  createdAt: string;
 }
