@@ -33,8 +33,15 @@ export default function TextButton({
         color: textColor ? textColor : Colors.light.highlightBackgroun_1
     };
 
+    const dynamicAdjust = {
+        padding: adjustPadding ? adjustPadding : 15,
+        margin: adjustMargin ? adjustMargin : 0
+    };
+
     return (
-        <Pressable style={[styles.button, { padding: adjustPadding, margin: adjustMargin }]} onPress={onPress}>
+        <Pressable
+            style={[styles.button, dynamicAdjust]}
+            onPress={onPress}>
             <Text style={[styles.text, dynamicTextColor]}>
                 {text}
             </Text>

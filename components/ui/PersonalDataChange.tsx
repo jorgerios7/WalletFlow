@@ -47,10 +47,10 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
         if (!user) return;
 
         try {
-            // Reautenticar se necessário
+           
             const credential = EmailAuthProvider.credential(
-                user.email || input1, // email atual
-                input3 // senha atual (necessária para email e senha)
+                user.email || input1,
+                input3 
             );
 
             if (editField === Function.ChangeEmail || editField === Function.ChangePassword) {

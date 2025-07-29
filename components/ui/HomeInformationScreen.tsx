@@ -1,6 +1,11 @@
+import { auth } from "@/app/config/firebaseConfig";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import CustomButton from "./CustomButton";
+import RadioButton from "./RadioButton";
+import TextButton from "./TextButton";
 
 interface FirestoreMemberMap {
   [userId: string]: {
@@ -27,6 +32,13 @@ export default function HouseInformationScreen({
   memberList: FirestoreMemberMap;
 }) {
 
+  const user = auth.currentUser;
+
+  if (!user) return null;
+
+  const [menuItemVisibility, setMenuItemVisibility] = useState(false);
+  const [menuItemData, setMenuItemData] = useState({ id: '', name: '' });
+
   const parsedMembers: MemberItem[] = Object.entries(memberList).map(
     ([id, data]) => ({
       id,
@@ -37,14 +49,14 @@ export default function HouseInformationScreen({
 
   const Item: React.FC<{
     member: MemberItem;
-    onPress: (id: string, role: string) => void;
+    onPress: (id: string, name: string) => void;
   }> = ({ member, onPress }) => {
     return (
-      <Pressable
+      <View
         style={styles.container}
       >
         <View style={styles.content}>
-          <View style={{ gap: 10, flexDirection: "row" }}>
+          <View style={{ gap: 10, flexDirection: "row", marginStart: 10 }}>
             <Text
               style={{
                 alignSelf: "center",
@@ -55,16 +67,18 @@ export default function HouseInformationScreen({
             </Text>
 
             {member.role === "owner" && (
-              <MaterialIcons
-                name="people"
-                size={20}
-                color={Colors.light.background}
-              />
+              <View style={{ alignSelf: 'center' }}>
+                <MaterialIcons
+                  name="people"
+                  size={20}
+                  color={Colors.light.background}
+                />
+              </View>
             )}
           </View>
           <Pressable
-            style={{ alignSelf: 'center' }}
-            onPress={() => onPress(member.id, member.role)}
+            style={{ alignSelf: 'center', padding: 10, borderRadius: 20 }}
+            onPress={() => onPress(member.id, member.name)}
           >
             <MaterialIcons
               name="more-vert"
@@ -73,7 +87,7 @@ export default function HouseInformationScreen({
             />
           </Pressable>
         </View>
-      </Pressable>
+      </View>
     );
   };
 
@@ -95,7 +109,10 @@ export default function HouseInformationScreen({
           <Item
             key={member.id}
             member={member}
-            onPress={(id, role) => console.log('id: ', id, ' role: ', role )}
+            onPress={(id, name) => {
+              setMenuItemData(prev => ({ ...prev, id: id, name: name }));
+              setMenuItemVisibility(true);
+            }}
           />
         ))}
       </View>
@@ -106,7 +123,7 @@ export default function HouseInformationScreen({
     const dateFull = createdAt.split("T")[0];
     const part = dateFull.split("-");
     const day = part[2];
-    const monthNumber = parseInt(part[1], 10); // transforma em número
+    const monthNumber = parseInt(part[1], 10);
     const year = part[0];
 
     const monthNames = [
@@ -127,11 +144,86 @@ export default function HouseInformationScreen({
     return creator?.name ?? "Desconhecido";
   }
 
+  function renderUserRole() {
+    if (!parsedMembers || parsedMembers.length === 0 || !user?.uid) return 'member';
+
+    const role = parsedMembers.find(
+      member => member.id.trim() === user.uid.trim()
+    );
+
+    return role?.role ?? 'member';
+  }
+
+
+  function MenuItem({
+    visibility,
+    onCancel,
+    selectedItem,
+    role
+  }: {
+    visibility: boolean;
+    onCancel: () => void;
+    role: string;
+    selectedItem: {
+      id: string;
+      name: string;
+    };
+  }) {
+    type Option = {
+      label: string;
+      value: string;
+    };
+
+    const options: Option[] = [
+      { label: "Promovê-lo a administrador", value: "promote" },
+      { label: "Excluir usuário", value: "delete" },
+    ];
+
+
+    return (
+      <Modal visible={visibility} animationType="fade" transparent>
+        <View style={styles.overlay}>
+          <View style={styles.menuItemContent}>
+            {role !== 'owner' ? (
+              <Text style={{ alignSelf: 'center' }}>
+                Você ainda não tem permissões para administrar outros usuários!
+              </Text>
+            ) : (
+              <>
+                <Text style={styles.title}>
+                  {selectedItem.name}
+                </Text>
+                <RadioButton
+                  options={options}
+                  onSelecting={(option) => console.log('selected option: ', option)}
+                />
+              </>
+            )}
+
+
+            {role === 'owner' && (
+              <CustomButton text="Confirmar" />
+            )}
+            <TextButton
+              text={role !== 'owner' ? ('Ok') : ('Cancel')}
+              onPress={onCancel} />
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
   return (
     <View style={{ padding: 10, gap: 10 }}>
       <Text style={styles.title}>Home {homeName}</Text>
       <Text>Criado por {nameCreator()} em {renderDate(createdAt)}</Text>
       <RecyclerItem />
+      <MenuItem
+        visibility={menuItemVisibility}
+        role={renderUserRole()}
+        selectedItem={menuItemData}
+        onCancel={() => setMenuItemVisibility(false)}
+      />
     </View>
   );
 }
@@ -154,7 +246,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 10
+
   },
   title: {
     fontSize: 18,
@@ -173,5 +265,19 @@ const styles = StyleSheet.create({
   RecyclerItemHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "#00000088",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  menuItemContent: {
+    width: "90%",
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 12,
+    gap: 20,
+    elevation: 4,
   },
 });
