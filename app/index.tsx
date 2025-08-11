@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Snackbar } from "react-native-paper";
 import { db } from "./config/firebaseConfig";
@@ -7,6 +7,8 @@ import BottomTabs from "./navigation/BottomTabs";
 import UserAccessScreen from "./pages/auth/UserAccessScreen";
 import SplashScreen from "./pages/SplashScreen";
 import HomeSetupScreen from "./screens/HomeSetupScreen";
+import { FetchHomeData } from "./services/firebase/HomeService";
+import { FetchUserData } from "./services/firebase/UserService";
 import { Home } from "./types/Home";
 import { User } from "./types/User";
 
@@ -65,11 +67,11 @@ export default function AppMain() {
       setIsSnackbarVisible(true);
     } finally {
 
-      fetchUserData();
+      fetchUserAndHomeData();
     }
   };
 
-  const fetchUserData = async () => {
+  const fetchUserAndHomeData = async () => {
     if (!uid) return;
 
     let user: User | null = null;
@@ -78,30 +80,37 @@ export default function AppMain() {
     setIsFetchingUser(true);
 
     try {
-      const userRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userRef);
 
-      if (userDoc.exists()) {
-        user = userDoc.data() as User;
+      user = await FetchUserData(uid);
 
-        if (!user.homeId || user.homeId.trim() === "") {
-
-          setIsShowHomeSetupScreen(true);
-        } else {
-
-          const homeRef = doc(db, "homes", user.homeId);
-          const homeDoc = await getDoc(homeRef);
-
-          if (homeDoc.exists()) {
-            home = homeDoc.data() as Home;
-
-            setIsShowHomeSetupScreen(false);
-          }
-        }
+      if (!user || !user.homeId) {
+        setIsShowHomeSetupScreen(true);
+      } else {
+        home = await FetchHomeData(user.homeId);
+        setIsShowHomeSetupScreen(false);
       }
+
+
+
+
+      //const userRef = doc(db, "users", uid);
+      //const userDoc = await getDoc(userRef);
+
+      //if (userDoc.exists()) {
+      //  user = userDoc.data() as User;
+
+      //  if (!user.homeId || user.homeId.trim() === "") {
+
+      //    setIsShowHomeSetupScreen(true);
+      //  } else {
+
+      //    home = await FetchHomeData(user.homeId);
+      //    setIsShowHomeSetupScreen(false);
+      //  }
+      //}
     } catch (error) {
 
-      console.error("(Index.tsx) Erro ao buscar dados do usuário:", error);
+      console.error("(Index.tsx) Erro ao buscar dados:", error);
     } finally {
 
       setUserData(user);
@@ -124,7 +133,7 @@ export default function AppMain() {
 
   useEffect(() => {
     if (uid) {
-      fetchUserData();
+      fetchUserAndHomeData();
     }
   }, [uid]);
 
