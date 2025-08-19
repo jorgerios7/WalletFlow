@@ -23,7 +23,6 @@ const BottomTabs: React.FC<Props> = ({ userData, homeData }) => {
   const ProfileWrapper = () => (
     <ProfileScreen
       user={userData}
-      home={homeData}
       onLogout={handleLogout}
     />
   );

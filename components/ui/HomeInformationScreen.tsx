@@ -1,16 +1,15 @@
 import { auth } from "@/app/config/firebaseConfig";
+import { DeleteMember, PromoteOrDemote } from "@/app/services/firebase/HomeService";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import CustomButton from "./CustomButton";
-import RadioButton from "./RadioButton";
-import TextButton from "./TextButton";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { MemberOptionMenu } from "./MemberOptionMenu";
 
 interface FirestoreMemberMap {
   [userId: string]: {
     name: string;
-    type: string;
+    role: string;
   };
 }
 
@@ -20,16 +19,22 @@ interface MemberItem {
   role: string;
 }
 
-export default function HouseInformationScreen({
+export default function HomeInformationScreen({
+  userId,
+  homeId,
   homeName,
   createdAt,
   createdBy,
   memberList,
+  update
 }: {
+  userId: string;
+  homeId: string;
   homeName: string;
   createdAt: string;
   createdBy: string;
   memberList: FirestoreMemberMap;
+  update: () => void
 }) {
 
   const user = auth.currentUser;
@@ -37,19 +42,20 @@ export default function HouseInformationScreen({
   if (!user) return null;
 
   const [menuItemVisibility, setMenuItemVisibility] = useState(false);
-  const [menuItemData, setMenuItemData] = useState({ id: '', name: '' });
+  const [menuItemData, setMenuItemData] = useState({ id: '', name: '', role: '' });
+  const [action, setAction] = useState({ promote: false, demote: false, delete: false });
 
   const parsedMembers: MemberItem[] = Object.entries(memberList).map(
     ([id, data]) => ({
       id,
       name: data.name,
-      role: data.type,
+      role: data.role,
     })
   );
 
   const Item: React.FC<{
     member: MemberItem;
-    onPress: (id: string, name: string) => void;
+    onPress: (id: string, name: string, role: string) => void;
   }> = ({ member, onPress }) => {
     return (
       <View
@@ -78,7 +84,7 @@ export default function HouseInformationScreen({
           </View>
           <Pressable
             style={{ alignSelf: 'center', padding: 10, borderRadius: 20 }}
-            onPress={() => onPress(member.id, member.name)}
+            onPress={() => onPress(member.id, member.name, member.role)}
           >
             <MaterialIcons
               name="more-vert"
@@ -109,8 +115,8 @@ export default function HouseInformationScreen({
           <Item
             key={member.id}
             member={member}
-            onPress={(id, name) => {
-              setMenuItemData(prev => ({ ...prev, id: id, name: name }));
+            onPress={(id, name, role) => {
+              setMenuItemData(prev => ({ ...prev, id: id, name: name, role: role }));
               setMenuItemVisibility(true);
             }}
           />
@@ -154,75 +160,30 @@ export default function HouseInformationScreen({
     return role?.role ?? 'member';
   }
 
-
-  function MenuItem({
-    visibility,
-    onCancel,
-    selectedItem,
-    role
-  }: {
-    visibility: boolean;
-    onCancel: () => void;
-    role: string;
-    selectedItem: {
-      id: string;
-      name: string;
-    };
-  }) {
-    type Option = {
-      label: string;
-      value: string;
-    };
-
-    const options: Option[] = [
-      { label: "Promovê-lo a administrador", value: "promote" },
-      { label: "Excluir usuário", value: "delete" },
-    ];
-
-
-    return (
-      <Modal visible={visibility} animationType="fade" transparent>
-        <View style={styles.overlay}>
-          <View style={styles.menuItemContent}>
-            {role !== 'owner' ? (
-              <Text style={{ alignSelf: 'center' }}>
-                Você ainda não tem permissões para administrar outros usuários!
-              </Text>
-            ) : (
-              <>
-                <Text style={styles.title}>
-                  {selectedItem.name}
-                </Text>
-                <RadioButton
-                  options={options}
-                  onSelecting={(option) => console.log('selected option: ', option)}
-                />
-              </>
-            )}
-
-
-            {role === 'owner' && (
-              <CustomButton text="Confirmar" />
-            )}
-            <TextButton
-              text={role !== 'owner' ? ('Ok') : ('Cancel')}
-              onPress={onCancel} />
-          </View>
-        </View>
-      </Modal>
-    );
-  }
-
   return (
     <View style={{ padding: 10, gap: 10 }}>
       <Text style={styles.title}>Home {homeName}</Text>
       <Text>Criado por {nameCreator()} em {renderDate(createdAt)}</Text>
       <RecyclerItem />
-      <MenuItem
-        visibility={menuItemVisibility}
+      <MemberOptionMenu
+        isStarted={menuItemVisibility}
         role={renderUserRole()}
         selectedItem={menuItemData}
         onCancel={() => setMenuItemVisibility(false)}
+        condition={'owner'}
+        currentUid={userId}
+        onConfirm={(variables) => {
+          console.log(variables);
+          if (variables.delete) {
+            DeleteMember(homeId, variables.member);
+          } else if (variables.promote) {
+            PromoteOrDemote(true, homeId, variables.member)
+          } else if (variables.demote) {
+            PromoteOrDemote(false, homeId, variables.member)
+          }
+
+          update();
+        }}
       />
     </View>
   );
@@ -265,19 +226,5 @@ const styles = StyleSheet.create({
   RecyclerItemHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: "#00000088",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  menuItemContent: {
-    width: "90%",
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 12,
-    gap: 20,
-    elevation: 4,
   },
 });

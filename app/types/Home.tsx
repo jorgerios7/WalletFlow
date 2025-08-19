@@ -2,7 +2,7 @@ export type MemberRole = 'owner' | 'member';
 
 export interface MemberData {
   name: string;
-  type: MemberRole
+  role: MemberRole
 } 
 
 export interface Home {

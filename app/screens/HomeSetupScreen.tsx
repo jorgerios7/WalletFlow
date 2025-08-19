@@ -83,7 +83,7 @@ const HomeSetupScreen: React.FC<Props> = ({
 
                                 <DynamicLabelInput
                                     label="Nome da casa"
-                                    value={values.Name}
+                                    //value={values.Name}
                                     onTextChange={(text) => setData({ id: '', name: text })}
                                 />
 
@@ -127,7 +127,7 @@ const HomeSetupScreen: React.FC<Props> = ({
 
                             <DynamicLabelInput
                                 label="ID da casa"
-                                value={values.Id_Home}
+                                //value={values.Id_Home}
                                 onTextChange={(text) => setData({ id: text, name: '' })}
                             />
 

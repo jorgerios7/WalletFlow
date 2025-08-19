@@ -1,29 +1,47 @@
 import { User } from '@/app/types/User';
 import FloatingMenuButton from '@/components/ui/FloatingMenuButton';
 import Header from '@/components/ui/Header';
-import HouseInformationScreen from '@/components/ui/HomeInformationScreen';
+import HomeInformationScreen from '@/components/ui/HomeInformationScreen';
 import MenuButton from '@/components/ui/MenuButton';
-import PersonalDataChange, { Function } from '@/components/ui/PersonalDataChange'; // Corrigido nome do enum
+import PersonalDataChange, { Function } from '@/components/ui/PersonalDataChange';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { getAuth } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FetchHomeData } from '../services/firebase/HomeService';
 import { Home } from '../types/Home';
 
 interface Props {
     user: User;
-    home: Home;
     onLogout: () => void;
 }
 
-export default function ProfileScreen({ user, home, onLogout }: Props) {
+export default function ProfileScreen({ user, onLogout }: Props) {
+
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) return;
+
+    const [update, setUpdate] = useState(false);
+
+    useEffect(() => { fetchData() }, [update]);
+
     const insets = useSafeAreaInsets();
     const { width, height } = useWindowDimensions();
-
     const [collapseMenu, setCollapseMenu] = useState(false);
     const [isDataChange, setIsDataChange] = useState(false);
     const [editField, setEditField] = useState<Function | null>(null);
+    const [homeData, setHomeData] = useState<Home | null>(null);
+
+    const fetchData = async () => {
+        if (!user?.homeId) return;
+        const data = await FetchHomeData(user.homeId);
+        setHomeData(data);
+        setUpdate(false);
+    };
 
     const onClose = (isLogout: boolean) => {
         setCollapseMenu(true);
@@ -110,6 +128,7 @@ export default function ProfileScreen({ user, home, onLogout }: Props) {
                             onPress={() => {
                                 setEditField(item.action);
                                 setIsDataChange(true);
+                                setUpdate(true);
                             }}
                             text={item.text}
                             iconName='arrow-right'
@@ -146,12 +165,17 @@ export default function ProfileScreen({ user, home, onLogout }: Props) {
 
             <View style={{ gap: 10 }}>
 
-                <HouseInformationScreen
-                    createdAt={home.createdAt}
-                    createdBy={home.createdBy}
-                    homeName={home.name}
-                    memberList={home.members}
-                />
+                {homeData && (
+                    <HomeInformationScreen
+                        createdAt={homeData.createdAt}
+                        createdBy={homeData.createdBy}
+                        userId={currentUser.uid}
+                        homeId={user.homeId}
+                        homeName={homeData.name}
+                        memberList={homeData.members}
+                        update={() => setUpdate(true)}
+                    />
+                )}
 
                 <View style={{ width: '100%', height: 0.5, backgroundColor: 'black', marginVertical: 10 }} />
 

@@ -38,7 +38,7 @@ export default function AppMain() {
           members: {
             [uid]: {
               'name': `${userData?.identification.name} ${userData?.identification.surname}`,
-              'type': 'owner'
+              'role': 'owner'
             }
           },
         });
@@ -55,7 +55,7 @@ export default function AppMain() {
           members: {
             [uid]: {
               'name': `${userData?.identification.name} ${userData?.identification.surname}`,
-              'type': 'member'
+              'role': 'member'
             }
           }
         }, { merge: true });
@@ -89,25 +89,6 @@ export default function AppMain() {
         home = await FetchHomeData(user.homeId);
         setIsShowHomeSetupScreen(false);
       }
-
-
-
-
-      //const userRef = doc(db, "users", uid);
-      //const userDoc = await getDoc(userRef);
-
-      //if (userDoc.exists()) {
-      //  user = userDoc.data() as User;
-
-      //  if (!user.homeId || user.homeId.trim() === "") {
-
-      //    setIsShowHomeSetupScreen(true);
-      //  } else {
-
-      //    home = await FetchHomeData(user.homeId);
-      //    setIsShowHomeSetupScreen(false);
-      //  }
-      //}
     } catch (error) {
 
       console.error("(Index.tsx) Erro ao buscar dados:", error);

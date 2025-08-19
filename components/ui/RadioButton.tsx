@@ -11,7 +11,12 @@ export default function RadioButton({
 }: {
     options: Option[], onSelecting: (option: string) => void
 }) {
-    const [selected, setSelected] = useState<string>("");
+    const [selectedButton, setSelectedButton] = useState<string>("");
+
+    function handleAction(value: string) {
+        setSelectedButton(value);
+        onSelecting(value);
+    }
 
     return (
         <View style={styles.container}>
@@ -19,13 +24,10 @@ export default function RadioButton({
                 <Pressable
                     key={option.value}
                     style={styles.radioContainer}
-                    onPress={() => {
-                        setSelected(option.value);
-                        onSelecting(option.value)
-                    }}
+                    onPress={() => handleAction(option.value)}
                 >
                     <View style={styles.radioCircle}>
-                        {selected === option.value && <View style={styles.selectedDot} />}
+                        {selectedButton === option.value && <View style={styles.selectedDot} />}
                     </View>
                     <Text>{option.label}</Text>
                 </Pressable>
