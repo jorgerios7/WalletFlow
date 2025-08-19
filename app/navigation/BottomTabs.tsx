@@ -9,14 +9,14 @@ import AddScreen from '../screens/AddScreens';
 import AnalysisScreen from '../screens/AnalysisScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TransactionScreen from '../screens/TransactionScreen';
-import { Home } from '../types/Home';
+import { Group } from '../types/Group';
 import { User } from '../types/User';
 
-interface Props { userData: User; homeData: Home }
+interface Props { userData: User; groupData: Group }
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabs: React.FC<Props> = ({ userData, homeData }) => {
+const BottomTabs: React.FC<Props> = ({ userData, groupData }) => {
   const insets = useSafeAreaInsets();
   const [confirmationScreenVisibility, setConfirmationScreenVisibility] = useState(false);
 

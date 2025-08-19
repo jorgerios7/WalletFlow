@@ -10,25 +10,25 @@ import { db } from "../config/firebaseConfig";
 
 interface Props {
     shouldRender: boolean;
-    values: { Id_Home: string, Name: string };
+    values: { groupId: string, Name: string };
     whenIsReady: (values: Partial<Props["values"]>) => void;
-    isCreateNewHome: (action: boolean) => void
+    isCreateNewGroup: (action: boolean) => void
     onPressingReturnButton: () => void;
     errorMessage: (message: string) => void;
 }
 
-const HomeSetupScreen: React.FC<Props> = ({
+const GroupSetupScreen: React.FC<Props> = ({
     shouldRender = true,
     values,
     whenIsReady,
-    isCreateNewHome,
+    isCreateNewGroup,
     onPressingReturnButton,
     errorMessage
 }) => {
     if (!shouldRender) return null;
 
     const [isQuestionScreen, setIsQuestionScreen] = useState(true);
-    const [isCreateHome, setCreateHome] = useState(false);
+    const [isCreateGroup, setCreateGroup] = useState(false);
     const [data, setData] = useState({ id: '', name: '' })
 
     const handleFieldCheck = (field: string) => {
@@ -40,17 +40,17 @@ const HomeSetupScreen: React.FC<Props> = ({
     }
 
     const handleCheckingIdExistence = async () => {
-        const homeId = data.id.trim();
+        const groupId = data.id.trim();
 
-        handleFieldCheck(homeId);
+        handleFieldCheck(groupId);
 
         try {
-            const docRef = doc(db, "publicHomes", homeId);
+            const docRef = doc(db, "publicGroups", groupId);
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
 
-                whenIsReady({ Id_Home: homeId, Name: '' });
+                whenIsReady({ groupId: groupId, Name: '' });
             } else {
 
                 errorMessage?.("ID não encontrado. ")
@@ -66,7 +66,7 @@ const HomeSetupScreen: React.FC<Props> = ({
 
         handleFieldCheck(name);
 
-        whenIsReady({ Id_Home: '', Name: data.name });
+        whenIsReady({ groupId: '', Name: data.name });
     };
 
     return (
@@ -76,13 +76,13 @@ const HomeSetupScreen: React.FC<Props> = ({
                     <View>
                         <View style={styles.container}>
                             <Text style={styles.title}>
-                                Configurar casa
+                                Configurar grupo
                             </Text>
 
                             <View>
 
                                 <DynamicLabelInput
-                                    label="Nome da casa"
+                                    label="Nome do grupo"
                                     //value={values.Name}
                                     onTextChange={(text) => setData({ id: '', name: text })}
                                 />
@@ -103,8 +103,8 @@ const HomeSetupScreen: React.FC<Props> = ({
                                     textColor={Colors.light.tint}
                                     onPress={() => {
                                         setIsQuestionScreen(false)
-                                        setCreateHome(false);
-                                        isCreateNewHome(false);
+                                        setCreateGroup(false);
+                                        isCreateNewGroup(false);
                                     }}
                                 />
                             </View>
@@ -114,19 +114,19 @@ const HomeSetupScreen: React.FC<Props> = ({
                                 adjustMargin={5}
                                 onPress={() => {
                                     onPressingReturnButton?.();
-                                    isCreateNewHome(true);
+                                    isCreateNewGroup(true);
                                     setData({ id: '', name: '' });
                                 }}
                             />
                         </View>
                     </View>
                 ) : (
-                    !isCreateHome && (
+                    !isCreateGroup && (
                         <View>
-                            <Text style={styles.title}> Configurar casa </Text>
+                            <Text style={styles.title}> Configurar grupo </Text>
 
                             <DynamicLabelInput
-                                label="ID da casa"
+                                label="ID do grupo"
                                 //value={values.Id_Home}
                                 onTextChange={(text) => setData({ id: text, name: '' })}
                             />
@@ -142,7 +142,7 @@ const HomeSetupScreen: React.FC<Props> = ({
                                 adjustPadding={15}
                                 onPress={() => {
                                     setIsQuestionScreen(true);
-                                    isCreateNewHome(true);
+                                    isCreateNewGroup(true);
                                     setData({ id: '', name: '' })
                                 }}
                             />
@@ -178,4 +178,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default HomeSetupScreen;
+export default GroupSetupScreen;

@@ -1,5 +1,5 @@
 import { auth } from "@/app/config/firebaseConfig";
-import { DeleteMember, PromoteOrDemote } from "@/app/services/firebase/HomeService";
+import { DeleteMember, PromoteOrDemote } from "@/app/services/firebase/GroupService";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -19,27 +19,27 @@ interface MemberItem {
   role: string;
 }
 
-export default function HomeInformationScreen({
+export default function GroupInformationScreen({
   userId,
-  homeId,
-  homeName,
+  groupId,
+  groupName,
   createdAt,
   createdBy,
   memberList,
   update
 }: {
   userId: string;
-  homeId: string;
-  homeName: string;
+  groupId: string;
+  groupName: string;
   createdAt: string;
   createdBy: string;
   memberList: FirestoreMemberMap;
   update: () => void
 }) {
 
-  const user = auth.currentUser;
+  const currentUser = auth.currentUser;
 
-  if (!user) return null;
+  if (!currentUser) return null;
 
   const [menuItemVisibility, setMenuItemVisibility] = useState(false);
   const [menuItemData, setMenuItemData] = useState({ id: '', name: '', role: '' });
@@ -53,7 +53,7 @@ export default function HomeInformationScreen({
     })
   );
 
-  const Item: React.FC<{
+  const MemberItem: React.FC<{
     member: MemberItem;
     onPress: (id: string, name: string, role: string) => void;
   }> = ({ member, onPress }) => {
@@ -62,7 +62,7 @@ export default function HomeInformationScreen({
         style={styles.container}
       >
         <View style={styles.content}>
-          <View style={{ gap: 10, flexDirection: "row", marginStart: 10 }}>
+          <View style={{ flexDirection: "row", marginStart: 10, gap: 5 }}>
             <Text
               style={{
                 alignSelf: "center",
@@ -72,8 +72,14 @@ export default function HomeInformationScreen({
               {member.name}
             </Text>
 
+            { currentUser.uid === member.id && (
+              <Text style={{ color: 'white', alignSelf: 'center' }}>
+                (você)
+              </Text>
+            )}
+
             {member.role === "owner" && (
-              <View style={{ alignSelf: 'center' }}>
+              <View style={{ alignSelf: 'center'}}>
                 <MaterialIcons
                   name="people"
                   size={20}
@@ -97,7 +103,7 @@ export default function HomeInformationScreen({
     );
   };
 
-  const RecyclerItem = () => {
+  const GroupMembersViewer = () => {
     return (
       <View style={styles.RecyclerItemContainer}>
         <View style={styles.RecyclerItemHeader}>
@@ -112,7 +118,7 @@ export default function HomeInformationScreen({
         </View>
 
         {parsedMembers.map((member) => (
-          <Item
+          <MemberItem
             key={member.id}
             member={member}
             onPress={(id, name, role) => {
@@ -151,10 +157,10 @@ export default function HomeInformationScreen({
   }
 
   function renderUserRole() {
-    if (!parsedMembers || parsedMembers.length === 0 || !user?.uid) return 'member';
+    if (!parsedMembers || parsedMembers.length === 0 || !currentUser?.uid) return 'member';
 
     const role = parsedMembers.find(
-      member => member.id.trim() === user.uid.trim()
+      member => member.id.trim() === currentUser.uid.trim()
     );
 
     return role?.role ?? 'member';
@@ -162,9 +168,9 @@ export default function HomeInformationScreen({
 
   return (
     <View style={{ padding: 10, gap: 10 }}>
-      <Text style={styles.title}>Home {homeName}</Text>
+      <Text style={styles.title}>{groupName}</Text>
       <Text>Criado por {nameCreator()} em {renderDate(createdAt)}</Text>
-      <RecyclerItem />
+      <GroupMembersViewer />
       <MemberOptionMenu
         isStarted={menuItemVisibility}
         role={renderUserRole()}
@@ -175,11 +181,11 @@ export default function HomeInformationScreen({
         onConfirm={(variables) => {
           console.log(variables);
           if (variables.delete) {
-            DeleteMember(homeId, variables.member);
+            DeleteMember(groupId, variables.member);
           } else if (variables.promote) {
-            PromoteOrDemote(true, homeId, variables.member)
+            PromoteOrDemote(true, groupId, variables.member)
           } else if (variables.demote) {
-            PromoteOrDemote(false, homeId, variables.member)
+            PromoteOrDemote(false, groupId, variables.member)
           }
 
           update();
@@ -207,7 +213,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     flexDirection: "row",
     justifyContent: "space-between",
-
   },
   title: {
     fontSize: 18,

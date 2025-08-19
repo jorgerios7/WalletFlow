@@ -16,7 +16,7 @@ type TransactionScreenRouteProp = RouteProp<{ Transactions: { user: User } }, 'T
 const TransactionScreen = () => {
   const route = useRoute<TransactionScreenRouteProp>();
   const { user } = route.params;
-  const HOME_ID = user.homeId;
+  const groupId = user.groupId;
   const [dateSelected, setDate] = useState('');
   const [dataBase, setDataBase] = useState<Transactions[]>([]);
   const [totalValue, setTotalValue] = useState(0);
@@ -25,7 +25,7 @@ const TransactionScreen = () => {
 
   // 🔄 Busca dados do Firestore
   const loadData = async () => {
-    const snapshot = await getDocs(collection(db, `homes/${HOME_ID}/transactions`));
+    const snapshot = await getDocs(collection(db, `groups/${groupId}/transactions`));
     const data: Transactions[] = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),

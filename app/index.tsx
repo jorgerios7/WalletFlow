@@ -6,10 +6,10 @@ import { db } from "./config/firebaseConfig";
 import BottomTabs from "./navigation/BottomTabs";
 import UserAccessScreen from "./pages/auth/UserAccessScreen";
 import SplashScreen from "./pages/SplashScreen";
-import HomeSetupScreen from "./screens/HomeSetupScreen";
-import { FetchHomeData } from "./services/firebase/HomeService";
+import GroupSetupScreen from "./screens/GroupSetupScreen";
+import { FetchGroupData } from "./services/firebase/GroupService";
 import { FetchUserData } from "./services/firebase/UserService";
-import { Home } from "./types/Home";
+import { Group } from "./types/Group";
 import { User } from "./types/User";
 
 export default function AppMain() {
@@ -18,20 +18,20 @@ export default function AppMain() {
   const [isReady, setIsReady] = useState(false);
   const [uid, setUId] = useState('');
   const [userData, setUserData] = useState<User | null>(null);
-  const [homeData, setHomeData] = useState<Home | null>(null);
-  const [isShowHomeSetupScreen, setIsShowHomeSetupScreen] = useState(false);
+  const [groupData, setGroupData] = useState<Group | null>(null);
+  const [isShowGroupSetupScreen, setIsShowGroupSetupScreen] = useState(false);
   const [isSnackbackVisible, setIsSnackbarVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isCreateNewHome, setIsCreateNewHome] = useState(true);
-  const [homeSetupInputValues, setHomeSetupInputValues] = useState({ Id_Home: "", Name: "" });
+  const [isCreateNewGroup, setIsCreateNewGroup] = useState(true);
+  const [groupSetupInputValues, setGroupSetupInputValues] = useState({ groupId: "", Name: "" });
   const [isFetchingUser, setIsFetchingUser] = useState(true);
 
-  const handleCreateUserHome = async (data: { Id_Home: string; Name: string }) => {
+  const handleCreateUserGroup = async (data: { groupId: string; Name: string }) => {
     try {
-      if (isCreateNewHome) {
+      if (isCreateNewGroup) {
 
-        const homeRef = doc(collection(db, "homes"));
-        await setDoc(homeRef, {
+        const groupRef = doc(collection(db, "groups"));
+        await setDoc(groupRef, {
           name: data.Name,
           createdBy: uid,
           createdAt: new Date().toISOString(),
@@ -43,15 +43,15 @@ export default function AppMain() {
           },
         });
 
-        await setDoc(doc(db, "publicHomes", homeRef.id), {});
+        await setDoc(doc(db, "publicGroups", groupRef.id), {});
 
-        await updateDoc(doc(db, "users", uid), { homeId: homeRef.id });
+        await updateDoc(doc(db, "users", uid), { groupId: groupRef.id });
 
       } else {
 
-        await updateDoc(doc(db, "users", uid), { homeId: data.Id_Home });
+        await updateDoc(doc(db, "users", uid), { groupId: data.groupId });
 
-        await setDoc(doc(db, "homes", data.Id_Home), {
+        await setDoc(doc(db, "groups", data.groupId), {
           members: {
             [uid]: {
               'name': `${userData?.identification.name} ${userData?.identification.surname}`,
@@ -63,19 +63,19 @@ export default function AppMain() {
     } catch (error) {
 
       console.error("(Index.tsx) Erro:", error);
-      setErrorMessage("Erro ao configurar a Home.");
+      setErrorMessage("Erro ao configurar o grupo.");
       setIsSnackbarVisible(true);
     } finally {
 
-      fetchUserAndHomeData();
+      fetchUserAndGroupData();
     }
   };
 
-  const fetchUserAndHomeData = async () => {
+  const fetchUserAndGroupData = async () => {
     if (!uid) return;
 
     let user: User | null = null;
-    let home: Home | null = null;
+    let home: Group | null = null;
 
     setIsFetchingUser(true);
 
@@ -83,11 +83,11 @@ export default function AppMain() {
 
       user = await FetchUserData(uid);
 
-      if (!user || !user.homeId) {
-        setIsShowHomeSetupScreen(true);
+      if (!user || !user.groupId) {
+        setIsShowGroupSetupScreen(true);
       } else {
-        home = await FetchHomeData(user.homeId);
-        setIsShowHomeSetupScreen(false);
+        home = await FetchGroupData(user.groupId);
+        setIsShowGroupSetupScreen(false);
       }
     } catch (error) {
 
@@ -95,7 +95,7 @@ export default function AppMain() {
     } finally {
 
       setUserData(user);
-      setHomeData(home);
+      setGroupData(home);
       setIsReady(true);
       setIsFetchingUser(false);
     }
@@ -114,7 +114,7 @@ export default function AppMain() {
 
   useEffect(() => {
     if (uid) {
-      fetchUserAndHomeData();
+      fetchUserAndGroupData();
     }
   }, [uid]);
 
@@ -128,11 +128,11 @@ export default function AppMain() {
   const renderMainContent = () => {
     return (
       <>
-        <HomeSetupScreen
-          shouldRender={isShowHomeSetupScreen}
+        <GroupSetupScreen
+          shouldRender={isShowGroupSetupScreen}
           onPressingReturnButton={() => setIsAuthenticated(false)}
-          values={homeSetupInputValues}
-          isCreateNewHome={(action) => setIsCreateNewHome(action)}
+          values={groupSetupInputValues}
+          isCreateNewGroup={(action) => setIsCreateNewGroup(action)}
           errorMessage={(message) => {
             setErrorMessage(message);
             setIsSnackbarVisible(true);
@@ -143,16 +143,16 @@ export default function AppMain() {
               setIsSnackbarVisible(true);
               return;
             }
-            const updatedData = { ...homeSetupInputValues, ...values };
+            const updatedData = { ...groupSetupInputValues, ...values };
 
-            setHomeSetupInputValues(updatedData);
-            handleCreateUserHome(updatedData);
+            setGroupSetupInputValues(updatedData);
+            handleCreateUserGroup(updatedData);
           }}
         />
 
-        {!isShowHomeSetupScreen && homeData && (
+        {!isShowGroupSetupScreen && groupData && (
           <BottomTabs
-            homeData={homeData}
+            groupData={groupData}
             userData={userData}
           />
         )}

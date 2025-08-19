@@ -5,7 +5,7 @@ export interface MemberData {
   role: MemberRole
 } 
 
-export interface Home {
+export interface Group {
   name: string;
   createdBy: string;
   members: Record<string, MemberData>;

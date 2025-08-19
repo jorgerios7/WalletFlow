@@ -20,19 +20,19 @@ const chartConfig = {
 
 export default function AnalysisScreen() {
   const route = useRoute<AnalysisScreenRouteProp>();
-    const { user } = route.params;
-    const HOME_ID = user.homeId;
+  const { user } = route.params;
+  const groupId = user.groupId;
   const insets = useSafeAreaInsets();
   const [rawData, setRawData] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const snapshot = await getDocs(collection(db, `homes/${HOME_ID}/transactions`));
+        const snapshot = await getDocs(collection(db, `groups/${groupId}/transactions`));
         const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setRawData(data);
       } catch (error) {
-        console.error('Erro ao buscar transações:', error);
+        console.error('(AnalysisScreen.tsx) Erro ao buscar transações:', error);
       }
     };
 
@@ -87,7 +87,7 @@ export default function AnalysisScreen() {
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 60 }]}>
-      
+
 
       <Text style={styles.title}>Entradas por Mês</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>

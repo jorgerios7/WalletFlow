@@ -1,7 +1,7 @@
 import { User } from '@/app/types/User';
 import FloatingMenuButton from '@/components/ui/FloatingMenuButton';
+import GroupInformationScreen from '@/components/ui/GroupInformationScreen';
 import Header from '@/components/ui/Header';
-import HomeInformationScreen from '@/components/ui/HomeInformationScreen';
 import MenuButton from '@/components/ui/MenuButton';
 import PersonalDataChange, { Function } from '@/components/ui/PersonalDataChange';
 import { Colors } from '@/constants/Colors';
@@ -10,8 +10,8 @@ import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FetchHomeData } from '../services/firebase/HomeService';
-import { Home } from '../types/Home';
+import { FetchGroupData } from '../services/firebase/GroupService';
+import { Group } from '../types/Group';
 
 interface Props {
     user: User;
@@ -34,12 +34,12 @@ export default function ProfileScreen({ user, onLogout }: Props) {
     const [collapseMenu, setCollapseMenu] = useState(false);
     const [isDataChange, setIsDataChange] = useState(false);
     const [editField, setEditField] = useState<Function | null>(null);
-    const [homeData, setHomeData] = useState<Home | null>(null);
+    const [groupData, setGroupData] = useState<Group | null>(null);
 
     const fetchData = async () => {
-        if (!user?.homeId) return;
-        const data = await FetchHomeData(user.homeId);
-        setHomeData(data);
+        if (!user?.groupId) return;
+        const data = await FetchGroupData(user.groupId);
+        setGroupData(data);
         setUpdate(false);
     };
 
@@ -165,14 +165,14 @@ export default function ProfileScreen({ user, onLogout }: Props) {
 
             <View style={{ gap: 10 }}>
 
-                {homeData && (
-                    <HomeInformationScreen
-                        createdAt={homeData.createdAt}
-                        createdBy={homeData.createdBy}
+                {groupData && (
+                    <GroupInformationScreen
+                        createdAt={groupData.createdAt}
+                        createdBy={groupData.createdBy}
                         userId={currentUser.uid}
-                        homeId={user.homeId}
-                        homeName={homeData.name}
-                        memberList={homeData.members}
+                        groupId={user.groupId}
+                        groupName={groupData.name}
+                        memberList={groupData.members}
                         update={() => setUpdate(true)}
                     />
                 )}

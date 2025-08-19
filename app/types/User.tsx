@@ -31,6 +31,6 @@ export interface User {
   bankCards: Record<string, BankCard>;
   contacts: Contacts;
   createdAt: string; // ISO string
-  homeId: string;
+  groupId: string;
   identification: Identification;
 }

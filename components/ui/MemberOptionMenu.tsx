@@ -42,7 +42,7 @@ export function MemberOptionMenu({
             : "Despromover de administrador";
         const deleteMemberText = currentUid === selectedItem.id
             ? "Sair do grupo"
-            : "Remover membro";
+            : "Remover membro do grupo";
 
         setVariables(prev => ({
             member: { ...prev.member, id: "" },
@@ -67,7 +67,7 @@ export function MemberOptionMenu({
                 <View style={styles.content}>
                     {role !== condition ? (
                         <Text style={{ alignSelf: 'center' }}>
-                            Você ainda não tem permissões para administrar outros usuários!
+                            Você ainda não tem permissões para administrar outros membros!
                         </Text>
                     ) : (
                         <>
@@ -78,15 +78,13 @@ export function MemberOptionMenu({
                                 options={[
                                     {
                                         label:
-                                            selectedItem.role === condition ?
-                                                (variables.demote.text)
-                                                :
-                                                (variables.promote.text),
+                                            selectedItem.role === condition 
+                                            ? (variables.demote.text)
+                                            : (variables.promote.text),
                                         value:
-                                            selectedItem.role === condition ?
-                                                (variables.demote.label)
-                                                :
-                                                (variables.promote.label)
+                                            selectedItem.role === condition 
+                                            ? (variables.demote.label)
+                                            : (variables.promote.label)
                                     },
                                     {
                                         label: variables.delete.text,

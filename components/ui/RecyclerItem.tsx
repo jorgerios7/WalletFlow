@@ -15,7 +15,7 @@ interface ItemRecyclerProps {
 }
 
 interface Section {
-  title: string; // Data
+  title: string;
   data: Transactions[];
 }
 
