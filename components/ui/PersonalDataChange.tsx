@@ -1,16 +1,7 @@
-import { auth, db } from "@/app/config/firebaseConfig";
-import {
-    EmailAuthProvider,
-    reauthenticateWithCredential,
-    sendEmailVerification,
-    updateEmail,
-    updatePassword,
-    updateProfile
-} from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import { auth } from "@/app/config/firebaseConfig";
+import { UpdateEmail, UpdateName, UpdatePassword } from "@/app/services/firebase/UserService";
+import React, { useEffect, useState } from "react";
 import { Alert, Modal, StyleSheet, Text, View } from "react-native";
-
 import CustomButton from "./CustomButton";
 import DynamicLabelInput from "./DynamicLabelInput";
 import TextButton from "./TextButton";
@@ -22,12 +13,14 @@ export enum Function {
 }
 
 interface PersonalDataChangeProps {
+    groupId: string;
     isVisible: boolean;
     onCancel: () => void;
     editField: Function;
 }
 
 const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
+    groupId,
     isVisible,
     onCancel,
     editField,
@@ -36,76 +29,27 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
     const [input2, setInput2] = useState("");
     const [input3, setInput3] = useState("");
 
-    const clearInputs = () => {
-        setInput1("");
-        setInput2("");
-        setInput3("");
-    };
+    useEffect(() => {
+        if (!isVisible) {
+            setInput1("");
+            setInput2("");
+            setInput3("");
+        }
+    }, [isVisible]);
+
 
     const handleConfirm = async () => {
         const user = auth.currentUser;
         if (!user) return;
 
         try {
-           
-            const credential = EmailAuthProvider.credential(
-                user.email || input1,
-                input3 
-            );
-
-            if (editField === Function.ChangeEmail || editField === Function.ChangePassword) {
-                await reauthenticateWithCredential(user, credential);
-            }
-
             if (editField === Function.ChangeName) {
-                if (input1.trim().length < 2 || input2.trim().length < 2) {
-                    Alert.alert("Erro", "Nome e sobrenome devem ter ao menos 2 letras.");
-                    return;
-                }
-
-                await updateProfile(user, { displayName: input1.trim() });
-
-                await updateDoc(doc(db, "users", user.uid), {
-                    "identification.name": input1.trim(),
-                    "identification.surname": input2.trim(),
-                });
-
-                Alert.alert("Sucesso", "Nome atualizado.");
+                await UpdateName(groupId, input1, input2);
+            } else if (editField === Function.ChangeEmail) {
+                await UpdateEmail(input3, input1, input2);
+            } else if (editField === Function.ChangePassword) {
+                await UpdatePassword(input1, input2, input3);
             }
-
-            if (editField === Function.ChangeEmail) {
-                if (!input2.includes("@")) {
-                    Alert.alert("Erro", "Informe um email válido.");
-                    return;
-                }
-
-                await updateEmail(user, input2.trim());
-
-                await updateDoc(doc(db, "users", user.uid), {
-                    "identification.email": input2.trim(),
-                });
-
-                await sendEmailVerification(user); // ✅ Envia verificação
-                Alert.alert("Sucesso", "Email atualizado. Verifique sua caixa de entrada.");
-            }
-
-            if (editField === Function.ChangePassword) {
-                if (input2.length < 6) {
-                    Alert.alert("Erro", "A nova senha deve ter pelo menos 6 caracteres.");
-                    return;
-                }
-
-                if (input2 !== input3) {
-                    Alert.alert("Erro", "As senhas não coincidem.");
-                    return;
-                }
-
-                await updatePassword(user, input2);
-                Alert.alert("Sucesso", "Senha atualizada.");
-            }
-
-            clearInputs();
-            onCancel();
         } catch (error: any) {
             console.log("Erro:", error.code);
             if (error.code === "auth/wrong-password") {
@@ -117,6 +61,8 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
             } else {
                 Alert.alert("Erro", error.message || "Falha ao atualizar os dados.");
             }
+        } finally {
+            onCancel();
         }
     };
 
@@ -149,12 +95,12 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
                     {editField === Function.ChangeEmail && (
                         <>
                             <DynamicLabelInput
-                                label="Seu email atual"
+                                label="Seu novo email"
                                 onTextChange={setInput1}
                             />
 
                             <DynamicLabelInput
-                                label="Seu novo email"
+                                label="Repita seu novo email"
                                 onTextChange={setInput2}
                             />
 
@@ -189,10 +135,7 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
                     )}
 
                     <CustomButton text="Confirmar" onPress={handleConfirm} />
-                    <TextButton text="Cancelar" onPress={() => {
-                        clearInputs();
-                        onCancel();
-                    }} />
+                    <TextButton text="Cancelar" onPress={onCancel} />
                 </View>
             </View>
         </Modal>

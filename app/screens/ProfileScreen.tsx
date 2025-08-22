@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FetchGroupData } from '../services/firebase/GroupService';
+import { FetchUserData } from '../services/firebase/UserService';
 import { Group } from '../types/Group';
 
 interface Props {
@@ -34,13 +35,27 @@ export default function ProfileScreen({ user, onLogout }: Props) {
     const [collapseMenu, setCollapseMenu] = useState(false);
     const [isDataChange, setIsDataChange] = useState(false);
     const [editField, setEditField] = useState<Function | null>(null);
+    const [userData, setUserData] = useState<User | null>(null)
     const [groupData, setGroupData] = useState<Group | null>(null);
 
+
     const fetchData = async () => {
-        if (!user?.groupId) return;
-        const data = await FetchGroupData(user.groupId);
-        setGroupData(data);
-        setUpdate(false);
+        let user_data: User | null = null;
+        let group_data: Group | null = null;
+
+        try {
+            user_data = await FetchUserData(currentUser.uid);
+            if (user_data?.groupId) {
+                group_data = await FetchGroupData(user_data.groupId);
+            }
+
+            setUserData(user_data);
+            setGroupData(group_data);
+
+            setUpdate(false);
+        } catch (error) {
+            console.log('(ProfileScreen.tsx) erro ao baixar dados do usuário e dados do grupo!')
+        }
     };
 
     const onClose = (isLogout: boolean) => {
@@ -107,7 +122,7 @@ export default function ProfileScreen({ user, onLogout }: Props) {
                     fontSize: 18,
                     fontWeight: 'bold'
                 }}>
-                    Olá, {user.identification.name} {user.identification.surname}!
+                    Olá, {userData?.identification.name} {userData?.identification.surname}!
                 </Text>
             </Header>
 
@@ -115,10 +130,11 @@ export default function ProfileScreen({ user, onLogout }: Props) {
                 closedSize={80}
                 menuHeight={height - insets.bottom - 42}
                 menuWidth={width - 20}
-                title={user.identification.name}
+                title={`${userData?.identification.name} ${userData?.identification.surname}`}
+                subtitle={userData?.identification.email}
                 topPosition={10}
                 rightPosition={10}
-                profilePhoto={user.identification.profilePhoto}
+                profilePhoto={userData?.identification.profilePhoto}
                 collapseMenu={collapseMenu}
             >
                 <View style={{ width: '100%', gap: 5 }}>
@@ -154,23 +170,25 @@ export default function ProfileScreen({ user, onLogout }: Props) {
                 </View>
             </FloatingMenuButton>
 
-            <PersonalDataChange
-                isVisible={isDataChange}
-                onCancel={() => {
-                    setIsDataChange(false);
-                    setEditField(null);
-                }}
-                editField={editField!}
-            />
+            {userData?.groupId && (
+                <PersonalDataChange
+                    groupId={userData.groupId}
+                    isVisible={isDataChange}
+                    onCancel={() => {
+                        setIsDataChange(false);
+                        setEditField(null);
+                        setUpdate(true)
+                    }}
+                    editField={editField!}
+                />)}
 
             <View style={{ gap: 10 }}>
-
-                {groupData && (
+                {groupData && userData && (
                     <GroupInformationScreen
                         createdAt={groupData.createdAt}
                         createdBy={groupData.createdBy}
-                        userId={currentUser.uid}
-                        groupId={user.groupId}
+                        currentUserId={currentUser.uid}
+                        groupId={userData.groupId}
                         groupName={groupData.name}
                         memberList={groupData.members}
                         update={() => setUpdate(true)}
@@ -196,7 +214,6 @@ export default function ProfileScreen({ user, onLogout }: Props) {
                     iconName={'feedback'}
                     onPress={() => console.log('item pressed!')}
                 />
-
             </View>
         </View>
     );

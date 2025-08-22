@@ -1,4 +1,3 @@
-import { auth } from "@/app/config/firebaseConfig";
 import { DeleteMember, PromoteOrDemote } from "@/app/services/firebase/GroupService";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -20,7 +19,7 @@ interface MemberItem {
 }
 
 export default function GroupInformationScreen({
-  userId,
+  currentUserId,
   groupId,
   groupName,
   createdAt,
@@ -28,7 +27,7 @@ export default function GroupInformationScreen({
   memberList,
   update
 }: {
-  userId: string;
+  currentUserId: string;
   groupId: string;
   groupName: string;
   createdAt: string;
@@ -36,10 +35,6 @@ export default function GroupInformationScreen({
   memberList: FirestoreMemberMap;
   update: () => void
 }) {
-
-  const currentUser = auth.currentUser;
-
-  if (!currentUser) return null;
 
   const [menuItemVisibility, setMenuItemVisibility] = useState(false);
   const [menuItemData, setMenuItemData] = useState({ id: '', name: '', role: '' });
@@ -72,7 +67,7 @@ export default function GroupInformationScreen({
               {member.name}
             </Text>
 
-            { currentUser.uid === member.id && (
+            { currentUserId === member.id && (
               <Text style={{ color: 'white', alignSelf: 'center' }}>
                 (você)
               </Text>
@@ -157,10 +152,10 @@ export default function GroupInformationScreen({
   }
 
   function renderUserRole() {
-    if (!parsedMembers || parsedMembers.length === 0 || !currentUser?.uid) return 'member';
+    if (!parsedMembers || parsedMembers.length === 0 || !currentUserId) return 'member';
 
     const role = parsedMembers.find(
-      member => member.id.trim() === currentUser.uid.trim()
+      member => member.id.trim() === currentUserId.trim()
     );
 
     return role?.role ?? 'member';
@@ -177,7 +172,7 @@ export default function GroupInformationScreen({
         selectedItem={menuItemData}
         onCancel={() => setMenuItemVisibility(false)}
         condition={'owner'}
-        currentUid={userId}
+        currentUid={currentUserId}
         onConfirm={(variables) => {
           console.log(variables);
           if (variables.delete) {

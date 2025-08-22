@@ -16,6 +16,7 @@ interface Props {
   rightPosition: number;
   closedSize: number;
   title: string;
+  subtitle?: string;
   menuWidth: number;
   menuHeight: number;
   profilePhoto?: string;
@@ -28,6 +29,7 @@ const FloatingMenuButton: React.FC<Props> = ({
   collapseMenu,
   closedSize,
   title,
+  subtitle,
   menuWidth,
   menuHeight,
   profilePhoto
@@ -113,7 +115,7 @@ const FloatingMenuButton: React.FC<Props> = ({
     const targetValues = {
       MENU_WIDTH: open ? menuWidth : closedSize,
       MENU_HEIGHT: open ? menuHeight : closedSize,
-      GAP: open ? 30 : 0,
+      GAP: open ? 20 : 0,
       MAIN_CONTENT_WIDTH: open ? menuWidth - 20 : closedSize,
       MAIN_CONTENT_HEIGHT: open ? 340 : closedSize,
       PADDING: open ? 10 : 0,
@@ -250,19 +252,34 @@ const FloatingMenuButton: React.FC<Props> = ({
     );
   };
 
-  const UserNameContent = () => {
+  const UserInformationContent = () => {
     return (
-      <Animated.Text
-        style={{
-          alignSelf: 'center',
-          fontSize: 26,
-          color: Colors.light.background,
-          fontWeight: 'bold',
-          opacity: contentOpacity
-        }}
-      >
-        {title}
-      </Animated.Text>
+      <>
+        <Animated.Text
+          style={{
+            alignSelf: 'center',
+            fontSize: 26,
+            color: Colors.light.background,
+            fontWeight: 'bold',
+            opacity: contentOpacity
+          }}
+        >
+          {title}
+        </Animated.Text>
+
+        <Animated.Text
+          style={{
+            alignSelf: 'center',
+            fontSize: 14,
+            color: Colors.light.background,
+            fontWeight: 'normal',
+            opacity: contentOpacity,
+            marginTop: -10
+          }}
+        >
+          {subtitle}
+        </Animated.Text>
+      </>
     );
   }
 
@@ -275,7 +292,7 @@ const FloatingMenuButton: React.FC<Props> = ({
         ]}>
         <ButtonClose />
         <ProfileButtonContent />
-        <UserNameContent />
+        <UserInformationContent />
       </Animated.View>
     );
   };

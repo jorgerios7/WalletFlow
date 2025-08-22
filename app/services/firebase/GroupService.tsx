@@ -17,7 +17,7 @@ export async function FetchGroupData(groupId: string): Promise<Group | null> {
   } catch (error) {
     console.error(`(GroupService.tsx) Erro ao buscar Grupo ${groupId}`, error);
   } finally {
-    console.log("(GroupService.tsx) Os dados foram atualizados com sucesso!");
+    console.log("(GroupService.tsx) Os dados grupo foram atualizados com sucesso!");
     return data;
   }
 }
