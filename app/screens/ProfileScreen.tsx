@@ -15,11 +15,10 @@ import { FetchUserData } from '../services/firebase/UserService';
 import { Group } from '../types/Group';
 
 interface Props {
-    user: User;
     onLogout: () => void;
 }
 
-export default function ProfileScreen({ user, onLogout }: Props) {
+export default function ProfileScreen({ onLogout }: Props) {
 
     const auth = getAuth();
     const currentUser = auth.currentUser;
@@ -38,7 +37,6 @@ export default function ProfileScreen({ user, onLogout }: Props) {
     const [userData, setUserData] = useState<User | null>(null)
     const [groupData, setGroupData] = useState<Group | null>(null);
 
-
     const fetchData = async () => {
         let user_data: User | null = null;
         let group_data: Group | null = null;
@@ -54,7 +52,7 @@ export default function ProfileScreen({ user, onLogout }: Props) {
 
             setUpdate(false);
         } catch (error) {
-            console.log('(ProfileScreen.tsx) erro ao baixar dados do usuário e dados do grupo!')
+            console.log('(ProfileScreen.tsx) erro ao baixar dados: ', error);
         }
     };
 

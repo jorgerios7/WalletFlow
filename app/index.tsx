@@ -152,8 +152,8 @@ export default function AppMain() {
 
         {!isShowGroupSetupScreen && groupData && (
           <BottomTabs
-            groupData={groupData}
             userData={userData}
+            onDismis={() => setIsAuthenticated(false)}
           />
         )}
       </>

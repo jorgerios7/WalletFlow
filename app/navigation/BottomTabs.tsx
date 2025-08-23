@@ -2,6 +2,7 @@ import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import TabButton from '@/components/ui/TabButton';
 import { Colors } from '@/constants/Colors';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getAuth, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,20 +10,23 @@ import AddScreen from '../screens/AddScreens';
 import AnalysisScreen from '../screens/AnalysisScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TransactionScreen from '../screens/TransactionScreen';
-import { Group } from '../types/Group';
 import { User } from '../types/User';
 
-interface Props { userData: User; groupData: Group }
+interface Props { userData: User; onDismis: () => void }
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabs: React.FC<Props> = ({ userData, groupData }) => {
+const BottomTabs: React.FC<Props> = ({ userData, onDismis}) => {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
+  if (!currentUser) return;
+
   const insets = useSafeAreaInsets();
   const [confirmationScreenVisibility, setConfirmationScreenVisibility] = useState(false);
 
   const ProfileWrapper = () => (
     <ProfileScreen
-      user={userData}
       onLogout={handleLogout}
     />
   );
@@ -31,10 +35,16 @@ const BottomTabs: React.FC<Props> = ({ userData, groupData }) => {
     setConfirmationScreenVisibility(true);
   };
 
-  const confirmLogout = () => {
+  const confirmLogout = async () => {
     setConfirmationScreenVisibility(false);
-    console.log('Usuário deslogado!');
-    // Aqui você pode colocar o signOut do Firebase ou outra lógica
+    try {
+      await signOut(auth);
+      onDismis();
+      
+    } catch (error) {
+      console.error("(BottomTabs) Erro ao deslogar:", error);
+    }
+
   };
 
   return (

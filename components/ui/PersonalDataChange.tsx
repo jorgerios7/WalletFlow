@@ -1,7 +1,7 @@
 import { auth } from "@/app/config/firebaseConfig";
 import { UpdateEmail, UpdateName, UpdatePassword } from "@/app/services/firebase/UserService";
 import React, { useEffect, useState } from "react";
-import { Alert, Modal, StyleSheet, Text, View } from "react-native";
+import { Modal, StyleSheet, Text, View } from "react-native";
 import CustomButton from "./CustomButton";
 import DynamicLabelInput from "./DynamicLabelInput";
 import TextButton from "./TextButton";
@@ -42,6 +42,8 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
         const user = auth.currentUser;
         if (!user) return;
 
+        let success = false;
+
         try {
             if (editField === Function.ChangeName) {
                 await UpdateName(groupId, input1, input2);
@@ -50,19 +52,13 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
             } else if (editField === Function.ChangePassword) {
                 await UpdatePassword(input1, input2, input3);
             }
-        } catch (error: any) {
-            console.log("Erro:", error.code);
-            if (error.code === "auth/wrong-password") {
-                Alert.alert("Erro", "Senha atual incorreta.");
-            } else if (error.code === "auth/requires-recent-login") {
-                Alert.alert("Reautenticação necessária", "Por favor, faça login novamente para continuar.");
-            } else if (error.code === "auth/email-already-in-use") {
-                Alert.alert("Erro", "Este email já está em uso.");
-            } else {
-                Alert.alert("Erro", error.message || "Falha ao atualizar os dados.");
-            }
+
+           success = true;
+        } 
+        catch (error: any) {
+            console.error('(PersonaDataChange.tsx) Erro ao atualizar campo: ', error)
         } finally {
-            onCancel();
+            if (success) onCancel();
         }
     };
 
@@ -87,9 +83,7 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
                                 label="Seu novo sobrenome"
                                 onTextChange={setInput2}
                             />
-
                         </>
-
                     )}
 
                     {editField === Function.ChangeEmail && (
@@ -109,7 +103,6 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
                                 secureTextEntry
                                 onTextChange={setInput3}
                             />
-
                         </>
                     )}
 
@@ -126,6 +119,7 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
                                 label="Sua nova senha"
                                 onTextChange={setInput2}
                             />
+                            
                             <DynamicLabelInput
                                 secureTextEntry
                                 label="Repita sua nova senha"

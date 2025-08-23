@@ -1,5 +1,6 @@
 import { auth, db } from "@/app/config/firebaseConfig";
 import { User } from "@/app/types/User";
+import { HandleErroMessage } from "@/components/ui/HandleErroMessage";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -19,10 +20,9 @@ export async function FetchUserData(uid: string): Promise<User | null> {
     }
 
   } catch (error) {
-
     console.error("(UserService) Erro ao buscar usuário:", error);
+    throw error; 
   } finally {
-
     console.log("(UserService.tsx) Os dados do usuário foram atualizados com sucesso!");
     return data;
   }
@@ -41,12 +41,16 @@ export async function UpdatePassword(
   const isNotTheSame = newPassword !== repeatNewPassword;
 
   if (isEmpty) {
-    const msg = ValidateEmptyFields(inputs, labels)
-    { msg && Alert.alert("Erro", msg) }
+    const msg = ValidateEmptyFields(inputs, labels);
+    if (msg) {
+      Alert.alert("Erro", msg);
+      throw new Error(msg);
+    }
     return;
   } else if (isNotTheSame) {
-    Alert.alert("As senhas não coincidem", "Certifique-se de que ambas as senhas sejam iguais.");
-    return;
+    const msg = `As senhas não coicidem. Certifique-se de que os campos nova senha e repetir senha sejam iguais.`
+    Alert.alert('Erro', msg);
+    throw new Error(msg);
   }
 
   try {
@@ -58,8 +62,10 @@ export async function UpdatePassword(
     await updatePassword(user, newPassword);
     
     Alert.alert("Sucesso", "Senha atualizada.");
-  } catch (error) {
-    console.error("(UserService.tsx) Erro ao atualizar senha:", error);
+  } catch (error: any) {
+    const msg = HandleErroMessage(error.code);
+    Alert.alert("Erro", msg);
+    throw error; 
   }
 }
 
@@ -79,14 +85,19 @@ export async function UpdateEmail(
 
   if (isEmpty) {
     const msg = ValidateEmptyFields(inputs, labels)
-    { msg && Alert.alert("Erro", msg) }
+    if (msg) {
+      Alert.alert("Erro", msg);
+      throw new Error(msg);
+    }   
     return;
   } else if (isValid) {
-    Alert.alert("Formato de email incorreto", "Digite um email válido.");
-    return;
+    const msg = `Formato de email incorreto. Digite um email válido.`
+    Alert.alert(msg);
+    throw new Error(msg);
   } else if (isNotTheSame) {
-    Alert.alert("Os e-mails não coincidem", "Certifique-se de que ambos os e-mails sejam iguais.");
-    return;
+    const msg = `Os e-mails não coincidem. Certifique-se de que ambos os e-mails sejam iguais.`
+    Alert.alert('Erro', msg);
+    throw new Error(msg);
   }
 
   try {
@@ -105,28 +116,30 @@ export async function UpdateEmail(
     Alert.alert("Sucesso", "Email atualizado.");
 
     //await sendEmailVerification(user); // ✅ Envia verificação
-  } catch (error) {
-    console.error("(UserService.tsx) Erro ao atualizar email:", error);
+  } catch (error: any) {
+    const msg = HandleErroMessage(error.code)
+    Alert.alert("Erro", msg);
+    throw error; 
   }
 }
 
 export async function UpdateName(groupId: string, name: string, surname: string) {
   const user = auth.currentUser;
-  if (!user) return;
+  if (!user) throw new Error("Usuário não autenticado.");
 
   const inputs = { name: name, surname: surname }
   const labels = { name: 'nome', surname: 'sobrenome' }
 
   const isEmpty = !name || !surname;
-
   if (isEmpty) {
-    const msg = ValidateEmptyFields(inputs, labels)
-    { msg && Alert.alert("Erro", msg) }
-
-    return;
+    const msg = ValidateEmptyFields(inputs, labels);
+    if (msg) {
+      Alert.alert("Erro", msg);
+      throw new Error(msg);
+    }
   }
 
-  const fullName = `${name} ${surname}`
+  const fullName = `${name} ${surname}`;
 
   try {
     await updateDoc(doc(db, "users", user.uid), {
@@ -137,9 +150,12 @@ export async function UpdateName(groupId: string, name: string, surname: string)
     await updateDoc(doc(db, 'groups', groupId), {
       [`members.${user.uid}.name`]: fullName.trim(),
     });
+
     Alert.alert("Sucesso", "Nome e sobrenome foram atualizados.");
-  } catch (error) {
-    Alert.alert("Erro", "Não foi possível atualizar o nome!");
-    console.error("Erro", "Falha ao atualizar o nome: ", error);
+  } catch (error: any) {
+    const msg = HandleErroMessage(error.code)
+    Alert.alert("Erro", msg);
+    throw error; 
   }
 }
+
