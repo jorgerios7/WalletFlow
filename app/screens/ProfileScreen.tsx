@@ -16,9 +16,11 @@ import { Group } from '../types/Group';
 
 interface Props {
     onLogout: () => void;
+    onDeleteAccount: () => void;
+    onNavigate: (locate: string) => void;
 }
 
-export default function ProfileScreen({ onLogout }: Props) {
+export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }: Props) {
 
     const auth = getAuth();
     const currentUser = auth.currentUser;
@@ -60,7 +62,11 @@ export default function ProfileScreen({ onLogout }: Props) {
         setCollapseMenu(true);
         setTimeout(() => {
             setCollapseMenu(false);
-            if (isLogout) onLogout();
+            if (isLogout) {
+                onLogout();
+            } else {
+                onDeleteAccount();
+            };
         }, 300);
     };
 
@@ -82,7 +88,6 @@ export default function ProfileScreen({ onLogout }: Props) {
                     padding: 10,
                     borderBottomColor: Colors.light.highlightBackgroun_1,
                     borderBottomWidth: 0.5,
-
                 }}>
 
                 <MaterialIcons
@@ -159,7 +164,7 @@ export default function ProfileScreen({ onLogout }: Props) {
                     />
 
                     <MenuButton
-                        onPress={() => onClose(true)}
+                        onPress={() => onClose(false)}
                         text="Excluir conta"
                         isHighlightText
                         fontSize={14}
@@ -198,7 +203,7 @@ export default function ProfileScreen({ onLogout }: Props) {
                 <ItemMenu2
                     name={'Configuraçõs'}
                     iconName={'settings'}
-                    onPress={() => console.log('item pressed!')}
+                    onPress={() => onNavigate("Configuration")}
                 />
 
                 <ItemMenu2
