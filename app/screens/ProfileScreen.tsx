@@ -10,6 +10,7 @@ import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LoadScreen } from '../pages/LoadScreen';
 import { FetchGroupData } from '../services/firebase/GroupService';
 import { FetchUserData } from '../services/firebase/UserService';
 import { Group } from '../types/Group';
@@ -110,114 +111,117 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
     ];
 
     return (
-        <View
-            style={{
-                width: width,
-                height: height,
-                paddingBottom: insets.bottom + 60,
-                paddingTop: insets.top,
-                gap: 10,
-                backgroundColor: Colors.light.shadow,
-            }}
-        >
-            <Header backgroundColor={Colors.light.shadow}>
-                <Text style={{
-                    fontSize: 18,
-                    fontWeight: 'bold'
+        <View>
+            {!userData || !groupData ? (
+                <LoadScreen />
+            ) : (
+                <View style={{
+                    width: width,
+                    height: height,
+                    paddingBottom: insets.bottom + 60,
+                    paddingTop: insets.top,
+                    gap: 10,
+                    backgroundColor: Colors.light.shadow,
                 }}>
-                    Olá, {userData?.identification.name} {userData?.identification.surname}!
-                </Text>
-            </Header>
+                    <Header backgroundColor={Colors.light.shadow}>
+                        <Text style={{
+                            fontSize: 18,
+                            fontWeight: 'bold'
+                        }}>
+                            Olá, {userData?.identification.name} {userData?.identification.surname}!
+                        </Text>
+                    </Header>
 
-            <FloatingMenuButton
-                closedSize={80}
-                menuHeight={height - insets.bottom - 42}
-                menuWidth={width - 20}
-                title={`${userData?.identification.name} ${userData?.identification.surname}`}
-                subtitle={userData?.identification.email}
-                topPosition={10}
-                rightPosition={10}
-                profilePhoto={userData?.identification.profilePhoto}
-                collapseMenu={collapseMenu}
-            >
-                <View style={{ width: '100%', gap: 5 }}>
-                    {menuItems.map((item, index) => (
-                        <MenuButton
-                            key={index}
-                            onPress={() => {
-                                setEditField(item.action);
-                                setIsDataChange(true);
-                                setUpdate(true);
-                            }}
-                            text={item.text}
-                            iconName='arrow-right'
-                            fontSize={14}
-                        />
-                    ))}
+                    <FloatingMenuButton
+                        closedSize={80}
+                        menuHeight={height - insets.bottom - 42}
+                        menuWidth={width - 20}
+                        title={`${userData?.identification.name} ${userData?.identification.surname}`}
+                        subtitle={userData?.identification.email}
+                        topPosition={10}
+                        rightPosition={10}
+                        profilePhoto={userData?.identification.profilePhoto}
+                        collapseMenu={collapseMenu}
+                    >
+                        <View style={{ width: '100%', gap: 5 }}>
+                            {menuItems.map((item, index) => (
+                                <MenuButton
+                                    key={index}
+                                    onPress={() => {
+                                        setEditField(item.action);
+                                        setIsDataChange(true);
+                                        setUpdate(true);
+                                    }}
+                                    text={item.text}
+                                    iconName='arrow-right'
+                                    fontSize={14}
+                                />
+                            ))}
 
-                    <MenuButton
-                        onPress={() => onClose(true)}
-                        text="Sair"
-                        iconName="exit-to-app"
-                        iconSize={24}
-                        fontSize={14}
-                    />
+                            <MenuButton
+                                onPress={() => onClose(true)}
+                                text="Sair"
+                                iconName="exit-to-app"
+                                iconSize={24}
+                                fontSize={14}
+                            />
 
-                    <MenuButton
-                        onPress={() => onClose(false)}
-                        text="Excluir conta"
-                        isHighlightText
-                        fontSize={14}
-                        borderBottomColor="transparent"
-                    />
-                </View>
-            </FloatingMenuButton>
+                            <MenuButton
+                                onPress={() => onClose(false)}
+                                text="Excluir conta"
+                                isHighlightText
+                                fontSize={14}
+                                borderBottomColor="transparent"
+                            />
+                        </View>
+                    </FloatingMenuButton>
 
-            {userData?.groupId && (
-                <PersonalDataChange
-                    groupId={userData.groupId}
-                    isVisible={isDataChange}
-                    onCancel={() => {
-                        setIsDataChange(false);
-                        setEditField(null);
-                        setUpdate(true)
-                    }}
-                    editField={editField!}
-                />)}
 
-            <View style={{ gap: 10 }}>
-                {groupData && userData && (
-                    <GroupInformationScreen
-                        createdAt={groupData.createdAt}
-                        createdBy={groupData.createdBy}
-                        currentUserId={currentUser.uid}
+                    <PersonalDataChange
                         groupId={userData.groupId}
-                        groupName={groupData.name}
-                        memberList={groupData.members}
-                        update={() => setUpdate(true)}
+                        isVisible={isDataChange}
+                        onCancel={() => {
+                            setIsDataChange(false);
+                            setEditField(null);
+                            setUpdate(true)
+                        }}
+                        editField={editField!}
                     />
-                )}
 
-                <View style={{ width: '100%', height: 0.5, backgroundColor: 'black', marginVertical: 10 }} />
 
-                <ItemMenu2
-                    name={'Configuraçõs'}
-                    iconName={'settings'}
-                    onPress={() => onNavigate("Configuration")}
-                />
+                    <View style={{ gap: 10 }}>
+                        <GroupInformationScreen
+                            createdAt={groupData.createdAt}
+                            createdBy={groupData.createdBy}
+                            currentUserId={currentUser.uid}
+                            groupId={userData.groupId}
+                            groupName={groupData.name}
+                            memberList={groupData.members}
+                            update={() => setUpdate(true)}
+                        />
 
-                <ItemMenu2
-                    name={'Ajuda'}
-                    iconName={'help'}
-                    onPress={() => console.log('item pressed!')}
-                />
+                        <View style={{ width: '100%', height: 0.5, backgroundColor: 'black', marginVertical: 10 }} />
 
-                <ItemMenu2
-                    name={'Feedback'}
-                    iconName={'feedback'}
-                    onPress={() => console.log('item pressed!')}
-                />
-            </View>
+                        <ItemMenu2
+                            name={'Configurações'}
+                            iconName={'settings'}
+                            onPress={() => onNavigate("Configuration")}
+                        />
+
+                        <ItemMenu2
+                            name={'Ajuda'}
+                            iconName={'help'}
+                            onPress={() => onNavigate("Help")}
+                        />
+
+                        <ItemMenu2
+                            name={'Feedback'}
+                            iconName={'feedback'}
+                            onPress={() => onNavigate("Feedback")}
+                        />
+                    </View>
+                </View>
+            )}
         </View>
     );
 }

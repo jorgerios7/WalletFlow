@@ -9,7 +9,7 @@ interface Props {
     onNavigate: (locate: string) => void
 }
 
-export function ConfigurationScreen({
+export function FeedbackScreen({
     onNavigate
 }: Props) {
     const insets = useSafeAreaInsets();
@@ -30,7 +30,7 @@ export function ConfigurationScreen({
                     onPress={() => onNavigate('Tabs')} >
                     <MaterialIcons name="chevron-left" size={32} color={Colors.light.highlightBackgroun_1} />
                 </Pressable>
-                <Text style={{ alignSelf: 'center', fontSize: 22 }}>Configurações</Text>
+                <Text style={{ alignSelf: 'center', fontSize: 22 }}>Feedback</Text>
             </Header>
         </View>
     );

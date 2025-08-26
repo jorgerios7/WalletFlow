@@ -10,6 +10,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddScreen from '../screens/AddScreens';
 import AnalysisScreen from '../screens/AnalysisScreen';
 import { ConfigurationScreen } from '../screens/ConfigurationScreen';
+import { FeedbackScreen } from '../screens/FeedbackScreen';
+import { HelpScreen } from '../screens/HelpScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TransactionScreen from '../screens/TransactionScreen';
 import { User } from '../types/User';
@@ -31,7 +33,7 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
   const insets = useSafeAreaInsets();
 
   const [confirmationScreenVisible, setConfirmationScreenVisible] = useState(false);
-  const [screenRender, setScreenRender] = useState('Análise');
+  const [screenRender, setScreenRender] = useState('Analisys');
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
 
   const handleLogout = () => (
@@ -70,7 +72,25 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
     <ConfigurationScreen
       onNavigate={(locate) => {
         navigation.navigate(locate);
-        setScreenRender('Perfil');
+        setScreenRender('Profile');
+      }}
+    />
+  );
+
+  const HelpWrapper = ({ navigation }: any) => (
+    <HelpScreen
+      onNavigate={(locate) => {
+        navigation.navigate(locate);
+        setScreenRender('Profile');
+      }}
+    />
+  );
+
+  const FeedbackWrapper = ({ navigation }: any) => (
+    <FeedbackScreen
+      onNavigate={(locate) => {
+        navigation.navigate(locate);
+        setScreenRender('Profile');
       }}
     />
   );
@@ -99,23 +119,33 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
           }}
         >
           <Tab.Screen
-            name="Análise"
+            name="Analisys"
             component={AnalysisScreen}
             initialParams={{ user: userData }}
             options={{
               tabBarButton: (props) => (
-                <TabButton {...props} iconName="bar-chart" label="Análise" />
+                <TabButton
+                  {...props}
+                  iconName="bar-chart"
+                  label="Análise"
+                  focused={props.accessibilityState?.selected}
+                />
               ),
             }}
           />
 
           <Tab.Screen
-            name="Transações"
+            name="Transactions"
             component={TransactionScreen}
             initialParams={{ user: userData }}
             options={{
               tabBarButton: (props) => (
-                <TabButton {...props} iconName="list-alt" label="Transações" />
+                <TabButton
+                  {...props}
+                  iconName="list-alt"
+                  label="Transações"
+                  focused={props.accessibilityState?.selected}
+                />
               ),
             }}
           />
@@ -125,17 +155,27 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
             component={AddScreen}
             options={{
               tabBarButton: (props) => (
-                <TabButton {...props} iconName="add" label="Adicionar" />
+                <TabButton
+                  {...props}
+                  iconName="add"
+                  label="Adicionar"
+                  focused={props.accessibilityState?.selected}
+                />
               ),
             }}
           />
 
           <Tab.Screen
-            name="Perfil"
+            name="Profile"
             component={ProfileWrapper}
             options={{
               tabBarButton: (props) => (
-                <TabButton {...props} iconName="person" label="Perfil" />
+                <TabButton
+                  {...props}
+                  iconName="person"
+                  label="Perfil"
+                  focused={props.accessibilityState?.selected}
+                />
               ),
             }}
           />
@@ -156,6 +196,16 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
       <Stack.Screen
         name="Configuration"
         component={ConfigurationWrapper}
+      />
+
+      <Stack.Screen
+        name="Help"
+        component={HelpWrapper}
+      />
+
+      <Stack.Screen
+        name="Feedback"
+        component={FeedbackWrapper}
       />
     </Stack.Navigator>
   );

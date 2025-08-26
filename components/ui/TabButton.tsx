@@ -6,22 +6,23 @@ interface TabButtonProps {
     onPress?: (event: GestureResponderEvent) => void;
     iconName: keyof typeof MaterialIcons.glyphMap;
     label?: string;
-    accessibilityState?: { selected?: boolean };
+    focused?: boolean;
 }
 
 const TabButton: React.FC<TabButtonProps> = ({
     onPress,
     iconName,
     label,
-    accessibilityState,
+    
+    focused
 }) => {
-    const isFocused = accessibilityState?.selected ?? false;
+    const isFocused = focused;
     const color = isFocused ? '#6200ee' : '#888';
-    const defaultSize = 24;
+    const tabBackgroundColor = isFocused ? '#e0d7f5' : Colors.light.background;
 
     return (
-        <Pressable onPress={onPress} style={styles.tabButton}>
-            <MaterialIcons name={iconName} size={defaultSize} color={color} />
+        <Pressable onPress={onPress} style={[styles.tabButton, { backgroundColor: tabBackgroundColor }]}>
+            <MaterialIcons name={iconName} size={24} color={color} />
             <Text style={[styles.tabLabel, { color }]}>{label}</Text>
         </Pressable>
     );
@@ -32,7 +33,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.light.background
+        backgroundColor: Colors.light.background,
+        borderRadius: 12,
     },
     tabLabel: {
         fontSize: 12,
