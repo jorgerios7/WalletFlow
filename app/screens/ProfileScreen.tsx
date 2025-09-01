@@ -205,19 +205,19 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
                         <ItemMenu2
                             name={'Configurações'}
                             iconName={'settings'}
-                            onPress={() => onNavigate("Configuration")}
+                            onPress={() => onNavigate("ConfigurationScreen")}
                         />
 
                         <ItemMenu2
                             name={'Ajuda'}
                             iconName={'help'}
-                            onPress={() => onNavigate("Help")}
+                            onPress={() => onNavigate("HelpScreen")}
                         />
 
                         <ItemMenu2
                             name={'Feedback'}
                             iconName={'feedback'}
-                            onPress={() => onNavigate("Feedback")}
+                            onPress={() => onNavigate("FeedbackScreen")}
                         />
                     </View>
                 </View>

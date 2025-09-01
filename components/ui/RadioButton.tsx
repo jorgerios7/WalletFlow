@@ -7,9 +7,9 @@ type Option = {
 };
 
 export default function RadioButton({
-    options, onSelecting
+    isVertical, gap, options, onSelecting
 }: {
-    options: Option[], onSelecting: (option: string) => void
+    isVertical?: boolean, gap?: number, options: Option[], onSelecting: (option: string) => void
 }) {
     const [selectedButton, setSelectedButton] = useState<string>("");
 
@@ -19,7 +19,7 @@ export default function RadioButton({
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { flexDirection: isVertical ? 'row' : 'column', gap: gap ? gap : 20 }]}>
             {options.map((option) => (
                 <Pressable
                     key={option.value}
@@ -38,13 +38,14 @@ export default function RadioButton({
 
 const styles = StyleSheet.create({
     container: {
-        gap: 20,
-        padding: 20
+        padding: 10,
+        //backgroundColor: 'blue'
     },
     radioContainer: {
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
+        alignSelf: 'center'
     },
     radioCircle: {
         height: 20,

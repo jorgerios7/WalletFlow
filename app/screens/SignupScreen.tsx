@@ -70,6 +70,7 @@ const SignupScreen: React.FC<Props> = ({
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, Email: text }))}
             />
             <DynamicLabelInput
+                dateEntry
                 label="Data de Nascimento"
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, BirthDate: text }))}
             />

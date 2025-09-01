@@ -7,8 +7,8 @@ import { getAuth, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AddScreen from '../screens/AddScreens';
-import AnalysisScreen from '../screens/AnalysisScreen';
+import { AddScreen } from '../screens/AddScreen';
+import AnalyticsScreen from '../screens/AnalyticsScreen';
 import { ConfigurationScreen } from '../screens/ConfigurationScreen';
 import { FeedbackScreen } from '../screens/FeedbackScreen';
 import { HelpScreen } from '../screens/HelpScreen';
@@ -33,13 +33,14 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
   const insets = useSafeAreaInsets();
 
   const [confirmationScreenVisible, setConfirmationScreenVisible] = useState(false);
-  const [screenRender, setScreenRender] = useState('Analisys');
+  const [screenRender, setScreenRender] = useState('AnalyticsScreen');
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
 
   const handleLogout = () => (
     setIsDeleteAccount(false),
     setConfirmationScreenVisible(true)
   );
+
   const handleDeleteAccount = () => (
     setIsDeleteAccount(true),
     setConfirmationScreenVisible(true)
@@ -68,11 +69,15 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
     />
   );
 
+  const AddWrapper = () => (
+    <AddScreen />
+  );
+
   const ConfigurationWrapper = ({ navigation }: any) => (
     <ConfigurationScreen
       onNavigate={(locate) => {
         navigation.navigate(locate);
-        setScreenRender('Profile');
+        setScreenRender('ProfileScreen');
       }}
     />
   );
@@ -81,7 +86,7 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
     <HelpScreen
       onNavigate={(locate) => {
         navigation.navigate(locate);
-        setScreenRender('Profile');
+        setScreenRender('ProfileScreen');
       }}
     />
   );
@@ -90,7 +95,7 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
     <FeedbackScreen
       onNavigate={(locate) => {
         navigation.navigate(locate);
-        setScreenRender('Profile');
+        setScreenRender('ProfileScreen');
       }}
     />
   );
@@ -119,8 +124,8 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
           }}
         >
           <Tab.Screen
-            name="Analisys"
-            component={AnalysisScreen}
+            name="AnalyticsScreen"
+            component={AnalyticsScreen}
             initialParams={{ user: userData }}
             options={{
               tabBarButton: (props) => (
@@ -135,7 +140,7 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
           />
 
           <Tab.Screen
-            name="Transactions"
+            name="TransactionScreen"
             component={TransactionScreen}
             initialParams={{ user: userData }}
             options={{
@@ -151,8 +156,8 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
           />
 
           <Tab.Screen
-            name="Add"
-            component={AddScreen}
+            name="AddScreen"
+            component={AddWrapper}
             options={{
               tabBarButton: (props) => (
                 <TabButton
@@ -166,7 +171,7 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
           />
 
           <Tab.Screen
-            name="Profile"
+            name="ProfileScreen"
             component={ProfileWrapper}
             options={{
               tabBarButton: (props) => (
@@ -194,17 +199,17 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
       />
 
       <Stack.Screen
-        name="Configuration"
+        name="ConfigurationScreen"
         component={ConfigurationWrapper}
       />
 
       <Stack.Screen
-        name="Help"
+        name="HelpScreen"
         component={HelpWrapper}
       />
 
       <Stack.Screen
-        name="Feedback"
+        name="FeedbackScreen"
         component={FeedbackWrapper}
       />
     </Stack.Navigator>

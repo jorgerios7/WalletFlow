@@ -27,9 +27,10 @@ export default function AppMain() {
   const [isFetchingUser, setIsFetchingUser] = useState(true);
 
   const handleCreateUserGroup = async (data: { groupId: string; Name: string }) => {
+    let isReady = false;
+
     try {
       if (isCreateNewGroup) {
-
         const groupRef = doc(collection(db, "groups"));
         await setDoc(groupRef, {
           name: data.Name,
@@ -42,15 +43,12 @@ export default function AppMain() {
             }
           },
         });
-
         await setDoc(doc(db, "publicGroups", groupRef.id), {});
-
         await updateDoc(doc(db, "users", uid), { groupId: groupRef.id });
 
+        isReady = true;
       } else {
-
         await updateDoc(doc(db, "users", uid), { groupId: data.groupId });
-
         await setDoc(doc(db, "groups", data.groupId), {
           members: {
             [uid]: {
@@ -59,15 +57,14 @@ export default function AppMain() {
             }
           }
         }, { merge: true });
+        isReady = true;
       }
     } catch (error) {
-
       console.error("(Index.tsx) Erro:", error);
       setErrorMessage("Erro ao configurar o grupo.");
       setIsSnackbarVisible(true);
     } finally {
-
-      fetchUserAndGroupData();
+      if (isReady) fetchUserAndGroupData();
     }
   };
 
@@ -120,8 +117,9 @@ export default function AppMain() {
 
   if (isLoading) return <SplashScreen />;
 
-  if (!isAuthenticated)
-    return <UserAccessScreen onPress={setIsAuthenticated} getUId={setUId} />;
+  if (!isAuthenticated) {
+    return <UserAccessScreen onPress={setIsAuthenticated} getUId={setUId} />
+  }
 
   if (!isReady || !userData || isFetchingUser) return <SplashScreen />;
 
