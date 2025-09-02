@@ -7,7 +7,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AddScreen } from '../screens/AddScreen';
+import AddScreen from '../screens/addScreen';
 import AnalyticsScreen from '../screens/AnalyticsScreen';
 import { ConfigurationScreen } from '../screens/ConfigurationScreen';
 import { FeedbackScreen } from '../screens/FeedbackScreen';

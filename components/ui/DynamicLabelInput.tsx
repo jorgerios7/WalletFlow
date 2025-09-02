@@ -45,7 +45,6 @@ export default function DynamicLabelInput({
   }, [text, number, isFocused]);
 
   const handleValueChange = (newValue: string) => {
-    console.log('newValue: ', newValue);
     if (!numberEntry) {
       setText(newValue);
       if (onTextChange) onTextChange(newValue);

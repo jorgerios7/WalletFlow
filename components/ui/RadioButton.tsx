@@ -7,11 +7,11 @@ type Option = {
 };
 
 export default function RadioButton({
-    isVertical, gap, options, onSelecting
+    isVertical, gap, options, initialValue, onSelecting
 }: {
-    isVertical?: boolean, gap?: number, options: Option[], onSelecting: (option: string) => void
+    isVertical?: boolean, gap?: number, options: Option[], initialValue: string, onSelecting: (option: string) => void
 }) {
-    const [selectedButton, setSelectedButton] = useState<string>("");
+    const [selectedButton, setSelectedButton] = useState<string>(initialValue ? initialValue : "");
 
     function handleAction(value: string) {
         setSelectedButton(value);
