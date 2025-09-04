@@ -8,7 +8,7 @@ import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { db } from '../config/firebaseConfig';
 import FinancialReportScreen from '../layout/FinancialReportScreen';
 import HorizontalCalendar from '../navigation/HorizontalCalendar';
-import { Transactions } from '../types/Finance';
+import { Payment, Transactions } from '../types/Finance';
 import { User } from '../types/User';
 
 type TransactionScreenRouteProp = RouteProp<{ Transactions: { user: User } }, 'Transactions'>;
@@ -17,17 +17,16 @@ const TransactionScreen = () => {
   const route = useRoute<TransactionScreenRouteProp>();
   const { user } = route.params;
   const groupId = user.groupId;
-  const [dateSelected, setDate] = useState('');
+  const [date, setDate] = useState('');
   const [dataBase, setDataBase] = useState<Transactions[]>([]);
   const [totalValue, setTotalValue] = useState(0);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [selectedItemData, setSelectedItemData] = useState<Transactions | null>(null);
 
-  // 🔄 Busca dados do Firestore
   const loadData = async () => {
     const snapshot = await getDocs(collection(db, `groups/${groupId}/transactions`));
     const data: Transactions[] = snapshot.docs.map((doc) => ({
-      id: doc.id,
+      transactionId: doc.id, 
       ...doc.data(),
     })) as Transactions[];
     setDataBase(data);
@@ -35,7 +34,7 @@ const TransactionScreen = () => {
 
   useEffect(() => {
     loadData();
-  }, [dateSelected]);
+  }, [date]);
 
   return (
     <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
@@ -49,9 +48,9 @@ const TransactionScreen = () => {
 
       <RecyclerItem
         list={dataBase}
-        dateFilter={dateSelected}
+        dateFilter={date}
         isStatusFilteringEnabled={false}
-        statusFilter={false}
+        paymentFilter={Payment.pending}
         onTotalValueChange={(total) => setTotalValue(total)}
         bottomMargin={96}
         onPressingItem={(selectedItem) => {

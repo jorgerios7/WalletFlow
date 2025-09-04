@@ -70,7 +70,7 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
   );
 
   const AddWrapper = () => (
-    <AddScreen />
+    <AddScreen groupId={userData.groupId} /> 
   );
 
   const ConfigurationWrapper = ({ navigation }: any) => (

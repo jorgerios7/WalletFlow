@@ -1,3 +1,4 @@
+import { Payment, Type } from "@/app/types/Finance";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import RadioButton from "@/components/ui/RadioButton";
 import SearchDropdown from "@/components/ui/SearchDropdown";
@@ -30,10 +31,11 @@ export function TypeStep(
         initialValue={value}
         gap={30}
         options={[
-          { label: "Adicionar Receita Financeira", value: "income" },
-          { label: "Adicionar Despesa Financeira", value: "expense" },
+          { label: "Adicionar Receita Financeira", value: Type.income },
+          { label: "Adicionar Despesa Financeira", value: Type.expense },
+          { label: "Adicionar Lucro Financeiro", value: Type.profit },
         ]}
-        onSelecting={onSelect}
+        onSelecting={(value) => onSelect(value)}
       />
     </StepScreen>
   );
@@ -205,8 +207,8 @@ export function PaymentStep(
         initialValue={value}
         gap={30}
         options={[
-          { label: 'O pagamento está concluído', value: 'concluded' },
-          { label: 'O pagamento está pendente', value: 'pending' },
+          { label: 'O pagamento está concluído', value: Payment.concluded },
+          { label: 'O pagamento está pendente', value: Payment.pending },
         ]}
         onSelecting={onSelect}
       />

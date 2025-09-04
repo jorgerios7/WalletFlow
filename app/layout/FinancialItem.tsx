@@ -1,34 +1,41 @@
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { FinanceType, Transactions } from "../types/Finance";
+import { Payment, Transactions, Type } from "../types/Finance";
 
-interface ItemRecyclerProps {
-    item: Transactions,
-    onPress: (selectedItem: Transactions) => void;
+const paymentStatus = (currentPayment: string) => {
+    return currentPayment === Payment.concluded ? 'Concluído' : 'Pendente'
 };
 
-const typeStatus = (status: boolean) => {
-    return status ? 'Concluído' : 'Pendente'
+const renderType = (currentType: string) => {
+    if (currentType === Type.income) {
+        return 'Entrada';
+    } else if (currentType === Type.expense) {
+        return 'Saída';
+    } else {
+        return 'Lucro';
+    }
 };
 
-const typeLabels: Record<FinanceType, string> = {
-  [FinanceType.INCOME]: 'Entrada',
-  [FinanceType.PROFIT]: 'Lucro',
-  [FinanceType.PENDING]: 'Saída',
-};
 
-const renderImage = (type: number) => {
-    if (type === 1) {
+const renderImage = (type: string) => {
+    if (type === Type.income) {
         return 'monetization-on'
-    } else if (type === 2) {
+    } else if (type === Type.profit) {
         return 'trending-up'
     } else {
         return 'remove-circle'
     }
 };
 
-const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, onPress }) => {
+export default function FinancialItem(
+    { item, onPress }
+        :
+        {
+            item: Transactions,
+            onPress: (selectedItem: Transactions) => void
+        }
+) {
     return (
         <TouchableOpacity
             style={defaultStyles.container}
@@ -45,14 +52,14 @@ const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, onPress }) => {
                     </View>
 
                     <View style={defaultStyles.textContainer}>
-                        <Text style={[defaultStyles.text, {fontSize: 16 ,fontWeight: 'bold'}]}>
-                            {typeLabels[item.type] ?? 'Invalid type'}
+                        <Text style={[defaultStyles.text, { fontSize: 16, fontWeight: 'bold' }]}>
+                            {renderType(item.type)}
                         </Text>
                         <Text style={defaultStyles.text}>
                             Categoria: {item.category}
                         </Text>
                         <Text style={defaultStyles.text}>
-                            Status: {typeStatus(item.isPaid)}
+                            Status: {paymentStatus(item.payment)}
                         </Text>
                         <Text style={defaultStyles.text}>
                             Data: {item.startDate}
@@ -70,8 +77,6 @@ const FinancialItem: React.FC<ItemRecyclerProps> = ({ item, onPress }) => {
         </TouchableOpacity>
     );
 };
-
-export default FinancialItem;
 
 const defaultStyles = StyleSheet.create({
     container: {

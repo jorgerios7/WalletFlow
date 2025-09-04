@@ -1,5 +1,5 @@
 import FinancialItem from '@/app/layout/FinancialItem';
-import { FinanceType, Transactions } from '@/app/types/Finance';
+import { Transactions, Type } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import React, { useEffect } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
@@ -8,7 +8,7 @@ interface ItemRecyclerProps {
   list: Transactions[];
   dateFilter?: string;
   isStatusFilteringEnabled: boolean;
-  statusFilter?: boolean;
+  paymentFilter?: string;
   onTotalValueChange?: (total: number) => void;
   bottomMargin?: number;
   onPressingItem: (datas: Transactions) => void;
@@ -47,7 +47,7 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
   list,
   dateFilter,
   isStatusFilteringEnabled,
-  statusFilter,
+  paymentFilter,
   onTotalValueChange,
   bottomMargin = 0,
   onPressingItem,
@@ -64,12 +64,12 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
 
   const filteredPaidList = filteredList.filter((item) => {
     if (!isStatusFilteringEnabled) return true;
-    return item.isPaid === statusFilter;
+    return item.payment === paymentFilter;
   });
 
   const totalValue = filteredPaidList.reduce((sum, item) => {
     const signedValue =
-      item.type === FinanceType.PENDING ? -item.totalValue : item.totalValue;
+      item.type === Type.expense ? -item.totalValue : item.totalValue;
     return sum + signedValue;
   }, 0);
 
@@ -83,7 +83,7 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
     <View style={{ flex: 1 }}>
       <SectionList
         sections={sections}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.transactionId}
         renderItem={({ item }) => (
           <FinancialItem item={item} onPress={onPressingItem} />
         )}

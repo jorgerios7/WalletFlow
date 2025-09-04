@@ -1,5 +1,8 @@
+import { db } from '@/app/config/firebaseConfig';
+import { Transactions } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import { getAuth } from 'firebase/auth';
+import { addDoc, collection, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import {
@@ -11,7 +14,7 @@ import {
   TypeStep
 } from './steps/Steps';
 
-export default function AddScreen() {
+export default function AddScreen({ groupId }: { groupId: string }) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
@@ -21,36 +24,64 @@ export default function AddScreen() {
 
   const [currentStep, setCurrentStep] = useState<Step>('type');
 
-  const [data, setData] = useState<FormData>({
+  const [data, setData] = useState<Transactions>({
+    transactionId: "",
     createdBy: currentUser.uid,
-    createdAt: new Date().toISOString(),
+    createdAt: "",
+    accountId: "",
     startDate: "",
     type: "",
     category: "",
     dueDate: "",
     description: "",
     payment: "",
-    recurrence: "",
+    isRecurrence: false,
     method: "",
     purpose: "",
-    accountId: "",
     totalValue: 0,
+    currentInstallment: 0
   });
 
-  interface FormData {
-    createdBy: string;
-    createdAt: string;
-    startDate: string;
-    type: string;
-    category: string;
-    dueDate: string;
-    description: string;
-    payment: string;
-    recurrence: string;
-    method: string;
-    purpose: string;
-    accountId: string;
-    totalValue: number;
+  async function uploadData() {
+    if (!currentUser) return null;
+    try {
+      const colRef = collection(db, "groups", groupId, "transactions");
+
+      // cria o doc e pega a referência
+      const docRef = await addDoc(colRef, {
+        ...data,
+        createdBy: currentUser.uid,
+        createdAt: new Date().toISOString(),
+      });
+
+      // agora você tem acesso ao id gerado
+      await updateDoc(docRef, {
+        transactionId: docRef.id,
+      });
+
+      Alert.alert("Sucesso!", "Transação salva com sucesso.");
+      setCurrentStep("type");
+      setData({
+        transactionId: "",
+        createdBy: currentUser.uid,
+        createdAt: new Date().toISOString(),
+        accountId: "",
+        startDate: "",
+        type: "",
+        category: "",
+        dueDate: "",
+        description: "",
+        payment: "",
+        isRecurrence: false,
+        method: "",
+        purpose: "",
+        totalValue: 0,
+        currentInstallment: 0
+      });
+    } catch (error: any) {
+      console.error("Erro ao salvar:", error);
+      Alert.alert("Erro", error.message || "Não foi possível salvar");
+    }
   }
 
   return (
@@ -98,7 +129,7 @@ export default function AddScreen() {
         isVisible={currentStep === "payment"}
         value={data.payment}
         onSelect={(selected) => setData((prev) => ({ ...prev, payment: selected }))}
-        onConfirm={() => { Alert.alert('Finalizado!', JSON.stringify(data, null, 2)) }}
+        onConfirm={uploadData}
         onBack={() => setCurrentStep("totalValue")}
       />
     </View>

@@ -1,20 +1,15 @@
-export enum FinanceType {
-  INCOME = 1,
-  PROFIT = 2,
-  PENDING = 3,
-}
-
-export type Type = 'Income' | 'Profit' | 'Pending';
+export enum Type { income = 'income', expense = 'expense', profit = 'profit' }
+export enum Payment { concluded = 'concluded', pending = 'pending' }
 
 export interface Transactions {
-  id: string;
+  transactionId: string;
   category: string;
   dueDate: string;
   createdAt: string;
   createdBy: string;
   startDate: string;
-  isPaid: boolean;
-  type: FinanceType;
+  payment: string;
+  type: string;
   totalValue: number;
   description: string;
   method: string;
@@ -30,7 +25,7 @@ export interface Installments {
   method: string;
   cardId: string;
   purpose: string;
-  type: FinanceType;
+  type: string;
   createdBy: string;
   createdAt: string;
   startDate: string;
@@ -41,6 +36,6 @@ export interface Parcels {
   currentInstallment: number;
   dueDate: string;
   value: number;
-  isPaid: boolean;
+  payment: string;
 }
 

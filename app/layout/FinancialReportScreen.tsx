@@ -1,18 +1,22 @@
 import { StyleSheet, Text, View } from "react-native";
-import { FinanceType, Transactions } from "../types/Finance";
+import { Payment, Transactions, Type } from "../types/Finance";
 
 interface Props {
     data?: Transactions
 }
 
-const typeLabels: Record<FinanceType, string> = {
-    [FinanceType.INCOME]: 'Entrada',
-    [FinanceType.PROFIT]: 'Lucro',
-    [FinanceType.PENDING]: 'Saída',
+const renderType = (currentType: string) => {
+    if (currentType === Type.income) {
+        return Type.income;
+    } else if (currentType === Type.expense) {
+        return Type.expense;
+    } else {
+        return Type.profit;
+    }
 };
 
-const typeStatus = (status: boolean) => {
-    return status ? 'Concluído' : 'Pendente'
+const paymentStatus = (currentPayment: string) => {
+    return currentPayment === Payment.concluded ? 'Concluído' : 'Pendente'
 };
 
 
@@ -31,7 +35,7 @@ const FinancialReportScreen = ({ data }: Props) => {
 
                 <View style={styles.row}>
                     <Text style={styles.label}>ID da Transação:</Text>
-                    <Text style={styles.value}>{data?.id || "N/A"}</Text>
+                    <Text style={styles.value}>{data?.transactionId || "N/A"}</Text>
                 </View>
 
                 <View style={styles.row}>
@@ -44,7 +48,7 @@ const FinancialReportScreen = ({ data }: Props) => {
                 <View style={styles.row}>
                     <Text style={styles.label}>Tipo:</Text>
                     <Text style={styles.value}>
-                        {typeof data?.type === "number" ? typeLabels[data.type] : "N/A"}
+                        {typeof data?.type === "number" ? renderType(data.type) : "N/A"}
                     </Text>
                 </View>
 
@@ -70,11 +74,11 @@ const FinancialReportScreen = ({ data }: Props) => {
                 <View style={styles.row}>
                     <Text style={styles.label}>Status:</Text>
                     <Text style={styles.value}>
-                        {data?.isPaid ? typeStatus(data.isPaid) : "N/A"}
+                        {data?.payment ? paymentStatus(data.payment) : "N/A"}
                     </Text>
                 </View>
 
-                {data?.isPaid && (
+                {data?.payment && (
                     <View style={styles.row}>
                         <Text style={styles.label}>Método de Pagamento:</Text>
                         <Text style={styles.value}>

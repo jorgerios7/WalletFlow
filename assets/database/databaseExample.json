@@ -55,7 +55,7 @@
       }
     }
   },
-  "homes/n1EUTJbnyA5CijICUVFm/transactions": {
+  "groups/n1EUTJbnyA5CijICUVFm/transactions": {
     "vCAxjSkdB7zcq1rJw6up": {
       "category": "Salário Mensal",
       "createdAt": "2025-07-07T19:46:52-03:00",
@@ -63,8 +63,8 @@
       "startDate": "01/07/2025",
       "description": "Empresa",
       "dueDate": "20/07/2025",
-      "isPaid": true,
-      "isRecurrence": true,
+      "payment": "concluded",
+      "recurrence": "y",
       "method": "Débito em conta",
       "accountId": "acc_santander_01",
       "purpose": "Pagar contas",
@@ -78,8 +78,8 @@
       "startDate": "02/07/2025",
       "description": "Compras do mês",
       "dueDate": "05/07/2025",
-      "isPaid": false,
-      "isRecurrence": false,
+      "payment": "concluded",
+      "recurrence": "n",
       "method": "Cartão de crédito",
       "cardId": "card_visa_01",
       "purpose": "Alimentação",
@@ -87,7 +87,7 @@
       "totalValue": 125889
     }
   },
-  "homes/n1EUTJbnyA5CijICUVFm/installments": {
+  "groups/n1EUTJbnyA5CijICUVFm/installments": {
     "sdapcje9fwefwoef": {
       "title": "Compra de celular",
       "category": "Financiamento",
@@ -101,18 +101,18 @@
       "totalValue": 116531
     }
   },
-  "homes/n1EUTJbnyA5CijICUVFm/installments/sdapcje9fwefwoef/parcels": {
+  "groups/n1EUTJbnyA5CijICUVFm/installments/sdapcje9fwefwoef/parcels": {
     "installment_1": {
       "currentInstallment": 1,
       "dueDate": "05/07/2025",
       "value": 58265,
-      "isPaid": false
+      "payment": "pending"
     },
     "installment_2": {
       "currentInstallment": 2,
       "dueDate": "05/08/2025",
       "value": 58266,
-      "isPaid": false
+      "payment": "concluded"
     }
   }
 }
