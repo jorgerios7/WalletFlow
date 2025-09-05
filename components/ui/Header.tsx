@@ -2,39 +2,54 @@ import { Colors } from "@/constants/Colors";
 import React from "react";
 import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 
+type Direction = 'normal' | 'inverted';
+
 interface HeaderProps {
     children?: React.ReactNode;
     onPress?: () => void;
     backgroundColor?: string;
+    direction?: Direction;
 }
 
-export default function Header({ onPress, children, backgroundColor }: HeaderProps) {
+export default function Header({ onPress, children, backgroundColor, direction }: HeaderProps) {
 
     const styleDynamic = {
-        backgroundColor: backgroundColor ? backgroundColor : Colors.light.shadow
+        backgroundColor: backgroundColor
+            ? backgroundColor
+            : Colors.light.shadow
     }
+
+    function childrenPosition_1() {
+        return (
+            direction === 'normal'
+                ? 0
+                : 2
+        );
+    };
+
+    function childrenPosition_2() {
+        return (
+            direction === 'normal'
+                ? 2
+                : 0
+        )
+    };
 
     return (
         <TouchableWithoutFeedback onPress={onPress}>
             <View style={[styles.container, styleDynamic]}>
-                {React.Children.count(children) === 2 ? (
+                {React.Children.count(children) === React.Children.count(children) && (
                     <>
                         <View style={{ flex: 1, alignItems: 'flex-start' }}>
-                            {React.Children.toArray(children)[0]}
+                            {React.Children.toArray(children)[childrenPosition_1()]}
                         </View>
-                         <View style={{ flex: 1, alignItems: 'center' }}>
+                        <View style={{ flex: 1, alignItems: 'center' }}>
                             {React.Children.toArray(children)[1]}
                         </View>
                         <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                            {React.Children.toArray(children)[2]}
+                            {React.Children.toArray(children)[childrenPosition_2()]}
                         </View>
                     </>
-                ) : (
-                    React.Children.map(children, (child, index) => (
-                        <View key={index} style={{ marginHorizontal: 5 }}>
-                            {child}
-                        </View>
-                    ))
                 )}
             </View>
         </TouchableWithoutFeedback>
@@ -43,11 +58,11 @@ export default function Header({ onPress, children, backgroundColor }: HeaderPro
 
 const styles = StyleSheet.create({
     container: {
-        height: 50,
+        //height: 50,
         width: "100%",
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 10
-    },
+        paddingHorizontal: 10,
+    }
 });

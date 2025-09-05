@@ -1,25 +1,21 @@
 import { auth } from "@/app/config/firebaseConfig";
 import { UpdateEmail, UpdateName, UpdatePassword } from "@/app/services/firebase/UserService";
+import CustomButton from "@/components/ui/CustomButton";
+import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
+import TextButton from "@/components/ui/TextButton";
 import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
-import CustomButton from "./CustomButton";
-import DynamicLabelInput from "./DynamicLabelInput";
-import TextButton from "./TextButton";
 
-export enum Function {
-    ChangeName = 1,
-    ChangeEmail = 2,
-    ChangePassword = 3,
-}
+export type Function= '' | 'ChangeName' | 'ChangeEmail' | 'ChangePassword';
 
 interface PersonalDataChangeProps {
     groupId: string;
     isVisible: boolean;
     onCancel: () => void;
     editField: Function;
-}
+};
 
-const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
+const PersonalDataChangeScreen: React.FC<PersonalDataChangeProps> = ({
     groupId,
     isVisible,
     onCancel,
@@ -45,11 +41,11 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
         let success = false;
 
         try {
-            if (editField === Function.ChangeName) {
+            if (editField === 'ChangeName') {
                 await UpdateName(groupId, input1, input2);
-            } else if (editField === Function.ChangeEmail) {
+            } else if (editField === 'ChangeEmail') {
                 await UpdateEmail(input3, input1, input2);
-            } else if (editField === Function.ChangePassword) {
+            } else if (editField === 'ChangePassword') {
                 await UpdatePassword(input1, input2, input3);
             }
 
@@ -67,12 +63,12 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
             <View style={styles.overlay}>
                 <View style={styles.content}>
                     <Text style={styles.title}>
-                        {editField === Function.ChangeName && "Editar nome"}
-                        {editField === Function.ChangeEmail && "Alterar email"}
-                        {editField === Function.ChangePassword && "Mudar senha"}
+                        {editField === 'ChangeName' && "Editar nome"}
+                        {editField === 'ChangeEmail' && "Alterar email"}
+                        {editField === 'ChangePassword' && "Mudar senha"}
                     </Text>
 
-                    {editField === Function.ChangeName && (
+                    {editField === 'ChangeName' && (
                         <>
                             <DynamicLabelInput
                                 label="Seu novo nome"
@@ -86,7 +82,7 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
                         </>
                     )}
 
-                    {editField === Function.ChangeEmail && (
+                    {editField === 'ChangeEmail' && (
                         <>
                             <DynamicLabelInput
                                 label="Seu novo email"
@@ -106,7 +102,7 @@ const PersonalDataChange: React.FC<PersonalDataChangeProps> = ({
                         </>
                     )}
 
-                    {editField === Function.ChangePassword && (
+                    {editField === 'ChangePassword' && (
                         <>
                             <DynamicLabelInput
                                 secureTextEntry
@@ -159,4 +155,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PersonalDataChange;
+export default PersonalDataChangeScreen;

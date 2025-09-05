@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import {
   StyleSheet,
+  Text,
   TouchableHighlight,
   TouchableOpacity,
   View
@@ -11,7 +12,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
-  onPress?: () => void;
+  onPress: (value: string) => void;
 }
 
 const AddButton: React.FC<Props> = ({ onPress }) => {
@@ -27,14 +28,33 @@ const AddButton: React.FC<Props> = ({ onPress }) => {
       {expanded && (
         <>
           <SmallButton
-            icon="camera-alt"
-            offset={160}
-            onPress={() => console.log('Câmera')}
+          text={'Adicionar Receita'}
+            icon="attach-money"
+            offset={230}
+            onPress={() => {
+              onPress('income');
+              setExpanded(false);
+            }}
           />
+
           <SmallButton
-            icon="edit"
+          text={'Adicionar Lucro'}
+            icon="bar-chart"
+            offset={160}
+            onPress={() => {
+              onPress('profit');
+              setExpanded(false);
+            }}
+          />
+
+          <SmallButton
+          text={'Adicionar Despesa'}
+            icon="money-off"
             offset={90}
-            onPress={() => console.log('Editar')}
+            onPress={() => {
+              onPress('expense');
+              setExpanded(false);
+            }}
           />
         </>
       )}
@@ -62,11 +82,12 @@ const AddButton: React.FC<Props> = ({ onPress }) => {
 
 interface SmallButtonProps {
   icon: any;
+  text: string;
   offset: number;
   onPress: () => void;
 }
 
-const SmallButton: React.FC<SmallButtonProps> = ({ icon, offset, onPress }) => {
+const SmallButton: React.FC<SmallButtonProps> = ({ icon, text, offset, onPress }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -77,13 +98,17 @@ const SmallButton: React.FC<SmallButtonProps> = ({ icon, offset, onPress }) => {
         colors={[Colors.light.highlightBackgroun_1, Colors.light.highlightBackgroun_2]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.smallButton}
+        style={[styles.smallButton, { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12 }]}
       >
-        <MaterialIcons name={icon} size={24} color={Colors.light.background} />
+        <MaterialIcons name={icon} size={22} color={Colors.light.background} />
+        <Text style={{ color: Colors.light.background, marginLeft: 6, fontSize: 14, fontWeight: "500" }} numberOfLines={1}>
+          {text}
+        </Text>
       </LinearGradient>
     </TouchableOpacity>
   );
 };
+
 
 const BUTTON_SIZE = 72;
 const SMALL_BUTTON_SIZE = 48;
@@ -114,11 +139,11 @@ const styles = StyleSheet.create({
   },
   smallButtonWrapper: {
     position: 'absolute',
-    left: '50%',
-    transform: [{ translateX: -SMALL_BUTTON_SIZE / 2 }],
+    left: '-20%',
+    transform: [{ translateX: -SMALL_BUTTON_SIZE / 2 }]
   },
   smallButton: {
-    width: SMALL_BUTTON_SIZE,
+    width: SMALL_BUTTON_SIZE + 100,
     height: SMALL_BUTTON_SIZE,
     borderRadius: SMALL_BUTTON_SIZE / 2,
     justifyContent: 'center',

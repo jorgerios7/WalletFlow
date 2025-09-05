@@ -1,19 +1,21 @@
+import { LoadScreen } from '@/app/pages/LoadScreen';
+import { FetchGroupData } from '@/app/services/firebase/GroupService';
+import { FetchUserData } from '@/app/services/firebase/UserService';
+import { Group } from '@/app/types/Group';
 import { User } from '@/app/types/User';
-import FloatingMenuButton from '@/components/ui/FloatingMenuButton';
 import GroupInformationScreen from '@/components/ui/GroupInformationScreen';
 import Header from '@/components/ui/Header';
 import MenuButton from '@/components/ui/MenuButton';
-import PersonalDataChange, { Function } from '@/components/ui/PersonalDataChange';
 import { Colors } from '@/constants/Colors';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { Pressable, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LoadScreen } from '../pages/LoadScreen';
-import { FetchGroupData } from '../services/firebase/GroupService';
-import { FetchUserData } from '../services/firebase/UserService';
-import { Group } from '../types/Group';
+import MenuTabButton from './menuTabButton';
+import PersonalDataChangeScreen, { Function } from './personalDataChangeScreen';
+import ProfileMenuButton from './profileMenuButton';
+
 
 interface Props {
     onLogout: () => void;
@@ -22,7 +24,6 @@ interface Props {
 }
 
 export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }: Props) {
-
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
@@ -36,7 +37,7 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
     const { width, height } = useWindowDimensions();
     const [collapseMenu, setCollapseMenu] = useState(false);
     const [isDataChange, setIsDataChange] = useState(false);
-    const [editField, setEditField] = useState<Function | null>(null);
+    const [editField, setEditField] = useState<Function>('');
     const [userData, setUserData] = useState<User | null>(null)
     const [groupData, setGroupData] = useState<Group | null>(null);
 
@@ -71,45 +72,6 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
         }, 300);
     };
 
-    const ItemMenu2: React.FC<{
-        onPress: () => void;
-        name: string;
-        iconName: keyof typeof MaterialIcons.glyphMap;
-        iconSize?: number
-    }> = ({ onPress, name, iconName, iconSize }) => {
-        return (
-            <Pressable
-                onPress={onPress}
-                style={{
-                    width: '100%',
-                    height: 50,
-                    gap: 20,
-                    backgroundColor: Colors.light.border,
-                    flexDirection: 'row',
-                    padding: 10,
-                    borderBottomColor: Colors.light.highlightBackgroun_1,
-                    borderBottomWidth: 0.5,
-                }}>
-
-                <MaterialIcons
-                    name={iconName}
-                    size={iconSize ? iconSize : 28}
-                    color={Colors.light.highlightBackgroun_1}
-                />
-
-                <Text style={{ alignSelf: 'center', fontSize: 14, fontWeight: 'bold' }}>
-                    {name}
-                </Text>
-            </Pressable>
-        );
-    }
-
-    const menuItems = [
-        { text: 'Editar nome', action: Function.ChangeName },
-        { text: 'Alterar email', action: Function.ChangeEmail },
-        { text: 'Mudar senha', action: Function.ChangePassword },
-    ];
-
     return (
         <View>
             {!userData || !groupData ? (
@@ -119,21 +81,31 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
                     width: width,
                     height: height,
                     paddingBottom: insets.bottom + 60,
-                    paddingTop: insets.top,
+                    marginTop: insets.top,
                     gap: 10,
                     backgroundColor: Colors.light.shadow,
                 }}>
-                    <Header backgroundColor={Colors.light.shadow}>
-                        <Text style={{
-                            fontSize: 18,
-                            fontWeight: 'bold'
-                        }}>
-                            Olá, {userData?.identification.name} {userData?.identification.surname}!
-                        </Text>
+                    <Header direction='normal' backgroundColor={Colors.light.shadow}>
+
+                        <Pressable
+                            onPress={() => onNavigate('Tabs')}
+                            style={{
+                                padding: 12,
+                                backgroundColor: 'transparent',
+                                alignSelf: 'flex-start'
+                            }}
+                        >
+                            <Feather
+                                style={{ padding: 3.8 }}
+                                name="chevron-left"
+                                color={Colors.light.highlightBackgroun_1}
+                                size={30}
+                            />
+                        </Pressable>
                     </Header>
 
-                    <FloatingMenuButton
-                        closedSize={80}
+                    <ProfileMenuButton
+                        closedSize={45}
                         menuHeight={height - insets.bottom - 42}
                         menuWidth={width - 20}
                         title={`${userData?.identification.name} ${userData?.identification.surname}`}
@@ -144,19 +116,42 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
                         collapseMenu={collapseMenu}
                     >
                         <View style={{ width: '100%', gap: 5 }}>
-                            {menuItems.map((item, index) => (
-                                <MenuButton
-                                    key={index}
-                                    onPress={() => {
-                                        setEditField(item.action);
-                                        setIsDataChange(true);
-                                        setUpdate(true);
-                                    }}
-                                    text={item.text}
-                                    iconName='arrow-right'
-                                    fontSize={14}
-                                />
-                            ))}
+
+                            <MenuButton
+                                text="Editar Nome"
+                                iconName="arrow-right"
+                                iconSize={24}
+                                fontSize={14}
+                                onPress={() => {
+                                    setEditField('ChangeName');
+                                    setIsDataChange(true);
+                                    setUpdate(true);
+                                }}
+                            />
+
+                            <MenuButton
+                                text="Alterar Email"
+                                iconName="arrow-right"
+                                iconSize={24}
+                                fontSize={14}
+                                onPress={() => {
+                                    setEditField('ChangeEmail');
+                                    setIsDataChange(true);
+                                    setUpdate(true);
+                                }}
+                            />
+
+                            <MenuButton
+                                text="Mudar Senha"
+                                iconName="arrow-right"
+                                iconSize={24}
+                                fontSize={14}
+                                onPress={() => {
+                                    setEditField('ChangePassword');
+                                    setIsDataChange(true);
+                                    setUpdate(true);
+                                }}
+                            />
 
                             <MenuButton
                                 onPress={() => onClose(true)}
@@ -174,20 +169,18 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
                                 borderBottomColor="transparent"
                             />
                         </View>
-                    </FloatingMenuButton>
+                    </ProfileMenuButton>
 
-
-                    <PersonalDataChange
+                    <PersonalDataChangeScreen
+                        editField={editField}
                         groupId={userData.groupId}
                         isVisible={isDataChange}
                         onCancel={() => {
                             setIsDataChange(false);
-                            setEditField(null);
+                            setEditField('');
                             setUpdate(true)
                         }}
-                        editField={editField!}
                     />
-
 
                     <View style={{ gap: 10 }}>
                         <GroupInformationScreen
@@ -202,19 +195,19 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
 
                         <View style={{ width: '100%', height: 0.5, backgroundColor: 'black', marginVertical: 10 }} />
 
-                        <ItemMenu2
+                        <MenuTabButton
                             name={'Configurações'}
                             iconName={'settings'}
                             onPress={() => onNavigate("ConfigurationScreen")}
                         />
 
-                        <ItemMenu2
+                        <MenuTabButton
                             name={'Ajuda'}
                             iconName={'help'}
                             onPress={() => onNavigate("HelpScreen")}
                         />
 
-                        <ItemMenu2
+                        <MenuTabButton
                             name={'Feedback'}
                             iconName={'feedback'}
                             onPress={() => onNavigate("FeedbackScreen")}

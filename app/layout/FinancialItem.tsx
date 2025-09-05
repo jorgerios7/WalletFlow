@@ -20,11 +20,11 @@ const renderType = (currentType: string) => {
 
 const renderImage = (type: string) => {
     if (type === Type.income) {
-        return 'monetization-on'
+        return 'attach-money'
     } else if (type === Type.profit) {
         return 'trending-up'
     } else {
-        return 'remove-circle'
+        return 'money-off'
     }
 };
 
