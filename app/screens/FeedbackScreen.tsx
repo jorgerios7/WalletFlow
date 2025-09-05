@@ -27,7 +27,7 @@ export function FeedbackScreen({
             <Header>
                 <Pressable
                     style={{ padding: 10 }}
-                    onPress={() => onNavigate('Tabs')} >
+                    onPress={() => onNavigate('Profile')} >
                     <MaterialIcons name="chevron-left" size={32} color={Colors.light.highlightBackgroun_1} />
                 </Pressable>
                 <Text style={{ alignSelf: 'center', fontSize: 22 }}>Feedback</Text>

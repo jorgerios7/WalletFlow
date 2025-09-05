@@ -16,7 +16,6 @@ import MenuTabButton from './menuTabButton';
 import PersonalDataChangeScreen, { Function } from './personalDataChangeScreen';
 import ProfileMenuButton from './profileMenuButton';
 
-
 interface Props {
     onLogout: () => void;
     onDeleteAccount: () => void;

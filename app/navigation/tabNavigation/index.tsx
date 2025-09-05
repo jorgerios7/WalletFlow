@@ -1,4 +1,11 @@
-import AddButton from '@/components/ui/AddButton';
+import AddScreen from '@/app/screens/addScreen';
+import AnalyticsScreen from '@/app/screens/AnalyticsScreen';
+import { ConfigurationScreen } from '@/app/screens/ConfigurationScreen';
+import { FeedbackScreen } from '@/app/screens/FeedbackScreen';
+import { HelpScreen } from '@/app/screens/HelpScreen';
+import ProfileScreen from '@/app/screens/profileScreen';
+import TransactionScreen from '@/app/screens/TransactionScreen';
+import { User } from '@/app/types/User';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import TabButton from '@/components/ui/TabButton';
 import { Colors } from '@/constants/Colors';
@@ -9,14 +16,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AddScreen from '../screens/addScreen';
-import AnalyticsScreen from '../screens/AnalyticsScreen';
-import { ConfigurationScreen } from '../screens/ConfigurationScreen';
-import { FeedbackScreen } from '../screens/FeedbackScreen';
-import { HelpScreen } from '../screens/HelpScreen';
-import ProfileScreen from '../screens/profileScreen';
-import TransactionScreen from '../screens/TransactionScreen';
-import { User } from '../types/User';
+import AddButton from './addButton';
 
 interface Props {
   userData: User;
@@ -26,7 +26,7 @@ interface Props {
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
+const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
@@ -79,10 +79,7 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
 
   const ConfigurationWrapper = ({ navigation }: any) => (
     <ConfigurationScreen
-      onNavigate={(locate) => {
-        navigation.navigate(locate);
-        //setTabScreenRender('Profile');
-      }}
+      onNavigate={(locate) => navigation.navigate(locate)}
     />
   );
 
@@ -90,7 +87,6 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
     <HelpScreen
       onNavigate={(locate) => {
         navigation.navigate(locate);
-        //setTabScreenRender('Profile');
       }}
     />
   );
@@ -99,7 +95,6 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
     <FeedbackScreen
       onNavigate={(locate) => {
         navigation.navigate(locate);
-        //setTabScreenRender('Profile');
       }}
     />
   );
@@ -107,23 +102,24 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
   const Tabs = ({ navigation }: any) => {
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
+
         <Pressable
+          onPress={() => navigation.navigate('Profile')}
           style={{
             width: 45,
             height: 45,
-            borderRadius: 99,
-            backgroundColor: Colors.light.highlightBackgroun_1,
+            borderRadius: 45 / 2,
+            borderColor: Colors.light.highlightBackgroun_2,
+            backgroundColor: Colors.light.highlightBackgroun_2,
             position: 'absolute',
-            top: insets.top,
+            top: insets.top + 10,
             right: 10,
             zIndex: 10,
             justifyContent: 'center',
             alignItems: 'center',
-            elevation: 5,
           }}
-          onPress={() => navigation.navigate('Profile')}
         >
-          <Feather name="user" color="white" size={35} />
+          <Feather name={'user'} color={Colors.light.highlightBackgroun_1} size={30} style={{ backgroundColor: 'white', borderRadius: 45 / 2, padding: 5.5 }} />
         </Pressable>
 
         <ConfirmationScreen
@@ -169,15 +165,7 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
               tabBarButton: (props) => (
                 <AddButton
                   onPress={(value) => navigation.navigate('AddScreen')}
-
-
                 />
-                //<TabButton
-                //  {...props}
-                //  iconName="add"
-                //  label="Adicionar"
-                //  focused={props.accessibilityState?.selected}
-                ///>
               ),
             }}
           />
@@ -205,7 +193,7 @@ const BottomTabs: React.FC<Props> = ({ userData, onDismis }) => {
 
   return (
     <Stack.Navigator
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ headerShown: false, animation: 'none' }}
     >
       <Stack.Screen
         name="Tabs"
@@ -244,4 +232,4 @@ const styles = StyleSheet.create({
   container: { flex: 1 }
 });
 
-export default BottomTabs;
+export default TabNavigation;

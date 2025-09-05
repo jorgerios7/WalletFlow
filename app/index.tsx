@@ -3,7 +3,7 @@ import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Snackbar } from "react-native-paper";
 import { db } from "./config/firebaseConfig";
-import BottomTabs from "./navigation/BottomTabs";
+import TabNavigation from "./navigation/tabNavigation";
 import UserAccessScreen from "./pages/auth/UserAccessScreen";
 import SplashScreen from "./pages/SplashScreen";
 import GroupSetupScreen from "./screens/GroupSetupScreen";
@@ -149,7 +149,7 @@ export default function AppMain() {
         />
 
         {!isShowGroupSetupScreen && groupData && (
-          <BottomTabs
+          <TabNavigation
             userData={userData}
             onDismis={() => setIsAuthenticated(false)}
           />

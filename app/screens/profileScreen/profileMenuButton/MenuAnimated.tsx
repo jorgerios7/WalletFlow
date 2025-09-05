@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 6,
-    backgroundColor: "transparent",
-  },
+    backgroundColor: "transparent"
+  }
 });
 
 export default MenuAnimated;
