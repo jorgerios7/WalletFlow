@@ -85,7 +85,6 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
                     backgroundColor: Colors.light.shadow,
                 }}>
                     <Header direction='normal' backgroundColor={Colors.light.shadow}>
-
                         <Pressable
                             onPress={() => onNavigate('Tabs')}
                             style={{

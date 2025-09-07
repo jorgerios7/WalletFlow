@@ -1,7 +1,8 @@
+import Header from '@/components/ui/Header';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BarChart, PieChart } from 'react-native-chart-kit';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { db } from '../config/firebaseConfig';
@@ -86,64 +87,67 @@ export default function AnalysisScreen() {
   const methodValues = methods.map((m) => methodMap[m]);
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 60 }]}>
+    <View>
+      <Header direction={'normal'}>
+        <View style={{height: 60}}/>
+      </Header>
+      <ScrollView contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 60 }]}>
+        <Text style={styles.title}>Entradas por Mês</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <BarChart
+            style={styles.containerContent}
+            data={{ labels: months, datasets: [{ data: incomeValues }] }}
+            width={months.length * 60}
+            height={250}
+            yAxisLabel="R$"
+            yAxisSuffix=""
+            chartConfig={{ ...chartConfig, color: () => 'green' }}
+            fromZero
+          />
+        </ScrollView>
 
+        <Text style={styles.title}>Saídas por Mês</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <BarChart
+            style={styles.containerContent}
+            data={{ labels: months, datasets: [{ data: expenseValues }] }}
+            width={months.length * 60}
+            height={250}
+            yAxisLabel="R$"
+            yAxisSuffix=""
+            chartConfig={{ ...chartConfig, color: () => 'red' }}
+            fromZero
+          />
+        </ScrollView>
 
-      <Text style={styles.title}>Entradas por Mês</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <BarChart
+        <Text style={styles.title}>Gastos por Categoria</Text>
+        <PieChart
           style={styles.containerContent}
-          data={{ labels: months, datasets: [{ data: incomeValues }] }}
-          width={months.length * 60}
-          height={250}
-          yAxisLabel="R$"
-          yAxisSuffix=""
-          chartConfig={{ ...chartConfig, color: () => 'green' }}
-          fromZero
-        />
-      </ScrollView>
-
-      <Text style={styles.title}>Saídas por Mês</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <BarChart
-          style={styles.containerContent}
-          data={{ labels: months, datasets: [{ data: expenseValues }] }}
-          width={months.length * 60}
-          height={250}
-          yAxisLabel="R$"
-          yAxisSuffix=""
-          chartConfig={{ ...chartConfig, color: () => 'red' }}
-          fromZero
-        />
-      </ScrollView>
-
-      <Text style={styles.title}>Gastos por Categoria</Text>
-      <PieChart
-        style={styles.containerContent}
-        data={pieData}
-        width={screenWidth - 32}
-        height={220}
-        chartConfig={chartConfig}
-        accessor="amount"
-        paddingLeft='0'
-        backgroundColor="transparent"
-        absolute
-      />
-
-      <Text style={styles.title}>Gastos por Método de Pagamento</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <BarChart
-          style={styles.containerContent}
-          data={{ labels: methods, datasets: [{ data: methodValues }] }}
-          width={methods.length * 100}
-          height={250}
-          yAxisLabel="R$"
-          yAxisSuffix=""
+          data={pieData}
+          width={screenWidth - 32}
+          height={220}
           chartConfig={chartConfig}
-          fromZero
+          accessor="amount"
+          paddingLeft='0'
+          backgroundColor="transparent"
+          absolute
         />
+
+        <Text style={styles.title}>Gastos por Método de Pagamento</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <BarChart
+            style={styles.containerContent}
+            data={{ labels: methods, datasets: [{ data: methodValues }] }}
+            width={methods.length * 100}
+            height={250}
+            yAxisLabel="R$"
+            yAxisSuffix=""
+            chartConfig={chartConfig}
+            fromZero
+          />
+        </ScrollView>
       </ScrollView>
-    </ScrollView>
+    </View>
   );
 }
 

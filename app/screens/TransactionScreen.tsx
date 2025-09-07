@@ -1,3 +1,4 @@
+import Header from '@/components/ui/Header';
 import RecyclerItem from '@/components/ui/RecyclerItem';
 import { BottomSheet } from '@/components/ui/sheet/BottomSheet';
 import TotalValueScreen from '@/components/ui/TotalValueScreen';
@@ -26,7 +27,7 @@ const TransactionScreen = () => {
   const loadData = async () => {
     const snapshot = await getDocs(collection(db, `groups/${groupId}/transactions`));
     const data: Transactions[] = snapshot.docs.map((doc) => ({
-      transactionId: doc.id, 
+      transactionId: doc.id,
       ...doc.data(),
     })) as Transactions[];
     setDataBase(data);
@@ -38,10 +39,13 @@ const TransactionScreen = () => {
 
   return (
     <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+
+      <Header >
+        <View style={{ height: 60 }}></View>
+      </Header>
+
       <HorizontalCalendar
-        onDateChange={(date) => {
-          setDate(date.toLocaleDateString('pt-BR'));
-        }}
+        onDateChange={(date) => setDate(date.toLocaleDateString('pt-BR'))}
       />
 
       <TotalValueScreen value={totalValue} />

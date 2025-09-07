@@ -1,29 +1,28 @@
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { GestureResponderEvent, Pressable, StyleSheet, Text } from "react-native";
 
 interface TabButtonProps {
     onPress?: (event: GestureResponderEvent) => void;
     iconName: keyof typeof MaterialIcons.glyphMap;
     label?: string;
-    focused?: boolean;
 }
 
 const TabButton: React.FC<TabButtonProps> = ({
     onPress,
     iconName,
     label,
-    
-    focused
 }) => {
-    const isFocused = focused;
-    const color = isFocused ? '#6200ee' : '#888';
-    const tabBackgroundColor = isFocused ? '#e0d7f5' : Colors.light.background;
-
+    const isFocused = useIsFocused();
+    const dynamicColor = isFocused ? Colors.light.background : Colors.light.highlightBackgroun_1;
+    const dynamicBackgroundTextColor = isFocused ? Colors.light.highlightBackgroun_1 : Colors.light.background;
+    const tabBackgroundColor = isFocused ? Colors.light.highlightBackgroun_1 : Colors.light.background;
+    
     return (
         <Pressable onPress={onPress} style={[styles.tabButton, { backgroundColor: tabBackgroundColor }]}>
-            <MaterialIcons name={iconName} size={24} color={color} />
-            <Text style={[styles.tabLabel, { color }]}>{label}</Text>
+            <MaterialIcons name={iconName} size={24} color={dynamicColor} />
+            <Text style={[styles.tabLabel, { color: dynamicColor, backgroundColor: dynamicBackgroundTextColor }]}>{label}</Text>
         </Pressable>
     );
 };
@@ -33,13 +32,12 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.light.background,
-        borderRadius: 12,
+        borderRadius: 5,
+        marginHorizontal: 10
     },
     tabLabel: {
         fontSize: 12,
         marginTop: 2,
-        backgroundColor: Colors.light.background
     },
 });
 

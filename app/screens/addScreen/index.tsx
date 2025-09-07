@@ -10,19 +10,20 @@ import {
   DueDateStep,
   PaymentStep,
   StartDateStep,
-  TotalValueStep,
-  TypeStep
+  TotalValueStep
 } from './steps/Steps';
 
-export default function AddScreen({ groupId }: { groupId: string }) {
+export type Type =  '' | 'income' | 'expense' | 'profit';
+
+export default function AddScreen({ groupId, type, onDismiss }: { groupId: string, type: Type, onDismiss: (locate: string) => void }) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
   if (!currentUser) return null;
 
-  type Step = 'type' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'payment';
-
-  const [currentStep, setCurrentStep] = useState<Step>('type');
+  type Step = 'Tabs' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'payment';
+  
+  const [currentStep, setCurrentStep] = useState<Step>('category');
 
   const [data, setData] = useState<Transactions>({
     transactionId: "",
@@ -30,7 +31,7 @@ export default function AddScreen({ groupId }: { groupId: string }) {
     createdAt: "",
     accountId: "",
     startDate: "",
-    type: "",
+    type: type,
     category: "",
     dueDate: "",
     description: "",
@@ -47,27 +48,26 @@ export default function AddScreen({ groupId }: { groupId: string }) {
     try {
       const colRef = collection(db, "groups", groupId, "transactions");
 
-      // cria o doc e pega a referência
       const docRef = await addDoc(colRef, {
         ...data,
         createdBy: currentUser.uid,
         createdAt: new Date().toISOString(),
       });
 
-      // agora você tem acesso ao id gerado
       await updateDoc(docRef, {
         transactionId: docRef.id,
       });
 
       Alert.alert("Sucesso!", "Transação salva com sucesso.");
-      setCurrentStep("type");
+      //setCurrentStep("category");
+      onDismiss('Tabs');
       setData({
         transactionId: "",
         createdBy: currentUser.uid,
         createdAt: new Date().toISOString(),
         accountId: "",
         startDate: "",
-        type: "",
+        type: type,
         category: "",
         dueDate: "",
         description: "",
@@ -86,19 +86,19 @@ export default function AddScreen({ groupId }: { groupId: string }) {
 
   return (
     <View style={styles.container}>
-      <TypeStep
+      {/**  <TypeStep
         isVisible={currentStep === "type"}
         value={data.type}
         onSelect={(selected) => setData((prev) => ({ ...prev, type: selected }))}
         onConfirm={() => setCurrentStep("category")}
-      />
+      /> */}
 
       <CategoryStep
         isVisible={currentStep === "category"}
         value={data.category}
         onSelect={(selected) => setData((prev) => ({ ...prev, category: selected }))}
         onConfirm={() => setCurrentStep("startDate")}
-        onBack={() => setCurrentStep("type")}
+        onBack={() => onDismiss("Tabs")}
       />
 
       <StartDateStep

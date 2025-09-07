@@ -1,4 +1,4 @@
-import AddScreen from '@/app/screens/addScreen';
+import AddScreen, { Type } from '@/app/screens/addScreen';
 import AnalyticsScreen from '@/app/screens/AnalyticsScreen';
 import { ConfigurationScreen } from '@/app/screens/ConfigurationScreen';
 import { FeedbackScreen } from '@/app/screens/FeedbackScreen';
@@ -7,7 +7,6 @@ import ProfileScreen from '@/app/screens/profileScreen';
 import TransactionScreen from '@/app/screens/TransactionScreen';
 import { User } from '@/app/types/User';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
-import TabButton from '@/components/ui/TabButton';
 import { Colors } from '@/constants/Colors';
 import { Feather } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -17,6 +16,7 @@ import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddButton from './addButton';
+import TabButton from './tabButton';
 
 interface Props {
   userData: User;
@@ -37,9 +37,10 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
   type TabScreen = 'Analytic' | 'Transactions' | 'Add' | 'Profile';
 
   const [confirmationScreenVisible, setConfirmationScreenVisible] = useState(false);
-  const [tabScreenRender, setTabScreenRender] = useState<TabScreen>('Analytic');
+  const [currentTabScreen, setCurrentTabScreen] = useState<TabScreen>('Analytic');
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
-
+  const [typeValue, setTypeValue] = useState<Type>('');
+ 
   const handleLogout = () => (
     setIsDeleteAccount(false),
     setConfirmationScreenVisible(true)
@@ -64,7 +65,6 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
     console.log('(BottomTabs) deleteAccount is called!');
   }
 
-
   const ProfileWrapper = ({ navigation }: any) => (
     <ProfileScreen
       onLogout={handleLogout}
@@ -73,8 +73,12 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
     />
   );
 
-  const AddWrapper = () => (
-    <AddScreen groupId={userData.groupId} />
+  const AddWrapper = ({navigation}: any) => (
+    <AddScreen
+      groupId={userData.groupId}
+      type={typeValue}
+      onDismiss={(locate) => navigation.navigate(locate) }
+    />
   );
 
   const ConfigurationWrapper = ({ navigation }: any) => (
@@ -102,7 +106,6 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
   const Tabs = ({ navigation }: any) => {
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
-
         <Pressable
           onPress={() => navigation.navigate('Profile')}
           style={{
@@ -119,7 +122,12 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
             alignItems: 'center',
           }}
         >
-          <Feather name={'user'} color={Colors.light.highlightBackgroun_1} size={30} style={{ backgroundColor: 'white', borderRadius: 45 / 2, padding: 5.5 }} />
+          <Feather
+            name={'user'}
+            color={Colors.light.highlightBackgroun_1}
+            size={30}
+            style={{ backgroundColor: 'white', borderRadius: 45 / 2, padding: 5.5 }}
+          />
         </Pressable>
 
         <ConfirmationScreen
@@ -130,7 +138,7 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
         />
 
         <Tab.Navigator
-          initialRouteName={tabScreenRender}
+          initialRouteName={currentTabScreen}
           screenOptions={{
             headerShown: false,
             tabBarShowLabel: false,
@@ -152,7 +160,6 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
                   {...props}
                   iconName="bar-chart"
                   label="Análise"
-                  focused={props.accessibilityState?.selected}
                 />
               ),
             }}
@@ -164,7 +171,10 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
             options={{
               tabBarButton: (props) => (
                 <AddButton
-                  onPress={(value) => navigation.navigate('AddScreen')}
+                  onPress={(value) => {
+                    setTypeValue(value);
+                    navigation.navigate('AddScreen');
+                  }}
                 />
               ),
             }}
@@ -180,7 +190,6 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
                   {...props}
                   iconName="list-alt"
                   label="Transações"
-                  focused={props.accessibilityState?.selected}
                 />
               ),
             }}
@@ -190,10 +199,9 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
     );
   }
 
-
   return (
     <Stack.Navigator
-      screenOptions={{ headerShown: false, animation: 'none' }}
+      screenOptions={{ headerShown: false, animation: 'fade' }}
     >
       <Stack.Screen
         name="Tabs"
