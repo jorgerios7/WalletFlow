@@ -1,21 +1,21 @@
+import { db } from '@/app/config/firebaseConfig';
+import { Payment, Transactions } from '@/app/types/Finance';
+import { User } from '@/app/types/User';
 import Header from '@/components/ui/Header';
-import RecyclerItem from '@/components/ui/RecyclerItem';
 import { BottomSheet } from '@/components/ui/sheet/BottomSheet';
 import TotalValueScreen from '@/components/ui/TotalValueScreen';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
-import { db } from '../config/firebaseConfig';
-import FinancialReportScreen from '../layout/FinancialReportScreen';
-import HorizontalCalendar from '../navigation/HorizontalCalendar';
-import { Payment, Transactions } from '../types/Finance';
-import { User } from '../types/User';
+import CalendarNavigator from './calendarNavigator';
+import FinanceItemRecycler from './recyclerFinanceItem';
+import FinanceReportScreen from './recyclerFinanceItem/financeReportScreen';
 
-type TransactionScreenRouteProp = RouteProp<{ Transactions: { user: User } }, 'Transactions'>;
+type TransactionsScreenRouteProp = RouteProp<{ Transactions: { user: User } }, 'Transactions'>;
 
-const TransactionScreen = () => {
-  const route = useRoute<TransactionScreenRouteProp>();
+const TransactionsScreen = () => {
+  const route = useRoute<TransactionsScreenRouteProp>();
   const { user } = route.params;
   const groupId = user.groupId;
   const [date, setDate] = useState('');
@@ -23,14 +23,22 @@ const TransactionScreen = () => {
   const [totalValue, setTotalValue] = useState(0);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [selectedItemData, setSelectedItemData] = useState<Transactions | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const loadData = async () => {
-    const snapshot = await getDocs(collection(db, `groups/${groupId}/transactions`));
-    const data: Transactions[] = snapshot.docs.map((doc) => ({
-      transactionId: doc.id,
-      ...doc.data(),
-    })) as Transactions[];
-    setDataBase(data);
+    try {
+      setLoading(true);
+      const snapshot = await getDocs(collection(db, `groups/${groupId}/transactions`));
+      const data: Transactions[] = snapshot.docs.map((doc) => ({
+        transactionId: doc.id,
+        ...doc.data(),
+      })) as Transactions[];
+      setDataBase(data);
+    } catch (error) {
+      console.error("(TransactionsScreen.tsx) Erro ao carregar dados: ", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -39,19 +47,19 @@ const TransactionScreen = () => {
 
   return (
     <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-
       <Header >
         <View style={{ height: 60 }}></View>
       </Header>
 
-      <HorizontalCalendar
+      <CalendarNavigator
         onDateChange={(date) => setDate(date.toLocaleDateString('pt-BR'))}
       />
 
       <TotalValueScreen value={totalValue} />
 
-      <RecyclerItem
+      <FinanceItemRecycler
         list={dataBase}
+        loading={loading}
         dateFilter={date}
         isStatusFilteringEnabled={false}
         paymentFilter={Payment.pending}
@@ -70,7 +78,7 @@ const TransactionScreen = () => {
           isDragHandleVisible={false}
         >
           {selectedItemData && (
-            <FinancialReportScreen data={selectedItemData} />
+            <FinanceReportScreen data={selectedItemData} />
           )}
         </BottomSheet>
       </SafeAreaView>
@@ -86,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TransactionScreen;
+export default TransactionsScreen;

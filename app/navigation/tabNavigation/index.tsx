@@ -4,7 +4,7 @@ import { ConfigurationScreen } from '@/app/screens/ConfigurationScreen';
 import { FeedbackScreen } from '@/app/screens/FeedbackScreen';
 import { HelpScreen } from '@/app/screens/HelpScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
-import TransactionScreen from '@/app/screens/TransactionScreen';
+import TransactionsScreen from '@/app/screens/transactionsScreen';
 import { User } from '@/app/types/User';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import { Colors } from '@/constants/Colors';
@@ -182,7 +182,7 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
 
           <Tab.Screen
             name="Transactions"
-            component={TransactionScreen}
+            component={TransactionsScreen}
             initialParams={{ user: userData }}
             options={{
               tabBarButton: (props) => (

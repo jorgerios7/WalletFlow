@@ -15,15 +15,6 @@ export function LoadScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'transparent'
-    },
-    loader: {
-        position: 'absolute',
-        top: '40%',
-        right: '45%',
-        backgroundColor: 'transparent',
-    }
+    container: { width: '100%', height: '100%', backgroundColor: 'transparent' },
+    loader: { flex: 1, justifyContent: "center", alignItems: "center" }
 });

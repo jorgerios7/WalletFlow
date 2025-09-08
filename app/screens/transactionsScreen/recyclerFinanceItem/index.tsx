@@ -1,10 +1,12 @@
-import FinancialItem from '@/app/layout/FinancialItem';
+import { LoadScreen } from '@/app/pages/LoadScreen';
+import NotFoundScreen from '@/app/pages/NotFoundScreen';
 import { Transactions, Type } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import React, { useEffect } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
+import FinanceDetailsItem from './financeDetailsItem';
 
-interface ItemRecyclerProps {
+interface Props {
   list: Transactions[];
   dateFilter?: string;
   isStatusFilteringEnabled: boolean;
@@ -12,6 +14,7 @@ interface ItemRecyclerProps {
   onTotalValueChange?: (total: number) => void;
   bottomMargin?: number;
   onPressingItem: (datas: Transactions) => void;
+  loading: boolean;
 }
 
 interface Section {
@@ -43,7 +46,7 @@ const groupByDate = (list: Transactions[]): Section[] => {
     }));
 };
 
-const RecyclerItem: React.FC<ItemRecyclerProps> = ({
+const FinanceItemRecycler: React.FC<Props> = ({
   list,
   dateFilter,
   isStatusFilteringEnabled,
@@ -51,6 +54,7 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
   onTotalValueChange,
   bottomMargin = 0,
   onPressingItem,
+  loading
 }) => {
 
   const filteredList = list.filter((item) => {
@@ -79,26 +83,47 @@ const RecyclerItem: React.FC<ItemRecyclerProps> = ({
 
   const sections = groupByDate(filteredList);
 
+  function HeaderSection({ text }: { text: string }) {
+    return (
+      <View style={{
+        backgroundColor: Colors.light.shadow, paddingVertical: 8, paddingHorizontal: 16,
+      }}>
+        <Text
+          style={{
+            fontSize: 12, color: Colors.light.text, alignSelf: 'center'
+          }}
+        >
+          {text}
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={{ flex: 1 }}>
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => item.transactionId}
-        renderItem={({ item }) => (
-          <FinancialItem item={item} onPress={onPressingItem} />
-        )}
-        renderSectionHeader={({ section }) => (
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionHeaderText}>{section.title}</Text>
-          </View>
-        )}
-        style={[styles.scrollContent, { marginBottom: bottomMargin }]}
-        ListHeaderComponent={<View style={styles.headerSpacer} />}
-        ListFooterComponent={<View style={styles.footerSpacer} />}
-        stickySectionHeadersEnabled
-      />
+      {loading ? (
+        <LoadScreen />
+      ) : sections.length === 0 ? (
+        <NotFoundScreen />
+      ) : (
+        <SectionList
+          sections={sections}
+          keyExtractor={(item) => item.transactionId}
+          renderItem={({ item }) => (
+            <FinanceDetailsItem item={item} onPress={onPressingItem} />
+          )}
+          renderSectionHeader={({ section }) => (
+            <HeaderSection text={section.title} />
+          )}
+          style={[styles.scrollContent, { marginBottom: bottomMargin }]}
+          ListHeaderComponent={<View style={styles.headerSpacer} />}
+          ListFooterComponent={<View style={styles.footerSpacer} />}
+          stickySectionHeadersEnabled
+        />
+      )}
     </View>
   );
+
 };
 
 const styles = StyleSheet.create({
@@ -110,17 +135,7 @@ const styles = StyleSheet.create({
   },
   footerSpacer: {
     height: 0,
-  },
-  sectionHeader: {
-    backgroundColor: Colors.light.shadow,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  sectionHeaderText: {
-    fontSize: 12,
-    color: Colors.light.text,
-    alignSelf: 'center'
-  },
+  }
 });
 
-export default RecyclerItem;
+export default FinanceItemRecycler;

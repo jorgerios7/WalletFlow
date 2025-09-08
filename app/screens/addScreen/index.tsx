@@ -4,7 +4,7 @@ import { Colors } from '@/constants/Colors';
 import { getAuth } from 'firebase/auth';
 import { addDoc, collection, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import {
   CategoryStep,
   DueDateStep,
@@ -13,7 +13,7 @@ import {
   TotalValueStep
 } from './steps/Steps';
 
-export type Type =  '' | 'income' | 'expense' | 'profit';
+export type Type = 'income' | 'expense' | 'profit';
 
 export default function AddScreen({ groupId, type, onDismiss }: { groupId: string, type: Type, onDismiss: (locate: string) => void }) {
   const auth = getAuth();
@@ -22,7 +22,7 @@ export default function AddScreen({ groupId, type, onDismiss }: { groupId: strin
   if (!currentUser) return null;
 
   type Step = 'Tabs' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'payment';
-  
+
   const [currentStep, setCurrentStep] = useState<Step>('category');
 
   const [data, setData] = useState<Transactions>({
@@ -84,17 +84,28 @@ export default function AddScreen({ groupId, type, onDismiss }: { groupId: strin
     }
   }
 
+  function renderTitle() {
+    if (type === 'income') {
+      return 'Adicionar Receita financeira'
+    } else if (type === 'profit') {
+      return 'Adicionar Lucro Financeiro'
+    } else {
+      return 'Adicionar Despesa Financeira'
+    }
+  }
+
   return (
     <View style={styles.container}>
-      {/**  <TypeStep
-        isVisible={currentStep === "type"}
-        value={data.type}
-        onSelect={(selected) => setData((prev) => ({ ...prev, type: selected }))}
-        onConfirm={() => setCurrentStep("category")}
-      /> */}
+
+      <Text style={{
+        fontWeight: 'bold', fontSize: 22
+      }}>
+        {renderTitle()}
+      </Text>
 
       <CategoryStep
         isVisible={currentStep === "category"}
+        type={type}
         value={data.category}
         onSelect={(selected) => setData((prev) => ({ ...prev, category: selected }))}
         onConfirm={() => setCurrentStep("startDate")}
@@ -137,6 +148,6 @@ export default function AddScreen({ groupId, type, onDismiss }: { groupId: strin
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.light.shadow, justifyContent: 'center', alignItems: 'center' },
+  container: { flex: 1, gap: 50, backgroundColor: Colors.light.shadow, justifyContent: 'center', alignItems: 'center' },
   //content: { width: 300, backgroundColor: Colors.light.shadow, flexDirection: 'column', gap: 30, alignSelf: 'center' },
 });

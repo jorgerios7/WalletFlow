@@ -1,56 +1,25 @@
-import { Payment, Type } from "@/app/types/Finance";
+import { Payment } from "@/app/types/Finance";
+import List from "@/assets/database/List";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import RadioButton from "@/components/ui/RadioButton";
-import SearchDropdown from "@/components/ui/SearchDropdown";
+import SearchDropdown from "@/components/ui/searchDropdown";
 import { Colors } from "@/constants/Colors";
 import { Alert } from "react-native";
+import { Type } from "..";
 import StepScreen from "../StepScreen";
-
-export function TypeStep(
-  {
-    isVisible, value, onSelect, onConfirm
-  }: {
-    isVisible: boolean;
-    value: string;
-    onSelect: (value: string) => void;
-    onConfirm: () => void
-  }
-) {
-  return (
-    <StepScreen
-      isVisible={isVisible}
-      onConfirm={() => {
-        if (value) {
-          onConfirm();
-        } else {
-          Alert.alert("Campo vazio", "Selecione uma opção para continuar");
-        }
-      }}
-    >
-      <RadioButton
-        initialValue={value}
-        gap={30}
-        options={[
-          { label: "Adicionar Receita Financeira", value: Type.income },
-          { label: "Adicionar Despesa Financeira", value: Type.expense },
-          { label: "Adicionar Lucro Financeiro", value: Type.profit },
-        ]}
-        onSelecting={(value) => onSelect(value)}
-      />
-    </StepScreen>
-  );
-}
 
 export function CategoryStep(
   {
-    isVisible, value, onConfirm, onBack, onSelect
+    isVisible, value, type, onConfirm, onBack, onSelect
   }: {
     isVisible: boolean;
     value: string;
+    type: Type;
     onConfirm: () => void;
     onBack: () => void;
     onSelect: (value: string) => void;
   }) {
+
   return (
     <StepScreen
       isVisible={isVisible}
@@ -65,15 +34,7 @@ export function CategoryStep(
     >
       <SearchDropdown
         initialValue={value}
-        list={[
-          'Supermercado',
-          'Aluguel',
-          'Fatura de Energia',
-          'Fatura de Água',
-          'Manga',
-          'Pera',
-          'Laranja',
-        ]}
+        list={List(type)}
         label={"Categoria"}
         onSelect={onSelect}
       />

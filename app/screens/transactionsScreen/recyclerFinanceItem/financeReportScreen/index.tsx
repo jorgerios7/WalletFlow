@@ -1,9 +1,7 @@
+import { Payment, Transactions, Type } from "@/app/types/Finance";
 import { StyleSheet, Text, View } from "react-native";
-import { Payment, Transactions, Type } from "../types/Finance";
 
-interface Props {
-    data?: Transactions
-}
+interface Props { data?: Transactions };
 
 const renderType = (currentType: string) => {
     if (currentType === Type.income) {
@@ -16,11 +14,15 @@ const renderType = (currentType: string) => {
 };
 
 const paymentStatus = (currentPayment: string) => {
-    return currentPayment === Payment.concluded ? 'Concluído' : 'Pendente'
+    return (
+        currentPayment === Payment.concluded
+            ? 'Concluído'
+            : 'Pendente'
+    )
 };
 
 
-const FinancialReportScreen = ({ data }: Props) => {
+const FinanceReportScreen = ({ data }: Props) => {
     return (
         <View>
             {/* Cabeçalho */}
@@ -162,4 +164,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FinancialReportScreen;
+export default FinanceReportScreen;

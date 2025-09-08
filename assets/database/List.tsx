@@ -1,0 +1,61 @@
+import { Type } from "@/app/screens/addScreen";
+
+const types: Record<Type, string[]> = {
+  income: [
+    "Salário mensal",
+    "Décimo terceiro",
+    "Aulas extras",
+    "Aluguel de imóvel",
+    "Venda de produtos",
+    "Comissão",
+    "Freelancer",
+    "Renda passiva",
+    "Bônus",
+    "Hora extra",
+    "Consultoria",
+    "Serviços autônomos"
+  ],
+  expense: [
+    "Aluguel",
+    "Condomínio",
+    "Supermercado",
+    "Água",
+    "Energia",
+    "Gás de cozinha",
+    "Gasolina",
+    "Transporte público",
+    "Manutenção do carro",
+    "Plano de saúde",
+    "Medicamentos",
+    "Escola",
+    "Cursos",
+    "Lazer",
+    "Viagens",
+    "Restaurantes",
+    "Internet",
+    "Streaming",
+    "Telefonia",
+    "Roupas",
+    "Academia",
+    "Seguros",
+    "Impostos"
+  ],
+  profit: [
+    "CDB",
+    "Poupança",
+    "Dividendos",
+    "Fundos imobiliários",
+    "Tesouro Direto",
+    "Criptomoedas",
+    "Ações",
+    "LCI/LCA",
+    "Debêntures",
+    "ETFs",
+    "Stock Options",
+    "Crowdfunding imobiliário"
+  ]
+};
+
+export default function List(type: Type) {
+  return types[type];
+}

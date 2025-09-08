@@ -1,7 +1,7 @@
+import { Payment, Transactions, Type } from "@/app/types/Finance";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Payment, Transactions, Type } from "../types/Finance";
 
 const paymentStatus = (currentPayment: string) => {
     return currentPayment === Payment.concluded ? 'Concluído' : 'Pendente'
@@ -28,7 +28,7 @@ const renderImage = (type: string) => {
     }
 };
 
-export default function FinancialItem(
+export default function FinanceDetailsItem(
     { item, onPress }
         :
         {

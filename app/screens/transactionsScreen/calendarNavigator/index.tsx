@@ -23,7 +23,7 @@ const RADIUS_DEFAULT = 16;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CENTER_OFFSET = (SCREEN_WIDTH - ITEM_WIDTH) / 4;
 
-const HorizontalCalendar: React.FC<Props> = ({ onDateChange }) => {
+const CalendarNavigator: React.FC<Props> = ({ onDateChange }) => {
     const scrollRef = useRef<ScrollView>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -212,4 +212,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HorizontalCalendar;
+export default CalendarNavigator;

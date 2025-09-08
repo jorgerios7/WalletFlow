@@ -1,7 +1,8 @@
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
-import { Animated, FlatList, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Animated, Pressable, StyleSheet, TextInput, View } from "react-native";
+import Dropdown from "./dropdown";
 
 interface Props {
     list: string[];
@@ -50,12 +51,10 @@ export default function SearchDropdown({ list, label, onSelect, initialValue }: 
 
         if (value.trim() === "") {
             setResults([]);
-
         } else {
             const filtered = list.filter((item) =>
                 item.toLowerCase().includes(value.toLowerCase())
             );
-
             setResults(filtered);
             setButtonVisible(prev => ({ ...prev, add: filtered.length === 0 }));
         }
@@ -86,41 +85,13 @@ export default function SearchDropdown({ list, label, onSelect, initialValue }: 
                 )}
             </View>
 
-            {results.length > 0 && (
-                <View style={styles.dropdown}>
-                    <FlatList
-                        data={results}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity
-                                style={styles.item}
-                                onPress={() => {
-                                    setText(item);
-                                    setResults([]);
-                                    onSelect(item);
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        alignContent: 'space-between',
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <Text style={{ width: 260 }}>{item}</Text>
-                                    <Pressable style={{ alignSelf: 'center', backgroundColor: 'transparent', }}>
-                                        <MaterialIcons
-                                            name={'more-vert'}
-                                            size={22}
-                                            color={Colors.light.highlightBackgroun_1}
-                                        />
-                                    </Pressable>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    />
-                </View>
-            )}
+            <Dropdown 
+                isVisible={results.length > 0}
+                results={results}
+                onSelect={onSelect}
+                onResults={setResults}
+                setText={setText}
+            />
         </View>
     );
 }
@@ -152,16 +123,5 @@ const styles = StyleSheet.create({
         borderBottomColor: Colors.light.highlightBackgroun_1,
         borderRadius: 8,
         padding: 14,
-    },
-    dropdown: {
-        backgroundColor: Colors.light.shadow,
-        borderRadius: 10,
-        maxHeight: 150,
-    },
-    item: {
-        padding: 10,
-        borderBottomWidth: 0.5,
-        borderBottomColor: Colors.light.highlightBackgroun_1,
-        borderRadius: 10
-    },
+    }
 });
