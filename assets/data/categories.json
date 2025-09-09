@@ -1,7 +1,5 @@
-import { Type } from "@/app/screens/addScreen";
-
-const types: Record<Type, string[]> = {
-  income: [
+{
+  "income": [
     "Salário mensal",
     "Décimo terceiro",
     "Aulas extras",
@@ -15,7 +13,7 @@ const types: Record<Type, string[]> = {
     "Consultoria",
     "Serviços autônomos"
   ],
-  expense: [
+  "expense": [
     "Aluguel",
     "Condomínio",
     "Supermercado",
@@ -40,7 +38,7 @@ const types: Record<Type, string[]> = {
     "Seguros",
     "Impostos"
   ],
-  profit: [
+  "profit": [
     "CDB",
     "Poupança",
     "Dividendos",
@@ -54,8 +52,4 @@ const types: Record<Type, string[]> = {
     "Stock Options",
     "Crowdfunding imobiliário"
   ]
-};
-
-export default function List(type: Type) {
-  return types[type];
 }

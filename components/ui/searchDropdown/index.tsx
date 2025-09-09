@@ -1,20 +1,24 @@
+import { Type } from "@/app/screens/addScreen";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { Animated, Pressable, StyleSheet, TextInput, View } from "react-native";
 import Dropdown from "./dropdown";
+import NewCategoryMenu from "./newCategoryMenu";
 
 interface Props {
     list: string[];
     label: string;
     onSelect: (result: string) => void;
     initialValue?: string;
+    currentType: Type;
+    onAddCategory: () => void;
 }
 
-export default function SearchDropdown({ list, label, onSelect, initialValue }: Props) {
+export default function SearchDropdown({ list, label, onSelect, initialValue, currentType, onAddCategory }: Props) {
     const [text, setText] = useState(initialValue ? initialValue : "");
     const [results, setResults] = useState<string[]>([]);
-    const [buttonVisible, setButtonVisible] = useState({ add: false, delete: false });
+    const [itemsVisible, setItemsVisible] = useState({ add: false, delete: false, newCategoryMenu: false });
     const labelPosition = useState(new Animated.Value(17))[0];
     const [isFocused, setIsFocused] = useState(false);
 
@@ -46,7 +50,7 @@ export default function SearchDropdown({ list, label, onSelect, initialValue }: 
     }
 
     const handleSearch = (value: string) => {
-        setButtonVisible(prev => ({ ...prev, add: false }));
+        setItemsVisible(prev => ({ ...prev, add: false }));
         setText(value);
 
         if (value.trim() === "") {
@@ -56,13 +60,13 @@ export default function SearchDropdown({ list, label, onSelect, initialValue }: 
                 item.toLowerCase().includes(value.toLowerCase())
             );
             setResults(filtered);
-            setButtonVisible(prev => ({ ...prev, add: filtered.length === 0 }));
+            setItemsVisible(prev => ({ ...prev, add: filtered.length === 0 }));
         }
     };
 
     return (
         <View style={styles.container}>
-            <View style={{ flexDirection: 'row', alignContent: 'space-between', marginEnd: 5 }} >
+            <View style={{ flexDirection: 'row', alignContent: 'space-between', marginEnd: 5 }}>
 
                 <LabelAnimated labelText={label} labelColor={Colors.light.shadow} />
 
@@ -74,23 +78,34 @@ export default function SearchDropdown({ list, label, onSelect, initialValue }: 
                     onBlur={() => setIsFocused(false)}
                 />
 
-                {buttonVisible.add && (
-                    <Pressable style={{ alignSelf: 'center', backgroundColor: 'transparent' }}>
+                {itemsVisible.add && (
+                    <Pressable
+                        style={{ alignSelf: 'center', backgroundColor: 'transparent' }}
+                        onPress={() => setItemsVisible(prev => ({ ...prev, newCategoryMenu: true }))}
+                    >
                         <MaterialIcons
                             name={'add'}
                             size={22}
                             color={Colors.light.highlightBackgroun_1}
                         />
                     </Pressable>
-                )}
+                )};
             </View>
 
-            <Dropdown 
+            <Dropdown
                 isVisible={results.length > 0}
                 results={results}
                 onSelect={onSelect}
                 onResults={setResults}
                 setText={setText}
+            />
+
+            <NewCategoryMenu
+                isVisible={itemsVisible.newCategoryMenu && itemsVisible.add}
+                newCategory={text}
+                currentType={currentType}
+                onSuccess={() => onAddCategory()}
+                onDismiss={() => setItemsVisible(prev => ({ ...prev, newCategoryMenu: false }))}
             />
         </View>
     );

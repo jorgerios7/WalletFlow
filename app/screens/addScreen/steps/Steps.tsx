@@ -1,9 +1,10 @@
 import { Payment } from "@/app/types/Finance";
-import List from "@/assets/database/List";
+import { LoadCategories } from "@/app/utils/categoryManager";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import RadioButton from "@/components/ui/RadioButton";
 import SearchDropdown from "@/components/ui/searchDropdown";
 import { Colors } from "@/constants/Colors";
+import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { Type } from "..";
 import StepScreen from "../StepScreen";
@@ -20,6 +21,21 @@ export function CategoryStep(
     onSelect: (value: string) => void;
   }) {
 
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    HandleLoadCategories();
+  }, []);
+
+  async function HandleLoadCategories() {
+    try {
+      const data = await LoadCategories(type); // <- resolve a Promise
+      setCategories(data);
+    } catch (error) {
+      console.log('(Steps.tsx) Erro ao carregar categoria: ', error);
+    }
+  }
+
   return (
     <StepScreen
       isVisible={isVisible}
@@ -34,9 +50,11 @@ export function CategoryStep(
     >
       <SearchDropdown
         initialValue={value}
-        list={List(type)}
+        list={categories}
         label={"Categoria"}
         onSelect={onSelect}
+        currentType={type}
+        onAddCategory={() => HandleLoadCategories()}
       />
     </StepScreen>
   );
