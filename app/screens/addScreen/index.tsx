@@ -97,16 +97,14 @@ export default function AddScreen({ groupId, type, onDismiss }: { groupId: strin
   return (
     <View style={styles.container}>
 
-      <Text style={{
-        fontWeight: 'bold', fontSize: 22
-      }}>
+      <Text style={{ fontWeight: 'bold', fontSize: 22 }}>
         {renderTitle()}
       </Text>
 
       <CategoryStep
         isVisible={currentStep === "category"}
         type={type}
-        value={data.category}
+        initialValue={data.category}
         onSelect={(selected) => setData((prev) => ({ ...prev, category: selected }))}
         onConfirm={() => setCurrentStep("startDate")}
         onBack={() => onDismiss("Tabs")}
@@ -148,6 +146,5 @@ export default function AddScreen({ groupId, type, onDismiss }: { groupId: strin
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, gap: 50, backgroundColor: Colors.light.shadow, justifyContent: 'center', alignItems: 'center' },
-  //content: { width: 300, backgroundColor: Colors.light.shadow, flexDirection: 'column', gap: 30, alignSelf: 'center' },
+  container: { flex: 1, backgroundColor: Colors.light.shadow, gap: 50, justifyContent: 'center', alignItems: 'center' }
 });

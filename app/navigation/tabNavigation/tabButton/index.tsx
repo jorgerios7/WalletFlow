@@ -19,9 +19,6 @@ const TabButton: React.FC<Props> = ({
     const dynamicColor = isFocused
         ? Colors.light.background
         : Colors.light.highlightBackgroun_1;
-    const dynamicBackgroundTextColor = isFocused
-        ? Colors.light.highlightBackgroun_1
-        : Colors.light.background;
     const tabBackgroundColor = isFocused
         ? Colors.light.highlightBackgroun_1
         : Colors.light.background;
@@ -29,24 +26,15 @@ const TabButton: React.FC<Props> = ({
     return (
         <Pressable
             onPress={onPress}
-            style={[styles.tabButton, { backgroundColor: tabBackgroundColor }]}
+            style={styles.tabButton}
         >
             <MaterialIcons
+                style={{ backgroundColor: tabBackgroundColor, borderRadius: 5, padding: 1 }}
                 name={iconName}
                 size={24}
                 color={dynamicColor}
             />
-            <Text
-                style={
-                    [
-                        styles.tabLabel,
-                        {
-                            color: dynamicColor,
-                            backgroundColor: dynamicBackgroundTextColor
-                        }
-                    ]
-                }
-            >
+            <Text style={styles.tabLabel}>
                 {label}
             </Text>
         </Pressable>
@@ -58,7 +46,7 @@ const styles = StyleSheet.create({
         flex: 1, alignItems: 'center', justifyContent: 'center',
         borderRadius: 5, marginHorizontal: 10, marginTop: 5
     },
-    tabLabel: { fontSize: 12, marginTop: 2 }
+    tabLabel: { fontSize: 12, marginTop: 2, color: Colors.light.highlightBackgroun_1},
 });
 
 export default TabButton

@@ -1,24 +1,24 @@
-import { Type } from "@/app/screens/addScreen";
 import { Colors } from "@/constants/Colors";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { Animated, Pressable, StyleSheet, TextInput, View } from "react-native";
 import Dropdown from "./dropdown";
-import NewCategoryMenu from "./newCategoryMenu";
 
 interface Props {
-    list: string[];
-    label: string;
-    onSelect: (result: string) => void;
-    initialValue?: string;
-    currentType: Type;
-    onAddCategory: () => void;
+    list: string[]; label: string; initialValue?: string; onSelectInDropdown: (item: string) => void;
+    whenSelectItemToAdd: (item: string) => void; whenSelectItemToDelete: (item: string) => void;
+    onTextInputChange:(text: string) => void , menuVisibility: (menu: Menu) => void
 }
 
-export default function SearchDropdown({ list, label, onSelect, initialValue, currentType, onAddCategory }: Props) {
+type Menu = 'newCategoryMenu' | 'deleteCategoryMenu';
+
+export default function SearchDropdown({
+    list, label, initialValue, onSelectInDropdown, whenSelectItemToAdd, 
+    whenSelectItemToDelete, onTextInputChange, menuVisibility
+}: Props) {
     const [text, setText] = useState(initialValue ? initialValue : "");
     const [results, setResults] = useState<string[]>([]);
-    const [itemsVisible, setItemsVisible] = useState({ add: false, delete: false, newCategoryMenu: false });
+    const [itemsVisible, setItemsVisible] = useState({ buttonAdd: false, newCategoryMenu: false, deleteCategoryMenu: false });
     const labelPosition = useState(new Animated.Value(17))[0];
     const [isFocused, setIsFocused] = useState(false);
 
@@ -32,6 +32,8 @@ export default function SearchDropdown({ list, label, onSelect, initialValue, cu
             useNativeDriver: false,
         }).start();
     }, [text, isFocused]);
+
+    
 
     function LabelAnimated({ labelText, labelColor }: { labelText: string, labelColor?: string }) {
         return (
@@ -49,9 +51,30 @@ export default function SearchDropdown({ list, label, onSelect, initialValue, cu
         );
     }
 
+    function ButtonAdd({ isVisible }: { isVisible: boolean }) {
+        if (!isVisible) return;
+
+        return (
+            <Pressable
+                style={{ position: 'absolute', right: 5, alignSelf: 'center', backgroundColor: 'transparent' }}
+                onPress={() => {
+                    whenSelectItemToAdd(text);
+                    menuVisibility('newCategoryMenu');
+                }}
+            >
+                <Feather
+                    name={'plus-circle'}
+                    size={22}
+                    color={Colors.light.highlightBackgroun_1}
+                />
+            </Pressable>
+        );
+    }
+
     const handleSearch = (value: string) => {
-        setItemsVisible(prev => ({ ...prev, add: false }));
+        setItemsVisible(prev => ({ ...prev, buttonAdd: false }));
         setText(value);
+        onTextInputChange(value);
 
         if (value.trim() === "") {
             setResults([]);
@@ -60,7 +83,7 @@ export default function SearchDropdown({ list, label, onSelect, initialValue, cu
                 item.toLowerCase().includes(value.toLowerCase())
             );
             setResults(filtered);
-            setItemsVisible(prev => ({ ...prev, add: filtered.length === 0 }));
+            setItemsVisible(prev => ({ ...prev, buttonAdd: filtered.length === 0 }));
         }
     };
 
@@ -78,34 +101,22 @@ export default function SearchDropdown({ list, label, onSelect, initialValue, cu
                     onBlur={() => setIsFocused(false)}
                 />
 
-                {itemsVisible.add && (
-                    <Pressable
-                        style={{ alignSelf: 'center', backgroundColor: 'transparent' }}
-                        onPress={() => setItemsVisible(prev => ({ ...prev, newCategoryMenu: true }))}
-                    >
-                        <MaterialIcons
-                            name={'add'}
-                            size={22}
-                            color={Colors.light.highlightBackgroun_1}
-                        />
-                    </Pressable>
-                )};
+                <ButtonAdd isVisible={itemsVisible.buttonAdd} />
+
             </View>
 
             <Dropdown
                 isVisible={results.length > 0}
                 results={results}
-                onSelect={onSelect}
-                onResults={setResults}
-                setText={setText}
-            />
-
-            <NewCategoryMenu
-                isVisible={itemsVisible.newCategoryMenu && itemsVisible.add}
-                newCategory={text}
-                currentType={currentType}
-                onSuccess={() => onAddCategory()}
-                onDismiss={() => setItemsVisible(prev => ({ ...prev, newCategoryMenu: false }))}
+                onSelect={(item) => {
+                    setText(item);
+                    onSelectInDropdown(item);
+                    setResults([]);
+                }}
+                onPressDelete={(item) => {
+                    menuVisibility('deleteCategoryMenu');
+                    whenSelectItemToDelete(item);
+                }}
             />
         </View>
     );
@@ -113,7 +124,7 @@ export default function SearchDropdown({ list, label, onSelect, initialValue, cu
 
 const styles = StyleSheet.create({
     container: {
-        width: 300,
+        minWidth: 300,
         margin: 5,
         backgroundColor: Colors.light.shadow,
         borderWidth: 0.5,
@@ -131,12 +142,12 @@ const styles = StyleSheet.create({
         padding: 2,
     },
     input: {
-        width: 270,
+        minWidth: 295,
         fontWeight: 'bold',
         backgroundColor: Colors.light.shadow,
         borderBottomWidth: 0.5,
         borderBottomColor: Colors.light.highlightBackgroun_1,
         borderRadius: 8,
-        padding: 14,
+        padding: 14
     }
 });

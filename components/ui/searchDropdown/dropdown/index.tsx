@@ -1,51 +1,64 @@
 import { Colors } from "@/constants/Colors";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
     isVisible: boolean;
     results: string[];
     onSelect: (item: string) => void;
-    onResults: (result: []) => void;
-    setText: (text: string) => void;
+    onPressDelete: (item: string) => void;
 }
 
-export default function Dropdown({ isVisible, results, onSelect, onResults, setText }: Props) {
+export default function Dropdown({ isVisible, results, onSelect, onPressDelete }: Props) {
     if (!isVisible) return;
+
+    function ButtonDelete({ item }: { item: string }) {
+        return (
+            <Pressable
+                style={{
+                    alignSelf: "center",
+                    backgroundColor: "transparent",
+                    padding: 5,
+                }}
+                onPress={() => onPressDelete(item)}
+            >
+                <Feather
+                    name={"minus-circle"}
+                    size={22}
+                    color={Colors.light.highlightBackgroun_1}
+                />
+            </Pressable>
+        );
+    }
 
     return (
         <View style={styles.dropdown}>
             <FlatList
                 data={results}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        style={styles.item}
-                        onPress={() => {
-                            onResults([]);
-                            setText(item);
-                            onSelect(item);
-                        }}
-                    >
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignContent: 'space-between',
-                                alignItems: 'center'
-                            }}
+                renderItem={({ item, index }) => {
+                    const isLast = index === results.length - 1;
+                    return (
+                        <TouchableOpacity
+                            style={[
+                                styles.item,
+                                isLast && { borderBottomWidth: 0, borderBottomColor: "transparent" },
+                            ]}
+                            onPress={() => onSelect(item)}
                         >
-                            <Text style={{ width: 260 }}>{item}</Text>
-                            <Pressable style={{ alignSelf: 'center', backgroundColor: 'transparent', }}>
-                                <MaterialIcons
-                                    name={'more-vert'}
-                                    size={22}
-                                    color={Colors.light.highlightBackgroun_1}
-                                />
-                            </Pressable>
-                        </View>
-                    </TouchableOpacity>
-                )}
+                            <View
+                                style={{ flexDirection: "row", alignContent: "space-between", alignItems: "center" }}
+                            >
+                                <Text style={{ width: 250 }}>{item}</Text>
+
+                                <ButtonDelete item={item} />
+
+                            </View>
+                        </TouchableOpacity>
+                    );
+                }}
             />
+
         </View>
     );
 };
@@ -54,7 +67,7 @@ const styles = StyleSheet.create({
     dropdown: {
         backgroundColor: Colors.light.shadow,
         borderRadius: 10,
-        maxHeight: 150,
+        maxHeight: 160,
     },
     item: {
         padding: 10,

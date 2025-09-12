@@ -3,25 +3,28 @@ import { LoadCategories } from "@/app/utils/categoryManager";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import RadioButton from "@/components/ui/RadioButton";
 import SearchDropdown from "@/components/ui/searchDropdown";
+import DeleteCategoryMenu from "@/components/ui/searchDropdown/deleteCategoryMenu";
+import NewCategoryMenu from "@/components/ui/searchDropdown/newCategoryMenu";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, View } from "react-native";
 import { Type } from "..";
 import StepScreen from "../StepScreen";
 
 export function CategoryStep(
   {
-    isVisible, value, type, onConfirm, onBack, onSelect
+    isVisible, initialValue, type, onConfirm, onBack, onSelect
   }: {
     isVisible: boolean;
-    value: string;
+    initialValue: string;
     type: Type;
     onConfirm: () => void;
     onBack: () => void;
     onSelect: (value: string) => void;
   }) {
-
+  const [itemsVisible, setItemsVisible] = useState({ newCategoryMenu: false, deleteCategoryMenu: false });
   const [categories, setCategories] = useState<string[]>([]);
+  const [text, setText] = useState(initialValue);
 
   useEffect(() => {
     HandleLoadCategories();
@@ -29,7 +32,7 @@ export function CategoryStep(
 
   async function HandleLoadCategories() {
     try {
-      const data = await LoadCategories(type); // <- resolve a Promise
+      const data = await LoadCategories(type);
       setCategories(data);
     } catch (error) {
       console.log('(Steps.tsx) Erro ao carregar categoria: ', error);
@@ -37,26 +40,46 @@ export function CategoryStep(
   }
 
   return (
-    <StepScreen
-      isVisible={isVisible}
-      onConfirm={() => {
-        if (value) {
-          onConfirm();
-        } else {
-          Alert.alert('Campo vazio', 'Selecione uma opção para continuar');
-        }
-      }}
-      onBack={onBack}
-    >
-      <SearchDropdown
-        initialValue={value}
-        list={categories}
-        label={"Categoria"}
-        onSelect={onSelect}
+    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <StepScreen
+        isVisible={isVisible}
+        onConfirm={() => {
+          if (text === '' || !text || text !== initialValue) {
+            Alert.alert('Campo vazio', 'Selecione uma opção para continuar');
+          } else {
+            onConfirm();
+          }
+        }}
+        onBack={onBack}
+      >
+        <SearchDropdown
+          initialValue={initialValue}
+          list={categories}
+          label={"Categoria"}
+          menuVisibility={(menu) => setItemsVisible(prev => ({ ...prev, [menu]: true }))}
+          onSelectInDropdown={(text1) => { onSelect(text1), setText(text1) }}
+          whenSelectItemToAdd={(text1) => { onSelect(text1); setText(text1) }}
+          whenSelectItemToDelete={(text1) => { onSelect(text1), setText(text1) }}
+          onTextInputChange={(text1) => setText(text1)}
+        />
+      </StepScreen>
+
+      <NewCategoryMenu
+        isVisible={itemsVisible.newCategoryMenu}
+        categoryToAdd={text}
         currentType={type}
-        onAddCategory={() => HandleLoadCategories()}
+        onSuccess={() => { HandleLoadCategories() }}
+        onDismiss={() => setItemsVisible(prev => ({ ...prev, newCategoryMenu: false }))}
       />
-    </StepScreen>
+
+      <DeleteCategoryMenu
+        isVisible={itemsVisible.deleteCategoryMenu}
+        currentType={type}
+        categoryToDelete={text}
+        onSuccess={() => { HandleLoadCategories() }}
+        onDismiss={() => setItemsVisible(prev => ({ ...prev, deleteCategoryMenu: false }))}
+      />
+    </View>
   );
 };
 
