@@ -9,21 +9,25 @@ import {
   CategoryStep,
   DueDateStep,
   PaymentStep,
+  RecurrenceScreen,
   StartDateStep,
   TotalValueStep
 } from './steps/Steps';
 
-export type Type = 'income' | 'expense' | 'profit';
+export type Type = '' | 'income' | 'expense' | 'profit';
 
-export default function AddScreen({ groupId, type, onDismiss }: { groupId: string, type: Type, onDismiss: (locate: string) => void }) {
+export default function AddScreen(
+  { groupId, type, onDismiss }
+    :
+    { groupId: string, type: Type, onDismiss: (locate: string) => void }) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
   if (!currentUser) return null;
 
-  type Step = 'Tabs' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'payment';
+  type Step = 'Tabs' | 'recurrence' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'payment';
 
-  const [currentStep, setCurrentStep] = useState<Step>('category');
+  const [currentStep, setCurrentStep] = useState<Step>('recurrence');
 
   const [data, setData] = useState<Transactions>({
     transactionId: "",
@@ -86,11 +90,11 @@ export default function AddScreen({ groupId, type, onDismiss }: { groupId: strin
 
   function renderTitle() {
     if (type === 'income') {
-      return 'Adicionar Receita financeira'
+      return 'Cadastro de Receita'
     } else if (type === 'profit') {
-      return 'Adicionar Lucro Financeiro'
+      return 'Cadastro de Lucro'
     } else {
-      return 'Adicionar Despesa Financeira'
+      return 'Cadastro de Despesa'
     }
   }
 
@@ -101,13 +105,21 @@ export default function AddScreen({ groupId, type, onDismiss }: { groupId: strin
         {renderTitle()}
       </Text>
 
+      <RecurrenceScreen
+        isVisible={currentStep === "recurrence"}
+        initialValue={data.isRecurrence ? 'recurrence' : 'single'}
+        onSelect={(selected) => setData((prev) => ({ ...prev, isRecurrence: selected === 'recurrence' }))}
+        onConfirm={() => setCurrentStep("category")}
+        onBack={() => onDismiss("Tabs")}
+      />
+
       <CategoryStep
         isVisible={currentStep === "category"}
         type={type}
         initialValue={data.category}
         onSelect={(selected) => setData((prev) => ({ ...prev, category: selected }))}
         onConfirm={() => setCurrentStep("startDate")}
-        onBack={() => onDismiss("Tabs")}
+        onBack={() => setCurrentStep("recurrence")}
       />
 
       <StartDateStep
@@ -146,5 +158,8 @@ export default function AddScreen({ groupId, type, onDismiss }: { groupId: strin
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.light.shadow, gap: 50, justifyContent: 'center', alignItems: 'center' }
+  container: {
+    flex: 1, backgroundColor: Colors.light.shadow, gap: 50,
+    justifyContent: 'center', alignItems: 'center'
+  }
 });

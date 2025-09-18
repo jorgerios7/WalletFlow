@@ -65,8 +65,14 @@ export default function Dropdown({ isVisible, results, onSelect, onPressDelete }
 
 const styles = StyleSheet.create({
     dropdown: {
-        backgroundColor: Colors.light.shadow,
+        position: "absolute",
+        top: "100%",
+        zIndex: 999,
+        marginTop: 2,
+        backgroundColor: Colors.light.background,
         borderRadius: 10,
+        borderWidth: 0.5,
+        borderColor: Colors.light.highlightBackgroun_1,
         maxHeight: 160,
     },
     item: {

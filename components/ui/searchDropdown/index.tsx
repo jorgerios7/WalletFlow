@@ -124,6 +124,7 @@ export default function SearchDropdown({
 
 const styles = StyleSheet.create({
     container: {
+        position: "relative",
         minWidth: 300,
         margin: 5,
         backgroundColor: Colors.light.shadow,

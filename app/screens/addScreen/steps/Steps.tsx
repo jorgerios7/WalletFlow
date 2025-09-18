@@ -1,15 +1,88 @@
 import { Payment } from "@/app/types/Finance";
 import { LoadCategories } from "@/app/utils/categoryManager";
+import DropdownMenu from "@/components/ui/dropdownMenu";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import RadioButton from "@/components/ui/RadioButton";
+import RadioGroup from "@/components/ui/radioGroup";
 import SearchDropdown from "@/components/ui/searchDropdown";
 import DeleteCategoryMenu from "@/components/ui/searchDropdown/deleteCategoryMenu";
 import NewCategoryMenu from "@/components/ui/searchDropdown/newCategoryMenu";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
-import { Alert, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { Type } from "..";
 import StepScreen from "../StepScreen";
+
+type Value = 'single' | 'recurrent';
+
+export function RecurrenceScreen(
+  {
+    isVisible, initialValue, onConfirm, onBack, onSelect
+  }: {
+    isVisible: boolean;
+    initialValue: Value;
+    onConfirm: () => void;
+    onBack: () => void;
+    onSelect: (value: string) => void;
+  }) {
+  if (!isVisible) return;
+
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    if (!initialValue) setValue(initialValue);
+  }, [initialValue]);
+
+  return (
+    <StepScreen
+      isVisible={isVisible}
+      onConfirm={() => {
+        if (value) {
+          onConfirm();
+        } else {
+          Alert.alert('Campo vazio', 'Digite uma data para continuar');
+        }
+      }}
+      onBack={onBack}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5}}>
+        <Text style={{ color: Colors.light.text, alignSelf: 'center' }}>
+          Esta transação é:
+        </Text>
+
+        <DropdownMenu
+          isVisible
+          setSelection={initialValue === 'single' ? 'Única' : 'Recorrente'}
+          options={['Única', 'Recorrente']}
+          onSelect={(item) => {
+            onSelect(item);
+            setValue(item === 'Única' ? 'single' : 'recurrent');
+          }}
+        />
+      </View>
+
+      <RadioGroup
+        isVisible={value === 'recurrent'}
+        options={[{ value: 'allTime' }, { value: 'setLimit' }]}
+        setSelection={'allTime'}
+        onSelect={(item) => onSelect(item)}
+      >
+        <Text>Irá repetir por tempo indeterminado</Text>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <Text>Terminará em</Text>
+          <DropdownMenu
+            isVisible
+            setSelection={"2"}
+            options={['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']}
+            onSelect={(item) => console.log("Selecionado:", item)}
+          />
+          <Text>meses</Text>
+        </View>
+      </RadioGroup>
+    </StepScreen>
+  );
+}
 
 export function CategoryStep(
   {

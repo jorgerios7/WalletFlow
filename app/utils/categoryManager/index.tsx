@@ -1,6 +1,6 @@
 import { Type } from "@/app/screens/addScreen";
 import categoriesDefault from "@/assets/data/categories.json";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 
 // Caminho no sandbox do app
 const FILE_PATH = FileSystem.documentDirectory + "categories.json";

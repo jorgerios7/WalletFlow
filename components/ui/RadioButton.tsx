@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -7,9 +8,9 @@ type Option = {
 };
 
 export default function RadioButton({
-    isVertical, gap, options, initialValue, onSelecting
+    isHorizontal, gap, options, initialValue, onSelecting
 }: {
-    isVertical?: boolean, gap?: number, options: Option[], initialValue: string, onSelecting: (option: string) => void
+    isHorizontal?: boolean, gap?: number, options: Option[], initialValue: string, onSelecting: (option: string) => void
 }) {
     const [selectedButton, setSelectedButton] = useState<string>(initialValue ? initialValue : "");
 
@@ -19,7 +20,7 @@ export default function RadioButton({
     }
 
     return (
-        <View style={[styles.container, { flexDirection: isVertical ? 'row' : 'column', gap: gap ? gap : 20 }]}>
+        <View style={[styles.container, { flexDirection: isHorizontal ? 'row' : 'column', gap: gap ? gap : 20 }]}>
             {options.map((option) => (
                 <Pressable
                     key={option.value}
@@ -38,21 +39,20 @@ export default function RadioButton({
 
 const styles = StyleSheet.create({
     container: {
-        padding: 10,
+        alignSelf: 'center',
         //backgroundColor: 'blue'
     },
     radioContainer: {
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
-        alignSelf: 'center'
     },
     radioCircle: {
         height: 20,
         width: 20,
         borderRadius: 10,
         borderWidth: 2,
-        borderColor: "#444",
+        borderColor: Colors.light.highlightBackgroun_1,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -60,6 +60,6 @@ const styles = StyleSheet.create({
         width: 10,
         height: 10,
         borderRadius: 5,
-        backgroundColor: "#444",
+        backgroundColor: Colors.light.highlightBackgroun_2
     },
 });
