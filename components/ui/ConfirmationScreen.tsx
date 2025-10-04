@@ -26,16 +26,12 @@ const ConfirmationScreen: React.FC<{
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
     modalOverlay: {
         flex: 1,
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
     },
-
     modalContent: {
         width: '100%',
         backgroundColor: 'white',

@@ -1,43 +1,50 @@
-import { Payment } from "@/app/types/Finance";
+import { Payment, RecurrenceType } from "@/app/types/Finance";
 import { LoadCategories } from "@/app/utils/categoryManager";
-import DropdownMenu from "@/components/ui/dropdownMenu";
+import SearchDropdown from "@/components/ui/dropdowns/dropdownSearch.tsx";
+import DeleteCategoryMenu from "@/components/ui/dropdowns/dropdownSearch.tsx/deleteCategoryMenu";
+import NewCategoryMenu from "@/components/ui/dropdowns/dropdownSearch.tsx/newCategoryMenu";
+import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import RadioButton from "@/components/ui/RadioButton";
-import RadioGroup from "@/components/ui/radioGroup";
-import SearchDropdown from "@/components/ui/searchDropdown";
-import DeleteCategoryMenu from "@/components/ui/searchDropdown/deleteCategoryMenu";
-import NewCategoryMenu from "@/components/ui/searchDropdown/newCategoryMenu";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, View } from "react-native";
 import { Type } from "..";
 import StepScreen from "../StepScreen";
-
-type Value = 'single' | 'recurrent';
 
 export function RecurrenceScreen(
   {
     isVisible, initialValue, onConfirm, onBack, onSelect
   }: {
-    isVisible: boolean;
-    initialValue: Value;
-    onConfirm: () => void;
-    onBack: () => void;
-    onSelect: (value: string) => void;
+    isVisible: boolean; initialValue: RecurrenceType; onConfirm: () => void; onBack: () => void;
+    onSelect: (recurrenceType: RecurrenceType, installmentNumber: number) => void;
   }) {
   if (!isVisible) return;
 
-  const [value, setValue] = useState(initialValue);
+  const [selection, setSelection] = useState({ recurrenceType: initialValue, installmentNumber: 2 });
 
   useEffect(() => {
-    if (!initialValue) setValue(initialValue);
+    if (!initialValue) setSelection((prev) => ({ ...prev, recurrenceType: initialValue }));
   }, [initialValue]);
 
+  useEffect(() => {
+    handleSelect();
+  }, [selection]);
+
+  function handleSelect() {
+    if (selection.recurrenceType === 'installment') {
+      onSelect(selection.recurrenceType, selection.installmentNumber)
+    } else {
+      onSelect(selection.recurrenceType, 0);
+    }
+  }
+
   return (
+    
     <StepScreen
       isVisible={isVisible}
       onConfirm={() => {
-        if (value) {
+        if (selection) {
           onConfirm();
         } else {
           Alert.alert('Campo vazio', 'Digite uma data para continuar');
@@ -45,41 +52,33 @@ export function RecurrenceScreen(
       }}
       onBack={onBack}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5}}>
-        <Text style={{ color: Colors.light.text, alignSelf: 'center' }}>
-          Esta transação é:
-        </Text>
+      <View style={{flexDirection: 'row', alignItems: 'center', gap: 5 }}>
 
-        <DropdownMenu
+        <DropdownSelect
           isVisible
-          setSelection={initialValue === 'single' ? 'Única' : 'Recorrente'}
-          options={['Única', 'Recorrente']}
+          onOpeningDropdown="openAtBottom"
+          placeholder={'Recorrência'}
+          setSelection={initialValue}
+          list={['single', 'fixed', 'installment']}
           onSelect={(item) => {
-            onSelect(item);
-            setValue(item === 'Única' ? 'single' : 'recurrent');
+            setSelection((prev) => ({ ...prev, recurrenceType: item as RecurrenceType }))
           }}
         />
       </View>
 
-      <RadioGroup
-        isVisible={value === 'recurrent'}
-        options={[{ value: 'allTime' }, { value: 'setLimit' }]}
-        setSelection={'allTime'}
-        onSelect={(item) => onSelect(item)}
-      >
-        <Text>Irá repetir por tempo indeterminado</Text>
-
+      {selection.recurrenceType === 'installment' && (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-          <Text>Terminará em</Text>
-          <DropdownMenu
+          <DropdownSelect
             isVisible
-            setSelection={"2"}
-            options={['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']}
-            onSelect={(item) => console.log("Selecionado:", item)}
+            onOpeningDropdown="openAtBottom"
+            placeholder={'Quantidade de parcelas'}
+            setSelection={2}
+            list={[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+            onSelect={(value) => {
+              setSelection((prev) => ({ ...prev, installmentNumber: value as number }))
+            }}
           />
-          <Text>meses</Text>
-        </View>
-      </RadioGroup>
+        </View>)}
     </StepScreen>
   );
 }
@@ -127,6 +126,7 @@ export function CategoryStep(
       >
         <SearchDropdown
           initialValue={initialValue}
+          onOpeningDropdown="openAtBottom"
           list={categories}
           label={"Categoria"}
           menuVisibility={(menu) => setItemsVisible(prev => ({ ...prev, [menu]: true }))}
@@ -286,6 +286,73 @@ export function PaymentStep(
           { label: 'O pagamento está pendente', value: Payment.pending },
         ]}
         onSelecting={onSelect}
+      />
+    </StepScreen>
+  );
+};
+
+export function PaymentDateStep(
+  {
+    isVisible, value, onSelect, onConfirm, onBack
+  }: {
+    isVisible: boolean;
+    value: string;
+    onSelect: (value: string) => void;
+    onBack: () => void;
+    onConfirm: () => void;
+  }) {
+  return (
+    <StepScreen
+      isVisible={isVisible}
+      onConfirm={() => {
+        if (value) {
+          onConfirm();
+        } else {
+          Alert.alert('Campo vazio', 'Digite uma data para continuar');
+        }
+      }}
+      onBack={onBack}
+    >
+      <DynamicLabelInput
+        dateEntry
+        initialText={value}
+        label={'Data do pagamento'}
+        colorLabel={Colors.light.shadow}
+        onTextChange={onSelect}
+      />
+    </StepScreen>
+  );
+};
+
+export function MethodStep(
+  {
+    isVisible, value, onConfirm, onBack, onSelect
+  }: {
+    isVisible: boolean;
+    value: string;
+    onSelect: (value: string) => void;
+    onBack: () => void;
+    onConfirm: () => void;
+  }) {
+  return (
+    <StepScreen
+      isVisible={isVisible}
+      onConfirm={() => {
+        if (value) {
+          onConfirm();
+        } else {
+          Alert.alert('Campo vazio', 'Digite uma data para continuar');
+        }
+      }}
+      onBack={onBack}
+    >
+      <DropdownSelect
+        isVisible
+        onOpeningDropdown="openAtBottom"
+        placeholder={'asas'}
+        setSelection={value}
+        list={['']}
+        onSelect={(value) => onSelect(value as string)}
       />
     </StepScreen>
   );

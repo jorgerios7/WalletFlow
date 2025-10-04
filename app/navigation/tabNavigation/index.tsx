@@ -34,13 +34,14 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
 
   const insets = useSafeAreaInsets();
 
-  type TabScreen = 'Analytic' | 'Transactions' | 'Add' | 'Profile';
+  type TabScreen = 'Analytic' | 'Transactions' | 'AddData' | 'Profile';
 
   const [confirmationScreenVisible, setConfirmationScreenVisible] = useState(false);
   const [currentTabScreen, setCurrentTabScreen] = useState<TabScreen>('Analytic');
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
   const [typeValue, setTypeValue] = useState<Type>('');
- 
+  const [addDataVisible, setAddDataVisible] = useState(false);
+
   const handleLogout = () => (
     setIsDeleteAccount(false),
     setConfirmationScreenVisible(true)
@@ -73,12 +74,8 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
     />
   );
 
-  const AddWrapper = ({navigation}: any) => (
-    <AddScreen
-      groupId={userData.groupId}
-      type={typeValue}
-      onDismiss={(locate) => navigation.navigate(locate) }
-    />
+  const AddDataWrapper = ({ navigation }: any) => (
+    <View></View>
   );
 
   const ConfigurationWrapper = ({ navigation }: any) => (
@@ -109,17 +106,9 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
         <Pressable
           onPress={() => navigation.navigate('Profile')}
           style={{
-            width: 45,
-            height: 45,
-            borderRadius: 45 / 2,
-            borderColor: Colors.light.highlightBackgroun_2,
-            backgroundColor: Colors.light.highlightBackgroun_2,
-            position: 'absolute',
-            top: insets.top + 10,
-            right: 10,
-            zIndex: 10,
-            justifyContent: 'center',
-            alignItems: 'center',
+            width: 45, height: 45, borderRadius: 45 / 2, borderColor: Colors.light.highlightBackgroun_2,
+            backgroundColor: Colors.light.highlightBackgroun_2, position: 'absolute', top: insets.top + 10,
+            right: 10, zIndex: 10, justifyContent: 'center', alignItems: 'center',
           }}
         >
           <Feather
@@ -135,6 +124,13 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
           message={isDeleteAccount ? 'Deseja realmente excluir sua conta?' : 'Deseja realmente sair?'}
           onConfirm={isDeleteAccount ? deleteAccount : logout}
           onCancel={() => setConfirmationScreenVisible(false)}
+        />
+
+        <AddScreen
+          isVisible={addDataVisible}
+          groupId={userData.groupId}
+          onDismiss={() => setAddDataVisible(false)}
+          type={typeValue}
         />
 
         <Tab.Navigator
@@ -166,14 +162,14 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
           />
 
           <Tab.Screen
-            name="Add"
-            component={AddWrapper}
+            name="AddData"
+            component={AddDataWrapper}
             options={{
-              tabBarButton: (props) => (
+              tabBarButton: () => (
                 <AddButton
                   onPress={(value) => {
+                    setAddDataVisible(true);
                     setTypeValue(value);
-                    navigation.navigate('AddScreen');
                   }}
                 />
               ),
@@ -211,11 +207,6 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
       <Stack.Screen
         name="Profile"
         component={ProfileWrapper}
-      />
-
-      <Stack.Screen
-        name="AddScreen"
-        component={AddWrapper}
       />
 
       <Stack.Screen

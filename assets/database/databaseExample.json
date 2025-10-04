@@ -57,18 +57,18 @@
   },
   "groups/n1EUTJbnyA5CijICUVFm/transactions": {
     "vCAxjSkdB7zcq1rJw6up": {
-      "category": "Salário Mensal",
+      "category": "Loja de eletrônicos",
       "createdAt": "2025-07-07T19:46:52-03:00",
       "createdBy": "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73",
       "startDate": "01/07/2025",
       "description": "Empresa",
       "dueDate": "20/07/2025",
       "payment": "concluded",
-      "recurrence": "y",
+      "recurrenceType": "installment",
+      "installmentNumber": 3,
       "method": "Débito em conta",
       "accountId": "acc_santander_01",
-      "purpose": "Pagar contas",
-      "type": 2,
+      "type": "expense",
       "totalValue": 455700
     },
     "kosokdfor943oedpdp0": {
@@ -79,27 +79,31 @@
       "description": "Compras do mês",
       "dueDate": "05/07/2025",
       "payment": "concluded",
-      "recurrence": "n",
+      "recurrenceType": "installment",
+      "installmentNumber": 2,
       "method": "Cartão de crédito",
       "cardId": "card_visa_01",
-      "purpose": "Alimentação",
-      "type": 1,
+      "type": "expense",
       "totalValue": 125889
+    },
+    "fve99ergiwevii90ivj": {
+      "category": "Salário Mensal",
+      "createdAt": "2025-07-07T19:46:52-03:00",
+      "createdBy": "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73",
+      "startDate": "01/07/2025",
+      "description": "Empresa",
+      "dueDate": "20/07/2025",
+      "paymentDate": "20/07/2025",
+      "payment": "concluded",
+      "recurrenceType": "fixed",
+      "installmentNumber": 0,
+      "method": "Débito em conta",
+      "accountId": "acc_santander_01",
+      "type": "income",
+      "totalValue": 455700
     }
   },
-  "groups/n1EUTJbnyA5CijICUVFm/installments": {
-    "sdapcje9fwefwoef": {
-      "title": "Compra de celular",
-      "category": "Financiamento",
-      "method": "Cartão de crédito",
-      "cardId": "card_master_02",
-      "createdBy": "jFdtYoBE8aQ4rubZ8ScngdyiJ73",
-      "createdAt": "2025-09-08T12:46:52-03:00",
-      "startDate": "09/07/2025",
-      "totalValue": 116531
-    }
-  },
-  "groups/n1EUTJbnyA5CijICUVFm/installments/sdapcje9fwefwoef/parcels": {
+  "groups/n1EUTJbnyA5CijICUVFm/transactions/kosokdfor943oedpdp0/installment": {
     "installment_1": {
       "currentInstallment": 1,
       "dueDate": "05/07/2025",
@@ -111,6 +115,26 @@
       "dueDate": "05/08/2025",
       "value": 58266,
       "payment": "concluded"
+    }
+  },
+  "groups/n1EUTJbnyA5CijICUVFm/transactions/vCAxjSkdB7zcq1rJw6up/installment": {
+    "installment_1": {
+      "currentInstallment": 1,
+      "dueDate": "10/07/2025",
+      "value": 19421,
+      "payment": "pending"
+    },
+    "installment_2": {
+      "currentInstallment": 2,
+      "dueDate": "10/08/2025",
+      "value": 19421,
+      "payment": "pending"
+    },
+    "installment_3": {
+      "currentInstallment": 3,
+      "dueDate": "10/09/2025",
+      "value": 19421,
+      "payment": "pending"
     }
   }
 }

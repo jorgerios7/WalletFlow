@@ -1,13 +1,15 @@
 import { db } from '@/app/config/firebaseConfig';
-import { Transactions } from '@/app/types/Finance';
+import { Payment, RecurrenceType, Transactions } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import { getAuth } from 'firebase/auth';
 import { addDoc, collection, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
 import {
   CategoryStep,
   DueDateStep,
+  MethodStep,
+  PaymentDateStep,
   PaymentStep,
   RecurrenceScreen,
   StartDateStep,
@@ -17,15 +19,15 @@ import {
 export type Type = '' | 'income' | 'expense' | 'profit';
 
 export default function AddScreen(
-  { groupId, type, onDismiss }
+  { isVisible, groupId, type, onDismiss }
     :
-    { groupId: string, type: Type, onDismiss: (locate: string) => void }) {
+    { isVisible: boolean, groupId: string, type: Type, onDismiss: () => void }) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
   if (!currentUser) return null;
 
-  type Step = 'Tabs' | 'recurrence' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'payment';
+  type Step = 'Tabs' | 'recurrence' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'payment' | 'paymentDate' | 'method';
 
   const [currentStep, setCurrentStep] = useState<Step>('recurrence');
 
@@ -35,58 +37,66 @@ export default function AddScreen(
     createdAt: "",
     accountId: "",
     startDate: "",
+    paymentDate: "",
     type: type,
     category: "",
     dueDate: "",
     description: "",
     payment: "",
-    isRecurrence: false,
+    recurrenceType: "",
+    installmentNumber: 0,
     method: "",
-    purpose: "",
     totalValue: 0,
-    currentInstallment: 0
   });
 
   async function uploadData() {
     if (!currentUser) return null;
+
     try {
       const colRef = collection(db, "groups", groupId, "transactions");
 
+      // Remove campos vazios ou zero
+      const cleanedData = Object.fromEntries(
+        Object.entries(data).filter(([_, value]) => {
+          if (value === "" || value === 0) return false;
+          return true;
+        })
+      );
+
       const docRef = await addDoc(colRef, {
-        ...data,
+        ...cleanedData,
         createdBy: currentUser.uid,
         createdAt: new Date().toISOString(),
       });
 
-      await updateDoc(docRef, {
-        transactionId: docRef.id,
-      });
+      await updateDoc(docRef, { transactionId: docRef.id });
 
       Alert.alert("Sucesso!", "Transação salva com sucesso.");
-      //setCurrentStep("category");
-      onDismiss('Tabs');
+
+      onDismiss();
       setData({
         transactionId: "",
         createdBy: currentUser.uid,
         createdAt: new Date().toISOString(),
         accountId: "",
         startDate: "",
+        paymentDate: "",
         type: type,
         category: "",
         dueDate: "",
         description: "",
         payment: "",
-        isRecurrence: false,
+        recurrenceType: "",
+        installmentNumber: 0,
         method: "",
-        purpose: "",
         totalValue: 0,
-        currentInstallment: 0
       });
     } catch (error: any) {
       console.error("Erro ao salvar:", error);
       Alert.alert("Erro", error.message || "Não foi possível salvar");
     }
   }
+
 
   function renderTitle() {
     if (type === 'income') {
@@ -99,67 +109,95 @@ export default function AddScreen(
   }
 
   return (
-    <View style={styles.container}>
+    <Modal visible={isVisible} animationType={"slide"} transparent>
+      <View style={styles.overlay}>
+        <View style={styles.container}>
 
-      <Text style={{ fontWeight: 'bold', fontSize: 22 }}>
-        {renderTitle()}
-      </Text>
+          <Text style={{ fontWeight: 'bold', fontSize: 22 }}>
+            {renderTitle()}
+          </Text>
 
-      <RecurrenceScreen
-        isVisible={currentStep === "recurrence"}
-        initialValue={data.isRecurrence ? 'recurrence' : 'single'}
-        onSelect={(selected) => setData((prev) => ({ ...prev, isRecurrence: selected === 'recurrence' }))}
-        onConfirm={() => setCurrentStep("category")}
-        onBack={() => onDismiss("Tabs")}
-      />
+          <RecurrenceScreen
+            isVisible={currentStep === "recurrence"}
+            initialValue={data.recurrenceType as RecurrenceType || 'single'}
+            onSelect={(recurrenceType, installmentNumber) => {
+              console.log('selection: ', recurrenceType, ' and ', installmentNumber);
+              setData((prev) => ({
+                ...prev,
+                recurrenceType: recurrenceType,
+                installmentNumber: installmentNumber
+              }))
+            }}
+            onConfirm={() => setCurrentStep("category")}
+            onBack={() => onDismiss()}
+          />
 
-      <CategoryStep
-        isVisible={currentStep === "category"}
-        type={type}
-        initialValue={data.category}
-        onSelect={(selected) => setData((prev) => ({ ...prev, category: selected }))}
-        onConfirm={() => setCurrentStep("startDate")}
-        onBack={() => setCurrentStep("recurrence")}
-      />
+          <CategoryStep
+            isVisible={currentStep === "category"}
+            type={type}
+            initialValue={data.category}
+            onSelect={(selected) => setData((prev) => ({ ...prev, category: selected }))}
+            onConfirm={() => setCurrentStep("startDate")}
+            onBack={() => setCurrentStep("recurrence")}
+          />
 
-      <StartDateStep
-        isVisible={currentStep === "startDate"}
-        value={data.startDate}
-        onSelect={(selected) => setData((prev) => ({ ...prev, startDate: selected }))}
-        onConfirm={() => setCurrentStep("dueDate")}
-        onBack={() => setCurrentStep("category")}
-      />
+          <StartDateStep
+            isVisible={currentStep === "startDate"}
+            value={data.startDate}
+            onSelect={(selected) => setData((prev) => ({ ...prev, startDate: selected }))}
+            onConfirm={() => setCurrentStep("dueDate")}
+            onBack={() => setCurrentStep("category")}
+          />
 
-      <DueDateStep
-        isVisible={currentStep === "dueDate"}
-        value={data.dueDate}
-        onSelect={(selected) => setData((prev) => ({ ...prev, dueDate: selected }))}
-        onConfirm={() => setCurrentStep("totalValue")}
-        onBack={() => setCurrentStep("startDate")}
-      />
+          <DueDateStep
+            isVisible={currentStep === "dueDate"}
+            value={data.dueDate}
+            onSelect={(selected) => setData((prev) => ({ ...prev, dueDate: selected }))}
+            onConfirm={() => setCurrentStep("totalValue")}
+            onBack={() => setCurrentStep("startDate")}
+          />
 
-      <TotalValueStep
-        isVisible={currentStep === "totalValue"}
-        value={data.totalValue}
-        onSelect={(selected) => setData((prev) => ({ ...prev, totalValue: selected }))}
-        onConfirm={() => setCurrentStep("payment")}
-        onBack={() => setCurrentStep("dueDate")}
-      />
+          <TotalValueStep
+            isVisible={currentStep === "totalValue"}
+            value={data.totalValue}
+            onSelect={(selected) => setData((prev) => ({ ...prev, totalValue: selected }))}
+            onConfirm={() => setCurrentStep("payment")}
+            onBack={() => setCurrentStep("dueDate")}
+          />
 
-      <PaymentStep
-        isVisible={currentStep === "payment"}
-        value={data.payment}
-        onSelect={(selected) => setData((prev) => ({ ...prev, payment: selected }))}
-        onConfirm={uploadData}
-        onBack={() => setCurrentStep("totalValue")}
-      />
-    </View>
+          <PaymentStep
+            isVisible={currentStep === "payment"}
+            value={data.payment}
+            onSelect={(selected) => setData((prev) => ({ ...prev, payment: selected }))}
+            onConfirm={() => data.payment === Payment.pending ? uploadData() : setCurrentStep('paymentDate')}
+            onBack={() => setCurrentStep("totalValue")}
+          />
+
+          <PaymentDateStep
+            isVisible={currentStep === 'paymentDate'}
+            value={data.paymentDate}
+            onSelect={(selected) => setData((prev) => ({ ...prev, paymentDate: selected }))}
+            onConfirm={() => setCurrentStep('method')}
+            onBack={() => setCurrentStep('payment')}
+          />
+
+          <MethodStep
+            isVisible={currentStep === 'method'}
+            value={data.method}
+            onSelect={(selected) => setData((prev) => ({ ...prev, method: selected }))}
+            onConfirm={() => uploadData()}
+            onBack={() => setCurrentStep('paymentDate')}
+          />
+        </View>
+      </View>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: "#00000031" },
   container: {
-    flex: 1, backgroundColor: Colors.light.shadow, gap: 50,
+    width: '100%', height: '80%', marginTop: '41%', backgroundColor: Colors.light.background, gap: 50,
     justifyContent: 'center', alignItems: 'center'
   }
 });

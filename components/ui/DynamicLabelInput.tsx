@@ -1,48 +1,23 @@
 import { MaskCurrency, MaskDate } from "@/app/utils/Format";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import { Animated, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import LabelAnimated from "./LabelAnimated";
 
-interface LabelProps {
-  initialText?: string,
-  initialNumber?: number,
-  label: string;
-  colorLabel?: string;
-  secureTextEntry?: boolean;
-  numberEntry?: boolean;
-  dateEntry?: boolean;
-  onTextChange?: (text: string) => void;
-  onNumberChange?: (number: number) => void;
+interface Props {
+  initialText?: string, initialNumber?: number, label: string; colorLabel?: string; secureTextEntry?: boolean;
+  numberEntry?: boolean; dateEntry?: boolean; onTextChange?: (text: string) => void; onNumberChange?: (number: number) => void;
 }
 
 export default function DynamicLabelInput({
-  initialText,
-  initialNumber,
-  label,
-  colorLabel,
-  secureTextEntry,
-  numberEntry,
-  dateEntry,
-  onTextChange,
-  onNumberChange,
-}: LabelProps) {
+  initialText, initialNumber, label, colorLabel, secureTextEntry,
+  numberEntry, dateEntry, onTextChange, onNumberChange,
+}: Props) {
   const [isFocused, setIsFocused] = useState(false);
   const [text, setText] = useState(initialText ? initialText : "");
   const [number, setNumber] = useState(initialNumber ? initialNumber.toString() : "");
   const [isPasswordVisible, setIsPasswordVisible] = useState(!secureTextEntry);
-  const labelPosition = useState(new Animated.Value(17))[0];
-
-  useEffect(() => {
-    const LABEL_TEXT_ABOVE = -9.6;
-    const LABEL_TEXT_BELOW = 14;
-
-    Animated.timing(labelPosition, {
-      toValue: text || number || isFocused ? LABEL_TEXT_ABOVE : LABEL_TEXT_BELOW,
-      duration: 50,
-      useNativeDriver: false,
-    }).start();
-  }, [text, number, isFocused]);
 
   const handleValueChange = (newValue: string) => {
     if (!numberEntry) {
@@ -67,42 +42,17 @@ export default function DynamicLabelInput({
     }
   };
 
-  function LabelAnimated({
-    labelText,
-    labelColor,
-  }: {
-    labelText: string;
-    labelColor?: string;
-  }) {
-    return (
-      <Animated.Text
-        style={[
-          styles.label,
-          {
-            top: labelPosition,
-            backgroundColor: labelColor ? labelColor : Colors.light.background,
-          },
-        ]}
-      >
-        {labelText}
-      </Animated.Text>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <LabelAnimated labelText={label} labelColor={colorLabel} />
+      <LabelAnimated
+        labelText={label}
+        labelColor={colorLabel}
+        focused={isFocused}
+        textInput={text ? text : number}
+      />
 
       <TextInput
-        value={
-          numberEntry ?
-            MaskCurrency(number)
-            :
-            dateEntry ?
-              MaskDate(text)
-              :
-              text
-        }
+        value={numberEntry ? MaskCurrency(number) : dateEntry ? MaskDate(text) : text}
         onChangeText={(value) => handleValueChange(value)}
         style={[styles.input, isFocused && styles.inputFocused]}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
@@ -129,37 +79,11 @@ export default function DynamicLabelInput({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    position: "relative",
-  },
-  label: {
-    position: "absolute",
-    left: 18,
-    paddingHorizontal: 10,
-    color: Colors.light.highlightBackgroun_1,
-    zIndex: 2,
-    fontSize: 12,
-    fontWeight: "bold",
-    padding: 2,
-  },
+  container: { position: "relative" },
   input: {
-    color: Colors.light.highlightBackgroun_1,
-    borderWidth: 0.5,
-    borderColor: Colors.light.highlightBackgroun_1,
-    backgroundColor: "transparent",
-    fontWeight: "bold",
-    borderRadius: 10,
-    padding: 14,
-    zIndex: 0,
+    color: Colors.light.highlightBackgroun_1, borderWidth: 0.5, borderColor: Colors.light.highlightBackgroun_1,
+    backgroundColor: "transparent", fontWeight: "bold", borderRadius: 10, padding: 14
   },
-  inputFocused: {
-    outlineColor: "transparent",
-  },
-  eyeButton: {
-    position: "absolute",
-    right: 18,
-    top: "55%",
-    transform: [{ translateY: -12 }],
-    outlineColor: "transparent",
-  },
+  inputFocused: { outlineColor: "transparent" },
+  eyeButton: { position: "absolute", right: 18, top: "55%", transform: [{ translateY: -12 }], outlineColor: "transparent" },
 });

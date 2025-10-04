@@ -58,11 +58,10 @@ export default function Header({ onPress, children, backgroundColor, direction }
 
 const styles = StyleSheet.create({
     container: {
-        //height: 50,
         width: "100%",
+        padding: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 10,
     }
 });

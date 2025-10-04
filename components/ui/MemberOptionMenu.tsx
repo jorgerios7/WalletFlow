@@ -75,16 +75,17 @@ export function MemberOptionMenu({
                                 {selectedItem.name}
                             </Text>
                             <RadioButton
+                                initialValue={''}
                                 options={[
                                     {
                                         label:
-                                            selectedItem.role === condition 
-                                            ? (variables.demote.text)
-                                            : (variables.promote.text),
+                                            selectedItem.role === condition
+                                                ? (variables.demote.text)
+                                                : (variables.promote.text),
                                         value:
-                                            selectedItem.role === condition 
-                                            ? (variables.demote.label)
-                                            : (variables.promote.label)
+                                            selectedItem.role === condition
+                                                ? (variables.demote.label)
+                                                : (variables.promote.label)
                                     },
                                     {
                                         label: variables.delete.text,
@@ -118,7 +119,7 @@ export function MemberOptionMenu({
                         </>
                     )}
                     <TextButton
-                        text={(variables.delete.value || variables.promote.value || variables.demote.value) 
+                        text={(variables.delete.value || variables.promote.value || variables.demote.value)
                             ? ('Cancelar')
                             : ('Voltar')
                         }

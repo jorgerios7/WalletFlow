@@ -1,20 +1,18 @@
 import { Type } from "@/app/screens/addScreen";
-import { AddCategory } from "@/app/utils/categoryManager";
+import { DeleteCategory } from "@/app/utils/categoryManager";
+import CustomButton from "@/components/ui/CustomButton";
+import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
 import { useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
-import CustomButton from "../../CustomButton";
-import TextButton from "../../TextButton";
 
 interface Props {
-    isVisible: boolean, categoryToAdd: string,
-    currentType: Type, onSuccess: () => void, onDismiss: () => void
+    isVisible: boolean; categoryToDelete: string; currentType: Type;
+    onSuccess: () => void; onDismiss: () => void;
 }
 
-export type Action = 'add' | 'delete' | 'update';
-
-export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType, onSuccess, onDismiss }: Props) {
-    if (!categoryToAdd) return;
+export default function DeleteCategoryMenu({ isVisible, categoryToDelete, currentType, onSuccess, onDismiss }: Props) {
+    if (!categoryToDelete) return;
 
     const [success, setSeccess] = useState(false);
 
@@ -28,20 +26,17 @@ export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType,
         }
     }
 
-    async function handleFunction() {
+    async function handleDeleteCategory() {
         let isReady = false;
         try {
-            await AddCategory(currentType, categoryToAdd);
+            await DeleteCategory(currentType, categoryToDelete);
             isReady = true;
         } catch (error) {
+            console.log('(DeleteCategoryMenu.tsx) error: ', error)
             isReady = false;
-            console.log('(NewCategoryMenu.tsx) erro: ', error);
         } finally {
-            if (isReady) {
-                onSuccess();
-                setSeccess(true);
-            }
-
+            if (isReady) onSuccess();
+            setSeccess(true);
         }
     }
 
@@ -50,37 +45,40 @@ export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType,
             <Pressable
                 style={{
                     flex: 1, backgroundColor: "#00000031",
-                    justifyContent: 'center', alignItems: 'center',
+                    justifyContent: 'center', alignItems: 'center'
                 }}
                 onPress={onDismiss}
             >
                 <View style={{
-                    minWidth: 250, minHeight: 250, justifyContent: 'center', alignItems: 'center', marginHorizontal: 20,
+                    justifyContent: 'center', alignItems: 'center', marginHorizontal: 20,
                     gap: 10, padding: 20, backgroundColor: Colors.light.background, borderRadius: 10
                 }}>
                     {!success ? (
                         <>
                             <Text style={{ marginBottom: 40, fontSize: 18, textAlign: 'center' }}>
-                                {`Você tem certeza que deseja adicionar `}
-                                <Text style={{ fontWeight: "bold", color: Colors.light.highlightBackgroun_1 }}>{categoryToAdd}</Text>
-                                {` a lista de categorias de ${renderCurrentType()}?`}
+                                {`Você tem certeza que deseja excluir `}
+                                <Text style={{ fontWeight: "bold", color: Colors.light.highlightBackgroun_1 }}>{categoryToDelete}</Text>
+                                {` da lista de categorias de ${renderCurrentType()}?`}
                             </Text>
 
                             <CustomButton
                                 text="Confirmar"
                                 onPress={() => {
-                                    handleFunction();
+                                    handleDeleteCategory();
                                 }}
                             />
                             <TextButton
                                 text="Cancelar"
-                                onPress={onDismiss}
+                                onPress={() => {
+                                    onDismiss();
+                                    setSeccess(false);
+                                }}
                             />
                         </>
                     ) : (
                         <>
                             <Text>
-                                {`A categoria ${categoryToAdd} foi adicionada com sucesso!`}
+                                {`A categoria ${categoryToDelete} foi exluída com sucesso!`}
                             </Text>
 
                             <CustomButton
@@ -90,11 +88,12 @@ export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType,
                                     setSeccess(false);
                                 }}
                             />
-                        </>
 
+                        </>
                     )}
+
                 </View>
             </Pressable>
         </Modal>
     );
-};
+}
