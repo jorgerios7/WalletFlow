@@ -34,7 +34,7 @@ export default function TextButton({
     };
 
     const dynamicAdjust = {
-        padding: adjustPadding ? adjustPadding : 15,
+        padding: adjustPadding ? adjustPadding : 12,
         margin: adjustMargin ? adjustMargin : 0
     };
 
@@ -61,7 +61,11 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
     },
     button: {
+        width: '100%',
         alignSelf: 'center',
         backgroundColor: 'transparent',
+        borderRadius: 10,
+        borderWidth: 0.5,
+        borderColor: Colors.light.highlightBackgroun_1,
     }
 });

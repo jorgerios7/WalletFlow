@@ -23,29 +23,20 @@ export interface Transactions {
   type: string;
   totalValue: number;
   description: string;
-  installmentNumber: number;
+  installmentTotalNumber: number;
   method: string;
   accountId: string;
   recurrenceType: string;
+  installmentId: string;
 }
 
-{/** export interface Installments {
-  title: string;
-  category: string;
-  method: string;
-  cardId: string;
-  purpose: string;
-  type: string;
-  createdBy: string;
-  createdAt: string;
-  startDate: string;
-  totalValue: number;
-}*/}
-
 export interface Installment {
-  currentInstallment: number;
+  installmentId: string;
   dueDate: string;
   value: number;
   payment: string;
+  paymentDate: string;
+  method: string;
+  installmentNumber: number;
 }
 

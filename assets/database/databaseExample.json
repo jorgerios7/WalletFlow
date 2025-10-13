@@ -4,28 +4,32 @@
       "bankAccounts": {
         "acc_santander_01": {
           "bank": "Santander",
-          "accountNumber": "01031997-2"
+          "accountNumber": "01031997-2",
+          "bankCards": {
+            "card_01": {
+              "brand": "Master",
+              "finalDigits": "5568"
+            },
+            "card_02": {
+              "brand": "Visa",
+              "finalDigits": "4254"
+            }
+          }
         },
         "acc_nubank_02": {
           "bank": "Nubank",
-          "accountNumber": "25241118-8"
-        }
-      },
-      "bankCards": {
-        "card_visa_01": {
-          "accountId": "acc_santander_01",
-          "brand": "Visa",
-          "lastDigits": "5255"
-        },
-        "card_master_02": {
-          "accountId": "acc_nubank_02",
-          "brand": "Master",
-          "lastDigits": "4585"
+          "accountNumber": "25241118-8",
+          "bankCards": {
+            "card_01": {
+              "brand": "Master",
+              "finalDigits": "5588"
+            }
+          }
         }
       },
       "contacts": {
         "email": "maria.pereira@gmail.com",
-        "phone": "+5567982434750"
+        "phone": "+5561982434750"
       },
       "createdAt": "2025-07-07T19:46:52-03:00",
       "homeId": "n1EUTJbnyA5CijICUVFm",
@@ -49,7 +53,7 @@
           "type": "member"
         },
         "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73": {
-          "name": "Jorge Rios", 
+          "name": "Jorge Rios",
           "type": "owner"
         }
       }
@@ -62,10 +66,8 @@
       "createdBy": "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73",
       "startDate": "01/07/2025",
       "description": "Empresa",
-      "dueDate": "20/07/2025",
-      "payment": "concluded",
       "recurrenceType": "installment",
-      "installmentNumber": 3,
+      "installmentNumber": 2,
       "method": "Débito em conta",
       "accountId": "acc_santander_01",
       "type": "expense",
@@ -77,8 +79,6 @@
       "createdBy": "jFdtYoBE8aQ4rubZ8ScngdyiJ73",
       "startDate": "02/07/2025",
       "description": "Compras do mês",
-      "dueDate": "05/07/2025",
-      "payment": "concluded",
       "recurrenceType": "installment",
       "installmentNumber": 2,
       "method": "Cartão de crédito",
@@ -92,48 +92,51 @@
       "createdBy": "jFdtYoBE8aQQ4oubZ8ScnNAyiJ73",
       "startDate": "01/07/2025",
       "description": "Empresa",
-      "dueDate": "20/07/2025",
-      "paymentDate": "20/07/2025",
-      "payment": "concluded",
       "recurrenceType": "fixed",
-      "installmentNumber": 0,
+      "installmentNumber": 1,
       "method": "Débito em conta",
       "accountId": "acc_santander_01",
       "type": "income",
-      "totalValue": 455700
+      "totalValue": 58265
     }
   },
   "groups/n1EUTJbnyA5CijICUVFm/transactions/kosokdfor943oedpdp0/installment": {
-    "installment_1": {
-      "currentInstallment": 1,
+    "1": {
+      "paymentDate": "05/08/2025",
       "dueDate": "05/07/2025",
       "value": 58265,
-      "payment": "pending"
+      "method": "Cartão de crédito",
+      "payment": "concluded"
     },
-    "installment_2": {
-      "currentInstallment": 2,
+    "2": {
       "dueDate": "05/08/2025",
       "value": 58266,
-      "payment": "concluded"
+      "payment": "pending"
     }
   },
   "groups/n1EUTJbnyA5CijICUVFm/transactions/vCAxjSkdB7zcq1rJw6up/installment": {
-    "installment_1": {
-      "currentInstallment": 1,
+    "1": {
+      "paymentDate": "10/07/2025",
       "dueDate": "10/07/2025",
       "value": 19421,
-      "payment": "pending"
+      "method": "Pix",
+      "payment": "concluded"
     },
-    "installment_2": {
-      "currentInstallment": 2,
+    "2": {
       "dueDate": "10/08/2025",
       "value": 19421,
       "payment": "pending"
     },
-    "installment_3": {
-      "currentInstallment": 3,
+    "3": {
       "dueDate": "10/09/2025",
       "value": 19421,
+      "payment": "pending"
+    }
+  },
+  "groups/n1EUTJbnyA5CijICUVFm/transactions/fve99ergiwevii90ivj/installment": {
+    "1": {
+      "dueDate": "05/07/2025",
+      "value": 58265,
       "payment": "pending"
     }
   }

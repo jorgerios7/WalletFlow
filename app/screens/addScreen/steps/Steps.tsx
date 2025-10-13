@@ -12,20 +12,22 @@ import { Alert, View } from "react-native";
 import { Type } from "..";
 import StepScreen from "../StepScreen";
 
+interface StepsProps {
+  isVisible: boolean; onBack: () => void; onConfirm: () => void; onCancel: () => void;
+}
+
 export function RecurrenceScreen(
   {
-    isVisible, initialValue, onConfirm, onBack, onSelect
-  }: {
-    isVisible: boolean; initialValue: RecurrenceType; onConfirm: () => void; onBack: () => void;
-    onSelect: (recurrenceType: RecurrenceType, installmentNumber: number) => void;
-  }) {
+    isVisible, value, onConfirm, onCancel, onSelect
+  }: StepsProps & { value: RecurrenceType; onSelect: (recurrenceType: RecurrenceType, installmentNumber: number) => void }
+) {
   if (!isVisible) return;
 
-  const [selection, setSelection] = useState({ recurrenceType: initialValue, installmentNumber: 2 });
+  const [selection, setSelection] = useState({ recurrenceType: value, installmentNumber: 2 });
 
   useEffect(() => {
-    if (!initialValue) setSelection((prev) => ({ ...prev, recurrenceType: initialValue }));
-  }, [initialValue]);
+    if (!value) setSelection((prev) => ({ ...prev, recurrenceType: value }));
+  }, [value]);
 
   useEffect(() => {
     handleSelect();
@@ -40,7 +42,7 @@ export function RecurrenceScreen(
   }
 
   return (
-    
+
     <StepScreen
       isVisible={isVisible}
       onConfirm={() => {
@@ -50,15 +52,15 @@ export function RecurrenceScreen(
           Alert.alert('Campo vazio', 'Digite uma data para continuar');
         }
       }}
-      onBack={onBack}
+      onCancel={onCancel}
     >
-      <View style={{flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
 
         <DropdownSelect
           isVisible
           onOpeningDropdown="openAtBottom"
           placeholder={'Recorrência'}
-          setSelection={initialValue}
+          setSelection={value}
           list={['single', 'fixed', 'installment']}
           onSelect={(item) => {
             setSelection((prev) => ({ ...prev, recurrenceType: item as RecurrenceType }))
@@ -78,25 +80,19 @@ export function RecurrenceScreen(
               setSelection((prev) => ({ ...prev, installmentNumber: value as number }))
             }}
           />
-        </View>)}
+        </View>
+      )}
     </StepScreen>
   );
 }
 
 export function CategoryStep(
-  {
-    isVisible, initialValue, type, onConfirm, onBack, onSelect
-  }: {
-    isVisible: boolean;
-    initialValue: string;
-    type: Type;
-    onConfirm: () => void;
-    onBack: () => void;
-    onSelect: (value: string) => void;
-  }) {
+  { isVisible, value, type, onConfirm, onBack, onSelect, onCancel }:
+    StepsProps & { value: string; type: Type; onSelect: (value: string) => void }
+) {
   const [itemsVisible, setItemsVisible] = useState({ newCategoryMenu: false, deleteCategoryMenu: false });
   const [categories, setCategories] = useState<string[]>([]);
-  const [text, setText] = useState(initialValue);
+  const [text, setText] = useState(value);
 
   useEffect(() => {
     HandleLoadCategories();
@@ -116,16 +112,17 @@ export function CategoryStep(
       <StepScreen
         isVisible={isVisible}
         onConfirm={() => {
-          if (text === '' || !text || text !== initialValue) {
+          if (text === '' || !text || text !== value) {
             Alert.alert('Campo vazio', 'Selecione uma opção para continuar');
           } else {
             onConfirm();
           }
         }}
         onBack={onBack}
+        onCancel={onCancel}
       >
         <SearchDropdown
-          initialValue={initialValue}
+          initialValue={value}
           onOpeningDropdown="openAtBottom"
           list={categories}
           label={"Categoria"}
@@ -157,15 +154,9 @@ export function CategoryStep(
 };
 
 export function StartDateStep(
-  {
-    isVisible, value, onConfirm, onBack, onSelect
-  }: {
-    isVisible: boolean;
-    value: string;
-    onSelect: (value: string) => void;
-    onBack: () => void;
-    onConfirm: () => void;
-  }) {
+  { isVisible, value, onConfirm, onBack, onSelect, onCancel }:
+    StepsProps & { value: string; onSelect: (value: string) => void }
+) {
   return (
     <StepScreen
       isVisible={isVisible}
@@ -177,6 +168,7 @@ export function StartDateStep(
         }
       }}
       onBack={onBack}
+      onCancel={onCancel}
     >
       <DynamicLabelInput
         dateEntry
@@ -190,15 +182,8 @@ export function StartDateStep(
 };
 
 export function DueDateStep(
-  {
-    isVisible, value, onSelect, onConfirm, onBack
-  }: {
-    isVisible: boolean;
-    value: string;
-    onSelect: (value: string) => void;
-    onBack: () => void;
-    onConfirm: () => void;
-  }) {
+  { isVisible, value, onSelect, onConfirm, onBack, onCancel }: StepsProps & { value: string; onSelect: (value: string) => void; }
+) {
   return (
     <StepScreen
       isVisible={isVisible}
@@ -210,6 +195,7 @@ export function DueDateStep(
         }
       }}
       onBack={onBack}
+      onCancel={onCancel}
     >
       <DynamicLabelInput
         dateEntry
@@ -223,15 +209,8 @@ export function DueDateStep(
 };
 
 export function TotalValueStep(
-  {
-    isVisible, value, onConfirm, onBack, onSelect
-  }: {
-    isVisible: boolean;
-    value: number;
-    onSelect: (value: number) => void;
-    onBack: () => void;
-    onConfirm: () => void;
-  }) {
+  { isVisible, value, onConfirm, onBack, onSelect, onCancel }: StepsProps & { value: number; onSelect: (value: number) => void }
+) {
   return (
     <StepScreen
       isVisible={isVisible}
@@ -243,6 +222,7 @@ export function TotalValueStep(
         }
       }}
       onBack={onBack}
+      onCancel={onCancel}
     >
       <DynamicLabelInput
         numberEntry
@@ -256,15 +236,7 @@ export function TotalValueStep(
 };
 
 export function PaymentStep(
-  {
-    isVisible, value, onSelect, onBack, onConfirm
-  }: {
-    isVisible: boolean;
-    value: string;
-    onSelect: (value: string) => void;
-    onBack: () => void;
-    onConfirm: () => void;
-  }
+  { isVisible, value, onSelect, onBack, onConfirm, onCancel }: StepsProps & { value: string; onSelect: (value: string) => void }
 ) {
   return (
     <StepScreen
@@ -277,6 +249,7 @@ export function PaymentStep(
         }
       }}
       onBack={onBack}
+      onCancel={onCancel}
     >
       <RadioButton
         initialValue={value}
@@ -291,16 +264,29 @@ export function PaymentStep(
   );
 };
 
+export function DescriptionStep(
+  { isVisible, value, onConfirm, onBack, onSelect, onCancel }: StepsProps & { value: string; onSelect: (value: string) => void }
+) {
+  return (
+    <StepScreen
+      isVisible={isVisible}
+      onConfirm={() => { onConfirm() }}
+      onBack={onBack}
+      onCancel={onCancel}
+    >
+      <DynamicLabelInput
+        initialText={value}
+        label={"Descrição"}
+        colorLabel={Colors.light.shadow}
+        onTextChange={onSelect}
+      />
+    </StepScreen>
+  );
+}
+
 export function PaymentDateStep(
-  {
-    isVisible, value, onSelect, onConfirm, onBack
-  }: {
-    isVisible: boolean;
-    value: string;
-    onSelect: (value: string) => void;
-    onBack: () => void;
-    onConfirm: () => void;
-  }) {
+  { isVisible, value, onSelect, onConfirm, onBack, onCancel }: StepsProps & { value: string; onSelect: (value: string) => void }
+) {
   return (
     <StepScreen
       isVisible={isVisible}
@@ -312,6 +298,7 @@ export function PaymentDateStep(
         }
       }}
       onBack={onBack}
+      onCancel={onCancel}
     >
       <DynamicLabelInput
         dateEntry
@@ -325,15 +312,8 @@ export function PaymentDateStep(
 };
 
 export function MethodStep(
-  {
-    isVisible, value, onConfirm, onBack, onSelect
-  }: {
-    isVisible: boolean;
-    value: string;
-    onSelect: (value: string) => void;
-    onBack: () => void;
-    onConfirm: () => void;
-  }) {
+  { isVisible, value, onConfirm, onBack, onSelect, onCancel }: StepsProps & { value: string; onSelect: (value: string) => void }
+) {
   return (
     <StepScreen
       isVisible={isVisible}
@@ -345,13 +325,14 @@ export function MethodStep(
         }
       }}
       onBack={onBack}
+      onCancel={onCancel}
     >
       <DropdownSelect
         isVisible
         onOpeningDropdown="openAtBottom"
-        placeholder={'asas'}
+        placeholder={'Método de pagamento'}
         setSelection={value}
-        list={['']}
+        list={['Cartão de crédito', 'Cartão de débito', 'Pix', 'Dinheiro', 'Boleto', 'Transferência bancária']}
         onSelect={(value) => onSelect(value as string)}
       />
     </StepScreen>

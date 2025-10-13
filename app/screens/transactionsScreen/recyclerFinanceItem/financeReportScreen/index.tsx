@@ -1,28 +1,20 @@
-import { Payment, Transactions, Type } from "@/app/types/Finance";
+import { Installment, Transactions } from "@/app/types/Finance";
 import { StyleSheet, Text, View } from "react-native";
 
-interface Props { data?: Transactions };
+interface Props { transaction: Transactions, installment: Installment };
 
-const renderType = (currentType: string) => {
-    if (currentType === Type.income) {
-        return Type.income;
-    } else if (currentType === Type.expense) {
-        return Type.expense;
-    } else {
-        return Type.profit;
-    }
-};
+function Row({ label, value }: { label: string, value: string | number | undefined }) {
+    if (!value || undefined || value === 0) return null;
 
-const paymentStatus = (currentPayment: string) => {
     return (
-        currentPayment === Payment.concluded
-            ? 'Concluído'
-            : 'Pendente'
-    )
-};
+        <View style={styles.row}>
+            <Text style={styles.label}>{label}</Text>
+            <Text style={styles.value}>{value}</Text>
+        </View>
+    );
+}
 
-
-const FinanceReportScreen = ({ data }: Props) => {
+const FinanceReportScreen = ({ transaction, installment }: Props) => {
     return (
         <View>
             {/* Cabeçalho */}
@@ -35,75 +27,31 @@ const FinanceReportScreen = ({ data }: Props) => {
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Detalhes da Transação</Text>
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>ID da Transação:</Text>
-                    <Text style={styles.value}>{data?.transactionId || "N/A"}</Text>
-                </View>
+                <Row label={"Id da transação:"} value={transaction?.transactionId} />
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>Data de Início:</Text>
-                    <Text style={styles.value}>
-                        {data?.startDate || "N/A"}
-                    </Text>
-                </View>
+                <Row label={"Data de início:"} value={transaction?.startDate} />
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>Tipo:</Text>
-                    <Text style={styles.value}>
-                        {typeof data?.type === "number" ? renderType(data.type) : "N/A"}
-                    </Text>
-                </View>
+                <Row label={"Tipo:"} value={transaction?.type} />
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>Descrição:</Text>
-                    <Text style={styles.value}>
-                        {data?.description || "N/A"}
-                    </Text>
-                </View>
+                <Row label={"Parcela:"} value={`${installment?.installmentNumber} de ${transaction?.installmentTotalNumber}`} />
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>Categoria:</Text>
-                    <Text style={styles.value}>{data?.category || "N/A"}</Text>
-                </View>
+                <Row label={"Valor total:"} value={`R$ ${Number(transaction?.totalValue).toFixed(2)}`} />
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>Data de Vencimento:</Text>
-                    <Text style={styles.value}>
-                        {data?.dueDate || "N/A"}
-                    </Text>
-                </View>
+                <Row label={"Descrição:"} value={transaction?.description} />
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>Status:</Text>
-                    <Text style={styles.value}>
-                        {data?.payment ? paymentStatus(data.payment) : "N/A"}
-                    </Text>
-                </View>
+                <Row label={"Categoria:"} value={transaction?.category} />
 
-                {data?.payment && (
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Método de Pagamento:</Text>
-                        <Text style={styles.value}>
-                            {data?.method || "N/A"}
-                        </Text>
-                    </View>
-                )}
+                <Row label={"Data de vencimento:"} value={installment?.dueDate} />
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>Valor:</Text>
-                    <Text style={styles.value}>
-                        {data?.totalValue
-                            ? `R$ ${Number(data.totalValue).toFixed(2)}`
-                            : "N/A"}
-                    </Text>
-                </View>
+                <Row label={"Pagamento:"} value={installment?.payment} />
 
+                <Row label={"Método de pagamento:"} value={installment?.method} />
+                
+                <Row label={"Data de pagamento:"} value={installment?.paymentDate} />
 
-            </View>
+                
 
-            {/* Rodapé */}
-            <View style={styles.footer}>
-                <Text>Gerado por Sistema Financeiro • Contato: suporte@empresa.com</Text>
+                <Row label={"Valor da parcela:"} value={`R$ ${Number(installment?.value).toFixed(2)}`} />
             </View>
         </View>
     )

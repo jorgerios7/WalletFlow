@@ -1,11 +1,9 @@
-import { Payment, Transactions, Type } from "@/app/types/Finance";
+import { Installment, Payment, Transactions, Type } from "@/app/types/Finance";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const paymentStatus = (currentPayment: string) => {
-    return currentPayment === Payment.concluded ? 'Concluído' : 'Pendente'
-};
+const paymentStatus = (currentPayment: string) => { return currentPayment === Payment.concluded ? 'Concluído' : 'Pendente' };
 
 const renderType = (currentType: string) => {
     if (currentType === Type.income) {
@@ -16,7 +14,6 @@ const renderType = (currentType: string) => {
         return 'Lucro';
     }
 };
-
 
 const renderImage = (type: string) => {
     if (type === Type.income) {
@@ -29,23 +26,19 @@ const renderImage = (type: string) => {
 };
 
 export default function FinanceDetailsItem(
-    { item, onPress }
-        :
-        {
-            item: Transactions,
-            onPress: (selectedItem: Transactions) => void
-        }
+    { transaction, installment, onPress }:
+        { transaction: any, installment: Installment, onPress: (transactionItem: Transactions, installmentItem: Installment) => void }
 ) {
     return (
         <TouchableOpacity
             style={defaultStyles.container}
-            onPress={() => onPress?.(item)}
+            onPress={() => onPress(transaction, installment)}
         >
             <View style={defaultStyles.card}>
                 <View style={defaultStyles.cardContent}>
                     <View style={defaultStyles.image}>
                         <MaterialIcons
-                            name={renderImage(item.type)}
+                            name={renderImage(transaction.type)}
                             size={16}
                             color={Colors.light.background}
                         />
@@ -53,23 +46,22 @@ export default function FinanceDetailsItem(
 
                     <View style={defaultStyles.textContainer}>
                         <Text style={[defaultStyles.text, { fontSize: 16, fontWeight: 'bold' }]}>
-                            {renderType(item.type)}
+                            {renderType(transaction.type)}
                         </Text>
                         <Text style={defaultStyles.text}>
-                            Categoria: {item.category}
+                            Categoria: {transaction.category}
                         </Text>
                         <Text style={defaultStyles.text}>
-                            Status: {paymentStatus(item.payment)}
+                            Status: {paymentStatus(installment.payment)}
                         </Text>
                         <Text style={defaultStyles.text}>
-                            Data: {item.startDate}
+                            Data: {transaction.startDate}
                         </Text>
-
                     </View>
 
                     <View style={defaultStyles.textContainer}>
                         <Text style={[defaultStyles.text, { fontWeight: 'bold' }]}>
-                            R$ {item.totalValue.toFixed(2)}
+                            R$ {installment.value.toFixed(2)}
                         </Text>
                     </View>
                 </View>
