@@ -1,4 +1,4 @@
-import { RecurrenceType } from "@/app/types/Finance";
+import { RecurrenceType, TransactionType } from "@/app/types/Finance";
 import { LoadCategories } from "@/app/utils/categoryManager";
 import SearchDropdown from "@/components/ui/dropdowns/dropdownSearch.tsx";
 import DeleteCategoryMenu from "@/components/ui/dropdowns/dropdownSearch.tsx/deleteCategoryMenu";
@@ -9,7 +9,6 @@ import RadioButton from "@/components/ui/RadioButton";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
-import { Type } from "..";
 import StepScreen from "../StepScreen";
 
 interface StepsProps {
@@ -88,7 +87,7 @@ export function RecurrenceScreen(
 
 export function CategoryStep(
   { isVisible, value, type, onConfirm, onBack, onSelect, onCancel }:
-    StepsProps & { value: string; type: Type; onSelect: (value: string) => void }
+    StepsProps & { value: string; type: TransactionType; onSelect: (value: string) => void }
 ) {
   const [itemsVisible, setItemsVisible] = useState({ newCategoryMenu: false, deleteCategoryMenu: false });
   const [categories, setCategories] = useState<string[]>([]);

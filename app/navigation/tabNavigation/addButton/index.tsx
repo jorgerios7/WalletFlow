@@ -1,4 +1,4 @@
-import { Type } from '@/app/screens/addScreen';
+import { TransactionType } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,7 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
-  onPress: (value: Type) => void;
+  onPress: (value: TransactionType) => void;
 }
 
 const AddButton: React.FC<Props> = ({ onPress }) => {

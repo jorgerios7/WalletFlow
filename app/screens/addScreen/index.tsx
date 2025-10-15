@@ -1,5 +1,5 @@
 import { db } from '@/app/config/firebaseConfig';
-import { Entries, PaymentType, RecurrenceType, Transactions } from '@/app/types/Finance';
+import { Entries, PaymentType, RecurrenceType, Transactions, TransactionType } from '@/app/types/Finance';
 import { FormatDateBR, SepareteDate } from '@/app/utils/Format';
 import { Colors } from '@/constants/Colors';
 import { getAuth } from 'firebase/auth';
@@ -18,12 +18,12 @@ import {
   TotalValueStep
 } from './steps/Steps';
 
-export type Type = '' | 'income' | 'expense' | 'profit';
+//export type Type = '' | 'income' | 'expense' | 'profit';
 
 export default function AddScreen(
   { isVisible, groupId, type, onDismiss }
     :
-    { isVisible: boolean, groupId: string, type: Type, onDismiss: () => void }) {
+    { isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void }) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 

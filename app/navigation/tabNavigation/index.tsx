@@ -1,10 +1,11 @@
-import AddScreen, { Type } from '@/app/screens/addScreen';
+import AddScreen from '@/app/screens/addScreen';
 import AnalyticsScreen from '@/app/screens/AnalyticsScreen';
 import { ConfigurationScreen } from '@/app/screens/ConfigurationScreen';
 import { FeedbackScreen } from '@/app/screens/FeedbackScreen';
 import { HelpScreen } from '@/app/screens/HelpScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
 import TransactionsScreen from '@/app/screens/transactionsScreen';
+import { TransactionType } from '@/app/types/Finance';
 import { User } from '@/app/types/User';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import { Colors } from '@/constants/Colors';
@@ -36,7 +37,7 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
   const [confirmationScreenVisible, setConfirmationScreenVisible] = useState(false);
   const [currentTabScreen, setCurrentTabScreen] = useState<TabScreen>('Analytic');
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
-  const [typeValue, setTypeValue] = useState<Type>('');
+  const [typeValue, setTypeValue] = useState<TransactionType>('income');
   const [addDataVisible, setAddDataVisible] = useState(false);
 
   const handleLogout = () => (

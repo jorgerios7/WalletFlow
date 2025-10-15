@@ -34,8 +34,6 @@ const TransactionsScreen = () => {
       const entries: Entries[] = [];
 
       for (const transactionDoc of transactionsSnapshot.docs) {
-        if (transactionDoc.id === 'undefined') return null;
-
         const transData = transactionDoc.data();
 
         const entriesRef = collection(db, `groups/${groupId}/transactions/${transactionDoc.id}/entries`);
