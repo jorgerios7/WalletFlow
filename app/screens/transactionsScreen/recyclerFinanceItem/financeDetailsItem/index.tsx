@@ -1,14 +1,14 @@
-import { Installment, Payment, Transactions, Type } from "@/app/types/Finance";
+import { Transactions } from "@/app/types/Finance";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const paymentStatus = (currentPayment: string) => { return currentPayment === Payment.concluded ? 'Concluído' : 'Pendente' };
+const paymentStatus = (currentPayment: string) => { return currentPayment === 'concluded' ? 'Concluído' : 'Pendente' };
 
 const renderType = (currentType: string) => {
-    if (currentType === Type.income) {
+    if (currentType === 'income') {
         return 'Entrada';
-    } else if (currentType === Type.expense) {
+    } else if (currentType === 'expense') {
         return 'Saída';
     } else {
         return 'Lucro';
@@ -16,9 +16,9 @@ const renderType = (currentType: string) => {
 };
 
 const renderImage = (type: string) => {
-    if (type === Type.income) {
+    if (type === 'income') {
         return 'attach-money'
-    } else if (type === Type.profit) {
+    } else if (type === 'profit') {
         return 'trending-up'
     } else {
         return 'money-off'
@@ -26,19 +26,19 @@ const renderImage = (type: string) => {
 };
 
 export default function FinanceDetailsItem(
-    { transaction, installment, onPress }:
-        { transaction: any, installment: Installment, onPress: (transactionItem: Transactions, installmentItem: Installment) => void }
+    { data, onPress }:
+        { data: any, onPress: (selectedItem: Transactions) => void }
 ) {
     return (
         <TouchableOpacity
             style={defaultStyles.container}
-            onPress={() => onPress(transaction, installment)}
+            onPress={() => onPress(data)}
         >
             <View style={defaultStyles.card}>
                 <View style={defaultStyles.cardContent}>
                     <View style={defaultStyles.image}>
                         <MaterialIcons
-                            name={renderImage(transaction.type)}
+                            name={renderImage(data.type)}
                             size={16}
                             color={Colors.light.background}
                         />
@@ -46,22 +46,22 @@ export default function FinanceDetailsItem(
 
                     <View style={defaultStyles.textContainer}>
                         <Text style={[defaultStyles.text, { fontSize: 16, fontWeight: 'bold' }]}>
-                            {renderType(transaction.type)}
+                            {renderType(data.type)}
                         </Text>
                         <Text style={defaultStyles.text}>
-                            Categoria: {transaction.category}
+                            Categoria: {data.category}
                         </Text>
                         <Text style={defaultStyles.text}>
-                            Status: {paymentStatus(installment.payment)}
+                            Status: {paymentStatus(data.payment)}
                         </Text>
                         <Text style={defaultStyles.text}>
-                            Data: {transaction.startDate}
+                            Data: {data.startDate}
                         </Text>
                     </View>
 
                     <View style={defaultStyles.textContainer}>
                         <Text style={[defaultStyles.text, { fontWeight: 'bold' }]}>
-                            R$ {installment.value.toFixed(2)}
+                            R$ {data.value.toFixed(2)}
                         </Text>
                     </View>
                 </View>

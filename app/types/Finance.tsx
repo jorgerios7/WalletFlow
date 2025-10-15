@@ -1,7 +1,5 @@
-
-export enum Type { income = 'income', expense = 'expense', profit = 'profit' }
-export enum Payment { concluded = 'concluded', pending = 'pending' }
-
+export type TransactionType = 'income' | 'expense' | 'profit';
+export type PaymentType = 'concluded' | 'pending';
 export type RecurrenceType = 'single' | 'fixed' | 'installment' | 'variable' | 'installment_dp' | 'scheduled';
 
 //"single" (única)
@@ -18,25 +16,20 @@ export interface Transactions {
   createdAt: string;
   createdBy: string;
   startDate: string;
-  paymentDate: string;
-  payment: string;
-  type: string;
   totalValue: number;
   description: string;
-  installmentTotalNumber: number;
-  method: string;
-  accountId: string;
+  totalEntries: number;
   recurrenceType: string;
-  installmentId: string;
 }
 
-export interface Installment {
-  installmentId: string;
+export interface Entries {
+  type: string;
+  entrieId: string;
   dueDate: string;
   value: number;
   payment: string;
   paymentDate: string;
   method: string;
-  installmentNumber: number;
+  entrieNumber: number;
 }
 

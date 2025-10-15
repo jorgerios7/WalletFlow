@@ -18,10 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddButton from './addButton';
 import TabButton from './tabButton';
 
-interface Props {
-  userData: User;
-  onDismis: () => void;
-}
+interface Props { userData: User; onDismis: () => void }
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

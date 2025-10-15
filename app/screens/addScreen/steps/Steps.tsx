@@ -1,4 +1,4 @@
-import { Payment, RecurrenceType } from "@/app/types/Finance";
+import { RecurrenceType } from "@/app/types/Finance";
 import { LoadCategories } from "@/app/utils/categoryManager";
 import SearchDropdown from "@/components/ui/dropdowns/dropdownSearch.tsx";
 import DeleteCategoryMenu from "@/components/ui/dropdowns/dropdownSearch.tsx/deleteCategoryMenu";
@@ -19,11 +19,11 @@ interface StepsProps {
 export function RecurrenceScreen(
   {
     isVisible, value, onConfirm, onCancel, onSelect
-  }: StepsProps & { value: RecurrenceType; onSelect: (recurrenceType: RecurrenceType, installmentNumber: number) => void }
+  }: StepsProps & { value: RecurrenceType; onSelect: (recurrenceType: RecurrenceType, totalEntries: number) => void }
 ) {
   if (!isVisible) return;
 
-  const [selection, setSelection] = useState({ recurrenceType: value, installmentNumber: 2 });
+  const [selection, setSelection] = useState({ recurrenceType: value, totalEntries: 2 });
 
   useEffect(() => {
     if (!value) setSelection((prev) => ({ ...prev, recurrenceType: value }));
@@ -35,7 +35,7 @@ export function RecurrenceScreen(
 
   function handleSelect() {
     if (selection.recurrenceType === 'installment') {
-      onSelect(selection.recurrenceType, selection.installmentNumber)
+      onSelect(selection.recurrenceType, selection.totalEntries)
     } else {
       onSelect(selection.recurrenceType, 0);
     }
@@ -77,7 +77,7 @@ export function RecurrenceScreen(
             setSelection={2}
             list={[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
             onSelect={(value) => {
-              setSelection((prev) => ({ ...prev, installmentNumber: value as number }))
+              setSelection((prev) => ({ ...prev, totalEntries: value as number }))
             }}
           />
         </View>
@@ -255,8 +255,8 @@ export function PaymentStep(
         initialValue={value}
         gap={30}
         options={[
-          { label: 'O pagamento está concluído', value: Payment.concluded },
-          { label: 'O pagamento está pendente', value: Payment.pending },
+          { label: 'O pagamento está concluído', value: 'concluded' },
+          { label: 'O pagamento está pendente', value: 'pending'},
         ]}
         onSelecting={onSelect}
       />

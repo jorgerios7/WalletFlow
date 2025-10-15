@@ -1,5 +1,5 @@
 import { db } from '@/app/config/firebaseConfig';
-import { Installment, Payment, RecurrenceType, Transactions } from '@/app/types/Finance';
+import { Entries, PaymentType, RecurrenceType, Transactions } from '@/app/types/Finance';
 import { FormatDateBR, SepareteDate } from '@/app/utils/Format';
 import { Colors } from '@/constants/Colors';
 import { getAuth } from 'firebase/auth';
@@ -34,12 +34,13 @@ export default function AddScreen(
   const [currentStep, setCurrentStep] = useState<Step>('recurrence');
 
   const [transaction, setTransaction] = useState<Transactions>({
-    transactionId: "", createdBy: currentUser.uid, createdAt: new Date().toISOString(), accountId: "", startDate: "", paymentDate: "",
-    type: type, category: "", dueDate: "", description: "", payment: "", recurrenceType: "", installmentTotalNumber: 0, method: "",
-    totalValue: 0, installmentId: ""
+    transactionId: "", createdBy: currentUser.uid, createdAt: new Date().toISOString(), startDate: "",
+    category: "", dueDate: "", description: "", recurrenceType: "", totalEntries: 0, totalValue: 0
   });
 
-  const [installment, setInstallment] = useState<Installment>({ installmentId: "", installmentNumber: 0, dueDate: "", value: 0, payment: "", paymentDate: "", method: "" });
+  const [entries, setEntries] = useState<Entries>({
+    type: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "", paymentDate: "", method: ""
+  });
 
   async function uploadData() {
     if (!currentUser || !groupId) return null;
@@ -52,8 +53,8 @@ export default function AddScreen(
         })
       );
 
-      const installmentDataCleaned = Object.fromEntries(
-        Object.entries(installment).filter(([_, value]) => {
+      const entriesDataCleaned = Object.fromEntries(
+        Object.entries(entries).filter(([_, value]) => {
           if (value === "") return false;
           return true;
         })
@@ -67,29 +68,33 @@ export default function AddScreen(
           createdAt: new Date().toISOString(), totalValue: transaction.totalValue
         });
 
-      const installmentRef = collection(db, "groups", groupId, "transactions", transactionDocRef.id, 'installments');
+      const entriesRef = collection(db, "groups", groupId, "transactions", transactionDocRef.id, 'entries');
 
-      const startDate = SepareteDate(installment.dueDate);
+      const startDate = SepareteDate(entries.dueDate);
 
-      const installmentsPromises = Array.from({ length: transaction.installmentTotalNumber || 1 }).map((_, i) => {
+      const entriesPromises = Array.from({ length: transaction.totalEntries || 1 }).map((_, i) => {
         const dueDate = new Date(startDate);
-        const value = (transaction.totalValue / transaction.installmentTotalNumber);
+        const value = (transaction.totalEntries === 0
+          ? transaction.totalValue
+          : (transaction.totalValue / transaction.totalEntries)
+        );
 
         dueDate.setMonth(dueDate.getMonth() + i);
 
-        return addDoc(installmentRef, { ...installmentDataCleaned, installmentId: installmentRef.id, installmentNumber: i, totalValue: value, dueDate: FormatDateBR(dueDate) });
+        return addDoc(
+          entriesRef, {
+          ...entriesDataCleaned, type: type, entrieNumber: i, value: value, dueDate: FormatDateBR(dueDate)
+        });
       });
 
-      await Promise.all(installmentsPromises);
+      await Promise.all(entriesPromises);
 
-      setTransaction(
-        {
-          transactionId: "", createdBy: "", createdAt: "", accountId: "", startDate: "", paymentDate: "", type: type, category: "",
-          dueDate: "", description: "", payment: "", recurrenceType: "", installmentTotalNumber: 0, method: "", totalValue: 0, installmentId: ""
-        }
-      );
+      setTransaction({
+        transactionId: "", createdBy: currentUser.uid, createdAt: new Date().toISOString(), startDate: "",
+        category: "", dueDate: "", description: "", recurrenceType: "", totalEntries: 0, totalValue: 0
+      });
 
-      setInstallment({ installmentId: "", installmentNumber: 0, dueDate: "", value: 0, payment: "", paymentDate: "", method: "" });
+      setEntries({ type: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "", paymentDate: "", method: "" });
 
       onDismiss();
       Alert.alert("Sucesso!", "Transação salva com sucesso.");
@@ -122,9 +127,7 @@ export default function AddScreen(
           <RecurrenceScreen
             isVisible={currentStep === "recurrence"}
             value={transaction.recurrenceType as RecurrenceType || 'single'}
-            onSelect={(recurrenceType, installmentNumber) => {
-              setTransaction((prev) => ({ ...prev, recurrenceType: recurrenceType, installmentNumber: installmentNumber }));
-            }}
+            onSelect={(recurrenceType, totalEntries) => setTransaction((prev) => ({ ...prev, recurrenceType: recurrenceType, totalEntries: totalEntries }))}
             onConfirm={() => setCurrentStep("category")}
             onBack={() => onDismiss()}
             onCancel={onDismiss}
@@ -151,8 +154,8 @@ export default function AddScreen(
 
           <DueDateStep
             isVisible={currentStep === "dueDate"}
-            value={installment.dueDate}
-            onSelect={(selected) => setInstallment((prev) => ({ ...prev, dueDate: selected }))}
+            value={entries.dueDate}
+            onSelect={(selected) => setEntries((prev) => ({ ...prev, dueDate: selected }))}
             onConfirm={() => setCurrentStep("totalValue")}
             onBack={() => setCurrentStep("startDate")}
             onCancel={onDismiss}
@@ -169,9 +172,9 @@ export default function AddScreen(
 
           <PaymentStep
             isVisible={currentStep === "payment"}
-            value={installment.payment}
-            onSelect={(selected) => setInstallment((prev) => ({ ...prev, payment: selected }))}
-            onConfirm={() => transaction.payment === Payment.pending ? uploadData() : setCurrentStep('description')}
+            value={entries.payment}
+            onSelect={(selected) => setEntries((prev) => ({ ...prev, payment: selected }))}
+            onConfirm={() => entries.payment === 'pending' as PaymentType ? uploadData() : setCurrentStep('description')}
             onBack={() => setCurrentStep("totalValue")}
             onCancel={onDismiss}
           />
@@ -187,8 +190,8 @@ export default function AddScreen(
 
           <PaymentDateStep
             isVisible={currentStep === 'paymentDate'}
-            value={installment.paymentDate}
-            onSelect={(selected) => setInstallment((prev) => ({ ...prev, paymentDate: selected }))}
+            value={entries.paymentDate}
+            onSelect={(selected) => setEntries((prev) => ({ ...prev, paymentDate: selected }))}
             onConfirm={() => setCurrentStep('method')}
             onBack={() => setCurrentStep('description')}
             onCancel={onDismiss}
@@ -196,8 +199,8 @@ export default function AddScreen(
 
           <MethodStep
             isVisible={currentStep === 'method'}
-            value={installment.method}
-            onSelect={(selected) => setInstallment((prev) => ({ ...prev, method: selected }))}
+            value={entries.method}
+            onSelect={(selected) => setEntries((prev) => ({ ...prev, method: selected }))}
             onConfirm={() => uploadData()}
             onBack={() => setCurrentStep('paymentDate')}
             onCancel={onDismiss}

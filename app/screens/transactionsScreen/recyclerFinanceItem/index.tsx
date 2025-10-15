@@ -1,67 +1,71 @@
 import { LoadScreen } from '@/app/pages/LoadScreen';
 import NotFoundScreen from '@/app/pages/NotFoundScreen';
-import { Installment, Transactions, Type } from '@/app/types/Finance';
+import { Entries, PaymentType, Transactions } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import React, { useEffect } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
 import FinanceDetailsItem from './financeDetailsItem';
 
 interface Props {
-  transaction_list: Transactions[]; installment_list: Installment[]; dateFilter?: string; isStatusFilteringEnabled: boolean;
-  paymentFilter?: string; bottomMargin?: number; loading: boolean; onTotalValueChange?: (total: number) => void;
-  onPressingItem: (transactionItems: Transactions, installmentItems: Installment) => void;
+  entries_list: Entries[]; selectedDate: string; selectedPaymentType: PaymentType; selectedMethodType?: string;
+  selectedValue?: number; bottomMargin?: number; isLoading: boolean; onTotalValueChange: (total: number) => void;
+  onPressingItem: (items: Transactions) => void;
 }
 
-interface Section { title: string; data: Installment[] }
-
-const groupByDate = (installments: Installment[]): Section[] => {
-  const grouped: { [key: string]: Installment[] } = {};
-
-  for (const item of installments) {
-    if (!grouped[item.dueDate]) { grouped[item.dueDate] = [] }
-
-    grouped[item.dueDate].push(item);
-  }
-
-  return Object.keys(grouped)
-    .sort((a, b) => {
-      const [da, ma, ya] = a.split('/').map(Number);
-      const [db, mb, yb] = b.split('/').map(Number);
-      const dateA = new Date(ya, ma - 1, da);
-      const dateB = new Date(yb, mb - 1, db);
-      return dateA.getTime() - dateB.getTime();
-    })
-    .map((date) => ({ title: date, data: grouped[date] }));
-};
-
 const FinanceItemRecycler: React.FC<Props> = ({
-  transaction_list, installment_list, dateFilter, isStatusFilteringEnabled, paymentFilter, bottomMargin = 0,
-  loading, onTotalValueChange, onPressingItem
+  entries_list, selectedDate, selectedPaymentType, selectedMethodType, selectedValue, 
+  bottomMargin = 0, isLoading, onTotalValueChange, onPressingItem
 }) => {
 
-  const filteredList = installment_list.filter((item) => {
-    if (!dateFilter) return true;
+  function filteredEntries() {
+    const newList = entries_list.filter((listedEntries) => {
+      if (!selectedDate) return true;
 
-    const [itemDay, itemMonth, itemYear] = item.dueDate.split('/');
-    const [filterDay, filterMonth, filterYear] = dateFilter.split('/');
+      const [listedDay, listedMonth, listedYear] = listedEntries.dueDate.split('/');
+      const [selectedDay, selectedMonth, selectedYear] = selectedDate.split('/');
 
-    return itemMonth === filterMonth && itemYear === filterYear;
-  });
+      const isDay = listedDay === selectedDay;
+      const isMonth = listedMonth === selectedMonth;
+      const isYear = listedYear === selectedYear;
+      const isPayment = listedEntries.payment === selectedPaymentType;
+      const isMethod = listedEntries.method === selectedMethodType;
+      const isValue = listedEntries.value === selectedValue;
 
-  const sections = groupByDate(filteredList);
+      return (isMonth && isYear && isPayment);
+    });
 
-  const filteredPaidList = transaction_list.filter((item) => {
-    if (!isStatusFilteringEnabled) return true;
-    return item.payment === paymentFilter;
-  });
+    return newList;
+  }
 
-  const totalValue = filteredPaidList.reduce((sum, item) => {
-    const signedValue = item.type === Type.expense ? - item.totalValue : item.totalValue;
+  interface Section { title: string; data: Entries[] }
 
+  const groupByDate = (entries: Entries[]): Section[] => {
+    const grouped: { [key: string]: Entries[] } = {};
+
+    for (const installment of entries) {
+      if (!grouped[installment.dueDate]) { grouped[installment.dueDate] = [] }
+      grouped[installment.dueDate].push(installment);
+    }
+
+    return Object.keys(grouped)
+      .sort((a, b) => {
+        const [da, ma, ya] = a.split('/').map(Number);
+        const [db, mb, yb] = b.split('/').map(Number);
+        const dateA = new Date(ya, ma - 1, da);
+        const dateB = new Date(yb, mb - 1, db);
+        return dateA.getTime() - dateB.getTime();
+      })
+      .map((date) => ({ title: date, data: grouped[date] }))
+  };
+
+  const sections = groupByDate(filteredEntries());
+
+  const totalValue = filteredEntries().reduce((sum, item) => {
+    const signedValue = item.type === 'expense' ? - item.value : item.value;
     return (sum + signedValue);
   }, 0);
 
-  useEffect(() => { onTotalValueChange?.(totalValue) }, [totalValue, onTotalValueChange]);
+  useEffect(() => { onTotalValueChange(totalValue) }, [totalValue, onTotalValueChange]);
 
   function HeaderSection({ text }: { text: string }) {
     return (
@@ -75,7 +79,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
 
   return (
     <View style={{ flex: 1 }}>
-      {loading ? (
+      {isLoading ? (
         <LoadScreen />
       ) : sections.length === 0 ? (
         <NotFoundScreen />
@@ -84,12 +88,11 @@ const FinanceItemRecycler: React.FC<Props> = ({
           stickySectionHeadersEnabled
           style={[styles.scrollContent, { marginBottom: bottomMargin }]}
           sections={sections}
-          keyExtractor={(item) => item.installmentId}
+          keyExtractor={(item) => item.entrieId}
           renderItem={({ item }) => (
             <FinanceDetailsItem
-              transaction={item}
-              installment={item}
-              onPress={(transactionItem, installmentItem) => onPressingItem(transactionItem, installmentItem)} />
+              data={item}
+              onPress={(selected) => onPressingItem(selected)} />
           )}
           renderSectionHeader={({ section }) => (<HeaderSection text={section.title} />)}
           ListHeaderComponent={<View style={styles.headerSpacer} />}
