@@ -73,7 +73,7 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
   );
 
   const AddDataWrapper = ({ navigation }: any) => (
-    <View></View>
+    <View/>
   );
 
   const ConfigurationWrapper = ({ navigation }: any) => (

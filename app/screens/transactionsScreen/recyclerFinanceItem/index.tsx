@@ -13,7 +13,7 @@ interface Props {
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
-  entries_list, selectedDate, selectedPaymentType, selectedMethodType, selectedValue, 
+  entries_list, selectedDate, selectedPaymentType, selectedMethodType, selectedValue,
   bottomMargin = 0, isLoading, onTotalValueChange, onPressingItem
 }) => {
 
@@ -42,9 +42,9 @@ const FinanceItemRecycler: React.FC<Props> = ({
   const groupByDate = (entries: Entries[]): Section[] => {
     const grouped: { [key: string]: Entries[] } = {};
 
-    for (const installment of entries) {
-      if (!grouped[installment.dueDate]) { grouped[installment.dueDate] = [] }
-      grouped[installment.dueDate].push(installment);
+    for (const entrie of entries) {
+      if (!grouped[entrie.dueDate]) { grouped[entrie.dueDate] = [] }
+      grouped[entrie.dueDate].push(entrie);
     }
 
     return Object.keys(grouped)
@@ -76,7 +76,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
       </View>
     );
   }
-
+  
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
