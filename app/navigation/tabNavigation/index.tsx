@@ -1,4 +1,4 @@
-import AddScreen from '@/app/screens/addScreen';
+import AddTransactionScreen from '@/app/screens/addTransactionScreen';
 import AnalyticsScreen from '@/app/screens/AnalyticsScreen';
 import { ConfigurationScreen } from '@/app/screens/ConfigurationScreen';
 import { FeedbackScreen } from '@/app/screens/FeedbackScreen';
@@ -73,7 +73,7 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
   );
 
   const AddDataWrapper = ({ navigation }: any) => (
-    <View/>
+    <View />
   );
 
   const ConfigurationWrapper = ({ navigation }: any) => (
@@ -124,7 +124,7 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
           onCancel={() => setConfirmationScreenVisible(false)}
         />
 
-        <AddScreen
+        <AddTransactionScreen
           isVisible={addDataVisible}
           groupId={userData.groupId}
           onDismiss={() => setAddDataVisible(false)}

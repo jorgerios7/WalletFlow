@@ -2,7 +2,7 @@ import { MaskCurrency, MaskDate } from "@/app/utils/Format";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import LabelAnimated from "./LabelAnimated";
 
 interface Props {
@@ -18,6 +18,7 @@ export default function DynamicLabelInput({
   const [text, setText] = useState(initialText ? initialText : "");
   const [number, setNumber] = useState(initialNumber ? initialNumber.toString() : "");
   const [isPasswordVisible, setIsPasswordVisible] = useState(!secureTextEntry);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
   const handleValueChange = (newValue: string) => {
     if (!numberEntry) {
@@ -63,16 +64,29 @@ export default function DynamicLabelInput({
       />
 
       {secureTextEntry && (
-        <TouchableOpacity
+        <Pressable
           onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-          style={styles.eyeButton}
+          style={styles.imageButton}
         >
           <Ionicons
             name={isPasswordVisible ? "eye" : "eye-off"}
             size={18}
             color={Colors.light.highlightBackgroun_1}
           />
-        </TouchableOpacity>
+        </Pressable>
+      )}
+
+      {dateEntry && (
+        <Pressable
+          onPress={() => setIsCalendarVisible(true)}
+          style={styles.imageButton}
+        >
+          <Ionicons
+            name={"calendar"}
+            size={18}
+            color={Colors.light.highlightBackgroun_1}
+          />
+        </Pressable>
       )}
     </View>
   );
@@ -85,5 +99,5 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent", fontWeight: "bold", borderRadius: 10, padding: 14
   },
   inputFocused: { outlineColor: "transparent" },
-  eyeButton: { position: "absolute", right: 18, top: "55%", transform: [{ translateY: -12 }], outlineColor: "transparent" },
+  imageButton: { position: "absolute", right: 18, top: "55%", transform: [{ translateY: -12 }], outlineColor: "transparent" },
 });

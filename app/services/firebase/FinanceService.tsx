@@ -23,9 +23,13 @@ export async function LoadTransactions(groupId: string, onLoading: (loading: boo
             const entriesDocs = entriesSnapshot.docs.map((doc) => {
                 const entData = doc.data() as Partial<Entries>;
                 return {
-                    entrieId: doc.id, transactionId: transactionDoc.id, category: transData.category, type: entData.type,
-                    startDate: transData.startDate, totalEntries: transData.totalEntries, dueDate: entData.dueDate,
-                    totalValue: transData.totalValue, payment: entData.payment, paymentDate: entData.paymentDate, method: entData.method,
+                    transactionId: transactionDoc.id, category: transData.category, totalValue: transData.totalValue,
+                    startDate: transData.startDate, totalEntries: transData.totalEntries,
+
+                    entrieId: doc.id, type: entData.type, dueDate: entData.dueDate, paymentBank: entData.paymentBank, payment: entData.payment,
+                    paymentDate: entData.paymentDate, paymentMethod: entData.paymentMethod, paymentBankCard: entData.paymentBankCard,
+                    entrieNumber: entData.entrieNumber, value: entData.value,
+
                     ...entData
                 } as Entries;
             });
@@ -51,13 +55,8 @@ export async function UploadTransaction(
     try {
         onLoading(true);
 
-        const transactionDataCleaned = Object.fromEntries(
-            Object.entries(transactions).filter(([_, value]) => value !== "")
-        );
-
-        const entriesDataCleaned = Object.fromEntries(
-            Object.entries(entries).filter(([_, value]) => value !== "")
-        );
+        const transactionDataCleaned = Object.fromEntries(Object.entries(transactions).filter(([_, value]) => value !== ""));
+        const entriesDataCleaned = Object.fromEntries(Object.entries(entries).filter(([_, value]) => value !== ""));
 
         const transactionRef = collection(db, "groups", groupId, "transactions");
 
@@ -73,15 +72,20 @@ export async function UploadTransaction(
 
         const entriesPromises = Array.from({ length: transactions.totalEntries || 1 }).map(async (_, i) => {
             const dueDate = new Date(startDate);
-            const value =
-                transactions.totalEntries === 0
-                    ? transactions.totalValue
-                    : transactions.totalValue / (transactions.totalEntries || 1);
+            const value = transactions.totalEntries === 0
+                ? transactions.totalValue
+                : transactions.totalValue / (transactions.totalEntries || 1);
 
-            dueDate.setMonth(dueDate.getMonth() + i);
+            const monthOffset = transactions.recurrenceType === "installment" ? i + 1 : i;
+            dueDate.setMonth(dueDate.getMonth() + monthOffset);
 
             const entryDocRef = await addDoc(entriesRef, {
-                ...entriesDataCleaned, type, entrieNumber: i, value, dueDate: FormatDateBR(dueDate), createdAt: new Date().toISOString(),
+                ...entriesDataCleaned,
+                type,
+                entrieNumber: (i + 1),
+                value,
+                dueDate: FormatDateBR(dueDate),
+                createdAt: new Date().toISOString(),
             });
 
             await updateDoc(entryDocRef, { entrieId: entryDocRef.id });

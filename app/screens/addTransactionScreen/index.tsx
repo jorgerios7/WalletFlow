@@ -5,9 +5,18 @@ import { Colors } from '@/constants/Colors';
 import { getAuth } from 'firebase/auth';
 import { useState } from 'react';
 import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
-import { CategoryStep, DescriptionStep, DueDateStep, MethodStep, PaymentDateStep, PaymentStep, RecurrenceScreen, StartDateStep, TotalValueStep } from './steps/Steps';
+import {
+  CategoryStep,
+  DescriptionStep,
+  DueDateStep,
+  PaymentDateStep,
+  PaymentStep,
+  RecurrenceScreen,
+  StartDateStep,
+  TotalValueStep
+} from './steps/Steps';
 
-export default function AddScreen(
+export default function AddTransactionScreen(
   { isVisible, groupId, type, onDismiss }
     :
     { isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void }
@@ -22,30 +31,31 @@ export default function AddScreen(
   const [currentStep, setCurrentStep] = useState<Step>('recurrence');
 
   const [transaction, setTransaction] = useState<Transactions>({
-    transactionId: "", createdBy: currentUser.uid, createdAt: new Date().toISOString(), startDate: "",
-    category: "", dueDate: "", description: "", recurrenceType: "", totalEntries: 0, totalValue: 0
+    transactionId: "", createdBy: currentUser.uid, createdAt: new Date().toISOString(), startDate: "", category: "", description: "",
+    recurrenceType: "", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: "", purchasebank: ""
   });
 
-  const [entries, setEntries] = useState<Entries>({
-    type: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "", paymentDate: "", method: ""
-  });
+  const [entries, setEntries] = useState<Partial<Entries>>({ type: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "" });
 
   const [loading, setLoading] = useState(false);
 
   async function uploadTransaction() {
     if (!currentUser) return null;
 
-    await UploadTransaction(currentUser?.uid, groupId, type, transaction, entries, setLoading);
+    await UploadTransaction(currentUser?.uid, groupId, type, transaction, entries as Entries, setLoading);
 
     onDismiss();
     Alert.alert("Sucesso!", "Transação salva com sucesso.");
 
     setTransaction({
-      transactionId: "", createdBy: "", createdAt: "", startDate: "",
-      category: "", dueDate: "", description: "", recurrenceType: "", totalEntries: 0, totalValue: 0
+      transactionId: "", createdBy: "", createdAt: "", startDate: "", category: "", purchasebank: "",
+      description: "", recurrenceType: "", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: ""
     });
 
-    setEntries({ type: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "", paymentDate: "", method: "" });
+    setEntries({
+      type: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "",
+      paymentDate: "", paymentMethod: "", paymentBankCard: "", paymentBank: ""
+    });
   }
 
   function renderTitle() {
@@ -63,9 +73,7 @@ export default function AddScreen(
       <View style={styles.overlay}>
         <View style={styles.container}>
 
-          <Text style={{ fontWeight: 'bold', fontSize: 22 }}>
-            {renderTitle()}
-          </Text>
+          <Text style={{ fontWeight: 'bold', fontSize: 22 }}> {renderTitle()}</Text>
 
           {loading ? (
             <LoadScreen />
@@ -73,8 +81,22 @@ export default function AddScreen(
             <View style={styles.content}>
               <RecurrenceScreen
                 isVisible={currentStep === "recurrence"}
-                value={transaction.recurrenceType as RecurrenceType || 'single'}
-                onSelect={(recurrenceType, totalEntries) => setTransaction((prev) => ({ ...prev, recurrenceType: recurrenceType, totalEntries: totalEntries }))}
+                transactionType={type}
+                recurrenceType={transaction.recurrenceType as RecurrenceType || 'single'}
+                totalEntries={transaction.totalEntries}
+                purchasingMethod={transaction.purchasingMethod}
+                purchaseBankCard={transaction.purchaseBankCard}
+                purchaseBank={transaction.purchasebank}
+                onSelect={(recurrenceType, totalEntries, purchasingMethod, purchaseBankCard, purchaseBank) => {
+                  {
+                    setTransaction((prev) => (
+                      {
+                        ...prev, recurrenceType: recurrenceType, totalEntries: totalEntries, purchasingMethod: purchasingMethod,
+                        purchaseBankCard: purchaseBankCard, purchaseBank: purchaseBank
+                      }
+                    ))
+                  }
+                }}
                 onConfirm={() => setCurrentStep("category")}
                 onBack={() => onDismiss()}
                 onCancel={onDismiss}
@@ -101,8 +123,10 @@ export default function AddScreen(
 
               <DueDateStep
                 isVisible={currentStep === "dueDate"}
-                value={entries.dueDate}
+                recurrenceType={transaction.recurrenceType}
+                value={entries.dueDate as string}
                 onSelect={(selected) => setEntries((prev) => ({ ...prev, dueDate: selected }))}
+                startDate={transaction.startDate}
                 onConfirm={() => setCurrentStep("totalValue")}
                 onBack={() => setCurrentStep("startDate")}
                 onCancel={onDismiss}
@@ -110,19 +134,11 @@ export default function AddScreen(
 
               <TotalValueStep
                 isVisible={currentStep === "totalValue"}
+                transactionType={type}
                 value={transaction.totalValue}
                 onSelect={(selected) => setTransaction((prev) => ({ ...prev, totalValue: selected }))}
-                onConfirm={() => setCurrentStep("payment")}
+                onConfirm={() => setCurrentStep("description")}
                 onBack={() => setCurrentStep("dueDate")}
-                onCancel={onDismiss}
-              />
-
-              <PaymentStep
-                isVisible={currentStep === "payment"}
-                value={entries.payment}
-                onSelect={(selected) => setEntries((prev) => ({ ...prev, payment: selected }))}
-                onConfirm={() => entries.payment === 'pending' as PaymentType ? uploadTransaction() : setCurrentStep('description')}
-                onBack={() => setCurrentStep("totalValue")}
                 onCancel={onDismiss}
               />
 
@@ -130,26 +146,31 @@ export default function AddScreen(
                 isVisible={currentStep === "description"}
                 value={transaction.description}
                 onSelect={(selected) => setTransaction((prev) => ({ ...prev, description: selected }))}
-                onConfirm={() => setCurrentStep('paymentDate')}
-                onBack={() => setCurrentStep("payment")}
+                onConfirm={() => setCurrentStep("payment")}
+                onBack={() => setCurrentStep("totalValue")}
                 onCancel={onDismiss}
               />
+
+              <PaymentStep
+                isVisible={currentStep === "payment"}
+                value={entries.payment as string}
+                onSelect={(selected) => setEntries((prev) => ({ ...prev, payment: selected }))}
+                onConfirm={() => entries.payment === 'pending' as PaymentType ? uploadTransaction() : console.log('create PaymentScreen!')}
+                onBack={() => setCurrentStep("description")}
+                onCancel={onDismiss}
+              />
+
+
+
+
+
 
               <PaymentDateStep
                 isVisible={currentStep === 'paymentDate'}
-                value={entries.paymentDate}
+                value={entries.paymentDate as string}
                 onSelect={(selected) => setEntries((prev) => ({ ...prev, paymentDate: selected }))}
-                onConfirm={() => setCurrentStep('method')}
-                onBack={() => setCurrentStep('description')}
-                onCancel={onDismiss}
-              />
-
-              <MethodStep
-                isVisible={currentStep === 'method'}
-                value={entries.method}
-                onSelect={(selected) => setEntries((prev) => ({ ...prev, method: selected }))}
                 onConfirm={() => uploadTransaction()}
-                onBack={() => setCurrentStep('paymentDate')}
+                onBack={() => setCurrentStep('description')}
                 onCancel={onDismiss}
               />
             </View>

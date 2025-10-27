@@ -28,10 +28,10 @@ const FinanceItemRecycler: React.FC<Props> = ({
       const isMonth = listedMonth === selectedMonth;
       const isYear = listedYear === selectedYear;
       const isPayment = listedEntries.payment === selectedPaymentType;
-      const isMethod = listedEntries.method === selectedMethodType;
+      //const isMethod = listedEntries.purchasingMethod === selectedMethodType;
       const isValue = listedEntries.value === selectedValue;
 
-      return (isMonth && isYear && isPayment);
+      return (isMonth && isYear);
     });
 
     return newList;
@@ -53,7 +53,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
         const [db, mb, yb] = b.split('/').map(Number);
         const dateA = new Date(ya, ma - 1, da);
         const dateB = new Date(yb, mb - 1, db);
-        return dateA.getTime() - dateB.getTime();
+        return dateA.getTime() - dateB.getTime(); 
       })
       .map((date) => ({ title: date, data: grouped[date] }))
   };
@@ -61,8 +61,8 @@ const FinanceItemRecycler: React.FC<Props> = ({
   const sections = groupByDate(filteredEntries());
 
   const totalValue = filteredEntries().reduce((sum, item) => {
-    const signedValue = item.type === 'expense' ? - item.value : item.value;
-    return (sum + signedValue);
+    const validValues = item.payment === 'concluded' ? item.value : 0;
+    return (sum + validValues);
   }, 0);
 
   useEffect(() => { onTotalValueChange(totalValue) }, [totalValue, onTotalValueChange]);

@@ -12,7 +12,6 @@ export type RecurrenceType = 'single' | 'fixed' | 'installment' | 'variable' | '
 export interface Transactions {
   transactionId: string;
   category: string;
-  dueDate: string;
   createdAt: string;
   createdBy: string;
   startDate: string;
@@ -20,6 +19,9 @@ export interface Transactions {
   description: string;
   totalEntries: number;
   recurrenceType: string;
+  purchasingMethod: string;
+  purchaseBankCard: string;
+  purchasebank: string;
 }
 
 export interface Entries {
@@ -29,7 +31,9 @@ export interface Entries {
   value: number;
   payment: string;
   paymentDate: string;
-  method: string;
+  paymentMethod: string;
   entrieNumber: number;
+  paymentBankCard: string;
+  paymentBank: string;
 }
 
