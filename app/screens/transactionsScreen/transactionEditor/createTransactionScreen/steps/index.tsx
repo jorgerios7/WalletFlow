@@ -9,8 +9,7 @@ import RadioButton from "@/components/ui/RadioButton";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
-import StepScreen from "../StepScreen";
-
+import StepScreen from "../../stepScreen";
 interface StepsProps {
   isVisible: boolean; onBack: () => void; onConfirm: () => void; onCancel: () => void;
 }
@@ -236,7 +235,10 @@ export function DueDateStep(
           onOpeningDropdown="openAtBottom"
           placeholder={'Dia do vencimento'}
           setSelection={handleDate(true, value)}
-          list={['02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']}
+          list={[
+            '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15',
+            '16', '17', '18', '19', '20', '21', '22', '23', '25', '26', '27', '28', '29', '30', '31'
+          ]}
           onSelect={(day) => handleDate(false, day as string)}
         />
       ) : (

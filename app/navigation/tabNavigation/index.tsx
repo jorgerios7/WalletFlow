@@ -1,10 +1,10 @@
-import AddTransactionScreen from '@/app/screens/addTransactionScreen';
 import AnalyticsScreen from '@/app/screens/AnalyticsScreen';
 import { ConfigurationScreen } from '@/app/screens/ConfigurationScreen';
 import { FeedbackScreen } from '@/app/screens/FeedbackScreen';
 import { HelpScreen } from '@/app/screens/HelpScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
 import TransactionsScreen from '@/app/screens/transactionsScreen';
+import CreateTransactionScreen from '@/app/screens/transactionsScreen/transactionEditor/createTransactionScreen';
 import { TransactionType } from '@/app/types/Finance';
 import { User } from '@/app/types/User';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
@@ -124,7 +124,7 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
           onCancel={() => setConfirmationScreenVisible(false)}
         />
 
-        <AddTransactionScreen
+        <CreateTransactionScreen
           isVisible={addDataVisible}
           groupId={userData.groupId}
           onDismiss={() => setAddDataVisible(false)}

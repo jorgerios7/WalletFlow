@@ -14,9 +14,9 @@ import {
   RecurrenceScreen,
   StartDateStep,
   TotalValueStep
-} from './steps/Steps';
+} from './steps';
 
-export default function AddTransactionScreen(
+export default function CreateTransactionScreen(
   { isVisible, groupId, type, onDismiss }
     :
     { isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void }
