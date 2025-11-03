@@ -5,6 +5,7 @@ import { HelpScreen } from '@/app/screens/HelpScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
 import TransactionsScreen from '@/app/screens/transactionsScreen';
 import CreateTransactionScreen from '@/app/screens/transactionsScreen/transactionEditor/createTransactionScreen';
+import PaymentScreen from '@/app/screens/transactionsScreen/transactionEditor/paymentScreen';
 import { TransactionType } from '@/app/types/Finance';
 import { User } from '@/app/types/User';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
@@ -19,16 +20,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddButton from './addButton';
 import TabButton from './tabButton';
 
-interface Props { userData: User; onDismis: () => void }
-
-const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
-const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
+const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ userData, onDismis }) => {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
   if (!currentUser) return null;
+
+  const Tab = createBottomTabNavigator();
+  const Stack = createNativeStackNavigator();
 
   const insets = useSafeAreaInsets();
 
@@ -38,7 +37,9 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
   const [currentTabScreen, setCurrentTabScreen] = useState<TabScreen>('Analytic');
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
   const [typeValue, setTypeValue] = useState<TransactionType>('income');
-  const [addDataVisible, setAddDataVisible] = useState(false);
+  const [paymentType, setPaymentType] = useState('');
+  const [createTransactionScreenVisible, setCreateTransactionScreenVisible] = useState(false);
+  const [paymentScreenVisible, setPaymentScreenVisible] = useState(false);
 
   const handleLogout = () => (
     setIsDeleteAccount(false),
@@ -125,10 +126,21 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
         />
 
         <CreateTransactionScreen
-          isVisible={addDataVisible}
-          groupId={userData.groupId}
-          onDismiss={() => setAddDataVisible(false)}
+          isVisible={createTransactionScreenVisible}
           type={typeValue}
+          groupId={userData.groupId}
+          onDismiss={() => setCreateTransactionScreenVisible(false)}
+          whenPaymentConcluded={(payment) => {
+            setPaymentType(payment);
+            setPaymentScreenVisible(true);
+          }}
+          children={
+            <PaymentScreen
+              isVisible={paymentScreenVisible}
+              values={{ docId: '', paymentType: paymentType, paymentDate: '', paymentMethod: '' }}
+              onDismiss={() => setCreateTransactionScreenVisible(false)}
+            />
+          }
         />
 
         <Tab.Navigator
@@ -166,7 +178,7 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
               tabBarButton: () => (
                 <AddButton
                   onPress={(value) => {
-                    setAddDataVisible(true);
+                    setCreateTransactionScreenVisible(true);
                     setTypeValue(value);
                   }}
                 />

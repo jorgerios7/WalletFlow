@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import StepScreen from "../../stepScreen";
 interface StepsProps {
-  isVisible: boolean; onBack: () => void; onConfirm: () => void; onCancel: () => void;
+  isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void;
 }
 
 export function RecurrenceScreen(
@@ -340,6 +340,7 @@ export function PaymentDateStep(
   return (
     <StepScreen
       isVisible={isVisible}
+      onBack={onBack}
       onConfirm={() => {
         if (value) {
           onConfirm();
@@ -347,7 +348,6 @@ export function PaymentDateStep(
           Alert.alert('Campo vazio', 'Digite uma data para continuar');
         }
       }}
-      onBack={onBack}
       onCancel={onCancel}
     >
       <DynamicLabelInput
@@ -356,6 +356,59 @@ export function PaymentDateStep(
         label={'Data do pagamento'}
         colorLabel={Colors.light.shadow}
         onTextChange={onSelect}
+      />
+    </StepScreen>
+  );
+};
+
+export function PaymentMethodStep(
+  { isVisible, value, paymentType, onSelect, onConfirm, onBack, onCancel }: StepsProps & { value: string, paymentType: string, onSelect: (value: string) => void }
+) {
+
+  const [selection, setSelection] = useState({ paymentBankCard: '', paymentMethod: '', paymentBank: '' });
+
+  return (
+    <StepScreen
+      isVisible={isVisible}
+      onBack={onBack}
+      onConfirm={() => {
+        if (value) {
+          onConfirm();
+        } else {
+          Alert.alert('Campo vazio', 'Digite uma data para continuar');
+        }
+      }}
+      onCancel={onCancel}
+    >
+      <DropdownSelect
+        isVisible
+        onOpeningDropdown="openAtBottom"
+        placeholder={'Método de pagamento'}
+        setSelection={selection.paymentMethod}
+        list={['Dinheiro', 'Pix', 'Cartão de crédito', 'Boleto', 'Transferência bancária']}
+        onSelect={(value) => setSelection((prev) => ({ ...prev, paymentMethod: value as RecurrenceType }))}
+      />
+
+      <DropdownSelect
+        isVisible={selection.paymentMethod === 'Cartão de crédito'}
+        onOpeningDropdown="openAtBottom"
+        placeholder={'Cartão bancário'}
+        setSelection={selection.paymentBankCard}
+        list={['Master(5885)', 'Visa(8822)']}
+        onSelect={(value) => setSelection((prev) => ({ ...prev, paymentBankCard: value as string }))}
+      />
+
+      <DropdownSelect
+        isVisible={
+          selection.paymentMethod === 'Cartão de crédito' ||
+          selection.paymentMethod === 'Pix' ||
+          selection.paymentMethod === 'Transferência bancária'
+        }
+        onOpeningDropdown="openAtBottom"
+        placeholder={'Instituição financeira'}
+        setSelection={selection.paymentBank}
+        list={['Santander', 'Nubank', 'Inter']}
+        onSelect={(value) => setSelection((prev) => ({ ...prev, paymentBank: value as string }))}
       />
     </StepScreen>
   );

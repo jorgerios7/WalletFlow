@@ -9,12 +9,12 @@ import FinanceDetailsItem from './financeDetailsItem';
 interface Props {
   entries_list: Entries[]; selectedDate: string; selectedPaymentType: PaymentType; selectedMethodType?: string;
   selectedValue?: number; bottomMargin?: number; isLoading: boolean; onTotalValueChange: (total: number) => void;
-  onPressingItem: (items: Transactions) => void;
+  onPressingInfo: (items: Transactions) => void; onPressingEditPayment: (id: string) => void; 
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
   entries_list, selectedDate, selectedPaymentType, selectedMethodType, selectedValue,
-  bottomMargin = 0, isLoading, onTotalValueChange, onPressingItem
+  bottomMargin = 0, isLoading, onTotalValueChange, onPressingInfo, onPressingEditPayment
 }) => {
 
   function filteredEntries() {
@@ -92,7 +92,9 @@ const FinanceItemRecycler: React.FC<Props> = ({
           renderItem={({ item }) => (
             <FinanceDetailsItem
               data={item}
-              onPress={(selected) => onPressingItem(selected)} />
+              onPressingEditPayment={(id) => onPressingEditPayment(id)}
+              onPressingDelete={(id) => console.log('delete is being called!', id)}
+              onPressingInfo={(selected) => onPressingInfo(selected)} />
           )}
           renderSectionHeader={({ section }) => (<HeaderSection text={section.title} />)}
           ListHeaderComponent={<View style={styles.headerSpacer} />}

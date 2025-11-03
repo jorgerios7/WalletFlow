@@ -9,6 +9,8 @@ import { View } from 'react-native';
 import CalendarNavigator from './calendarNavigator';
 import FinanceItemRecycler from './recyclerFinanceItem';
 import FinanceReportScreen from './recyclerFinanceItem/financeReportScreen';
+import ContentScreen from './transactionEditor/contentScreen';
+import PaymentScreen from './transactionEditor/paymentScreen';
 
 type TransactionsScreenRouteProp = RouteProp<{ Transactions: { user: User } }, 'Transactions'>;
 
@@ -19,6 +21,7 @@ const TransactionsScreen = () => {
   const [date, setDate] = useState('');
   const [entriesList, setEntriesList] = useState<Entries[]>([]);
   const [totalValue, setTotalValue] = useState(0);
+  const [paymentScreen, setPaymentScreen] = useState({ visibility: false, id: "" });
   const [showFinanceReportScreen, setShowFinanceReportScreen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transactions | null>(null);
   const [loading, setLoading] = useState(false);
@@ -55,11 +58,24 @@ const TransactionsScreen = () => {
         isLoading={loading}
         onTotalValueChange={(total) => setTotalValue(total)}
         bottomMargin={96}
-        onPressingItem={(selected) => {
+        onPressingEditPayment={(id) => setPaymentScreen({ visibility: true, id: id })}
+        onPressingInfo={(selected) => {
           setSelectedItem(selected);
           setShowFinanceReportScreen(true);
         }}
       />
+      <ContentScreen
+        visible={paymentScreen.visibility}
+        title={'Editar pagamento'}
+        uploading={false}
+        children={
+          <PaymentScreen
+            isVisible
+            values={{docId: paymentScreen.id, paymentType: 'pending', paymentDate: '65464', paymentMethod: 'Cartão de crédito'}}
+            onDismiss={() => setPaymentScreen({ visibility: false, id: "" })}
+          />
+        }>
+      </ContentScreen>
 
       <FinanceReportScreen
         isVisible={showFinanceReportScreen}
