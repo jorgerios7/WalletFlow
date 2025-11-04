@@ -20,17 +20,13 @@ const renderImage = (type: string) => {
     return "money-off";
 };
 
-export default function FinanceDetailsItem({
-    data,
-    onPressingEditPayment,
-    onPressingDelete,
-    onPressingInfo
-
-}: {
-    data: any;
-    onPressingEditPayment: (id: string) => void;
-    onPressingDelete: (id: string) => void;
-    onPressingInfo: (selectedItem: Transactions) => void;
+export default function FinanceDetailsItem({ data, onPressingEditPayment, onPressingDelete, onPressingInfo }: {
+    data: any; onPressingDelete: (id: string) => void; onPressingInfo: (selectedItem: Transactions) => void;
+    onPressingEditPayment: (
+        values: {
+            transactionId: string, entryId: string, paymentType: string, paymentDate: string,
+            paymentMethod: string, paymentBank: string, paymentBankCard: string
+        }) => void;
 }) {
     const translateX = useRef(new Animated.Value(0)).current;
     const [isOpen, setIsOpen] = useState(false);
@@ -56,7 +52,13 @@ export default function FinanceDetailsItem({
             <View style={styles.actionsContainer}>
                 <Pressable
                     style={[styles.actionButton, { backgroundColor: "transparent" }]}
-                    onPress={() => onPressingEditPayment(data.entrieId)}
+                    onPress={() => onPressingEditPayment(
+                        {
+                            transactionId: data.transactionId, entryId: data.entrieId, paymentType: data.payment,
+                            paymentDate: data.paymentDate, paymentMethod: data.paymentMehod, paymentBank: data.paymentBank,
+                            paymentBankCard: data.paymentBankCard
+                        }
+                    )}
                 >
                     <MaterialIcons name="check-circle" size={24} color={Colors.light.highlightBackgroun_1} />
                 </Pressable>

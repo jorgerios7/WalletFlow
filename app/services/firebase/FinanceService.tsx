@@ -1,7 +1,7 @@
 import { db } from "@/app/config/firebaseConfig";
 import { Entries, Transactions, TransactionType } from "@/app/types/Finance";
 import { FormatDateBR, SepareteDate } from "@/app/utils/Format";
-import { addDoc, collection, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { Alert } from "react-native";
 
 export async function LoadTransactions(groupId: string, onLoading: (loading: boolean) => void): Promise<Entries[] | undefined> {
@@ -36,13 +36,13 @@ export async function LoadTransactions(groupId: string, onLoading: (loading: boo
 
             entries.push(...entriesDocs);
         }
-        console.log("(FinanceTransactions.tsx) As transações fora carregadas com sucesso!.");
+        console.log("(FinanceService.tsx) As transações fora carregadas com sucesso!.");
 
         return entries as Entries[];
 
     } catch (error) {
 
-        console.error("(FinanceTransactions.tsx) Erro ao carregar dados: ", error);
+        console.error("(FinanceService.tsx) Erro ao carregar dados: ", error);
     } finally {
         onLoading(false);
     }
@@ -93,9 +93,36 @@ export async function UploadTransaction(
 
         await Promise.all(entriesPromises);
     } catch (error: any) {
-        console.error("Erro ao salvar:", error);
+        console.error("(FinanceService.tsx) Erro ao salvar:", error);
         Alert.alert("Erro", error.message || "Não foi possível salvar");
     } finally {
         onLoading(false);
     }
 }
+
+export async function UpdateEntry(
+  { group_id, transaction_id, entry_id, newEntry, onUpdate }:
+  { group_id: string, transaction_id: string, entry_id: string, newEntry: Partial<Entries>, onUpdate: (isUpdate: boolean) => void }
+) {
+  try {
+    onUpdate(true);
+
+    // Remove campos vazios
+    const entriesDataCleaned = Object.fromEntries(
+      Object.entries(newEntry).filter(([_, value]) => value !== "")
+    );
+
+    // Referência correta do documento
+    const entryRef = doc(db, "groups", group_id, "transactions", transaction_id, "entries", entry_id);
+
+    // Atualiza o documento
+    await updateDoc(entryRef, entriesDataCleaned);
+
+  } catch (error: any) {
+    console.error("(FinanceService.tsx) Erro ao atualizar:", error);
+    Alert.alert("Erro", error.message || "Não foi possível atualizar o documento");
+  } finally {
+    onUpdate(false);
+  }
+}
+

@@ -9,7 +9,12 @@ import FinanceDetailsItem from './financeDetailsItem';
 interface Props {
   entries_list: Entries[]; selectedDate: string; selectedPaymentType: PaymentType; selectedMethodType?: string;
   selectedValue?: number; bottomMargin?: number; isLoading: boolean; onTotalValueChange: (total: number) => void;
-  onPressingInfo: (items: Transactions) => void; onPressingEditPayment: (id: string) => void; 
+  onPressingInfo: (items: Transactions) => void;
+  onPressingEditPayment: (
+    values: {
+      transactionId: string, entryId: string, paymentType: string, paymentDate: string,
+      paymentMethod: string, paymentBank: string, paymentBankCard: string
+    }) => void;
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
@@ -53,7 +58,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
         const [db, mb, yb] = b.split('/').map(Number);
         const dateA = new Date(ya, ma - 1, da);
         const dateB = new Date(yb, mb - 1, db);
-        return dateA.getTime() - dateB.getTime(); 
+        return dateA.getTime() - dateB.getTime();
       })
       .map((date) => ({ title: date, data: grouped[date] }))
   };
@@ -76,7 +81,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
       </View>
     );
   }
-  
+
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
@@ -92,7 +97,15 @@ const FinanceItemRecycler: React.FC<Props> = ({
           renderItem={({ item }) => (
             <FinanceDetailsItem
               data={item}
-              onPressingEditPayment={(id) => onPressingEditPayment(id)}
+              onPressingEditPayment={(values) =>
+                onPressingEditPayment(
+                  { 
+                    transactionId: values.transactionId, entryId: values.entryId, paymentType: values.paymentType, 
+                    paymentDate: values.paymentDate, paymentMethod: values.paymentMethod, paymentBank: values.paymentBank,
+                    paymentBankCard: values.paymentBankCard
+                  }
+                )
+              }
               onPressingDelete={(id) => console.log('delete is being called!', id)}
               onPressingInfo={(selected) => onPressingInfo(selected)} />
           )}

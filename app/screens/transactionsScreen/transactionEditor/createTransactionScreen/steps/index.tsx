@@ -10,9 +10,9 @@ import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import StepScreen from "../../stepScreen";
-interface StepsProps {
-  isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void;
-}
+
+interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
+interface MethodProps { paymentBankCard: string, paymentMehod: string, paymentBank: string }
 
 export function RecurrenceScreen(
   {
@@ -362,22 +362,27 @@ export function PaymentDateStep(
 };
 
 export function PaymentMethodStep(
-  { isVisible, value, paymentType, onSelect, onConfirm, onBack, onCancel }: StepsProps & { value: string, paymentType: string, onSelect: (value: string) => void }
+  { isVisible, values, onSelect, onConfirm, onBack, onCancel }
+    : StepsProps & { values: MethodProps, onSelect: (values: MethodProps) => void }
 ) {
 
-  const [selection, setSelection] = useState({ paymentBankCard: '', paymentMethod: '', paymentBank: '' });
+  const [selection, setSelection] = useState(
+    { paymentMethod: values.paymentMehod, paymentBankCard: values.paymentBankCard, paymentBank: values.paymentBank }
+  );
+
+  function handleSelect() {
+    onSelect(
+      { paymentMehod: selection.paymentMethod, paymentBankCard: selection.paymentBankCard, paymentBank: selection.paymentBank }
+    )
+  }
+
+  useEffect(() => { handleSelect() }, [selection]);
 
   return (
     <StepScreen
       isVisible={isVisible}
       onBack={onBack}
-      onConfirm={() => {
-        if (value) {
-          onConfirm();
-        } else {
-          Alert.alert('Campo vazio', 'Digite uma data para continuar');
-        }
-      }}
+      onConfirm={() => onConfirm()}
       onCancel={onCancel}
     >
       <DropdownSelect

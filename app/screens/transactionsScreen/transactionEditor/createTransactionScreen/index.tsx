@@ -8,7 +8,10 @@ import { CategoryStep, DescriptionStep, DueDateStep, PaymentStep, RecurrenceScre
 export default function CreateTransactionScreen(
   { isVisible, groupId, type, onDismiss, whenPaymentConcluded, children }
     :
-    { isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void, whenPaymentConcluded: (payment: string) => void, children?: ReactNode }
+    {
+      isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void,
+      whenPaymentConcluded: (values: { docId: string, payment: string }) => void, children: ReactNode
+    }
 ) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
@@ -35,6 +38,14 @@ export default function CreateTransactionScreen(
 
     //await UploadTransaction(currentUser?.uid, groupId, type, transaction, entries as Entries, setLoading);
 
+    if (paymentType === 'concluded') {
+      whenPaymentConcluded({ docId: entries.entrieId as string, payment: entries.payment as string });
+      setCurrentStep('paymentConcluded');
+    } else {
+      onDismiss();
+      Alert.alert("Sucesso!", "Transação salva com sucesso.");
+    }
+
     setTransaction({
       transactionId: "", createdBy: "", createdAt: "", startDate: "", category: "", purchasebank: "",
       description: "", recurrenceType: "", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: ""
@@ -44,13 +55,6 @@ export default function CreateTransactionScreen(
       type: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "",
       paymentDate: "", paymentMethod: "", paymentBankCard: "", paymentBank: ""
     });
-
-    if (paymentType === 'concluded') {
-      setCurrentStep('paymentConcluded');
-    } else {
-      onDismiss();
-      Alert.alert("Sucesso!", "Transação salva com sucesso.");
-    }
   }
 
   function renderTitle() {

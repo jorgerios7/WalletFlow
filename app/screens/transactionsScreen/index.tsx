@@ -1,9 +1,7 @@
 import { LoadTransactions } from '@/app/services/firebase/FinanceService';
 import { Entries, Transactions } from '@/app/types/Finance';
-import { User } from '@/app/types/User';
 import Header from '@/components/ui/Header';
 import TotalValueScreen from '@/components/ui/TotalValueScreen';
-import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import CalendarNavigator from './calendarNavigator';
@@ -12,16 +10,13 @@ import FinanceReportScreen from './recyclerFinanceItem/financeReportScreen';
 import ContentScreen from './transactionEditor/contentScreen';
 import PaymentScreen from './transactionEditor/paymentScreen';
 
-type TransactionsScreenRouteProp = RouteProp<{ Transactions: { user: User } }, 'Transactions'>;
-
-const TransactionsScreen = () => {
-  const route = useRoute<TransactionsScreenRouteProp>();
-  const { user } = route.params;
-  const groupId = user.groupId;
+const TransactionsScreen = ({ group_id }: { group_id: string }) => {
   const [date, setDate] = useState('');
   const [entriesList, setEntriesList] = useState<Entries[]>([]);
   const [totalValue, setTotalValue] = useState(0);
-  const [paymentScreen, setPaymentScreen] = useState({ visibility: false, id: "" });
+  const [itemValueSelected, setItemValueSelected] = useState(
+    { visibility: false, transactionId: '', entryId: '', paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }
+  );
   const [showFinanceReportScreen, setShowFinanceReportScreen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transactions | null>(null);
   const [loading, setLoading] = useState(false);
@@ -30,7 +25,7 @@ const TransactionsScreen = () => {
     let isMounted = true;
 
     const fetchEntries = async () => {
-      const entries = await LoadTransactions(groupId, setLoading);
+      const entries = await LoadTransactions(group_id, setLoading);
       if (isMounted) setEntriesList(entries || []);
     };
 
@@ -58,24 +53,43 @@ const TransactionsScreen = () => {
         isLoading={loading}
         onTotalValueChange={(total) => setTotalValue(total)}
         bottomMargin={96}
-        onPressingEditPayment={(id) => setPaymentScreen({ visibility: true, id: id })}
+        onPressingEditPayment={(values) =>
+          setItemValueSelected(
+            {
+              visibility: true, transactionId: values.transactionId, entryId: values.entryId,
+              paymentType: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod,
+              paymentBank: values.paymentBank, paymentBankCard: values.paymentBankCard
+            }
+          )
+        }
         onPressingInfo={(selected) => {
           setSelectedItem(selected);
           setShowFinanceReportScreen(true);
         }}
       />
+
       <ContentScreen
-        visible={paymentScreen.visibility}
+        visible={itemValueSelected.visibility}
         title={'Editar pagamento'}
         uploading={false}
         children={
           <PaymentScreen
-            isVisible
-            values={{docId: paymentScreen.id, paymentType: 'pending', paymentDate: '65464', paymentMethod: 'Cartão de crédito'}}
-            onDismiss={() => setPaymentScreen({ visibility: false, id: "" })}
+            values={
+              {
+                group_id: group_id, transaction_id: itemValueSelected.transactionId, entry_id: itemValueSelected.entryId,
+                paymentType: itemValueSelected.paymentType, paymentDate: itemValueSelected.paymentDate, paymentMethod: itemValueSelected.paymentMethod,
+                paymentBank: itemValueSelected.paymentBank, paymentBankCard: itemValueSelected.paymentBankCard
+              }
+            }
+            onDismiss={() => setItemValueSelected(
+              {
+                visibility: false, transactionId: '', entryId: "", paymentType: '', 
+                paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: ''
+              }
+            )}
           />
-        }>
-      </ContentScreen>
+        }
+      />
 
       <FinanceReportScreen
         isVisible={showFinanceReportScreen}

@@ -1,26 +1,45 @@
+import { UpdateEntry } from "@/app/services/firebase/FinanceService";
 import { Entries, PaymentType } from "@/app/types/Finance";
 import { useState } from "react";
 import { View } from "react-native";
 import { PaymentDateStep, PaymentMethodStep, PaymentStep } from "../createTransactionScreen/steps";
 
 interface Props {
-  isVisible: boolean, values: { docId: string, paymentType: string, paymentDate: string, paymentMethod: string }, onDismiss: () => void
+  values: {
+    group_id: string, transaction_id: string, entry_id: string, paymentType: string,
+    paymentDate: string, paymentMethod: string, paymentBank: string, paymentBankCard: string
+  },
+  onDismiss: () => void
 }
 
-export default function PaymentScreen({ isVisible, values, onDismiss }: Props) {
-  if (!isVisible) return null;
+export default function PaymentScreen({ values, onDismiss }: Props) {
 
-  const [currentStep, setCurrentStep] = useState<'payment' | 'description' | 'paymentDate' | 'method'>(values.paymentType === '' ? 'payment' : 'paymentDate');
+  const [currentStep, setCurrentStep] = useState<'payment' | 'paymentDate' | 'method'>('payment');
 
   const [isUploading, setIsUploading] = useState(false);
 
   const [entries, setEntries] = useState<Partial<Entries>>(
     {
-      entrieId: values.docId, payment: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod
+      payment: values.paymentType, paymentDate: values.paymentDate,
+      paymentMethod: values.paymentMethod, paymentBankCard: values.paymentBankCard, paymentBank: values.paymentBank
     }
   );
 
-  console.log('id: ', values.docId);
+  async function UpdateNewEntry() {
+    await UpdateEntry({
+      group_id: values.group_id,
+      transaction_id: values.transaction_id,
+      entry_id: values.entry_id,
+      newEntry: {
+        payment: entries.payment,
+        paymentDate: entries.paymentDate,
+        paymentMethod: entries.paymentMethod,
+        paymentBank: entries.paymentBank,
+        paymentBankCard: entries.paymentBankCard
+      },
+      onUpdate: (isUpdating) => { setIsUploading(isUpdating) }
+    });
+  }
 
   return (
     <View>
@@ -43,14 +62,19 @@ export default function PaymentScreen({ isVisible, values, onDismiss }: Props) {
 
       <PaymentMethodStep
         isVisible={currentStep === 'method'}
-        paymentType={""}
-        value={entries.paymentMethod as string}
-        onSelect={(selected) => setEntries((prev) => ({ ...prev, paymentMethod: selected }))}
-        onConfirm={() => setCurrentStep("payment")}
+        values={{
+          paymentBankCard: entries.paymentBankCard as string, paymentMehod: entries.paymentMethod as string,
+          paymentBank: entries.paymentBank as string
+        }}
+        onSelect={(value) => {
+          setEntries((prev) => (
+            { ...prev, paymentMethod: value.paymentMehod, paymentBank: value.paymentBank, paymentBankCard: value.paymentBankCard }
+          ))
+        }}
+        onConfirm={() => UpdateNewEntry()}
         onCancel={onDismiss}
         onBack={() => setCurrentStep('paymentDate')}
       />
     </View>
-
   );
 }

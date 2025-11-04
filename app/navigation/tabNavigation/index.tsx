@@ -37,9 +37,8 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
   const [currentTabScreen, setCurrentTabScreen] = useState<TabScreen>('Analytic');
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
   const [typeValue, setTypeValue] = useState<TransactionType>('income');
-  const [paymentType, setPaymentType] = useState('');
+  const [paymentValues, setPaymentValues] = useState({ docId: '', payment: '' });
   const [createTransactionScreenVisible, setCreateTransactionScreenVisible] = useState(false);
-  const [paymentScreenVisible, setPaymentScreenVisible] = useState(false);
 
   const handleLogout = () => (
     setIsDeleteAccount(false),
@@ -80,6 +79,12 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
   const ConfigurationWrapper = ({ navigation }: any) => (
     <ConfigurationScreen
       onNavigate={(locate) => navigation.navigate(locate)}
+    />
+  );
+
+  const TransactionsWrapper = ({navigation}: any) => (
+    <TransactionsScreen 
+      group_id={userData.groupId}
     />
   );
 
@@ -130,14 +135,21 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
           type={typeValue}
           groupId={userData.groupId}
           onDismiss={() => setCreateTransactionScreenVisible(false)}
-          whenPaymentConcluded={(payment) => {
-            setPaymentType(payment);
-            setPaymentScreenVisible(true);
-          }}
+          whenPaymentConcluded={(values) => 
+            //setPaymentValues({ docId: values.docId, payment: values.payment })
+
+            // criar tela que mostra todos as entradas da transação para o usuário escolher qual entrada tem o pagamento concluído!
+
+            console.log('(taNavigation.tsx) whenPaymentConcluded: ', values)
+          }
           children={
             <PaymentScreen
-              isVisible={paymentScreenVisible}
-              values={{ docId: '', paymentType: paymentType, paymentDate: '', paymentMethod: '' }}
+              values={
+                { 
+                  group_id: '', transaction_id: '', entry_id: paymentValues.docId, paymentType: paymentValues.payment, 
+                  paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: ''
+                }
+              }
               onDismiss={() => setCreateTransactionScreenVisible(false)}
             />
           }
@@ -188,7 +200,7 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
 
           <Tab.Screen
             name="Transactions"
-            component={TransactionsScreen}
+            component={TransactionsWrapper}
             initialParams={{ user: userData }}
             options={{
               tabBarButton: (props) => (
