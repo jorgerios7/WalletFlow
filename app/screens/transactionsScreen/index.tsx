@@ -14,8 +14,10 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
   const [date, setDate] = useState('');
   const [entriesList, setEntriesList] = useState<Entries[]>([]);
   const [totalValue, setTotalValue] = useState(0);
+  const [paymentScreenVisibility, setPaymentScreenVisibility] = useState(false);
+  const [id, setId] = useState({ transaction: '', entry: '' });
   const [itemValueSelected, setItemValueSelected] = useState(
-    { visibility: false, transactionId: '', entryId: '', paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }
+    { paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }
   );
   const [showFinanceReportScreen, setShowFinanceReportScreen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Transactions | null>(null);
@@ -53,14 +55,16 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
         isLoading={loading}
         onTotalValueChange={(total) => setTotalValue(total)}
         bottomMargin={96}
-        onPressingEditPayment={(values) =>
+        onPressingEditPayment={(id, values) => {
+          setPaymentScreenVisibility(true);
+          setId({transaction: id.transaction, entry: id.entry});
           setItemValueSelected(
             {
-              visibility: true, transactionId: values.transactionId, entryId: values.entryId,
               paymentType: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod,
               paymentBank: values.paymentBank, paymentBankCard: values.paymentBankCard
             }
           )
+        }
         }
         onPressingInfo={(selected) => {
           setSelectedItem(selected);
@@ -69,24 +73,23 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
       />
 
       <ContentScreen
-        visible={itemValueSelected.visibility}
+        visible={paymentScreenVisibility}
         title={'Editar pagamento'}
         uploading={false}
         children={
           <PaymentScreen
+            iDs={{ group: group_id, transaction: id.transaction, entry: id.entry }}
             values={
               {
-                group_id: group_id, transaction_id: itemValueSelected.transactionId, entry_id: itemValueSelected.entryId,
                 paymentType: itemValueSelected.paymentType, paymentDate: itemValueSelected.paymentDate, paymentMethod: itemValueSelected.paymentMethod,
                 paymentBank: itemValueSelected.paymentBank, paymentBankCard: itemValueSelected.paymentBankCard
               }
             }
-            onDismiss={() => setItemValueSelected(
-              {
-                visibility: false, transactionId: '', entryId: "", paymentType: '', 
-                paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: ''
-              }
-            )}
+            onDismiss={() => {
+              setPaymentScreenVisibility(false);
+              setId({ transaction: '', entry: '' })
+              setItemValueSelected({ paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' })
+            }}
           />
         }
       />

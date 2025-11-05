@@ -1,6 +1,6 @@
 import { LoadScreen } from '@/app/pages/LoadScreen';
 import NotFoundScreen from '@/app/pages/NotFoundScreen';
-import { Entries, PaymentType, Transactions } from '@/app/types/Finance';
+import { Entries, PaymentType, Transactions, UpdateEntryValues } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import React, { useEffect } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
@@ -10,11 +10,7 @@ interface Props {
   entries_list: Entries[]; selectedDate: string; selectedPaymentType: PaymentType; selectedMethodType?: string;
   selectedValue?: number; bottomMargin?: number; isLoading: boolean; onTotalValueChange: (total: number) => void;
   onPressingInfo: (items: Transactions) => void;
-  onPressingEditPayment: (
-    values: {
-      transactionId: string, entryId: string, paymentType: string, paymentDate: string,
-      paymentMethod: string, paymentBank: string, paymentBankCard: string
-    }) => void;
+  onPressingEditPayment: (iDs: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
@@ -97,12 +93,12 @@ const FinanceItemRecycler: React.FC<Props> = ({
           renderItem={({ item }) => (
             <FinanceDetailsItem
               data={item}
-              onPressingEditPayment={(values) =>
+              onPressingEditPayment={(iDs, values) =>
                 onPressingEditPayment(
-                  { 
-                    transactionId: values.transactionId, entryId: values.entryId, paymentType: values.paymentType, 
-                    paymentDate: values.paymentDate, paymentMethod: values.paymentMethod, paymentBank: values.paymentBank,
-                    paymentBankCard: values.paymentBankCard
+                  { transaction: iDs.transaction, entry: iDs.entry },
+                  {
+                    paymentType: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod,
+                    paymentBank: values.paymentBank, paymentBankCard: values.paymentBankCard
                   }
                 )
               }

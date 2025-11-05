@@ -1,41 +1,39 @@
 import { UpdateEntry } from "@/app/services/firebase/FinanceService";
-import { Entries, PaymentType } from "@/app/types/Finance";
+import { PaymentType, UpdateEntryValues } from "@/app/types/Finance";
 import { useState } from "react";
 import { View } from "react-native";
 import { PaymentDateStep, PaymentMethodStep, PaymentStep } from "../createTransactionScreen/steps";
 
 interface Props {
-  values: {
-    group_id: string, transaction_id: string, entry_id: string, paymentType: string,
-    paymentDate: string, paymentMethod: string, paymentBank: string, paymentBankCard: string
-  },
-  onDismiss: () => void
+  iDs: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onDismiss: () => void
 }
 
-export default function PaymentScreen({ values, onDismiss }: Props) {
+export default function PaymentScreen({ iDs, values, onDismiss }: Props) {
 
   const [currentStep, setCurrentStep] = useState<'payment' | 'paymentDate' | 'method'>('payment');
 
   const [isUploading, setIsUploading] = useState(false);
 
-  const [entries, setEntries] = useState<Partial<Entries>>(
+  const [entry, setEntry] = useState<UpdateEntryValues>(
     {
-      payment: values.paymentType, paymentDate: values.paymentDate,
-      paymentMethod: values.paymentMethod, paymentBankCard: values.paymentBankCard, paymentBank: values.paymentBank
+      paymentType: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod,
+      paymentBankCard: values.paymentBankCard, paymentBank: values.paymentBank
     }
   );
 
   async function UpdateNewEntry() {
     await UpdateEntry({
-      group_id: values.group_id,
-      transaction_id: values.transaction_id,
-      entry_id: values.entry_id,
+      ids: {
+        group: iDs.group,
+        transaction: iDs.transaction,
+        entry: iDs.entry,
+      },
       newEntry: {
-        payment: entries.payment,
-        paymentDate: entries.paymentDate,
-        paymentMethod: entries.paymentMethod,
-        paymentBank: entries.paymentBank,
-        paymentBankCard: entries.paymentBankCard
+        paymentType: entry.paymentType,
+        paymentDate: entry.paymentDate,
+        paymentMethod: entry.paymentMethod,
+        paymentBank: entry.paymentBank,
+        paymentBankCard: entry.paymentBankCard
       },
       onUpdate: (isUpdating) => { setIsUploading(isUpdating) }
     });
@@ -45,16 +43,16 @@ export default function PaymentScreen({ values, onDismiss }: Props) {
     <View>
       <PaymentStep
         isVisible={currentStep === 'payment'}
-        value={entries.payment as string}
-        onSelect={(selected) => setEntries((prev) => ({ ...prev, payment: selected }))}
-        onConfirm={() => entries.payment === 'pending' as PaymentType ? console.log('invalid payment type') : setCurrentStep("paymentDate")}
+        value={entry.paymentType as string}
+        onSelect={(selected) => setEntry((prev) => ({ ...prev, payment: selected }))}
+        onConfirm={() => entry.paymentType === 'pending' as PaymentType ? console.log('invalid payment type') : setCurrentStep("paymentDate")}
         onCancel={onDismiss}
       />
 
       <PaymentDateStep
         isVisible={currentStep === 'paymentDate'}
-        value={entries.paymentDate as string}
-        onSelect={(selected) => setEntries((prev) => ({ ...prev, paymentDate: selected }))}
+        value={entry.paymentDate as string}
+        onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentDate: selected }))}
         onConfirm={() => setCurrentStep("method")}
         onCancel={onDismiss}
         onBack={() => setCurrentStep('payment')}
@@ -63,12 +61,12 @@ export default function PaymentScreen({ values, onDismiss }: Props) {
       <PaymentMethodStep
         isVisible={currentStep === 'method'}
         values={{
-          paymentBankCard: entries.paymentBankCard as string, paymentMehod: entries.paymentMethod as string,
-          paymentBank: entries.paymentBank as string
+          paymentMethod: entry.paymentMethod as string, paymentBankCard: entry.paymentBankCard as string,
+          paymentBank: entry.paymentBank as string
         }}
         onSelect={(value) => {
-          setEntries((prev) => (
-            { ...prev, paymentMethod: value.paymentMehod, paymentBank: value.paymentBank, paymentBankCard: value.paymentBankCard }
+          setEntry((prev) => (
+            { ...prev, paymentMethod: value.paymentMethod, paymentBank: value.paymentBank, paymentBankCard: value.paymentBankCard }
           ))
         }}
         onConfirm={() => UpdateNewEntry()}

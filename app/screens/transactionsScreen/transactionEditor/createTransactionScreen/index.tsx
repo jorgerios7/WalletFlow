@@ -27,7 +27,7 @@ export default function CreateTransactionScreen(
     recurrenceType: "", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: "", purchasebank: ""
   });
 
-  const [entries, setEntries] = useState<Partial<Entries>>({ type: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "pending" });
+  const [entries, setEntries] = useState<Partial<Entries>>({ paymentType: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "pending" });
 
   const [paymentType, setPaymentType] = useState('');
 
@@ -52,7 +52,7 @@ export default function CreateTransactionScreen(
     });
 
     setEntries({
-      type: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "",
+      paymentType: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "",
       paymentDate: "", paymentMethod: "", paymentBankCard: "", paymentBank: ""
     });
   }

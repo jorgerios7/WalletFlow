@@ -1,4 +1,4 @@
-import { Transactions } from "@/app/types/Finance";
+import { Transactions, UpdateEntryValues } from "@/app/types/Finance";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
@@ -22,11 +22,7 @@ const renderImage = (type: string) => {
 
 export default function FinanceDetailsItem({ data, onPressingEditPayment, onPressingDelete, onPressingInfo }: {
     data: any; onPressingDelete: (id: string) => void; onPressingInfo: (selectedItem: Transactions) => void;
-    onPressingEditPayment: (
-        values: {
-            transactionId: string, entryId: string, paymentType: string, paymentDate: string,
-            paymentMethod: string, paymentBank: string, paymentBankCard: string
-        }) => void;
+    onPressingEditPayment: (iDs: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
 }) {
     const translateX = useRef(new Animated.Value(0)).current;
     const [isOpen, setIsOpen] = useState(false);
@@ -53,10 +49,10 @@ export default function FinanceDetailsItem({ data, onPressingEditPayment, onPres
                 <Pressable
                     style={[styles.actionButton, { backgroundColor: "transparent" }]}
                     onPress={() => onPressingEditPayment(
+                        { transaction: data.transactionId, entry: data.entrieId },
                         {
-                            transactionId: data.transactionId, entryId: data.entrieId, paymentType: data.payment,
-                            paymentDate: data.paymentDate, paymentMethod: data.paymentMehod, paymentBank: data.paymentBank,
-                            paymentBankCard: data.paymentBankCard
+                            paymentType: data.payment, paymentDate: data.paymentDate, paymentMethod: data.paymentMethod,
+                            paymentBank: data.paymentBank, paymentBankCard: data.paymentBankCard
                         }
                     )}
                 >

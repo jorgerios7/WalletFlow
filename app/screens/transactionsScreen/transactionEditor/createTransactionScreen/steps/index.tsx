@@ -12,7 +12,7 @@ import { Alert, View } from "react-native";
 import StepScreen from "../../stepScreen";
 
 interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
-interface MethodProps { paymentBankCard: string, paymentMehod: string, paymentBank: string }
+interface MethodProps { paymentBankCard: string, paymentMethod: string, paymentBank: string }
 
 export function RecurrenceScreen(
   {
@@ -367,12 +367,12 @@ export function PaymentMethodStep(
 ) {
 
   const [selection, setSelection] = useState(
-    { paymentMethod: values.paymentMehod, paymentBankCard: values.paymentBankCard, paymentBank: values.paymentBank }
+    { paymentMethod: values.paymentMethod, paymentBankCard: values.paymentBankCard, paymentBank: values.paymentBank }
   );
 
   function handleSelect() {
     onSelect(
-      { paymentMehod: selection.paymentMethod, paymentBankCard: selection.paymentBankCard, paymentBank: selection.paymentBank }
+      { paymentMethod: selection.paymentMethod, paymentBankCard: selection.paymentBankCard, paymentBank: selection.paymentBank }
     )
   }
 

@@ -25,7 +25,7 @@ export interface Transactions {
 }
 
 export interface Entries {
-  type: string;
+  paymentType: string;
   entrieId: string;
   dueDate: string;
   value: number;
@@ -35,5 +35,13 @@ export interface Entries {
   entrieNumber: number;
   paymentBankCard: string;
   paymentBank: string;
+}
+
+export interface UpdateEntryValues {
+  paymentType: string,
+  paymentDate: string,
+  paymentMethod: string,
+  paymentBank: string,
+  paymentBankCard: string
 }
 

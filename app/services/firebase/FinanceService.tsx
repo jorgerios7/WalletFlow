@@ -1,5 +1,5 @@
 import { db } from "@/app/config/firebaseConfig";
-import { Entries, Transactions, TransactionType } from "@/app/types/Finance";
+import { Entries, Transactions, TransactionType, UpdateEntryValues } from "@/app/types/Finance";
 import { FormatDateBR, SepareteDate } from "@/app/utils/Format";
 import { addDoc, collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { Alert } from "react-native";
@@ -26,7 +26,7 @@ export async function LoadTransactions(groupId: string, onLoading: (loading: boo
                     transactionId: transactionDoc.id, category: transData.category, totalValue: transData.totalValue,
                     startDate: transData.startDate, totalEntries: transData.totalEntries,
 
-                    entrieId: doc.id, type: entData.type, dueDate: entData.dueDate, paymentBank: entData.paymentBank, payment: entData.payment,
+                    entrieId: doc.id, type: entData.paymentType, dueDate: entData.dueDate, paymentBank: entData.paymentBank, payment: entData.payment,
                     paymentDate: entData.paymentDate, paymentMethod: entData.paymentMethod, paymentBankCard: entData.paymentBankCard,
                     entrieNumber: entData.entrieNumber, value: entData.value,
 
@@ -101,28 +101,25 @@ export async function UploadTransaction(
 }
 
 export async function UpdateEntry(
-  { group_id, transaction_id, entry_id, newEntry, onUpdate }:
-  { group_id: string, transaction_id: string, entry_id: string, newEntry: Partial<Entries>, onUpdate: (isUpdate: boolean) => void }
+    { ids: { group, transaction, entry }, newEntry, onUpdate }:
+        { ids: { group: string, transaction: string, entry: string }, newEntry: UpdateEntryValues, onUpdate: (isUpdate: boolean) => void }
 ) {
-  try {
-    onUpdate(true);
+    try {
+        onUpdate(true);
 
-    // Remove campos vazios
-    const entriesDataCleaned = Object.fromEntries(
-      Object.entries(newEntry).filter(([_, value]) => value !== "")
-    );
+        const entriesDataCleaned = Object.fromEntries(
+            Object.entries(newEntry).filter(([_, value]) => value !== "")
+        );
 
-    // Referência correta do documento
-    const entryRef = doc(db, "groups", group_id, "transactions", transaction_id, "entries", entry_id);
+        const entryRef = doc(db, "groups", group, "transactions", transaction, "entries", entry);
 
-    // Atualiza o documento
-    await updateDoc(entryRef, entriesDataCleaned);
+        await updateDoc(entryRef, entriesDataCleaned);
 
-  } catch (error: any) {
-    console.error("(FinanceService.tsx) Erro ao atualizar:", error);
-    Alert.alert("Erro", error.message || "Não foi possível atualizar o documento");
-  } finally {
-    onUpdate(false);
-  }
+    } catch (error: any) {
+        console.error("(FinanceService.tsx) Erro ao atualizar:", error);
+        Alert.alert("Erro", error.message || "Não foi possível atualizar o documento");
+    } finally {
+        onUpdate(false);
+    }
 }
 
