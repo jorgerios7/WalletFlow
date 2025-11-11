@@ -1,5 +1,6 @@
 import { LoadTransactions } from '@/app/services/firebase/FinanceService';
 import { Entries, Transactions } from '@/app/types/Finance';
+import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import Header from '@/components/ui/Header';
 import TotalValueScreen from '@/components/ui/TotalValueScreen';
 import React, { useEffect, useState } from 'react';
@@ -14,13 +15,17 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
   const [date, setDate] = useState('');
   const [entriesList, setEntriesList] = useState<Entries[]>([]);
   const [totalValue, setTotalValue] = useState(0);
-  const [paymentScreenVisibility, setPaymentScreenVisibility] = useState(false);
-  const [id, setId] = useState({ transaction: '', entry: '' });
-  const [itemValueSelected, setItemValueSelected] = useState(
-    { paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }
+  const [paymentScreen, setPaymentScreen] = useState(
+    {
+      isVisible: false, id: { transaction: '', entry: '' },
+      values: { paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }
+    }
   );
-  const [showFinanceReportScreen, setShowFinanceReportScreen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Transactions | null>(null);
+
+  const [financeReportScreen, setFinanceReportScreen] = useState({ isVisible: false, data: null as Transactions | null });
+
+  const [confirmationScreen, setConfirmationScreen] = useState({ isVisible: false, message: '', id: '' });
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -33,9 +38,7 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
 
     fetchEntries();
 
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false };
   }, [date]);
 
   return (
@@ -56,49 +59,51 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
         onTotalValueChange={(total) => setTotalValue(total)}
         bottomMargin={96}
         onPressingEditPayment={(id, values) => {
-          setPaymentScreenVisibility(true);
-          setId({transaction: id.transaction, entry: id.entry});
-          setItemValueSelected(
-            {
+          setPaymentScreen({
+            isVisible: true, id: { transaction: id.transaction, entry: id.entry },
+            values: {
               paymentType: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod,
               paymentBank: values.paymentBank, paymentBankCard: values.paymentBankCard
             }
-          )
-        }
-        }
-        onPressingInfo={(selected) => {
-          setSelectedItem(selected);
-          setShowFinanceReportScreen(true);
+          });
         }}
+        onPressDelete={(id) => setConfirmationScreen({ isVisible: true, message: 'Tem certeza que deseja excluir esta entrada?', id: id })}
+        onPressingInfo={(list) => { setFinanceReportScreen({ isVisible: true, data: list }) }}
       />
 
       <ContentScreen
-        visible={paymentScreenVisibility}
+        visible={paymentScreen.isVisible}
         title={'Editar pagamento'}
         uploading={false}
         children={
           <PaymentScreen
-            iDs={{ group: group_id, transaction: id.transaction, entry: id.entry }}
+            ids={{ group: group_id, transaction: paymentScreen.id.transaction, entry: paymentScreen.id.entry }}
             values={
               {
-                paymentType: itemValueSelected.paymentType, paymentDate: itemValueSelected.paymentDate, paymentMethod: itemValueSelected.paymentMethod,
-                paymentBank: itemValueSelected.paymentBank, paymentBankCard: itemValueSelected.paymentBankCard
-              }
-            }
+                paymentType: paymentScreen.values.paymentType, paymentDate: paymentScreen.values.paymentDate, paymentMethod: paymentScreen.values.paymentMethod,
+                paymentBank: paymentScreen.values.paymentBank, paymentBankCard: paymentScreen.values.paymentBankCard
+              }}
             onDismiss={() => {
-              setPaymentScreenVisibility(false);
-              setId({ transaction: '', entry: '' })
-              setItemValueSelected({ paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' })
+              setPaymentScreen({
+                isVisible: false, id: { transaction: '', entry: '' },
+                values: { paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }
+              });
             }}
           />
         }
       />
 
       <FinanceReportScreen
-        isVisible={showFinanceReportScreen}
-        data={selectedItem}
-        onClose={() => setShowFinanceReportScreen(false)}
+        isVisible={financeReportScreen.isVisible}
+        data={financeReportScreen.data}
+        onClose={() => setFinanceReportScreen({ isVisible: false, data: null })}
       />
+
+      <ConfirmationScreen
+        isVisible={confirmationScreen.isVisible}
+        message={confirmationScreen.message}
+        onConfirm={() => console.log('Delete entry with id:', confirmationScreen.id)}
+        onCancel={() => setConfirmationScreen((prev) => ({ ...prev, isVisible: false, id: '' }))} />
     </View>
   );
 };

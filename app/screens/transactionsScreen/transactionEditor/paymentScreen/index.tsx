@@ -5,12 +5,12 @@ import { View } from "react-native";
 import { PaymentDateStep, PaymentMethodStep, PaymentStep } from "../createTransactionScreen/steps";
 
 interface Props {
-  iDs: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onDismiss: () => void
+  ids: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onDismiss: () => void
 }
 
-export default function PaymentScreen({ iDs, values, onDismiss }: Props) {
+export default function PaymentScreen({ ids, values, onDismiss }: Props) {
 
-  const [currentStep, setCurrentStep] = useState<'payment' | 'paymentDate' | 'method'>('payment');
+  const [currentStep, setCurrentStep] = useState<'paymentType' | 'paymentDate' | 'paymentMethod'>('paymentType');
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -23,17 +23,10 @@ export default function PaymentScreen({ iDs, values, onDismiss }: Props) {
 
   async function UpdateNewEntry() {
     await UpdateEntry({
-      ids: {
-        group: iDs.group,
-        transaction: iDs.transaction,
-        entry: iDs.entry,
-      },
+      ids: { group: ids.group, transaction: ids.transaction, entry: ids.entry },
       newEntry: {
-        paymentType: entry.paymentType,
-        paymentDate: entry.paymentDate,
-        paymentMethod: entry.paymentMethod,
-        paymentBank: entry.paymentBank,
-        paymentBankCard: entry.paymentBankCard
+        paymentType: entry.paymentType, paymentDate: entry.paymentDate, paymentMethod: entry.paymentMethod,
+        paymentBank: entry.paymentBank, paymentBankCard: entry.paymentBankCard
       },
       onUpdate: (isUpdating) => { setIsUploading(isUpdating) }
     });
@@ -42,10 +35,15 @@ export default function PaymentScreen({ iDs, values, onDismiss }: Props) {
   return (
     <View>
       <PaymentStep
-        isVisible={currentStep === 'payment'}
+        isVisible={currentStep === 'paymentType'}
         value={entry.paymentType as string}
-        onSelect={(selected) => setEntry((prev) => ({ ...prev, payment: selected }))}
-        onConfirm={() => entry.paymentType === 'pending' as PaymentType ? console.log('invalid payment type') : setCurrentStep("paymentDate")}
+        onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentType: selected }))}
+        onConfirm={() => entry.paymentType === 'pending' as PaymentType && values.paymentType === 'pending' as PaymentType
+          ? console.log('(paymentScreen.tsx) invalid payment type')
+          : entry.paymentType === 'pending'
+            ? console.log('(paymentScreen.tsx) Os dados serão apagados do banco de dados!.')
+            : setCurrentStep("paymentDate")
+        }
         onCancel={onDismiss}
       />
 
@@ -53,13 +51,13 @@ export default function PaymentScreen({ iDs, values, onDismiss }: Props) {
         isVisible={currentStep === 'paymentDate'}
         value={entry.paymentDate as string}
         onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentDate: selected }))}
-        onConfirm={() => setCurrentStep("method")}
+        onConfirm={() => setCurrentStep("paymentMethod")}
         onCancel={onDismiss}
-        onBack={() => setCurrentStep('payment')}
+        onBack={() => setCurrentStep('paymentType')}
       />
 
       <PaymentMethodStep
-        isVisible={currentStep === 'method'}
+        isVisible={currentStep === 'paymentMethod'}
         values={{
           paymentMethod: entry.paymentMethod as string, paymentBankCard: entry.paymentBankCard as string,
           paymentBank: entry.paymentBank as string

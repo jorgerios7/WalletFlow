@@ -56,7 +56,11 @@ export default function FinanceDetailsItem({ data, onPressingEditPayment, onPres
                         }
                     )}
                 >
-                    <MaterialIcons name="check-circle" size={24} color={Colors.light.highlightBackgroun_1} />
+                    <MaterialIcons
+                        name={data.payment === "pending" ? "check-circle" : "edit"}
+                        size={24}
+                        color={Colors.light.highlightBackgroun_1}
+                    />
                 </Pressable>
 
                 <Pressable
@@ -74,7 +78,6 @@ export default function FinanceDetailsItem({ data, onPressingEditPayment, onPres
                 </Pressable>
             </View>
 
-            {/* Card animado */}
             <Animated.View style={[styles.card, { transform: [{ translateX }] }]}
             >
                 <Pressable onPress={handlePress} style={styles.cardContent}>
@@ -87,9 +90,7 @@ export default function FinanceDetailsItem({ data, onPressingEditPayment, onPres
                     </View>
 
                     <View style={styles.textContainer}>
-                        <Text style={[styles.text, { fontSize: 16, fontWeight: "bold" }]}>
-                            {renderType(data.type)}
-                        </Text>
+                        <Text style={[styles.text, { fontSize: 16, fontWeight: "bold" }]}>{renderType(data.type)}</Text>
                         <Text style={styles.text}>Categoria: {data.category}</Text>
                         <Text style={styles.text}>Status: {paymentStatus(data.payment)}</Text>
                         <Text style={styles.text}>Data: {data.startDate}</Text>

@@ -9,13 +9,13 @@ import FinanceDetailsItem from './financeDetailsItem';
 interface Props {
   entries_list: Entries[]; selectedDate: string; selectedPaymentType: PaymentType; selectedMethodType?: string;
   selectedValue?: number; bottomMargin?: number; isLoading: boolean; onTotalValueChange: (total: number) => void;
-  onPressingInfo: (items: Transactions) => void;
+  onPressingInfo: (items: Transactions) => void; onPressDelete: (id: string) => void;
   onPressingEditPayment: (iDs: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
   entries_list, selectedDate, selectedPaymentType, selectedMethodType, selectedValue,
-  bottomMargin = 0, isLoading, onTotalValueChange, onPressingInfo, onPressingEditPayment
+  bottomMargin = 0, isLoading, onTotalValueChange, onPressingInfo, onPressDelete, onPressingEditPayment
 }) => {
 
   function filteredEntries() {
@@ -38,14 +38,12 @@ const FinanceItemRecycler: React.FC<Props> = ({
     return newList;
   }
 
-  interface Section { title: string; data: Entries[] }
-
-  const groupByDate = (entries: Entries[]): Section[] => {
+  const groupByDate = (entrys: Entries[]): { title: string; data: Entries[] }[] => {
     const grouped: { [key: string]: Entries[] } = {};
 
-    for (const entrie of entries) {
-      if (!grouped[entrie.dueDate]) { grouped[entrie.dueDate] = [] }
-      grouped[entrie.dueDate].push(entrie);
+    for (const entry of entrys) {
+      if (!grouped[entry.dueDate]) { grouped[entry.dueDate] = [] }
+      grouped[entry.dueDate].push(entry);
     }
 
     return Object.keys(grouped)
@@ -93,16 +91,16 @@ const FinanceItemRecycler: React.FC<Props> = ({
           renderItem={({ item }) => (
             <FinanceDetailsItem
               data={item}
-              onPressingEditPayment={(iDs, values) =>
+              onPressingEditPayment={(id, values) =>
                 onPressingEditPayment(
-                  { transaction: iDs.transaction, entry: iDs.entry },
+                  { transaction: id.transaction, entry: id.entry },
                   {
                     paymentType: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod,
                     paymentBank: values.paymentBank, paymentBankCard: values.paymentBankCard
                   }
                 )
               }
-              onPressingDelete={(id) => console.log('delete is being called!', id)}
+              onPressingDelete={(id) => onPressDelete(id)}
               onPressingInfo={(selected) => onPressingInfo(selected)} />
           )}
           renderSectionHeader={({ section }) => (<HeaderSection text={section.title} />)}
@@ -112,7 +110,6 @@ const FinanceItemRecycler: React.FC<Props> = ({
       )}
     </View>
   );
-
 };
 
 const styles = StyleSheet.create({

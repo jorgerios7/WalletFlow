@@ -82,8 +82,8 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
     />
   );
 
-  const TransactionsWrapper = ({navigation}: any) => (
-    <TransactionsScreen 
+  const TransactionsWrapper = ({ navigation }: any) => (
+    <TransactionsScreen
       group_id={userData.groupId}
     />
   );
@@ -135,7 +135,7 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
           type={typeValue}
           groupId={userData.groupId}
           onDismiss={() => setCreateTransactionScreenVisible(false)}
-          whenPaymentConcluded={(values) => 
+          whenPaymentConcluded={(values) =>
             //setPaymentValues({ docId: values.docId, payment: values.payment })
 
             // criar tela que mostra todos as entradas da transação para o usuário escolher qual entrada tem o pagamento concluído!
@@ -144,12 +144,8 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
           }
           children={
             <PaymentScreen
-              values={
-                { 
-                  group_id: '', transaction_id: '', entry_id: paymentValues.docId, paymentType: paymentValues.payment, 
-                  paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: ''
-                }
-              }
+              ids={{ group: '', transaction: '', entry: paymentValues.docId }}
+              values={{ paymentType: paymentValues.payment, paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }}
               onDismiss={() => setCreateTransactionScreenVisible(false)}
             />
           }
