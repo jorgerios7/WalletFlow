@@ -5,14 +5,12 @@ import { View } from "react-native";
 import { PaymentDateStep, PaymentMethodStep, PaymentStep } from "../createTransactionScreen/steps";
 
 interface Props {
-  ids: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onDismiss: () => void
+  ids: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onUpdate: (isUpdating: boolean) => void, onDismiss: () => void
 }
 
-export default function PaymentScreen({ ids, values, onDismiss }: Props) {
+export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Props) {
 
   const [currentStep, setCurrentStep] = useState<'paymentType' | 'paymentDate' | 'paymentMethod'>('paymentType');
-
-  const [isUploading, setIsUploading] = useState(false);
 
   const [entry, setEntry] = useState<UpdateEntryValues>(
     {
@@ -28,7 +26,11 @@ export default function PaymentScreen({ ids, values, onDismiss }: Props) {
         paymentType: entry.paymentType, paymentDate: entry.paymentDate, paymentMethod: entry.paymentMethod,
         paymentBank: entry.paymentBank, paymentBankCard: entry.paymentBankCard
       },
-      onUpdate: (isUpdating) => { setIsUploading(isUpdating) }
+      onUpdate: (updating) => {  
+        setEntry({ paymentType: "", paymentDate: "", paymentMethod: "", paymentBank: "", paymentBankCard: "" });
+        onUpdate(updating);
+        onDismiss();
+      }
     });
   }
 

@@ -8,9 +8,10 @@ import FinanceDetailsItem from './financeDetailsItem';
 
 interface Props {
   entries_list: Entries[]; selectedDate: string; selectedPaymentType: PaymentType; selectedMethodType?: string;
-  selectedValue?: number; bottomMargin?: number; isLoading: boolean; onTotalValueChange: (total: number) => void;
-  onPressingInfo: (items: Transactions) => void; onPressDelete: (id: string) => void;
-  onPressingEditPayment: (iDs: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
+  selectedValue?: number; bottomMargin?: number; isLoading: boolean;
+  onTotalValueChange: (total: number) => void; onPressingInfo: (items: Transactions) => void;
+  onPressDelete: (id: { transaction: string, entry: string }, values: { paymentType: string, value: number }) => void;
+  onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
@@ -28,7 +29,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
       const isDay = listedDay === selectedDay;
       const isMonth = listedMonth === selectedMonth;
       const isYear = listedYear === selectedYear;
-      const isPayment = listedEntries.payment === selectedPaymentType;
+      const isPayment = listedEntries.paymentType === selectedPaymentType;
       //const isMethod = listedEntries.purchasingMethod === selectedMethodType;
       const isValue = listedEntries.value === selectedValue;
 
@@ -60,7 +61,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
   const sections = groupByDate(filteredEntries());
 
   const totalValue = filteredEntries().reduce((sum, item) => {
-    const validValues = item.payment === 'concluded' ? item.value : 0;
+    const validValues = item.paymentType === 'concluded' ? item.value : 0;
     return (sum + validValues);
   }, 0);
 
@@ -100,7 +101,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
                   }
                 )
               }
-              onPressingDelete={(id) => onPressDelete(id)}
+              onPressingDelete={(id, values) => onPressDelete(id, values)}
               onPressingInfo={(selected) => onPressingInfo(selected)} />
           )}
           renderSectionHeader={({ section }) => (<HeaderSection text={section.title} />)}

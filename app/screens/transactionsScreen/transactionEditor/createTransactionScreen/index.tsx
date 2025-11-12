@@ -1,3 +1,4 @@
+import { UploadTransaction } from '@/app/services/firebase/FinanceService';
 import { Entries, RecurrenceType, Transactions, TransactionType } from '@/app/types/Finance';
 import { getAuth } from 'firebase/auth';
 import { ReactNode, useState } from 'react';
@@ -27,7 +28,9 @@ export default function CreateTransactionScreen(
     recurrenceType: "", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: "", purchasebank: ""
   });
 
-  const [entries, setEntries] = useState<Partial<Entries>>({ paymentType: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "pending" });
+  const [entries, setEntries] = useState<Partial<Entries>>(
+    { paymentType: "pending", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, }
+  );
 
   const [paymentType, setPaymentType] = useState('');
 
@@ -36,10 +39,10 @@ export default function CreateTransactionScreen(
   async function uploadTransaction() {
     if (!currentUser) return null;
 
-    //await UploadTransaction(currentUser?.uid, groupId, type, transaction, entries as Entries, setLoading);
+    await UploadTransaction(currentUser?.uid, groupId, type, transaction, entries as Entries, setLoading);
 
     if (paymentType === 'concluded') {
-      whenPaymentConcluded({ docId: entries.entrieId as string, payment: entries.payment as string });
+      whenPaymentConcluded({ docId: entries.entrieId as string, payment: entries.paymentType as string });
       setCurrentStep('paymentConcluded');
     } else {
       onDismiss();
@@ -52,7 +55,7 @@ export default function CreateTransactionScreen(
     });
 
     setEntries({
-      paymentType: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, payment: "",
+      paymentType: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0, 
       paymentDate: "", paymentMethod: "", paymentBankCard: "", paymentBank: ""
     });
   }
@@ -148,7 +151,7 @@ export default function CreateTransactionScreen(
 
           <PaymentStep
             isVisible={currentStep === "payment"}
-            value={entries.payment as string}
+            value={entries.paymentType as string}
             onSelect={(selected) => setPaymentType(selected)}
             onConfirm={() => uploadTransaction()}
             onBack={() => setCurrentStep("description")}

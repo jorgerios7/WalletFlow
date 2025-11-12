@@ -25,17 +25,19 @@ export interface Transactions {
 }
 
 export interface Entries {
+  type: string;
   paymentType: string;
   entrieId: string;
   dueDate: string;
   value: number;
-  payment: string;
   paymentDate: string;
   paymentMethod: string;
   entrieNumber: number;
   paymentBankCard: string;
   paymentBank: string;
 }
+
+export interface MixedTransactionEntry extends Transactions, Entries { }
 
 export interface UpdateEntryValues {
   paymentType: string,

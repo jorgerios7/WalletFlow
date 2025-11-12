@@ -1,18 +1,21 @@
+import { MixedTransactionEntry } from "@/app/types/Finance";
 import { BottomSheet } from "@/components/ui/sheet/BottomSheet";
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 
-function Row({ label, value }: { label: string, value: string | number | undefined }) {
-    if (!value || undefined || value === 0) return null;
+function Row({ label, value }: { label: string, value?: string | number }) {
+    if (value === undefined || value === null || value === '') return null;
 
     return (
         <View style={styles.row}>
             <Text style={styles.label}>{label}</Text>
-            <Text style={styles.value}>{value}</Text>
+            <Text style={styles.value}>{String(value)}</Text>
         </View>
     );
 }
 
-const FinanceReportScreen = ({ data, isVisible, onClose }: { data: any, isVisible: boolean, onClose: () => void }) => {
+const FinanceReportScreen = ({ data, isVisible, onClose }: { data: MixedTransactionEntry, isVisible: boolean, onClose: () => void }) => {
+    if (!data) return null; 
+    
     return (
         <SafeAreaView style={{ position: 'absolute', bottom: 0, width: '100%' }}>
             <BottomSheet
@@ -29,29 +32,29 @@ const FinanceReportScreen = ({ data, isVisible, onClose }: { data: any, isVisibl
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Detalhes da Transação</Text>
 
-                    <Row label={"Id da transação:"} value={data?.transactionId} />
+                    <Row label={"Id da transação:"} value={data.transactionId} />
 
-                    <Row label={"Data de início:"} value={data?.startDate} />
+                    <Row label={"Data de início:"} value={data.startDate} />
 
-                    <Row label={"Tipo:"} value={data?.type} />
+                    <Row label={"Tipo:"} value={data.type} />
 
-                    <Row label={"Parcela:"} value={`${data?.entrieNumber} de ${data?.totalEntries}`} />
+                    <Row label={"Parcela:"} value={`${data.entrieNumber} de ${data.totalEntries}`} />
 
-                    <Row label={"Valor total:"} value={`R$ ${Number(data?.totalValue).toFixed(2)}`} />
+                    <Row label={"Valor total:"} value={`R$ ${Number(data.totalValue).toFixed(2)}`} />
 
-                    <Row label={"Descrição:"} value={data?.description} />
+                    <Row label={"Descrição:"} value={data.description} />
 
-                    <Row label={"Categoria:"} value={data?.category} />
+                    <Row label={"Categoria:"} value={data.category} />
 
-                    <Row label={"Data de vencimento:"} value={data?.dueDate} />
+                    <Row label={"Data de vencimento:"} value={data.dueDate} />
 
-                    <Row label={"Pagamento:"} value={data?.payment} />
+                    <Row label={"Pagamento:"} value={data.paymentType} />
 
-                    <Row label={"Método de pagamento:"} value={data?.method} />
+                    <Row label={"Método de pagamento:"} value={data.paymentMethod} />
 
-                    <Row label={"Data de pagamento:"} value={data?.paymentDate} />
+                    <Row label={"Data de pagamento:"} value={data.paymentDate} />
 
-                    <Row label={"Valor da parcela:"} value={`R$ ${Number(data?.value).toFixed(2)}`} />
+                    <Row label={"Valor da parcela:"} value={`R$ ${Number(data.value).toFixed(2)}`} />
                 </View>
             </BottomSheet>
         </SafeAreaView>

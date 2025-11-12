@@ -146,6 +146,7 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
             <PaymentScreen
               ids={{ group: '', transaction: '', entry: paymentValues.docId }}
               values={{ paymentType: paymentValues.payment, paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }}
+              onUpdate={() => console.log('(tabNavigation.tsx) onUpdate called!')}
               onDismiss={() => setCreateTransactionScreenVisible(false)}
             />
           }

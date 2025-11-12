@@ -1,7 +1,7 @@
 import { db } from "@/app/config/firebaseConfig";
 import { Entries, Transactions, TransactionType, UpdateEntryValues } from "@/app/types/Finance";
 import { FormatDateBR, SepareteDate } from "@/app/utils/Format";
-import { addDoc, collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { Alert } from "react-native";
 
 export async function LoadTransactions(groupId: string, onLoading: (loading: boolean) => void): Promise<Entries[] | undefined> {
@@ -26,7 +26,7 @@ export async function LoadTransactions(groupId: string, onLoading: (loading: boo
                     transactionId: transactionDoc.id, category: transData.category, totalValue: transData.totalValue,
                     startDate: transData.startDate, totalEntries: transData.totalEntries,
 
-                    entrieId: doc.id, type: entData.paymentType, dueDate: entData.dueDate, paymentBank: entData.paymentBank, payment: entData.payment,
+                    entrieId: doc.id, type: entData.paymentType, dueDate: entData.dueDate, paymentBank: entData.paymentBank, payment: entData.paymentType,
                     paymentDate: entData.paymentDate, paymentMethod: entData.paymentMethod, paymentBankCard: entData.paymentBankCard,
                     entrieNumber: entData.entrieNumber, value: entData.value,
 
@@ -122,4 +122,25 @@ export async function UpdateEntry(
         onUpdate(false);
     }
 }
+
+export async function DeleteEntry(
+    { ids: { group, transaction, entry }, onDelete }:
+        { ids: { group: string, transaction: string, entry: string }, onDelete: (isDeleting: boolean) => void }
+) {
+    try {
+        onDelete(true);
+        const entryRef = doc(db, "groups", group, "transactions", transaction, "entries", entry);
+
+        await deleteDoc(entryRef);
+
+        console.log("(FinanceService.tsx) Entrada deletada com sucesso!");
+
+    } catch (error: any) {
+        console.error("(FinanceService.tsx) Erro ao deletar:", error);
+        Alert.alert("Erro", error.message || "Não foi possível deletar o documento");
+    } finally {
+        onDelete(false);
+    }
+}
+
 

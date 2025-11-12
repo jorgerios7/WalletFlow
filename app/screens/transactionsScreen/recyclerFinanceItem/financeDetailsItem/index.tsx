@@ -1,4 +1,4 @@
-import { Transactions, UpdateEntryValues } from "@/app/types/Finance";
+import { MixedTransactionEntry, Transactions, UpdateEntryValues } from "@/app/types/Finance";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
@@ -21,8 +21,9 @@ const renderImage = (type: string) => {
 };
 
 export default function FinanceDetailsItem({ data, onPressingEditPayment, onPressingDelete, onPressingInfo }: {
-    data: any; onPressingDelete: (id: string) => void; onPressingInfo: (selectedItem: Transactions) => void;
-    onPressingEditPayment: (iDs: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
+    data: Partial<MixedTransactionEntry>; onPressingDelete: (id: { transaction: string, entry: string }, values: { paymentType: string, value: number }) => void;
+    onPressingInfo: (list: Transactions) => void;
+    onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
 }) {
     const translateX = useRef(new Animated.Value(0)).current;
     const [isOpen, setIsOpen] = useState(false);
@@ -49,15 +50,15 @@ export default function FinanceDetailsItem({ data, onPressingEditPayment, onPres
                 <Pressable
                     style={[styles.actionButton, { backgroundColor: "transparent" }]}
                     onPress={() => onPressingEditPayment(
-                        { transaction: data.transactionId, entry: data.entrieId },
+                        { transaction: data.transactionId as string, entry: data.entrieId as string },
                         {
-                            paymentType: data.payment, paymentDate: data.paymentDate, paymentMethod: data.paymentMethod,
-                            paymentBank: data.paymentBank, paymentBankCard: data.paymentBankCard
+                            paymentType: data.paymentType as string, paymentDate: data.paymentDate as string, paymentMethod: data.paymentMethod as string,
+                            paymentBank: data.paymentBank as string, paymentBankCard: data.paymentBankCard as string
                         }
                     )}
                 >
                     <MaterialIcons
-                        name={data.payment === "pending" ? "check-circle" : "edit"}
+                        name={data.paymentType === "pending" ? "check-circle" : "edit"}
                         size={24}
                         color={Colors.light.highlightBackgroun_1}
                     />
@@ -65,14 +66,17 @@ export default function FinanceDetailsItem({ data, onPressingEditPayment, onPres
 
                 <Pressable
                     style={[styles.actionButton, { backgroundColor: "transparent" }]}
-                    onPress={() => onPressingDelete(data.entrieId)}
+                    onPress={() => onPressingDelete(
+                        { transaction: data.transactionId as string, entry: data.entrieId as string },
+                        { paymentType: data.paymentType as string, value: data.value as number})
+                    }
                 >
                     <MaterialIcons name="delete" size={24} color={Colors.light.highlightBackgroun_1} />
                 </Pressable>
 
                 <Pressable
                     style={[styles.actionButton, { backgroundColor: "transparent" }]}
-                    onPress={() => onPressingInfo(data)}
+                    onPress={() => onPressingInfo(data as MixedTransactionEntry)}
                 >
                     <MaterialIcons name="info" size={24} color={Colors.light.highlightBackgroun_1} />
                 </Pressable>
@@ -83,22 +87,22 @@ export default function FinanceDetailsItem({ data, onPressingEditPayment, onPres
                 <Pressable onPress={handlePress} style={styles.cardContent}>
                     <View style={styles.image}>
                         <MaterialIcons
-                            name={renderImage(data.type)}
+                            name={renderImage(data.type as string)}
                             size={16}
                             color={Colors.light.background}
                         />
                     </View>
 
                     <View style={styles.textContainer}>
-                        <Text style={[styles.text, { fontSize: 16, fontWeight: "bold" }]}>{renderType(data.type)}</Text>
+                        <Text style={[styles.text, { fontSize: 16, fontWeight: "bold" }]}>{renderType(data.type as string)}</Text>
                         <Text style={styles.text}>Categoria: {data.category}</Text>
-                        <Text style={styles.text}>Status: {paymentStatus(data.payment)}</Text>
+                        <Text style={styles.text}>Pagamento: {data.paymentType}</Text>
                         <Text style={styles.text}>Data: {data.startDate}</Text>
                     </View>
 
                     <View style={styles.textContainer}>
                         <Text style={[styles.text, { fontWeight: "bold" }]}>
-                            R$ {data.value.toFixed(2)}
+                            R$ {data.value?.toFixed(2)}
                         </Text>
                     </View>
 
