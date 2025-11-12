@@ -5,7 +5,6 @@ import { HelpScreen } from '@/app/screens/HelpScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
 import TransactionsScreen from '@/app/screens/transactionsScreen';
 import CreateTransactionScreen from '@/app/screens/transactionsScreen/transactionEditor/createTransactionScreen';
-import PaymentScreen from '@/app/screens/transactionsScreen/transactionEditor/paymentScreen';
 import { TransactionType } from '@/app/types/Finance';
 import { User } from '@/app/types/User';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
@@ -135,21 +134,6 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
           type={typeValue}
           groupId={userData.groupId}
           onDismiss={() => setCreateTransactionScreenVisible(false)}
-          whenPaymentConcluded={(values) =>
-            //setPaymentValues({ docId: values.docId, payment: values.payment })
-
-            // criar tela que mostra todos as entradas da transação para o usuário escolher qual entrada tem o pagamento concluído!
-
-            console.log('(taNavigation.tsx) whenPaymentConcluded: ', values)
-          }
-          children={
-            <PaymentScreen
-              ids={{ group: '', transaction: '', entry: paymentValues.docId }}
-              values={{ paymentType: paymentValues.payment, paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }}
-              onUpdate={() => console.log('(tabNavigation.tsx) onUpdate called!')}
-              onDismiss={() => setCreateTransactionScreenVisible(false)}
-            />
-          }
         />
 
         <Tab.Navigator
@@ -157,7 +141,7 @@ const TabNavigation: React.FC<{ userData: User; onDismis: () => void }> = ({ use
           screenOptions={{
             headerShown: false,
             tabBarShowLabel: false,
-            animation: 'fade',
+            animation: 'shift',
             tabBarStyle: {
               backgroundColor: Colors.light.background,
               position: 'absolute',

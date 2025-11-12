@@ -21,7 +21,7 @@ export interface Transactions {
   recurrenceType: string;
   purchasingMethod: string;
   purchaseBankCard: string;
-  purchasebank: string;
+  purchaseBank: string;
 }
 
 export interface Entries {

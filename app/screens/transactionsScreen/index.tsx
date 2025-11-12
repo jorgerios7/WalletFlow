@@ -18,7 +18,8 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
   const [totalValue, setTotalValue] = useState(0);
   const [paymentScreen, setPaymentScreen] = useState(
     {
-      isVisible: false, id: { transaction: '', entry: '' },
+      isVisible: false,
+      id: { transaction: '', entry: '' },
       values: { paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }
     }
   );

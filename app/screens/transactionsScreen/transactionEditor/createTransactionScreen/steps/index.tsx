@@ -13,31 +13,45 @@ import StepScreen from "../../stepScreen";
 
 interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
 interface MethodProps { paymentBankCard: string, paymentMethod: string, paymentBank: string }
+interface RecurrenceValuesProps { recurrenceType: RecurrenceType; totalEntries: number, purchasingMethod: string, purchaseBankCard: string, purchaseBank: string }
 
 export function RecurrenceScreen(
   {
-    isVisible, transactionType, recurrenceType, totalEntries, purchasingMethod, purchaseBankCard, purchaseBank, onConfirm, onCancel, onSelect
-  }: StepsProps & {
-    transactionType: TransactionType, recurrenceType: RecurrenceType; totalEntries: number, purchasingMethod: string, purchaseBankCard: string,
-    purchaseBank: string, onSelect: (recurrenceType: RecurrenceType, totalEntries: number, method: string, bankCard: string, bank: string) => void
-  }
+    isVisible, transactionType, values, onConfirm, onCancel, onSelect
+  }: StepsProps & { transactionType: TransactionType, values: RecurrenceValuesProps, onSelect: (values: RecurrenceValuesProps) => void }
 ) {
   if (!isVisible) return;
 
   const [selection, setSelection] = useState(
     {
-      recurrenceType: recurrenceType, totalEntries: totalEntries, purchaseBankCard: purchaseBankCard,
-      purchasingMethod: purchasingMethod, purchaseBank: purchaseBank
+      recurrenceType: values.recurrenceType, totalEntries: values.totalEntries, purchaseBankCard: values.purchaseBankCard,
+      purchasingMethod: values.purchasingMethod, purchaseBank: values.purchaseBank
     }
   );
 
   function handleSelect() {
-    if (selection.recurrenceType === 'installment') {
-      onSelect(selection.recurrenceType, selection.totalEntries, selection.purchasingMethod, selection.purchaseBankCard, selection.purchaseBank)
-    } else {
-      onSelect(selection.recurrenceType, 0, "", "", "");
+    const { recurrenceType, purchasingMethod, purchaseBankCard, purchaseBank, totalEntries } = selection;
+
+    const isInstallment = recurrenceType === 'installment';
+
+    const entries = isInstallment ? totalEntries : 0;
+
+    const baseSelection = { recurrenceType, totalEntries: entries, purchasingMethod, purchaseBankCard: "", purchaseBank: "" };
+
+    switch (purchasingMethod) {
+      case 'Cartão de crédito': onSelect({ ...baseSelection, purchaseBankCard, purchaseBank: isInstallment ? purchaseBank : "", totalEntries });
+        break;
+
+      case 'Boleto': onSelect({ ...baseSelection, purchaseBank });
+        break;
+
+      case 'Contrato direto': case 'Carnê': onSelect(baseSelection);
+        break;
+
+      default: console.warn("Método de compra desconhecido:", purchasingMethod);
     }
   }
+
 
   useEffect(() => { handleSelect() }, [selection]);
 
@@ -59,18 +73,7 @@ export function RecurrenceScreen(
         placeholder={'Recorrência'}
         setSelection={selection.recurrenceType}
         list={['single', 'fixed', 'installment']}
-        onSelect={(item) => {
-          setSelection((prev) => ({ ...prev, recurrenceType: item as RecurrenceType }))
-        }}
-      />
-
-      <DropdownSelect
-        isVisible={selection.recurrenceType === 'installment'}
-        onOpeningDropdown="openAtBottom"
-        placeholder={'Quantidade de parcelas'}
-        setSelection={selection.totalEntries}
-        list={[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
-        onSelect={(value) => setSelection((prev) => ({ ...prev, totalEntries: value as number }))}
+        onSelect={(item) => { setSelection((prev) => ({ ...prev, recurrenceType: item as RecurrenceType })) }}
       />
 
       <DropdownSelect
@@ -85,21 +88,30 @@ export function RecurrenceScreen(
       />
 
       <DropdownSelect
-        isVisible={selection.purchasingMethod === 'Cartão de crédito'}
-        onOpeningDropdown="openAtBottom"
-        placeholder={'Cartão bancário'}
-        setSelection={selection.purchaseBankCard}
-        list={['Master(5885)', 'Visa(8822)']}
-        onSelect={(value) => setSelection((prev) => ({ ...prev, purchaseBankCard: value as string }))}
-      />
-
-      <DropdownSelect
         isVisible={selection.purchasingMethod === 'Boleto' || selection.purchasingMethod === 'Pix'}
         onOpeningDropdown="openAtBottom"
         placeholder={'Instituição financeira'}
         setSelection={selection.purchaseBank}
         list={['Santander', 'Nubank', 'Inter']}
         onSelect={(value) => setSelection((prev) => ({ ...prev, purchaseBank: value as string }))}
+      />
+
+      <DropdownSelect
+        isVisible={selection.recurrenceType === 'installment'}
+        onOpeningDropdown="openAtBottom"
+        placeholder={'Quantidade de parcelas'}
+        setSelection={selection.totalEntries}
+        list={[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+        onSelect={(value) => setSelection((prev) => ({ ...prev, totalEntries: value as number }))}
+      />
+
+      <DropdownSelect
+        isVisible={selection.purchasingMethod === 'Cartão de crédito'}
+        onOpeningDropdown="openAtBottom"
+        placeholder={'Cartão bancário'}
+        setSelection={selection.purchaseBankCard}
+        list={['Master(5885)', 'Visa(8822)']}
+        onSelect={(value) => setSelection((prev) => ({ ...prev, purchaseBankCard: value as string }))}
       />
     </StepScreen>
   );
