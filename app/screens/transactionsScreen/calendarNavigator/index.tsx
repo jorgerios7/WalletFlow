@@ -1,21 +1,9 @@
 import { Colors } from '@/constants/Colors';
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-    Animated,
-    Dimensions,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface Props {
-    onDateChange: (date: Date) => void;
-}
-
-const ITEM_WIDTH = 70;
+const ITEM_WIDTH = 75;
 const ITEM_SPACING = 0;
 const SPACING_DEFAULT = 10;
 const DEFAULT_SIZE = 55;
@@ -23,7 +11,7 @@ const RADIUS_DEFAULT = 16;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CENTER_OFFSET = (SCREEN_WIDTH - ITEM_WIDTH) / 4;
 
-const CalendarNavigator: React.FC<Props> = ({ onDateChange }) => {
+const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ onDateChange }) => {
     const scrollRef = useRef<ScrollView>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -32,10 +20,16 @@ const CalendarNavigator: React.FC<Props> = ({ onDateChange }) => {
     const currentMonthIndex = now.getMonth();
     const currentYear = now.getFullYear();
 
-    const months = [
-        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-    ];
+    const months = Array.from({ length: 24 }, (_, i) => {
+        const year = currentYear + Math.floor(i / 12);
+        const monthIndex = i % 12;
+        const monthNames = [
+            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+        ];
+        return { label: `${monthNames[monthIndex]}`, monthIndex, year };
+    });
+
 
     useEffect(() => {
         scrollToIndex(currentMonthIndex, true);
@@ -56,12 +50,8 @@ const CalendarNavigator: React.FC<Props> = ({ onDateChange }) => {
         onDateChange(new Date(currentYear, index, 1));
     };
 
-    const handleNext = () => {
-        scrollToIndex(currentIndex + 1, false);
-    }
-    const handlePrevious = () => {
-        scrollToIndex(currentIndex - 1, false);
-    }
+    const handleNext = () => { scrollToIndex(currentIndex + 1, false) }
+    const handlePrevious = () => { scrollToIndex(currentIndex - 1, false) }
 
     const onScrollEnd = (e: any) => {
         const x = e.nativeEvent.contentOffset.x;
@@ -72,7 +62,7 @@ const CalendarNavigator: React.FC<Props> = ({ onDateChange }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{currentYear}</Text>
+            <Text style={styles.title}>{months[currentIndex]?.year}</Text>
 
             <View style={styles.ContainerContent}>
 
@@ -98,33 +88,29 @@ const CalendarNavigator: React.FC<Props> = ({ onDateChange }) => {
                         {months.map((month, index) => (
                             <Animated.View
                                 key={index}
-                                style={[
-                                    styles.card,
-                                    index === currentIndex && styles.activeCard,
-                                    {
-                                        transform: [
-                                            {
-                                                scale: scrollX.interpolate({
-                                                    inputRange: [
-                                                        (index - 1) * (ITEM_WIDTH + ITEM_SPACING),
-                                                        index * (ITEM_WIDTH + ITEM_SPACING),
-                                                        (index + 1) * (ITEM_WIDTH + ITEM_SPACING),
-                                                    ],
-                                                    outputRange: [0.9, 1, 0.9],
-                                                    extrapolate: 'clamp',
-                                                }),
-                                            },
-                                        ],
-                                    },
-                                ]}
+                                style={[styles.card, index === currentIndex && styles.activeCard,
+                                {
+                                    transform: [
+                                        {
+                                            scale: scrollX.interpolate({
+                                                inputRange: [
+                                                    (index - 1) * (ITEM_WIDTH + ITEM_SPACING),
+                                                    index * (ITEM_WIDTH + ITEM_SPACING),
+                                                    (index + 1) * (ITEM_WIDTH + ITEM_SPACING),
+                                                ],
+                                                outputRange: [0.9, 1, 0.9],
+                                                extrapolate: 'clamp',
+                                            }),
+                                        },
+                                    ]
+                                }]}
                             >
                                 <Text style={[styles.monthText, index === currentIndex && styles.activeText]}>
-                                    {month}
+                                    {month.label}
                                 </Text>
                             </Animated.View>
                         ))}
                     </Animated.ScrollView>
-
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleNext}>
@@ -132,7 +118,7 @@ const CalendarNavigator: React.FC<Props> = ({ onDateChange }) => {
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.menu}>
+            {/**<View style={styles.menu}>
 
                 <TouchableOpacity style={styles.menuTab} onPress={handleNext}>
                     <Feather name="filter" size={16} color="black" />
@@ -145,7 +131,7 @@ const CalendarNavigator: React.FC<Props> = ({ onDateChange }) => {
                 <TouchableOpacity style={styles.menuTab} onPress={handleNext}>
                     <Feather name="search" size={16} color="black" />
                 </TouchableOpacity>
-            </View>
+            </View>*/}
         </View>
     );
 };

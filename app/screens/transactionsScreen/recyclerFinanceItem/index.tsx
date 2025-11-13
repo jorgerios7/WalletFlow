@@ -69,8 +69,8 @@ const FinanceItemRecycler: React.FC<Props> = ({
 
   function HeaderSection({ text }: { text: string }) {
     return (
-      <View style={{ backgroundColor: Colors.light.shadow, paddingVertical: 8, paddingHorizontal: 16 }}>
-        <Text style={{ fontSize: 12, color: Colors.light.text, alignSelf: 'center' }}>
+      <View style={{ backgroundColor: Colors.light.highlightBackgroun_1, paddingVertical: 8, width: 'auto', alignSelf: 'center', borderRadius: 8  }}>
+        <Text style={{ fontSize: 12, color: Colors.light.background, alignSelf: 'center', fontStyle: 'italic', marginHorizontal: 16}}>
           {text}
         </Text>
       </View>

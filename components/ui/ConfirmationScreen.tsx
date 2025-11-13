@@ -1,17 +1,14 @@
+import { Colors } from "@/constants/Colors";
 import { Modal, StyleSheet, Text, View } from "react-native";
 import CustomButton from "./CustomButton";
 import TextButton from "./TextButton";
 
-const ConfirmationScreen: React.FC<{
-    isVisible: boolean;
-    message: string;
-    onConfirm: () => void;
-    onCancel: () => void;
-
-}> = ({ isVisible, message, onConfirm, onCancel }) => {
+const ConfirmationScreen: React.FC<{ isVisible: boolean; message: string; onConfirm: () => void; onCancel: () => void; }> = (
+    { isVisible, message, onConfirm, onCancel }
+) => {
 
     return (
-        <Modal visible={isVisible} animationType="fade">
+        <Modal visible={isVisible} animationType="fade" transparent>
             <View style={styles.modalOverlay}>
                 <View style={styles.modalContent}>
                     <Text style={{ color: 'black', fontSize: 16, textAlign: 'center', fontWeight: 'bold' }}>
@@ -26,18 +23,8 @@ const ConfirmationScreen: React.FC<{
 }
 
 const styles = StyleSheet.create({
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'white',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalContent: {
-        width: '100%',
-        backgroundColor: 'white',
-        padding: 20,
-        gap: 20
-    },
+    modalOverlay: { flex: 1, backgroundColor: 'rgba(20, 20, 20, 0.4)', justifyContent: 'center', alignItems: 'center', },
+    modalContent: { width: '90%', borderRadius: 10, backgroundColor: Colors.light.background, padding: 20, gap: 20 }
 });
 
 export default ConfirmationScreen;
