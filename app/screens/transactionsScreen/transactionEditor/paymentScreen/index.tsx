@@ -2,7 +2,7 @@ import { UpdateEntry } from "@/app/services/firebase/FinanceService";
 import { PaymentType, UpdateEntryValues } from "@/app/types/Finance";
 import { useState } from "react";
 import { View } from "react-native";
-import { PaymentDateStep, PaymentMethodStep, PaymentStep } from "../createTransactionScreen/steps";
+import { MessageFinalStep, PaymentDateStep, PaymentMethodStep, PaymentStep } from "../createTransactionScreen/steps";
 
 interface Props {
   ids: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onUpdate: (isUpdating: boolean) => void, onDismiss: () => void
@@ -10,7 +10,7 @@ interface Props {
 
 export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Props) {
 
-  const [currentStep, setCurrentStep] = useState<'paymentType' | 'paymentDate' | 'paymentMethod'>('paymentType');
+  const [currentStep, setCurrentStep] = useState<'paymentType' | 'paymentDate' | 'paymentMethod' | 'final'>('paymentType');
 
   const [entry, setEntry] = useState<UpdateEntryValues>(
     {
@@ -26,10 +26,10 @@ export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Prop
         paymentType: entry.paymentType, paymentDate: entry.paymentDate, paymentMethod: entry.paymentMethod,
         paymentBank: entry.paymentBank, paymentBankCard: entry.paymentBankCard
       },
-      onUpdate: (updating) => {  
+      onUpdate: (updating) => {
         setEntry({ paymentType: "", paymentDate: "", paymentMethod: "", paymentBank: "", paymentBankCard: "" });
         onUpdate(updating);
-        onDismiss();
+        setCurrentStep("final");
       }
     });
   }
@@ -72,6 +72,13 @@ export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Prop
         onConfirm={() => UpdateNewEntry()}
         onCancel={onDismiss}
         onBack={() => setCurrentStep('paymentDate')}
+      />
+
+      <MessageFinalStep
+        isVisible={currentStep === 'final'}
+        text1={'Atualização concluída com sucesso!'}
+        text2={'Toque em confirmar para sair do editor de pagamento.'}
+        onConfirm={onDismiss}
       />
     </View>
   );

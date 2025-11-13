@@ -14,8 +14,8 @@ function Row({ label, value }: { label: string, value?: string | number }) {
 }
 
 const FinanceReportScreen = ({ data, isVisible, onClose }: { data: MixedTransactionEntry, isVisible: boolean, onClose: () => void }) => {
-    if (!data) return null; 
-    
+    if (!data) return null;
+
     return (
         <SafeAreaView style={{ position: 'absolute', bottom: 0, width: '100%' }}>
             <BottomSheet
@@ -34,7 +34,11 @@ const FinanceReportScreen = ({ data, isVisible, onClose }: { data: MixedTransact
 
                     <Row label={"Id da transação:"} value={data.transactionId} />
 
+                    <Row label={"Categoria:"} value={data.category} />
+
                     <Row label={"Data de início:"} value={data.startDate} />
+
+                    <Row label={"Data de vencimento:"} value={data.dueDate} />
 
                     <Row label={"Tipo:"} value={data.type} />
 
@@ -44,17 +48,21 @@ const FinanceReportScreen = ({ data, isVisible, onClose }: { data: MixedTransact
 
                     <Row label={"Descrição:"} value={data.description} />
 
-                    <Row label={"Categoria:"} value={data.category} />
-
-                    <Row label={"Data de vencimento:"} value={data.dueDate} />
+                    {data.paymentType === 'concluded' && (<Text style={styles.sectionTitle}>Detalhes do pagamento</Text>)}
 
                     <Row label={"Pagamento:"} value={data.paymentType} />
 
                     <Row label={"Método de pagamento:"} value={data.paymentMethod} />
 
+                    <Row label={"Banco:"} value={data.paymentBank} />
+
+                    <Row label={"Cartão bancário:"} value={data.paymentBankCard} />
+
                     <Row label={"Data de pagamento:"} value={data.paymentDate} />
 
                     <Row label={"Valor da parcela:"} value={`R$ ${Number(data.value).toFixed(2)}`} />
+
+
                 </View>
             </BottomSheet>
         </SafeAreaView>
@@ -64,7 +72,7 @@ const FinanceReportScreen = ({ data, isVisible, onClose }: { data: MixedTransact
 const styles = StyleSheet.create({
     page: { padding: 40, fontFamily: "Arial" }, header: { marginBottom: 20, borderBottomWidth: 1, paddingBottom: 10 },
     title: { fontSize: 24, fontWeight: "bold", marginBottom: 5 }, subtitle: { fontSize: 12, color: "#666" },
-    section: { marginBottom: 15 }, sectionTitle: { fontSize: 14, fontWeight: "bold", marginBottom: 8, color: "#333" },
+    section: { marginBottom: 15 }, sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 8, color: "#333" },
     row: { flexDirection: "row", marginBottom: 5 }, label: { width: "40%", fontSize: 12, fontWeight: "bold" },
     value: { width: "60%", fontSize: 12 }, paid: { color: "#4CAF50" }, unpaid: { color: "#F44336" },
     footer: { marginTop: 30, fontSize: 10, textAlign: "center", color: "#999" }

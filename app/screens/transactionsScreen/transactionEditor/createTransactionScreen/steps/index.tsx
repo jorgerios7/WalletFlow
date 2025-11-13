@@ -8,17 +8,20 @@ import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import RadioButton from "@/components/ui/RadioButton";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
-import { Alert, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import StepScreen from "../../stepScreen";
 
 interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
 interface MethodProps { paymentBankCard: string, paymentMethod: string, paymentBank: string }
 interface RecurrenceValuesProps { recurrenceType: RecurrenceType; totalEntries: number, purchasingMethod: string, purchaseBankCard: string, purchaseBank: string }
 
+
+
+
 export function RecurrenceScreen(
   {
-    isVisible, transactionType, values, onConfirm, onCancel, onSelect
-  }: StepsProps & { transactionType: TransactionType, values: RecurrenceValuesProps, onSelect: (values: RecurrenceValuesProps) => void }
+    isVisible, transactionType, values, onConfirm, onCancel, onSelect }:
+    StepsProps & { transactionType: TransactionType, values: RecurrenceValuesProps, onSelect: (values: RecurrenceValuesProps) => void }
 ) {
   if (!isVisible) return;
 
@@ -39,7 +42,7 @@ export function RecurrenceScreen(
     const baseSelection = { recurrenceType, totalEntries: entries, purchasingMethod, purchaseBankCard: "", purchaseBank: "" };
 
     switch (purchasingMethod) {
-      case 'Cartão de crédito': onSelect({ ...baseSelection, purchaseBankCard, purchaseBank: isInstallment ? purchaseBank : "", totalEntries });
+      case 'Cartão de crédito': case 'Pix': onSelect({ ...baseSelection, purchaseBankCard, purchaseBank: isInstallment ? purchaseBank : "", totalEntries });
         break;
 
       case 'Boleto': onSelect({ ...baseSelection, purchaseBank });
@@ -82,7 +85,7 @@ export function RecurrenceScreen(
         placeholder={transactionType === 'expense' ? 'Método de compra' : 'Método de recebimento'}
         setSelection={selection.purchasingMethod}
         list={transactionType === 'expense'
-          ? ['Cartão de crédito', 'Boleto', 'Contrato direto', 'Carnê']
+          ? ['Cartão de crédito', 'Boleto', 'Pix', 'Contrato direto', 'Carnê']
           : ['Boleto', 'Carnê', 'Contrato direto', 'Dinheiro', 'Pix', 'Transferência bancária']}
         onSelect={(value) => setSelection((prev) => ({ ...prev, purchasingMethod: value as RecurrenceType }))}
       />
@@ -383,9 +386,22 @@ export function PaymentMethodStep(
   );
 
   function handleSelect() {
-    onSelect(
-      { paymentMethod: selection.paymentMethod, paymentBankCard: selection.paymentBankCard, paymentBank: selection.paymentBank }
-    )
+    const { paymentMethod, paymentBankCard, paymentBank } = selection;
+
+    const baseSelection = { paymentMethod, paymentBankCard: "", paymentBank: "" };
+
+    switch (paymentMethod) {
+      case 'Dinheiro': case 'Boleto': onSelect(baseSelection);
+        break;
+
+      case 'Cartão de crédito': onSelect({ ...baseSelection, paymentBankCard, paymentBank });
+        break;
+
+      case 'Boleto': case 'Pix': case 'Transferência bancária': onSelect({ ...baseSelection, paymentBank });
+        break;
+
+      default: console.warn("Método de compra desconhecido:", paymentMethod);
+    }
   }
 
   useEffect(() => { handleSelect() }, [selection]);
@@ -430,3 +446,22 @@ export function PaymentMethodStep(
     </StepScreen>
   );
 };
+
+export function MessageFinalStep(
+  { isVisible, text1, text2, onConfirm }: { isVisible: boolean; text1?: string, text2?: string, onConfirm: () => void }
+) {
+
+  return (
+    <StepScreen
+      isVisible={isVisible}
+      buttonTextConfirm={'Finalizar'}
+      onConfirm={() => onConfirm()}
+      children={
+        <View style={{ justifyContent: 'center', alignItems: 'center', gap: 10 }}>
+          {text1 && (<Text style={{ fontSize: 16, fontWeight: 'normal', textAlign: 'justify' }}>{text1}</Text>)}
+          {text2 && (<Text style={{ fontSize: 16, fontWeight: 'normal', textAlign: 'center' }}>{text2}</Text>)}
+        </View>
+      }
+    />
+  )
+}

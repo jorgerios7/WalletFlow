@@ -2,9 +2,8 @@ import { UploadTransaction } from '@/app/services/firebase/FinanceService';
 import { Entries, RecurrenceType, Transactions, TransactionType } from '@/app/types/Finance';
 import { getAuth } from 'firebase/auth';
 import { useState } from 'react';
-import { Alert } from 'react-native';
 import ContentScreen from '../contentScreen';
-import { CategoryStep, DescriptionStep, DueDateStep, RecurrenceScreen, StartDateStep, TotalValueStep } from './steps';
+import { CategoryStep, DescriptionStep, DueDateStep, MessageFinalStep, RecurrenceScreen, StartDateStep, TotalValueStep } from './steps';
 
 export default function CreateTransactionScreen(
   { isVisible, groupId, type, onDismiss }: { isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void }
@@ -14,7 +13,7 @@ export default function CreateTransactionScreen(
 
   if (!currentUser) return null;
 
-  type Step = 'Tabs' | 'recurrence' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'payment' | 'description' | 'paymentDate' | 'method' | 'paymentConcluded';
+  type Step = 'recurrence' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'description' | 'paymentConcluded' | 'final';
 
   const [currentStep, setCurrentStep] = useState<Step>('recurrence');
 
@@ -34,8 +33,7 @@ export default function CreateTransactionScreen(
 
     await UploadTransaction(currentUser?.uid, groupId, type, transaction, entries as Entries, setLoading);
 
-    onDismiss();
-    Alert.alert("Sucesso!", "Transação salva com sucesso.");
+    setCurrentStep('final')
 
     setTransaction({
       transactionId: "", createdBy: "", createdAt: "", startDate: "", category: "", purchaseBank: "",
@@ -132,6 +130,13 @@ export default function CreateTransactionScreen(
             onConfirm={() => uploadTransaction()}
             onBack={() => setCurrentStep("totalValue")}
             onCancel={onDismiss}
+          />
+
+          <MessageFinalStep
+            isVisible={currentStep === "final"}
+            onConfirm={onDismiss}
+            text1={'Todos os passos foram concluídos!'}
+            text2={'Toque em confirmar para finalizar o cadastro da transação.'}
           />
         </>
       }
