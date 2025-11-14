@@ -1,12 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { Feather } from "@expo/vector-icons";
-import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import TransitionView from "../TransitionView";
 
 export type OpenDirection = 'openAtTop' | 'openAtBottom';
@@ -18,11 +12,6 @@ interface Props {
 
 export default function Dropdown({ isVisible, items, deleteButtonVisible, onShowing, onSelect, onPressDelete }: Props) {
     if (!isVisible) return null;
-
-    const dynamicPosition = {
-        top: onShowing === 'openAtTop' ? 100 : undefined,
-        bottom: onShowing === 'openAtBottom' ? 100 : undefined,
-    };
 
     function ButtonDelete({ item }: { item: string | number }) {
         if (!deleteButtonVisible) return null;

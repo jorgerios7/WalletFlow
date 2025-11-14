@@ -3,13 +3,13 @@ import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const ITEM_WIDTH = 75;
-const ITEM_SPACING = 0;
-const SPACING_DEFAULT = 10;
-const DEFAULT_SIZE = 55;
-const RADIUS_DEFAULT = 16;
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const ITEM_WIDTH = SCREEN_WIDTH / 5;
 const CENTER_OFFSET = (SCREEN_WIDTH - ITEM_WIDTH) / 4;
+const ITEM_SPACING = 0;
+const SPACING_DEFAULT = 25;
+const DEFAULT_SIZE = SPACING_DEFAULT * 2;
+const RADIUS_DEFAULT = 16;
 
 const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ onDateChange }) => {
     const scrollRef = useRef<ScrollView>(null);
@@ -23,13 +23,9 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
     const months = Array.from({ length: 24 }, (_, i) => {
         const year = currentYear + Math.floor(i / 12);
         const monthIndex = i % 12;
-        const monthNames = [
-            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-        ];
+        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         return { label: `${monthNames[monthIndex]}`, monthIndex, year };
     });
-
 
     useEffect(() => {
         scrollToIndex(currentMonthIndex, true);
@@ -79,10 +75,7 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
                         decelerationRate="fast"
                         contentContainerStyle={{ paddingHorizontal: CENTER_OFFSET }}
                         onMomentumScrollEnd={onScrollEnd}
-                        onScroll={Animated.event(
-                            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-                            { useNativeDriver: false }
-                        )}
+                        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], { useNativeDriver: false })}
                         scrollEventThrottle={16}
                     >
                         {months.map((month, index) => (
@@ -117,21 +110,6 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
                     <Feather name="chevron-right" size={24} color="black" />
                 </TouchableOpacity>
             </View>
-
-            {/**<View style={styles.menu}>
-
-                <TouchableOpacity style={styles.menuTab} onPress={handleNext}>
-                    <Feather name="filter" size={16} color="black" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.menuTab} onPress={updateToCurrentDate}>
-                    <Feather name="calendar" size={16} color="black" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.menuTab} onPress={handleNext}>
-                    <Feather name="search" size={16} color="black" />
-                </TouchableOpacity>
-            </View>*/}
         </View>
     );
 };
@@ -146,7 +124,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     row: {
-        width: '59%',
+        width: SPACING_DEFAULT + ITEM_WIDTH * 2.7,
         height: DEFAULT_SIZE,
         backgroundColor: Colors.light.background,
     },
@@ -182,7 +160,7 @@ const styles = StyleSheet.create({
         borderRadius: RADIUS_DEFAULT,
     },
     activeCard: {
-        backgroundColor: Colors.light.highlightBackgroun_2,
+        backgroundColor: Colors.light.highlightBackgroun_1,
         borderColor: Colors.light.shadow,
         borderWidth: 1,
     },

@@ -4,7 +4,7 @@ import { FormatDateBR, SepareteDate } from "@/app/utils/Format";
 import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { Alert } from "react-native";
 
-export async function LoadTransactions(groupId: string, onLoading: (loading: boolean) => void): Promise<Entries[] | undefined> {
+export async function LoadTransactions(date: string, groupId: string, onLoading: (loading: boolean) => void): Promise<Entries[] | undefined> {
     try {
         onLoading(true);
 
@@ -26,22 +26,40 @@ export async function LoadTransactions(groupId: string, onLoading: (loading: boo
                     transactionId: transactionDoc.id, category: transData.category, totalValue: transData.totalValue,
                     startDate: transData.startDate, totalEntries: transData.totalEntries,
 
-                    entrieId: doc.id, type: entData.paymentType, dueDate: entData.dueDate, paymentBank: entData.paymentBank, payment: entData.paymentType,
-                    paymentDate: entData.paymentDate, paymentMethod: entData.paymentMethod, paymentBankCard: entData.paymentBankCard,
-                    entrieNumber: entData.entrieNumber, value: entData.value,
-
+                    entrieId: doc.id, type: entData.paymentType, dueDate: entData.dueDate, paymentBank: entData.paymentBank,
+                    payment: entData.paymentType, paymentDate: entData.paymentDate, paymentMethod: entData.paymentMethod,
+                    paymentBankCard: entData.paymentBankCard, entrieNumber: entData.entrieNumber, value: entData.value,
                     ...entData
                 } as Entries;
             });
 
             entries.push(...entriesDocs);
         }
+
+        function filteredEntries() {
+            const newList = entries.filter((listedEntries) => {
+                if (!date) return true;
+                const [listedDay, listedMonth, listedYear] = listedEntries.dueDate.split('/');
+                const [selectedDay, selectedMonth, selectedYear] = date.split('/');
+                //const isDay = listedDay === selectedDay;
+                const isMonth = listedMonth === selectedMonth;
+                const isYear = listedYear === selectedYear;
+                //const isPayment = listedEntries.paymentType === selectedPaymentType;
+                //const isMethod = listedEntries.purchasingMethod === selectedMethodType;
+                //const isValue = listedEntries.value === selectedValue;
+                return (isMonth && isYear);
+            });
+
+            return newList;
+        }
+
+        const filtered = filteredEntries();
+
         console.log("(FinanceService.tsx) As transações fora carregadas com sucesso!.");
 
-        return entries as Entries[];
+        return filtered;
 
     } catch (error) {
-
         console.error("(FinanceService.tsx) Erro ao carregar dados: ", error);
     } finally {
         onLoading(false);

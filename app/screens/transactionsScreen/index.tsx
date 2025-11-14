@@ -2,9 +2,10 @@ import { DeleteEntry, LoadTransactions } from '@/app/services/firebase/FinanceSe
 import { Entries, MixedTransactionEntry, Transactions } from '@/app/types/Finance';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import Header from '@/components/ui/Header';
-import TotalValueScreen from '@/components/ui/TotalValueScreen';
+import { Colors } from '@/constants/Colors';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import BalanceScreen from './balanceScreen';
 import CalendarNavigator from './calendarNavigator';
 import FinanceItemRecycler from './recyclerFinanceItem';
 import FinanceReportScreen from './recyclerFinanceItem/financeReportScreen';
@@ -26,9 +27,7 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
 
   const [financeReportScreen, setFinanceReportScreen] = useState({ isVisible: false, data: null as Transactions | null });
 
-  const [confirmationScreen, setConfirmationScreen] = useState(
-    { isVisible: false, message: '', transactionId: '', entryId: '', }
-  );
+  const [confirmationScreen, setConfirmationScreen] = useState({ isVisible: false, message: '', transactionId: '', entryId: '' });
 
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +35,7 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
     let isMounted = true;
 
     const fetchEntries = async () => {
-      const entries = await LoadTransactions(group_id, setLoading);
+      const entries = await LoadTransactions(date, group_id, setLoading);
       if (isMounted) setEntriesList(entries || []);
     };
 
@@ -58,21 +57,17 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
       console.error("(transactionsScreen.tsx) Erro ao deletar entrada: ", error);
     }
   }
-
+ 
   return (
     <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-      <Header>
-        <View style={{ height: 60 }} />
-      </Header>
+      <Header backgroundColor={Colors.light.background}><View style={{ height: 40 }} /></Header>
 
       <CalendarNavigator onDateChange={(date) => setDate(date.toLocaleDateString('pt-BR'))} />
 
-      <TotalValueScreen value={totalValue} />
+      <BalanceScreen isLoading={loading} list={entriesList} totalValue={totalValue}/>
 
       <FinanceItemRecycler
         entries_list={entriesList}
-        selectedDate={date}
-        selectedPaymentType={'concluded'}
         isLoading={loading}
         onTotalValueChange={(total) => setTotalValue(total)}
         bottomMargin={96}
