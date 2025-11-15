@@ -3,7 +3,13 @@ import { Entries, RecurrenceType, Transactions, TransactionType } from '@/app/ty
 import { getAuth } from 'firebase/auth';
 import { useState } from 'react';
 import ContentScreen from '../contentScreen';
-import { CategoryStep, DescriptionStep, DueDateStep, MessageFinalStep, RecurrenceScreen, StartDateStep, TotalValueStep } from './steps';
+import FinalStep from '../stepScreen/finalStep';
+import CategoryStep from './steps/categoryStep';
+import DescriptionStep from './steps/descriptionStep';
+import DueDateStep from './steps/dueDateStep';
+import RecurrenceStep from './steps/recurrenceStep';
+import StartDateStep from './steps/startDateStep';
+import ValueStep from './steps/valueStep';
 
 export default function CreateTransactionScreen(
   { isVisible, groupId, type, onDismiss }: { isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void }
@@ -19,7 +25,7 @@ export default function CreateTransactionScreen(
 
   const [transaction, setTransaction] = useState<Transactions>({
     transactionId: "", createdBy: currentUser.uid, createdAt: new Date().toISOString(), startDate: "", category: "", description: "",
-    recurrenceType: "", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: "", purchaseBank: ""
+    recurrenceType: "none", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: "", purchaseBank: ""
   });
 
   const [entries, setEntries] = useState<Partial<Entries>>(
@@ -37,24 +43,16 @@ export default function CreateTransactionScreen(
 
     setTransaction({
       transactionId: "", createdBy: "", createdAt: "", startDate: "", category: "", purchaseBank: "",
-      description: "", recurrenceType: "", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: ""
+      description: "", recurrenceType: "none", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: ""
     });
 
     setEntries({
-      paymentType: "", entrieId: "", entrieNumber: 0, dueDate: "", value: 0,
+      paymentType: "none", entrieId: "", entrieNumber: 0, dueDate: "", value: 0,
       paymentDate: "", paymentMethod: "", paymentBankCard: "", paymentBank: ""
     });
   }
 
-  function renderTitle() {
-    if (type === 'income') {
-      return 'Cadastro de Receita'
-    } else if (type === 'profit') {
-      return 'Cadastro de Lucro'
-    } else {
-      return 'Cadastro de Despesa'
-    }
-  }
+  function renderTitle() { return type === 'income' ? 'Cadastro de Receita' : 'Cadastro de Despesa' }
 
   return (
     <ContentScreen
@@ -63,7 +61,7 @@ export default function CreateTransactionScreen(
       uploading={loading}
       children={
         <>
-          <RecurrenceScreen
+          <RecurrenceStep
             isVisible={currentStep === "recurrence"}
             transactionType={type}
             values={{
@@ -113,7 +111,7 @@ export default function CreateTransactionScreen(
             onCancel={onDismiss}
           />
 
-          <TotalValueStep
+          <ValueStep
             isVisible={currentStep === "totalValue"}
             transactionType={type}
             value={transaction.totalValue}
@@ -132,11 +130,11 @@ export default function CreateTransactionScreen(
             onCancel={onDismiss}
           />
 
-          <MessageFinalStep
+          <FinalStep
             isVisible={currentStep === "final"}
             onConfirm={onDismiss}
-            text1={'Todos os passos foram concluídos!'}
-            text2={'Toque em confirmar para finalizar o cadastro da transação.'}
+            textAbove={'Todos os passos foram concluídos!'}
+            textBelow={'Toque em confirmar para finalizar o cadastro da transação.'}
           />
         </>
       }

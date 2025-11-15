@@ -4,9 +4,10 @@ import TransitionView from "@/components/ui/TransitionView";
 import { StyleSheet } from "react-native";
 
 export default function StepScreen({
-  isVisible, children, buttonTextConfirm, onConfirm, onBack, onCancel
+  isVisible, children, buttonTextConfirm, onConfirm, onBack, onCancel,
 }: {
-  isVisible: boolean; children: React.ReactNode; onConfirm: () => void; buttonTextConfirm?: string, onBack?: () => void; onCancel?: () => void;
+  isVisible: boolean; children: React.ReactNode; onConfirm: () => void;
+  buttonTextConfirm?: string, onBack?: () => void; onCancel?: () => void;
 }) {
   if (!isVisible) return null;
 
@@ -15,7 +16,9 @@ export default function StepScreen({
   return (
     <TransitionView style={styles.content}>
       {children}
+
       <CustomButton text={confirmText} onPress={onConfirm} />
+
       {onBack && (<TextButton text="Voltar" onPress={onBack} />)}
       {onCancel && (<TextButton text="Cancelar" onPress={onCancel} />)}
     </TransitionView>

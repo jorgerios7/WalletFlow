@@ -1,6 +1,7 @@
-export type TransactionType = 'income' | 'expense' | 'profit';
-export type PaymentType = 'concluded' | 'pending';
-export type RecurrenceType = 'single' | 'fixed' | 'installment' | 'variable' | 'installment_dp' | 'scheduled';
+export type TransactionType = "none" |'income' | 'expense';
+export type PaymentType = "none" |"concluded" | "pending";
+export type RecurrenceType = "none" | "single" | "fixed" | "installment";
+export type RecurrenceFrequency = "none" |"daily"| "weekly"| "monthly"| "yearly";
 
 //"single" (única)
 //"fixed" (fixa (recorrente igual))
@@ -11,12 +12,12 @@ export type RecurrenceType = 'single' | 'fixed' | 'installment' | 'variable' | '
 
 export interface Transactions {
   transactionId: string; category: string; createdAt: string; createdBy: string; startDate: string; totalValue: number; description: string;
-  totalEntries: number; recurrenceType: string; purchasingMethod: string; purchaseBankCard: string; purchaseBank: string;
+  totalEntries: number; recurrenceType: RecurrenceType; purchasingMethod: string; purchaseBankCard: string; purchaseBank: string;
 }
 
 export interface Entries {
-  type: string; paymentType: string; entrieId: string; dueDate: string; value: number; paymentDate: string; paymentMethod: string;
-  entrieNumber: number; paymentBankCard: string; paymentBank: string;
+  type: TransactionType; paymentType: PaymentType; entrieId: string; dueDate: string; value: number; paymentDate: string; paymentMethod: string;
+  entrieNumber: number; paymentBankCard: string; paymentBank: string; recurrenceFrequency: RecurrenceFrequency
 }
 
 export interface MixedTransactionEntry extends Transactions, Entries { }

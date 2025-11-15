@@ -2,7 +2,10 @@ import { UpdateEntry } from "@/app/services/firebase/FinanceService";
 import { PaymentType, UpdateEntryValues } from "@/app/types/Finance";
 import { useState } from "react";
 import { View } from "react-native";
-import { MessageFinalStep, PaymentDateStep, PaymentMethodStep, PaymentStep } from "../createTransactionScreen/steps";
+import FinalStep from "../stepScreen/finalStep";
+import PaymentDateStep from "./steps/paymentDateStep";
+import PaymentMethodStep from "./steps/paymentMethodStep";
+import PaymentStep from "./steps/paymentStep";
 
 interface Props {
   ids: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onUpdate: (isUpdating: boolean) => void, onDismiss: () => void
@@ -74,10 +77,10 @@ export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Prop
         onBack={() => setCurrentStep('paymentDate')}
       />
 
-      <MessageFinalStep
+      <FinalStep
         isVisible={currentStep === 'final'}
-        text1={'Atualização concluída com sucesso!'}
-        text2={'Toque em confirmar para sair do editor de pagamento.'}
+        textAbove={'Atualização concluída com sucesso!'}
+        textBelow={'Toque em confirmar para sair do editor de pagamento.'}
         onConfirm={onDismiss}
       />
     </View>
