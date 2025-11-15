@@ -1,17 +1,71 @@
 import { db } from "@/app/config/firebaseConfig";
-import { Entries, Transactions, TransactionType, UpdateEntryValues } from "@/app/types/Finance";
+import { BalanceValues, Entries, Transactions, TransactionType, UpdateEntryValues } from "@/app/types/Finance";
 import { FormatDateBR, SepareteDate } from "@/app/utils/Format";
 import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { Alert } from "react-native";
 
-export async function LoadTransactions(date: string, groupId: string, onLoading: (loading: boolean) => void): Promise<Entries[] | undefined> {
+export async function LoadTransactions(
+    date: string, groupId: string, onLoading: (loading: boolean) => void, onBalanceCalculation?: (balance: BalanceValues) => void
+): Promise<Entries[] | undefined> {
+
     try {
         onLoading(true);
+
+        if (!date) return [];
+
+        const [selectedDay, selectedMonth, selectedYear] = date.split("/");
 
         const transactionsRef = collection(db, `groups/${groupId}/transactions`);
         const transactionsSnapshot = await getDocs(transactionsRef);
 
-        const entries: Entries[] = [];
+        const result: Entries[] = [];
+
+        function Balance() {
+            // Ordem dos índices:
+            // typeIndex:      0 = income,  1 = expense
+            // paymentIndex:   0 = concluded, 1 = pending
+
+            // Matriz 2x2 para valores totalizados:
+            // totals[typeIndex][paymentIndex]
+            const totals = [
+                [0, 0], // income: [concluded, pending]
+                [0, 0]  // expense: [concluded, pending]
+            ];
+
+            // Totais gerais por type (independente de concluded/pending)
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            for (const { type, paymentType, value = 0 } of result) {
+                // Mapear para índices numéricos extremamente rápidos
+                const typeIndex = type === "income" ? 0 : 1;
+                const payIndex = paymentType === "concluded" ? 0 : 1;
+
+                // Soma por categoria (income/expense)
+                if (typeIndex === 0) totalIncome += value;
+                else totalExpense += value;
+
+                // Soma nas matrizes
+                totals[typeIndex][payIndex] += value;
+            }
+
+            const [[concludedIncome, pendingIncome], [concludedExpense, pendingExpense]] = totals;
+
+            const balance: BalanceValues = {
+                totalIncomeBalance: totalIncome,
+                totalExpenseBalance: totalExpense,
+
+                totalConcludedIncomeBalance: concludedIncome,
+                totalPendingIncomeBalance: pendingIncome,
+
+                totalConcludedExpenseBalance: concludedExpense,
+                totalPendingExpenseBalance: pendingExpense,
+
+                totalConcludedSum: concludedIncome + concludedExpense
+            };
+
+            return balance;
+        }
 
         for (const transactionDoc of transactionsSnapshot.docs) {
             const transData = transactionDoc.data();
@@ -20,51 +74,40 @@ export async function LoadTransactions(date: string, groupId: string, onLoading:
 
             const entriesSnapshot = await getDocs(entriesRef);
 
-            const entriesDocs = entriesSnapshot.docs.map((doc) => {
-                const entData = doc.data() as Partial<Entries>;
-                return {
-                    transactionId: transactionDoc.id, category: transData.category, totalValue: transData.totalValue,
-                    startDate: transData.startDate, totalEntries: transData.totalEntries,
+            for (const entryDoc of entriesSnapshot.docs) {
+                const entData = entryDoc.data() as Partial<Entries>;
 
-                    entrieId: doc.id, type: entData.paymentType, dueDate: entData.dueDate, paymentBank: entData.paymentBank,
-                    payment: entData.paymentType, paymentDate: entData.paymentDate, paymentMethod: entData.paymentMethod,
-                    paymentBankCard: entData.paymentBankCard, entrieNumber: entData.entrieNumber, value: entData.value,
-                    ...entData
-                } as Entries;
-            });
+                const [day, month, year] = entData.dueDate?.split("/") ?? ["", "", ""];
 
-            entries.push(...entriesDocs);
+                if (month === selectedMonth && year === selectedYear) {
+
+                    result.push({
+                        transactionId: transactionDoc.id, category: transData.category, totalValue: transData.totalValue,
+                        startDate: transData.startDate, totalEntries: transData.totalEntries, description: transData.description,
+
+                        entrieId: entryDoc.id, type: entData.type ?? entData.paymentType, paymentType: entData.paymentType,
+                        dueDate: entData.dueDate, paymentBank: entData.paymentBank, payment: entData.paymentType,
+                        paymentDate: entData.paymentDate, paymentMethod: entData.paymentMethod, paymentBankCard: entData.paymentBankCard,
+                        entrieNumber: entData.entrieNumber, value: entData.value ?? 0,
+                        ...entData,
+                    } as Entries);
+                }
+            }
         }
 
-        function filteredEntries() {
-            const newList = entries.filter((listedEntries) => {
-                if (!date) return true;
-                const [listedDay, listedMonth, listedYear] = listedEntries.dueDate.split('/');
-                const [selectedDay, selectedMonth, selectedYear] = date.split('/');
-                //const isDay = listedDay === selectedDay;
-                const isMonth = listedMonth === selectedMonth;
-                const isYear = listedYear === selectedYear;
-                //const isPayment = listedEntries.paymentType === selectedPaymentType;
-                //const isMethod = listedEntries.purchasingMethod === selectedMethodType;
-                //const isValue = listedEntries.value === selectedValue;
-                return (isMonth && isYear);
-            });
+        onBalanceCalculation?.(Balance());
 
-            return newList;
-        }
+        console.log("(FinanceService.tsx) Transações carregadas com sucesso!");
 
-        const filtered = filteredEntries();
-
-        console.log("(FinanceService.tsx) As transações fora carregadas com sucesso!.");
-
-        return filtered;
+        return result;
 
     } catch (error) {
-        console.error("(FinanceService.tsx) Erro ao carregar dados: ", error);
+        console.error("(FinanceService.tsx) Erro ao carregar dados:", error);
     } finally {
         onLoading(false);
     }
 }
+
 
 export async function UploadTransaction(
     userId: string, groupId: string, type: TransactionType, transactions: Transactions,

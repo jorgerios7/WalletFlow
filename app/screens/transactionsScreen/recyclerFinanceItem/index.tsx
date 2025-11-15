@@ -2,19 +2,18 @@ import { LoadScreen } from '@/app/pages/LoadScreen';
 import NotFoundScreen from '@/app/pages/NotFoundScreen';
 import { Entries, Transactions, UpdateEntryValues } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
 import FinanceDetailsItem from './financeDetailsItem';
 
 interface Props {
-  entries_list: Entries[];  bottomMargin?: number; isLoading: boolean;
-  onTotalValueChange: (total: number) => void; onPressingInfo: (items: Transactions) => void;
+  entries_list: Entries[]; bottomMargin?: number; isLoading: boolean; onPressingInfo: (items: Transactions) => void;
   onPressDelete: (id: { transaction: string, entry: string }, values: { paymentType: string, value: number }) => void;
   onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
-  entries_list, bottomMargin = 0, isLoading, onTotalValueChange, onPressingInfo, onPressDelete, onPressingEditPayment
+  entries_list, bottomMargin = 0, isLoading, onPressingInfo, onPressDelete, onPressingEditPayment
 }) => {
 
   const groupByDate = (entries: Entries[]): { title: string; data: Entries[]; value: number }[] => {
@@ -49,13 +48,6 @@ const FinanceItemRecycler: React.FC<Props> = ({
   };
 
   const sections = groupByDate(entries_list);
-
-  const totalValue = entries_list.reduce((sum, item) => {
-    const validValues = item.paymentType === 'concluded' ? item.value : 0;
-    return (sum + validValues);
-  }, 0);
-
-  useEffect(() => { onTotalValueChange(totalValue) }, [totalValue, onTotalValueChange]);
 
   function HeaderSection({ date, value }: { date: string, value: number }) {
     return (

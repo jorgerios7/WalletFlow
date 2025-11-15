@@ -1,5 +1,5 @@
 import { DeleteEntry, LoadTransactions } from '@/app/services/firebase/FinanceService';
-import { Entries, MixedTransactionEntry, Transactions } from '@/app/types/Finance';
+import { BalanceValues, Entries, MixedTransactionEntry, Transactions } from '@/app/types/Finance';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import Header from '@/components/ui/Header';
 import { Colors } from '@/constants/Colors';
@@ -16,7 +16,10 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
   const [date, setDate] = useState('');
   const [loadData, setLoadData] = useState(false);
   const [entriesList, setEntriesList] = useState<Entries[]>([]);
-  const [totalValue, setTotalValue] = useState(0);
+  const [balance, setBalance] = useState({
+    totalIncomeBalance: 0, totalExpenseBalance: 0, totalConcludedIncomeBalance: 0, totalPendingIncomeBalance: 0,
+    totalConcludedExpenseBalance: 0, totalPendingExpenseBalance: 0, totalConcludedSum: 0
+  } as BalanceValues);
   const [paymentScreen, setPaymentScreen] = useState(
     {
       isVisible: false,
@@ -35,7 +38,7 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
     let isMounted = true;
 
     const fetchEntries = async () => {
-      const entries = await LoadTransactions(date, group_id, setLoading);
+      const entries = await LoadTransactions(date, group_id, setLoading, setBalance);
       if (isMounted) setEntriesList(entries || []);
     };
 
@@ -57,19 +60,18 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
       console.error("(transactionsScreen.tsx) Erro ao deletar entrada: ", error);
     }
   }
- 
+
   return (
     <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
       <Header backgroundColor={Colors.light.background}><View style={{ height: 40 }} /></Header>
 
       <CalendarNavigator onDateChange={(date) => setDate(date.toLocaleDateString('pt-BR'))} />
 
-      <BalanceScreen isLoading={loading} list={entriesList} totalValue={totalValue}/>
+      <BalanceScreen isLoading={loading} balanceValues={balance} />
 
       <FinanceItemRecycler
         entries_list={entriesList}
         isLoading={loading}
-        onTotalValueChange={(total) => setTotalValue(total)}
         bottomMargin={96}
         onPressingEditPayment={(id, values) => {
           setPaymentScreen({
