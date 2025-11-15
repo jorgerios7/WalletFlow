@@ -32,34 +32,28 @@ export async function LoadTransactions(
                 [0, 0]  // expense: [concluded, pending]
             ];
 
-            // Totais gerais por type (independente de concluded/pending)
             let totalIncome = 0;
             let totalExpense = 0;
 
             for (const { type, paymentType, value = 0 } of result) {
-                // Mapear para índices numéricos extremamente rápidos
+
                 const typeIndex = type === "income" ? 0 : 1;
                 const payIndex = paymentType === "concluded" ? 0 : 1;
 
-                // Soma por categoria (income/expense)
                 if (typeIndex === 0) totalIncome += value;
                 else totalExpense += value;
 
-                // Soma nas matrizes
                 totals[typeIndex][payIndex] += value;
             }
 
             const [[concludedIncome, pendingIncome], [concludedExpense, pendingExpense]] = totals;
 
             const balance: BalanceValues = {
-                totalIncomeBalance: totalIncome,
-                totalExpenseBalance: totalExpense,
+                totalIncomeBalance: totalIncome, totalExpenseBalance: totalExpense,
 
-                totalConcludedIncomeBalance: concludedIncome,
-                totalPendingIncomeBalance: pendingIncome,
+                totalConcludedIncomeBalance: concludedIncome, totalPendingIncomeBalance: pendingIncome,
 
-                totalConcludedExpenseBalance: concludedExpense,
-                totalPendingExpenseBalance: pendingExpense,
+                totalConcludedExpenseBalance: concludedExpense, totalPendingExpenseBalance: pendingExpense,
 
                 totalConcludedSum: concludedIncome + concludedExpense
             };

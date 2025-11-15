@@ -4,16 +4,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-const format = (isLoading: boolean, value: number) =>
-  `R$ ${(isLoading ? 0 : value).toFixed(2)}`;
+const format = (isLoading: boolean, value: number) => `R$ ${(isLoading ? 0 : value).toFixed(2)}`;
 
-export default function BalanceScreen({
-  isLoading,
-  balanceValues
-}: {
-  isLoading: boolean;
-  balanceValues: BalanceValues;
-}) {
+export default function BalanceScreen({ isLoading, balanceValues }: { isLoading: boolean; balanceValues: BalanceValues }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpand = () => setIsExpanded((prev) => !prev);

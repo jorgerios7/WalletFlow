@@ -65,13 +65,13 @@ const FinanceItemRecycler: React.FC<Props> = ({
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <LoadScreen />
+        <LoadScreen marginBottom={bottomMargin}/>
       ) : sections.length === 0 ? (
-        <NotFoundScreen />
+        <NotFoundScreen marginBottom={bottomMargin}/>
       ) : (
         <SectionList
           stickySectionHeadersEnabled
-          style={[styles.scrollContent, { marginBottom: bottomMargin }]}
+          style={[styles.scrollContent, { marginBottom: bottomMargin}]}
           sections={sections}
           keyExtractor={(item) => item.entrieId}
           renderItem={({ item, index, section }) => {

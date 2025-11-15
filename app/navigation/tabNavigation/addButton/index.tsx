@@ -3,28 +3,15 @@ import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-interface Props {
-  onPress: (value: TransactionType) => void;
-}
+const AddButton: React.FC<{ onPress: (value: TransactionType) => void }> = ({ onPress }) => {
 
-const AddButton: React.FC<Props> = ({ onPress }) => {
   const insets = useSafeAreaInsets();
   const [expanded, setExpanded] = useState(false);
 
-  const toggleExpanded = () => {
-    setExpanded(!expanded);
-  };
+  const toggleExpanded = () => { setExpanded(!expanded) };
 
   return (
     <>
@@ -34,19 +21,9 @@ const AddButton: React.FC<Props> = ({ onPress }) => {
             <SmallButton
               text={'Adicionar Receita'}
               icon="attach-money"
-              offset={230}
-              onPress={() => {
-                onPress('income');
-                toggleExpanded()
-              }}
-            />
-
-            <SmallButton
-              text={'Adicionar Lucro'}
-              icon="bar-chart"
               offset={160}
               onPress={() => {
-                onPress('profit');
+                onPress('income');
                 toggleExpanded()
               }}
             />
@@ -74,57 +51,49 @@ const AddButton: React.FC<Props> = ({ onPress }) => {
   );
 };
 
-const LargeButton: React.FC<{
-  onPress: () => void, expanded: boolean
-}> = ({
-  onPress, expanded
-}) => {
-    return (
-      <TouchableHighlight
-        onPress={onPress}
-        style={styles.shadowWrapper}
-        underlayColor={Colors.light.shadow}
+const LargeButton: React.FC<{ onPress: () => void, expanded: boolean }> = ({ onPress, expanded }) => {
+  return (
+    <TouchableHighlight
+      onPress={onPress}
+      style={styles.shadowWrapper}
+      underlayColor={Colors.light.shadow}
+    >
+      <LinearGradient
+        colors={[
+          Colors.light.highlightBackgroun_1,
+          Colors.light.highlightBackgroun_2,
+        ]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.addButton}
       >
-        <LinearGradient
-          colors={[
-            Colors.light.highlightBackgroun_1,
-            Colors.light.highlightBackgroun_2,
-          ]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.addButton}
-        >
-          <MaterialIcons name={expanded ? 'close' : 'add'} size={28} color={Colors.light.background} />
-        </LinearGradient>
-      </TouchableHighlight>
-    );
-  }
+        <MaterialIcons name={expanded ? 'close' : 'add'} size={28} color={Colors.light.background} />
+      </LinearGradient>
+    </TouchableHighlight>
+  );
+}
 
-const SmallButton: React.FC<{
-  icon: any, text: string, offset: number, onPress: () => void;
-}> = ({
-  icon, text, offset, onPress
-}) => {
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        style={[styles.smallButtonWrapper, { bottom: offset }]}
-        activeOpacity={0.8}
+const SmallButton: React.FC<{ icon: any, text: string, offset: number, onPress: () => void }> = ({ icon, text, offset, onPress }) => {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.smallButtonWrapper, { bottom: offset }]}
+      activeOpacity={0.8}
+    >
+      <LinearGradient
+        colors={[Colors.light.highlightBackgroun_1, Colors.light.highlightBackgroun_2]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.smallButton, { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12 }]}
       >
-        <LinearGradient
-          colors={[Colors.light.highlightBackgroun_1, Colors.light.highlightBackgroun_2]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[styles.smallButton, { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12 }]}
-        >
-          <MaterialIcons name={icon} size={22} color={Colors.light.background} />
-          <Text style={{ color: Colors.light.background, marginLeft: 6, fontSize: 14, fontWeight: "500" }} numberOfLines={1}>
-            {text}
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
-    );
-  };
+        <MaterialIcons name={icon} size={22} color={Colors.light.background} />
+        <Text style={{ color: Colors.light.background, marginLeft: 6, fontSize: 14, fontWeight: "500" }} numberOfLines={1}>
+          {text}
+        </Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+};
 
 const BUTTON_SIZE = 72;
 const SMALL_BUTTON_SIZE = 48;

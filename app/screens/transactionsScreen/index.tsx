@@ -5,6 +5,7 @@ import Header from '@/components/ui/Header';
 import { Colors } from '@/constants/Colors';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BalanceScreen from './balanceScreen';
 import CalendarNavigator from './calendarNavigator';
 import FinanceItemRecycler from './recyclerFinanceItem';
@@ -13,6 +14,7 @@ import ContentScreen from './transactionEditor/contentScreen';
 import PaymentScreen from './transactionEditor/paymentScreen';
 
 const TransactionsScreen = ({ group_id }: { group_id: string }) => {
+  const insets = useSafeAreaInsets();
   const [date, setDate] = useState('');
   const [loadData, setLoadData] = useState(false);
   const [entriesList, setEntriesList] = useState<Entries[]>([]);
@@ -72,7 +74,7 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
       <FinanceItemRecycler
         entries_list={entriesList}
         isLoading={loading}
-        bottomMargin={96}
+        bottomMargin={insets.bottom + 50}
         onPressingEditPayment={(id, values) => {
           setPaymentScreen({
             isVisible: true,

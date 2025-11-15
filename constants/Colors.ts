@@ -7,7 +7,7 @@ export const Colors = {
     background: '#fff',
     highlightBackgroun_1: 'rgb(6, 11, 58)',
     highlightBackgroun_2: 'rgba(24, 24, 49, 0.9)',
-    shadow: 'rgba(255, 255, 255, 0.1)',
+    shadow: 'rgba(85, 82, 82, 0.12)',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
