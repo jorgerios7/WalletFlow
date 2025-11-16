@@ -1,4 +1,4 @@
-import { UploadTransaction } from '@/app/services/firebase/FinanceService';
+import UploadTransaction from '@/app/services/firebase/financeService/uploadTransaction';
 import { Entries, RecurrenceType, Transactions, TransactionType } from '@/app/types/Finance';
 import { getAuth } from 'firebase/auth';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ export default function CreateTransactionScreen(
 
   const [transaction, setTransaction] = useState<Transactions>({
     transactionId: "", createdBy: currentUser.uid, createdAt: new Date().toISOString(), startDate: "", category: "", description: "",
-    recurrenceType: "none", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: "", purchaseBank: ""
+    recurrenceType: "none", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: "", purchaseBank: "", recurrenceFrequency: "none"
   });
 
   const [entries, setEntries] = useState<Partial<Entries>>(
@@ -42,7 +42,7 @@ export default function CreateTransactionScreen(
     setCurrentStep('final')
 
     setTransaction({
-      transactionId: "", createdBy: "", createdAt: "", startDate: "", category: "", purchaseBank: "",
+      transactionId: "", createdBy: "", createdAt: "", startDate: "", category: "", purchaseBank: "", recurrenceFrequency: "none",
       description: "", recurrenceType: "none", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: ""
     });
 
@@ -65,16 +65,15 @@ export default function CreateTransactionScreen(
             isVisible={currentStep === "recurrence"}
             transactionType={type}
             values={{
-              recurrenceType: transaction.recurrenceType as RecurrenceType || 'single', totalEntries: transaction.totalEntries,
-              purchasingMethod: transaction.purchasingMethod, purchaseBankCard: transaction.purchaseBankCard, purchaseBank: transaction.purchaseBank
+              recurrenceType: transaction.recurrenceType as RecurrenceType, totalEntries: transaction.totalEntries,
+              purchasingMethod: transaction.purchasingMethod, purchaseBankCard: transaction.purchaseBankCard,
+              purchaseBank: transaction.purchaseBank, recurrenceFrequency: transaction.recurrenceFrequency
             }}
-            onSelect={({ recurrenceType, totalEntries, purchasingMethod, purchaseBankCard, purchaseBank }) => {
-              setTransaction((prev) => (
-                {
-                  ...prev, recurrenceType: recurrenceType, totalEntries: totalEntries, purchasingMethod: purchasingMethod,
-                  purchaseBankCard: purchaseBankCard, purchaseBank: purchaseBank
-                }
-              ))
+            onSelect={({ recurrenceType, recurrenceFrequency, totalEntries, purchasingMethod, purchaseBankCard, purchaseBank }) => {
+              setTransaction((prev) => ({
+                ...prev, recurrenceType: recurrenceType, totalEntries: totalEntries, recurrenceFrequency: recurrenceFrequency,
+                purchasingMethod: purchasingMethod, purchaseBankCard: purchaseBankCard, purchaseBank: purchaseBank
+              }))
             }}
             onConfirm={() => setCurrentStep("category")}
             onBack={() => onDismiss()}
@@ -95,7 +94,11 @@ export default function CreateTransactionScreen(
             isVisible={currentStep === "startDate"}
             value={transaction.startDate}
             onSelect={(selected) => setTransaction((prev) => ({ ...prev, startDate: selected }))}
-            onConfirm={() => setCurrentStep("dueDate")}
+            onConfirm={() => setCurrentStep(
+              transaction.recurrenceFrequency === "daily"
+                ? "totalValue"
+                : "dueDate"
+            )}
             onBack={() => setCurrentStep("category")}
             onCancel={onDismiss}
           />
@@ -103,6 +106,7 @@ export default function CreateTransactionScreen(
           <DueDateStep
             isVisible={currentStep === "dueDate"}
             recurrenceType={transaction.recurrenceType}
+            recurrenceFrequency={transaction.recurrenceFrequency}
             value={entries.dueDate as string}
             onSelect={(selected) => setEntries((prev) => ({ ...prev, dueDate: selected }))}
             startDate={transaction.startDate}
@@ -117,7 +121,11 @@ export default function CreateTransactionScreen(
             value={transaction.totalValue}
             onSelect={(selected) => setTransaction((prev) => ({ ...prev, totalValue: selected }))}
             onConfirm={() => setCurrentStep("description")}
-            onBack={() => setCurrentStep("dueDate")}
+            onBack={() => setCurrentStep(
+              transaction.recurrenceFrequency === "daily"
+                ? "category"
+                : "dueDate"
+            )}
             onCancel={onDismiss}
           />
 

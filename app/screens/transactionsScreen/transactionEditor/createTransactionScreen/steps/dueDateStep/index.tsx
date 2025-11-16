@@ -1,14 +1,17 @@
+import { RecurrenceFrequency } from "@/app/types/Finance";
 import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import { Colors } from "@/constants/Colors";
 import { Alert } from "react-native";
 import StepScreen from "../../../stepScreen";
 
-interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
+interface Props {
+  isVisible: boolean; startDate: string, recurrenceType: string, recurrenceFrequency: RecurrenceFrequency, value: string;
+  onSelect: (value: string) => void; onBack?: () => void; onConfirm: () => void; onCancel: () => void;
+}
 
 export default function DueDateStep(
-  { isVisible, startDate, recurrenceType, value, onSelect, onConfirm, onBack, onCancel }:
-    StepsProps & { startDate: string, recurrenceType: string, value: string; onSelect: (value: string) => void; }
+  { isVisible, startDate, recurrenceType, recurrenceFrequency, value, onSelect, onConfirm, onBack, onCancel }: Props
 ) {
 
   function handleDate(preSelect: boolean, dueDay: string) {
@@ -39,19 +42,24 @@ export default function DueDateStep(
         <DropdownSelect
           isVisible
           onOpeningDropdown="openAtBottom"
-          placeholder={'Dia do vencimento'}
+          placeholder={recurrenceFrequency === "weekly"
+            ? "Vencerá sempre neste dia de cada semana"
+            : "Vencerá sempre neste dia de cada mês"
+          }
           setSelection={handleDate(true, value)}
-          list={[
-            '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15',
-            '16', '17', '18', '19', '20', '21', '22', '23', '25', '26', '27', '28', '29', '30', '31'
-          ]}
+          list={recurrenceFrequency === "weekly"
+            ? ['01', '02', '03', '04', '05', '06', '07']
+            : [
+              '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15',
+              '16', '17', '18', '19', '20', '21', '22', '23', '25', '26', '27', '28', '29', '30', '31'
+            ]}
           onSelect={(day) => handleDate(false, day as string)}
         />
       ) : (
         <DynamicLabelInput
           dateEntry
           initialText={value}
-          label={'Data de vencimento'}
+          label={'Data do vencimento'}
           colorLabel={Colors.light.shadow}
           onTextChange={onSelect}
         />

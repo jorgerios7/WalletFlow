@@ -1,37 +1,40 @@
-import { RecurrenceType, TransactionType } from "@/app/types/Finance";
+import { RecurrenceFrequency, RecurrenceType, RecurrenceValues, TransactionType } from "@/app/types/Finance";
 import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 import StepScreen from "../../../stepScreen";
 
 interface Props { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
-interface RecurrenceValuesProps { recurrenceType: RecurrenceType; totalEntries: number, purchasingMethod: string, purchaseBankCard: string, purchaseBank: string }
 
 export default function RecurrenceStep(
     {
         isVisible, transactionType, values, onConfirm, onCancel, onSelect }:
-        Props & { transactionType: TransactionType, values: RecurrenceValuesProps, onSelect: (values: RecurrenceValuesProps) => void }
+        Props & { transactionType: TransactionType, values: RecurrenceValues, onSelect: (values: RecurrenceValues) => void }
 ) {
     if (!isVisible) return;
 
     const [selection, setSelection] = useState(
         {
-            recurrenceType: values.recurrenceType, totalEntries: values.totalEntries, purchaseBankCard: values.purchaseBankCard,
-            purchasingMethod: values.purchasingMethod, purchaseBank: values.purchaseBank
+            recurrenceType: values.recurrenceType, recurrenceFrequency: values.recurrenceFrequency, totalEntries: values.totalEntries,
+            purchaseBankCard: values.purchaseBankCard, purchasingMethod: values.purchasingMethod, purchaseBank: values.purchaseBank,
         }
     );
 
     function handleSelect() {
-        const { recurrenceType, purchasingMethod, purchaseBankCard, purchaseBank, totalEntries } = selection;
+        const { recurrenceType, recurrenceFrequency, purchasingMethod, purchaseBankCard, purchaseBank, totalEntries } = selection;
 
         const isInstallment = recurrenceType === 'installment';
 
         const entries = isInstallment ? totalEntries : 0;
 
-        const baseSelection = { recurrenceType, totalEntries: entries, purchasingMethod, purchaseBankCard: "", purchaseBank: "" };
+        const baseSelection = { recurrenceType, recurrenceFrequency, totalEntries: entries, purchasingMethod, purchaseBankCard: "", purchaseBank: "" };
 
         switch (purchasingMethod) {
-            case 'Cartão de crédito': case 'Pix': onSelect({ ...baseSelection, purchaseBankCard, purchaseBank: isInstallment ? purchaseBank : "", totalEntries });
+            case 'Cartão de crédito': case 'Pix': onSelect(
+                {
+                    ...baseSelection, purchaseBankCard, purchaseBank: (isInstallment ? purchaseBank : ""),
+                    totalEntries: (isInstallment ? totalEntries : 0), recurrenceFrequency: (isInstallment ? recurrenceFrequency : "none")
+                }
+            );
                 break;
 
             case 'Boleto': onSelect({ ...baseSelection, purchaseBank });
@@ -44,28 +47,46 @@ export default function RecurrenceStep(
         }
     }
 
+    function handleInstallmentNumbers() {
+        switch (selection.recurrenceFrequency) {
+            case "weekly":
+                return Array.from({ length: 7 }, (_, i) => i + 1);
+
+            case "monthly":
+                return Array.from({ length: 12 }, (_, i) => i + 1);
+
+            case "daily":
+                return Array.from({ length: 30 }, (_, i) => i + 1);
+
+            default:
+                return [];
+        }
+    }
 
     useEffect(() => { handleSelect() }, [selection]);
 
     return (
         <StepScreen
             isVisible={isVisible}
-            onConfirm={() => {
-                if (selection) {
-                    onConfirm();
-                } else {
-                    Alert.alert('Campo vazio', 'Digite uma data para continuar');
-                }
-            }}
+            onConfirm={onConfirm}
             onCancel={onCancel}
         >
             <DropdownSelect
                 isVisible
                 onOpeningDropdown="openAtBottom"
-                placeholder={'Recorrência'}
-                setSelection={selection.recurrenceType}
+                placeholder={'Tipo de recorrência'}
+                setSelection={selection.recurrenceType === "none" ? "" : selection.recurrenceType}
                 list={['single', 'fixed', 'installment']}
                 onSelect={(item) => { setSelection((prev) => ({ ...prev, recurrenceType: item as RecurrenceType })) }}
+            />
+
+            <DropdownSelect
+                isVisible={selection.recurrenceType === "installment"}
+                onOpeningDropdown="openAtBottom"
+                placeholder={'Frequência da recorrência'}
+                setSelection={selection.recurrenceFrequency === "none" ? "" : selection.recurrenceFrequency}
+                list={["daily", "weekly", "monthly"]}
+                onSelect={(item) => { setSelection((prev) => ({ ...prev, recurrenceFrequency: item as RecurrenceFrequency })) }}
             />
 
             <DropdownSelect
@@ -93,7 +114,7 @@ export default function RecurrenceStep(
                 onOpeningDropdown="openAtBottom"
                 placeholder={'Quantidade de parcelas'}
                 setSelection={selection.totalEntries}
-                list={[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+                list={handleInstallmentNumbers()}
                 onSelect={(value) => setSelection((prev) => ({ ...prev, totalEntries: value as number }))}
             />
 

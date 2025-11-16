@@ -1,4 +1,5 @@
-import { DeleteEntry, LoadTransactions } from '@/app/services/firebase/FinanceService';
+import DeleteEntry from '@/app/services/firebase/financeService/deleteEntry';
+import LoadTransactions from '@/app/services/firebase/financeService/loadTransactions';
 import { BalanceValues, Entries, MixedTransactionEntry, Transactions } from '@/app/types/Finance';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import Header from '@/components/ui/Header';

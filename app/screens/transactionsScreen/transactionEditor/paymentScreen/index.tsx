@@ -1,4 +1,4 @@
-import { UpdateEntry } from "@/app/services/firebase/FinanceService";
+import UpdateEntry from "@/app/services/firebase/financeService/updateEntry";
 import { PaymentType, UpdateEntryValues } from "@/app/types/Finance";
 import { useState } from "react";
 import { View } from "react-native";
