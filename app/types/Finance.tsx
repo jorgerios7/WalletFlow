@@ -1,7 +1,7 @@
 export type TransactionType = "none" | 'income' | 'expense';
 export type PaymentType = "none" | "concluded" | "pending";
 export type RecurrenceType = "none" | "single" | "fixed" | "installment";
-export type RecurrenceFrequency = "none" | "daily" | "weekly" | "monthly" | "yearly";
+export type RecurrenceFrequency = "none" | "daily" | "weekly" | "monthly";
 
 //"single" (única)
 //"fixed" (fixa (recorrente igual))

@@ -74,7 +74,7 @@ export default function RecurrenceStep(
             <DropdownSelect
                 isVisible
                 onOpeningDropdown="openAtBottom"
-                placeholder={'Tipo de recorrência'}
+                placeholder={'Tipo'}
                 setSelection={selection.recurrenceType === "none" ? "" : selection.recurrenceType}
                 list={['single', 'fixed', 'installment']}
                 onSelect={(item) => { setSelection((prev) => ({ ...prev, recurrenceType: item as RecurrenceType })) }}
@@ -83,7 +83,7 @@ export default function RecurrenceStep(
             <DropdownSelect
                 isVisible={selection.recurrenceType === "installment"}
                 onOpeningDropdown="openAtBottom"
-                placeholder={'Frequência da recorrência'}
+                placeholder={'Frequência'}
                 setSelection={selection.recurrenceFrequency === "none" ? "" : selection.recurrenceFrequency}
                 list={["daily", "weekly", "monthly"]}
                 onSelect={(item) => { setSelection((prev) => ({ ...prev, recurrenceFrequency: item as RecurrenceFrequency })) }}

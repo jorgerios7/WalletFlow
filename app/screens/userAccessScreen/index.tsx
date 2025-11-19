@@ -1,6 +1,4 @@
 import { auth, db } from "@/app/config/firebaseConfig";
-import LoginScreen from "@/app/screens/LoginScreen";
-import SignupScreen from "@/app/screens/SignupScreen";
 import BoxInputs from "@/components/ui/BoxInputs";
 import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
@@ -9,13 +7,16 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { Provider as PaperProvider, Snackbar } from "react-native-paper";
+import LoginScreen from "./loginScreen";
+import SignupScreen from "./signupScreen";
 
 interface Props {
-    onPress: (isLoged: boolean) => void,
-    getUId: (id: string) => void
+    isVisible: boolean, onPress: (isLoged: boolean) => void, onUserId: (id: string) => void
 }
 
-const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
+const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => {
+    if (!isVisible) return null;
+
     const [loginInputValue, setLoginInputValue] = useState({ Email: "", Password: "" });
 
     const loginFormLabels = { Email: "Email", Password: "Senha" };
@@ -53,7 +54,7 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
                 },
                 createdAt: new Date().toISOString()
             });
-            getUId(uid);
+            onUserId(uid);
             setLoginCreation(true);
         } catch (error) {
             console.error("(UserAccessScreen) Erro:", error);
@@ -75,7 +76,7 @@ const UserAccessScreen: React.FC<Props> = ({ onPress, getUId }) => {
             .then((userCredential) => {
                 const user = userCredential.user;
 
-                if (getUId) getUId(user.uid)
+                if (onUserId) onUserId(user.uid)
                 if (onPress) onPress(true);
 
                 setLoginInputValue({ Email: "", Password: "" });

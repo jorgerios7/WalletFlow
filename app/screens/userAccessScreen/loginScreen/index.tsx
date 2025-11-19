@@ -1,8 +1,8 @@
 import CustomButton from '@/components/ui/CustomButton';
+import DynamicLabelInput from '@/components/ui/DynamicLabelInput';
+import TextButton from '@/components/ui/TextButton';
 import React from 'react';
 import { View } from "react-native";
-import DynamicLabelInput from "../../components/ui/DynamicLabelInput";
-import TextButton from "../../components/ui/TextButton";
 
 interface Props {
     values: { Email: string; Password: string };

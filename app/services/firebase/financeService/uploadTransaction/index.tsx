@@ -32,9 +32,6 @@ export default async function UploadTransaction(
                 ? transactions.totalValue
                 : transactions.totalValue / (transactions.totalEntries || 1);
 
-            //const monthOffset = transactions.recurrenceType === "installment" ? i + 1 : i;
-            //dueDate.setMonth(dueDate.getMonth() + monthOffset);
-
             switch (transactions.recurrenceFrequency) {
 
                 case "daily":

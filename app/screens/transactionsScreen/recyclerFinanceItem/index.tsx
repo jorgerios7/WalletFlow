@@ -34,10 +34,13 @@ const FinanceItemRecycler: React.FC<Props> = ({
       })
       .map((date) => {
         const [d, m, y] = date.split('/').map(Number);
+        const dateObj = new Date(y, m - 1, d);
 
-        const formattedDate = new Date(y, m - 1, d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+        const weekday = dateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+        const day = dateObj.toLocaleDateString('pt-BR', { day: '2-digit' });
+        const monthYear = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
-        const title = formattedDate.toLowerCase();
+        const title = `${weekday}, dia ${day} de ${monthYear}`.toLowerCase();
 
         const value = grouped[date].reduce((sum, item) => {
           return sum + (item.paymentType === 'concluded' ? item.value : 0);
@@ -46,6 +49,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
         return { title, data: grouped[date], value };
       });
   };
+
 
   const sections = groupByDate(entries_list);
 
@@ -65,13 +69,13 @@ const FinanceItemRecycler: React.FC<Props> = ({
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <LoadScreen marginBottom={bottomMargin}/>
+        <LoadScreen marginBottom={bottomMargin} />
       ) : sections.length === 0 ? (
-        <NotFoundScreen marginBottom={bottomMargin}/>
+        <NotFoundScreen marginBottom={bottomMargin} />
       ) : (
         <SectionList
           stickySectionHeadersEnabled
-          style={[styles.scrollContent, { marginBottom: bottomMargin}]}
+          style={[styles.scrollContent, { marginBottom: bottomMargin }]}
           sections={sections}
           keyExtractor={(item) => item.entrieId}
           renderItem={({ item, index, section }) => {

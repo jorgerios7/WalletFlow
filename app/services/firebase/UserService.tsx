@@ -21,7 +21,7 @@ export async function FetchUserData(uid: string): Promise<User | null> {
 
   } catch (error) {
     console.error("(UserService) Erro ao buscar usuário:", error);
-    throw error; 
+    throw error;
   } finally {
     console.log("(UserService.tsx) Os dados do usuário foram atualizados com sucesso!");
     return data;
@@ -60,12 +60,12 @@ export async function UpdatePassword(
 
     await reauthenticateWithCredential(user, credential);
     await updatePassword(user, newPassword);
-    
+
     Alert.alert("Sucesso", "Senha atualizada.");
   } catch (error: any) {
     const msg = HandleErroMessage(error.code);
     Alert.alert("Erro", msg);
-    throw error; 
+    throw error;
   }
 }
 
@@ -88,7 +88,7 @@ export async function UpdateEmail(
     if (msg) {
       Alert.alert("Erro", msg);
       throw new Error(msg);
-    }   
+    }
     return;
   } else if (isValid) {
     const msg = `Formato de email incorreto. Digite um email válido.`
@@ -107,7 +107,7 @@ export async function UpdateEmail(
 
     await reauthenticateWithCredential(user, credential);
     await updateEmail(user, newEmail);
-    
+
     await updateDoc(doc(db, "users", user.uid), {
       "identification.email": newEmail,
     });
@@ -119,7 +119,7 @@ export async function UpdateEmail(
   } catch (error: any) {
     const msg = HandleErroMessage(error.code)
     Alert.alert("Erro", msg);
-    throw error; 
+    throw error;
   }
 }
 
@@ -155,7 +155,7 @@ export async function UpdateName(groupId: string, name: string, surname: string)
   } catch (error: any) {
     const msg = HandleErroMessage(error.code)
     Alert.alert("Erro", msg);
-    throw error; 
+    throw error;
   }
 }
 

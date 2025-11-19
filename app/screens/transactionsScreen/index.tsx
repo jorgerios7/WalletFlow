@@ -2,8 +2,6 @@ import DeleteEntry from '@/app/services/firebase/financeService/deleteEntry';
 import LoadTransactions from '@/app/services/firebase/financeService/loadTransactions';
 import { BalanceValues, Entries, MixedTransactionEntry, Transactions } from '@/app/types/Finance';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
-import Header from '@/components/ui/Header';
-import { Colors } from '@/constants/Colors';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -66,8 +64,6 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
 
   return (
     <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-      <Header backgroundColor={Colors.light.background}><View style={{ height: 40 }} /></Header>
-
       <CalendarNavigator onDateChange={(date) => setDate(date.toLocaleDateString('pt-BR'))} />
 
       <BalanceScreen isLoading={loading} balanceValues={balance} />

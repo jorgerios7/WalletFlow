@@ -1,100 +1,50 @@
 import { Colors } from "@/constants/Colors";
-import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Snackbar } from "react-native-paper";
-import { db } from "./config/firebaseConfig";
 import TabNavigation from "./navigation/tabNavigation";
-import UserAccessScreen from "./pages/auth/UserAccessScreen";
+import { LoadScreen } from "./pages/LoadScreen";
 import SplashScreen from "./pages/SplashScreen";
 import GroupSetupScreen from "./screens/GroupSetupScreen";
-import { FetchGroupData } from "./services/firebase/GroupService";
+import UserAccessScreen from "./screens/userAccessScreen";
+import { CreateGroup, FetchGroupData } from "./services/firebase/GroupService";
 import { FetchUserData } from "./services/firebase/UserService";
 import { Group } from "./types/Group";
 import { User } from "./types/User";
 
 export default function AppMain() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isReady, setIsReady] = useState(false);
-  const [uid, setUId] = useState('');
-  const [userData, setUserData] = useState<User | null>(null);
-  const [groupData, setGroupData] = useState<Group | null>(null);
-  const [isShowGroupSetupScreen, setIsShowGroupSetupScreen] = useState(false);
-  const [isSnackbackVisible, setIsSnackbarVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [auth, setAuth] = useState({ isLoading: true, isAuthenticated: false, user_id: "" });
+
+  const [data, setData] = useState({ user: null as User | null, group: null as Group | null });
+  const [loadingUserAndGroup, setLoadingUserAndGroup] = useState(false);
+
+  const [isGrouped, setIsGrouped] = useState(false);
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(true);
-  const [groupSetupInputValues, setGroupSetupInputValues] = useState({ groupId: "", Name: "" });
-  const [isFetchingUser, setIsFetchingUser] = useState(true);
+  const [newGroup, setNewGroup] = useState({ id: "", name: "" });
 
-  const handleCreateUserGroup = async (data: { groupId: string; Name: string }) => {
-    let isReady = false;
+  const [showError, setShowError] = useState({ snackbarVisible: false, message: "" });
 
-    try {
-      if (isCreateNewGroup) {
-        const groupRef = doc(collection(db, "groups"));
-        await setDoc(groupRef, {
-          name: data.Name,
-          createdBy: uid,
-          createdAt: new Date().toISOString(),
-          members: {
-            [uid]: {
-              'name': `${userData?.identification.name} ${userData?.identification.surname}`,
-              'role': 'owner'
-            }
-          },
-        });
-        await setDoc(doc(db, "publicGroups", groupRef.id), {});
-        await updateDoc(doc(db, "users", uid), { groupId: groupRef.id });
-
-        isReady = true;
-      } else {
-        await updateDoc(doc(db, "users", uid), { groupId: data.groupId });
-        await setDoc(doc(db, "groups", data.groupId), {
-          members: {
-            [uid]: {
-              'name': `${userData?.identification.name} ${userData?.identification.surname}`,
-              'role': 'member'
-            }
-          }
-        }, { merge: true });
-        isReady = true;
-      }
-    } catch (error) {
-      console.error("(Index.tsx) Erro:", error);
-      setErrorMessage("Erro ao configurar o grupo.");
-      setIsSnackbarVisible(true);
-    } finally {
-      if (isReady) fetchUserAndGroupData();
-    }
-  };
-
-  const fetchUserAndGroupData = async () => {
-    if (!uid) return;
+  const loadUserAndGroup = async (update: { isUpdate: boolean }) => {
+    if (!auth.user_id) return;
 
     let user: User | null = null;
-    let home: Group | null = null;
+    let group: Group | null = null;
 
-    setIsFetchingUser(true);
+    if (!update.isUpdate) setLoadingUserAndGroup(true);
 
     try {
-
-      user = await FetchUserData(uid);
+      user = await FetchUserData(auth.user_id);
 
       if (!user || !user.groupId) {
-        setIsShowGroupSetupScreen(true);
+        setIsGrouped(false);
       } else {
-        home = await FetchGroupData(user.groupId);
-        setIsShowGroupSetupScreen(false);
+        group = await FetchGroupData(user.groupId);
+        if (!update.isUpdate) setIsGrouped(true);
       }
     } catch (error) {
-
       console.error("(Index.tsx) Erro ao buscar dados:", error);
     } finally {
-
-      setUserData(user);
-      setGroupData(home);
-      setIsReady(true);
-      setIsFetchingUser(false);
+      setData((prev) => ({ ...prev, user: user, group: group }))
+      if (!update.isUpdate) setLoadingUserAndGroup(false);
     }
   };
 
@@ -102,77 +52,77 @@ export default function AppMain() {
     const checkLogin = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       const userIsLogged = false;
-      setIsAuthenticated(userIsLogged);
-      setIsLoading(false);
+      setAuth((prev) => ({ ...prev, isAuthenticated: userIsLogged, isLoading: false }));
     };
-
     checkLogin();
   }, []);
 
   useEffect(() => {
-    if (uid) {
-      fetchUserAndGroupData();
+    if (auth.user_id && auth.isAuthenticated) {
+      loadUserAndGroup({ isUpdate: false })
     }
-  }, [uid]);
+  }, [auth.user_id, auth.isAuthenticated]);
 
-  if (isLoading) return <SplashScreen />;
+  if (auth.isLoading) return <SplashScreen />;
 
-  if (!isAuthenticated) {
-    return <UserAccessScreen onPress={setIsAuthenticated} getUId={setUId} />
-  }
+  if (!auth.isLoading && loadingUserAndGroup) return <LoadScreen />;
 
-  if (!isReady || !userData || isFetchingUser) return <SplashScreen />;
-
-  const renderMainContent = () => {
+  if (showError.snackbarVisible) {
     return (
-      <>
-        <GroupSetupScreen
-          shouldRender={isShowGroupSetupScreen}
-          onPressingReturnButton={() => setIsAuthenticated(false)}
-          values={groupSetupInputValues}
-          isCreateNewGroup={(action) => setIsCreateNewGroup(action)}
-          errorMessage={(message) => {
-            setErrorMessage(message);
-            setIsSnackbarVisible(true);
-          }}
-          whenIsReady={(values) => {
-            if (!uid) {
-              setErrorMessage("(Index.tsx) Usuário não autenticado.");
-              setIsSnackbarVisible(true);
-              return;
-            }
-            const updatedData = { ...groupSetupInputValues, ...values };
-
-            setGroupSetupInputValues(updatedData);
-            handleCreateUserGroup(updatedData);
-          }}
-        />
-
-        {!isShowGroupSetupScreen && groupData && (
-          <TabNavigation
-            userData={userData}
-            onDismis={() => setIsAuthenticated(false)}
-          />
-        )}
-      </>
-    );
+      <Snackbar
+        visible
+        onDismiss={() => setShowError({ snackbarVisible: false, message: "" })}
+        style={{ backgroundColor: Colors.light.tint }}
+        action={{
+          label: "Fechar",
+          onPress: () => setShowError({ snackbarVisible: false, message: "" }),
+        }}
+      >
+        {showError.message}
+      </Snackbar>
+    )
   }
 
   return (
     <>
-      {renderMainContent()}
+      <UserAccessScreen
+        isVisible={!auth.isAuthenticated}
+        onPress={(value) => setAuth((prev) => ({ ...prev, isAuthenticated: value }))}
+        onUserId={(id) => setAuth((prev) => ({ ...prev, user_id: id }))}
+      />
 
-      <Snackbar
-        visible={isSnackbackVisible}
-        onDismiss={() => setIsSnackbarVisible(false)}
-        style={{ backgroundColor: Colors.light.tint }}
-        action={{
-          label: "Fechar",
-          onPress: () => setIsSnackbarVisible(false),
+      <GroupSetupScreen
+        isVisible={auth.isAuthenticated && !loadingUserAndGroup && !isGrouped}
+        onPressingReturnButton={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
+        group={newGroup}
+        isCreateNewGroup={(action) => setIsCreateNewGroup(action)}
+        errorMessage={(message) => setShowError({ snackbarVisible: true, message: message })}
+        whenIsReady={(values) => {
+          if (!auth.user_id) {
+            setShowError({ snackbarVisible: true, message: "Usuário não autenticado." });
+            return;
+          }
+          const updatedGroup = { ...newGroup, ...values };
+
+          setNewGroup(updatedGroup);
+          {
+            data.user && (
+              CreateGroup(
+                isCreateNewGroup, updatedGroup,
+                { id: auth.user_id, name: data.user?.identification.name, surname: data.user?.identification.surname },
+                () => loadUserAndGroup({ isUpdate: false }), (visible, message) => setShowError({ snackbarVisible: visible, message: message })
+              ))
+          }
         }}
-      >
-        {errorMessage}
-      </Snackbar>
+      />
+
+      <TabNavigation
+        isVisible={auth.isAuthenticated && !loadingUserAndGroup && isGrouped}
+        onUpdating={() => loadUserAndGroup({ isUpdate: true })}
+        userData={data.user as User}
+        groupData={data.group as Group}
+        onDismis={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
+      />
     </>
   );
 }

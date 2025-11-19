@@ -9,23 +9,23 @@ import { StyleSheet, Text, View } from "react-native";
 import { db } from "../config/firebaseConfig";
 
 interface Props {
-    shouldRender: boolean;
-    values: { groupId: string, Name: string };
-    whenIsReady: (values: Partial<Props["values"]>) => void;
+    isVisible: boolean;
+    group: { id: string, name: string };
+    whenIsReady: (values: Partial<Props["group"]>) => void;
     isCreateNewGroup: (action: boolean) => void
     onPressingReturnButton: () => void;
     errorMessage: (message: string) => void;
 }
 
 const GroupSetupScreen: React.FC<Props> = ({
-    shouldRender = true,
-    values,
+    isVisible,
+    group,
     whenIsReady,
     isCreateNewGroup,
     onPressingReturnButton,
     errorMessage
 }) => {
-    if (!shouldRender) return null;
+    if (!isVisible) return null;
 
     const [isQuestionScreen, setIsQuestionScreen] = useState(true);
     const [isCreateGroup, setCreateGroup] = useState(false);
@@ -50,7 +50,7 @@ const GroupSetupScreen: React.FC<Props> = ({
 
             if (docSnap.exists()) {
 
-                whenIsReady({ groupId: groupId, Name: '' });
+                whenIsReady({ id: groupId, name: '' });
             } else {
 
                 errorMessage?.("ID não encontrado. ")
@@ -66,7 +66,7 @@ const GroupSetupScreen: React.FC<Props> = ({
 
         handleFieldCheck(name);
 
-        whenIsReady({ groupId: '', Name: data.name });
+        whenIsReady({ id: '', name: data.name });
     };
 
     return (

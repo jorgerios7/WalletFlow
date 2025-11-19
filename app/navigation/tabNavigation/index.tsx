@@ -1,9 +1,8 @@
-import { Feather } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { getAuth, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TransactionType } from '@/app/types/Finance';
@@ -13,10 +12,12 @@ import { Colors } from '@/constants/Colors';
 import AnalyticsScreen from '@/app/screens/AnalyticsScreen';
 import { ConfigurationScreen } from '@/app/screens/ConfigurationScreen';
 import { FeedbackScreen } from '@/app/screens/FeedbackScreen';
+import GroupScreen from '@/app/screens/groupScreen';
 import { HelpScreen } from '@/app/screens/HelpScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
 import TransactionsScreen from '@/app/screens/transactionsScreen';
 import CreateTransactionScreen from '@/app/screens/transactionsScreen/transactionEditor/createTransactionScreen';
+import { Group } from '@/app/types/Group';
 import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
 import AddButton from './addButton';
 import TabButton from './tabButton';
@@ -24,14 +25,14 @@ import TabButton from './tabButton';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-interface Props {
-  userData: User;
-  onDismis: () => void;
-}
+interface Props {isVisible: boolean, userData: User, groupData: Group, onUpdating: (isUpdating: boolean) => void, onDismis: () => void }
 
-const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
+const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdating, onDismis }) => {
+  if (!isVisible) return null;
+
   const auth = getAuth();
   const currentUser = auth.currentUser;
+
   const insets = useSafeAreaInsets();
 
   if (!currentUser) return null;
@@ -76,6 +77,18 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
     />
   );
 
+  const GroupWrapper = () => (
+    <GroupScreen
+      createdAt={groupData.createdAt}
+      createdBy={groupData.createdBy}
+      currentUserId={currentUser.uid}
+      groupId={userData.groupId}
+      groupName={groupData.name}
+      memberList={groupData.members}
+      onUpdating={onUpdating}
+    />
+  )
+
   const SimpleWrapper = (ScreenComponent: React.FC<any>) => ({ navigation }: any) => (
     <ScreenComponent onNavigate={(screen: string) => navigation.navigate(screen)} />
   );
@@ -85,21 +98,6 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
   // ----- Tabs -----
   const Tabs = ({ navigation }: any) => (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Botão de Perfil */}
-      <Pressable
-        onPress={() => navigation.navigate('Profile')}
-        style={[
-          styles.profileButton,
-          { top: insets.top + 10 },
-        ]}
-      >
-        <Feather
-          name="user"
-          color={Colors.light.highlightBackgroun_1}
-          size={30}
-          style={styles.profileIcon}
-        />
-      </Pressable>
 
       {/* Modal de confirmação */}
       <ConfirmationScreen
@@ -136,7 +134,15 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
         />
 
         <Tab.Screen
-          name="CreateTransaction"
+          name="Transactions"
+          component={TransactionsWrapper}
+          options={{
+            tabBarButton: (props) => <TabButton {...props} iconName="list-alt" label="Transações" />,
+          }}
+        />
+
+        <Tab.Screen
+          name={"CreateTransaction"}
           options={{
             tabBarButton: () => (
               <AddButton
@@ -151,27 +157,37 @@ const TabNavigation: React.FC<Props> = ({ userData, onDismis }) => {
           {() => null}
         </Tab.Screen>
 
-      <Tab.Screen
-        name="Transactions"
-        component={TransactionsWrapper}
-        options={{
-          tabBarButton: (props) => <TabButton {...props} iconName="list-alt" label="Transações" />,
-        }}
-      />
-    </Tab.Navigator>
+        <Tab.Screen
+          name={'Group'}
+          component={GroupWrapper}
+          options={{
+            tabBarButton: (props) => <TabButton {...props} iconName='group' label='Grupo' />,
+          }}
+        />
+
+        <Tab.Screen
+          name={'Profile'}
+          component={ProfileWrapper}
+          options={{
+            tabBarButton: (props) => <TabButton {...props} iconName='verified-user' label='Perfil' />,
+          }}
+        />
+
+
+      </Tab.Navigator>
     </View >
   );
 
-// ----- Navegação Stack -----
-return (
-  <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
-    <Stack.Screen name="Tabs" component={Tabs} />
-    <Stack.Screen name="Profile" component={ProfileWrapper} />
-    <Stack.Screen name="ConfigurationScreen" component={SimpleWrapper(ConfigurationScreen)} />
-    <Stack.Screen name="HelpScreen" component={SimpleWrapper(HelpScreen)} />
-    <Stack.Screen name="FeedbackScreen" component={SimpleWrapper(FeedbackScreen)} />
-  </Stack.Navigator>
-);
+  // ----- Navegação Stack -----
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
+      <Stack.Screen name="Tabs" component={Tabs} />
+      <Stack.Screen name="Profile" component={ProfileWrapper} />
+      <Stack.Screen name="ConfigurationScreen" component={SimpleWrapper(ConfigurationScreen)} />
+      <Stack.Screen name="HelpScreen" component={SimpleWrapper(HelpScreen)} />
+      <Stack.Screen name="FeedbackScreen" component={SimpleWrapper(FeedbackScreen)} />
+    </Stack.Navigator>
+  );
 };
 
 const styles = StyleSheet.create({

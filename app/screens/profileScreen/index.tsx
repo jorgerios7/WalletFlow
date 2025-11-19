@@ -3,14 +3,11 @@ import { FetchGroupData } from '@/app/services/firebase/GroupService';
 import { FetchUserData } from '@/app/services/firebase/UserService';
 import { Group } from '@/app/types/Group';
 import { User } from '@/app/types/User';
-import GroupInformationScreen from '@/components/ui/GroupInformationScreen';
-import Header from '@/components/ui/Header';
 import MenuButton from '@/components/ui/MenuButton';
 import { Colors } from '@/constants/Colors';
-import { Feather } from '@expo/vector-icons';
 import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { Pressable, useWindowDimensions, View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MenuTabButton from './menuTabButton';
 import PersonalDataChangeScreen, { Function } from './personalDataChangeScreen';
@@ -80,27 +77,10 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
                     width: width,
                     height: height,
                     paddingBottom: insets.bottom + 60,
-                    marginTop: insets.top,
                     gap: 10,
                     backgroundColor: Colors.light.shadow,
                 }}>
-                    <Header direction='normal' backgroundColor={Colors.light.shadow}>
-                        <Pressable
-                            onPress={() => onNavigate('Tabs')}
-                            style={{
-                                padding: 12,
-                                backgroundColor: 'transparent',
-                                alignSelf: 'flex-start'
-                            }}
-                        >
-                            <Feather
-                                style={{ padding: 3.8 }}
-                                name="chevron-left"
-                                color={Colors.light.highlightBackgroun_1}
-                                size={30}
-                            />
-                        </Pressable>
-                    </Header>
+
 
                     <ProfileMenuButton
                         closedSize={45}
@@ -181,17 +161,6 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
                     />
 
                     <View style={{ gap: 10 }}>
-                        <GroupInformationScreen
-                            createdAt={groupData.createdAt}
-                            createdBy={groupData.createdBy}
-                            currentUserId={currentUser.uid}
-                            groupId={userData.groupId}
-                            groupName={groupData.name}
-                            memberList={groupData.members}
-                            update={() => setUpdate(true)}
-                        />
-
-                        <View style={{ width: '100%', height: 0.5, backgroundColor: 'black', marginVertical: 10 }} />
 
                         <MenuTabButton
                             name={'Configurações'}
