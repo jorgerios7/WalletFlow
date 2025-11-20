@@ -14,8 +14,7 @@ import { User } from "./types/User";
 export default function AppMain() {
   const [auth, setAuth] = useState({ isLoading: true, isAuthenticated: false, user_id: "" });
 
-  const [data, setData] = useState({ user: null as User | null, group: null as Group | null });
-  const [loadingUserAndGroup, setLoadingUserAndGroup] = useState(false);
+  const [data, setData] = useState({ isLoading: false, user: null as User | null, group: null as Group | null });
 
   const [isGrouped, setIsGrouped] = useState(false);
   const [isCreateNewGroup, setIsCreateNewGroup] = useState(true);
@@ -29,7 +28,7 @@ export default function AppMain() {
     let user: User | null = null;
     let group: Group | null = null;
 
-    if (!update.isUpdate) setLoadingUserAndGroup(true);
+    if (!update.isUpdate) setData((prev) => ({ ...prev, isLoading: true }));
 
     try {
       user = await FetchUserData(auth.user_id);
@@ -43,29 +42,29 @@ export default function AppMain() {
     } catch (error) {
       console.error("(Index.tsx) Erro ao buscar dados:", error);
     } finally {
-      setData((prev) => ({ ...prev, user: user, group: group }))
-      if (!update.isUpdate) setLoadingUserAndGroup(false);
+      setData((prev) => ({ ...prev, isLoading: false, user: user, group: group }));
     }
   };
 
   useEffect(() => {
+    setAuth((prev) => ({ ...prev, isLoading: true }));
+
     const checkLogin = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       const userIsLogged = false;
       setAuth((prev) => ({ ...prev, isAuthenticated: userIsLogged, isLoading: false }));
     };
+
     checkLogin();
   }, []);
 
   useEffect(() => {
-    if (auth.user_id && auth.isAuthenticated) {
-      loadUserAndGroup({ isUpdate: false })
-    }
-  }, [auth.user_id, auth.isAuthenticated]);
+    if (auth.user_id && auth.isAuthenticated && !data.isLoading && !auth.isLoading) loadUserAndGroup({ isUpdate: false });
+  }, [auth.isAuthenticated]);
 
   if (auth.isLoading) return <SplashScreen />;
 
-  if (!auth.isLoading && loadingUserAndGroup) return <LoadScreen />;
+  if (!auth.isLoading && data.isLoading) return <LoadScreen />;
 
   if (showError.snackbarVisible) {
     return (
@@ -73,10 +72,7 @@ export default function AppMain() {
         visible
         onDismiss={() => setShowError({ snackbarVisible: false, message: "" })}
         style={{ backgroundColor: Colors.light.tint }}
-        action={{
-          label: "Fechar",
-          onPress: () => setShowError({ snackbarVisible: false, message: "" }),
-        }}
+        action={{ label: "Fechar", onPress: () => setShowError({ snackbarVisible: false, message: "" }) }}
       >
         {showError.message}
       </Snackbar>
@@ -92,7 +88,7 @@ export default function AppMain() {
       />
 
       <GroupSetupScreen
-        isVisible={auth.isAuthenticated && !loadingUserAndGroup && !isGrouped}
+        isVisible={auth.isAuthenticated && !data.isLoading && !isGrouped}
         onPressingReturnButton={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
         group={newGroup}
         isCreateNewGroup={(action) => setIsCreateNewGroup(action)}
@@ -111,13 +107,14 @@ export default function AppMain() {
                 isCreateNewGroup, updatedGroup,
                 { id: auth.user_id, name: data.user?.identification.name, surname: data.user?.identification.surname },
                 () => loadUserAndGroup({ isUpdate: false }), (visible, message) => setShowError({ snackbarVisible: visible, message: message })
-              ))
+              )
+            )
           }
         }}
       />
 
       <TabNavigation
-        isVisible={auth.isAuthenticated && !loadingUserAndGroup && isGrouped}
+        isVisible={auth.isAuthenticated && !data.isLoading && isGrouped}
         onUpdating={() => loadUserAndGroup({ isUpdate: true })}
         userData={data.user as User}
         groupData={data.group as Group}

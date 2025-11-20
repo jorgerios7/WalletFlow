@@ -85,6 +85,7 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
       groupId={userData.groupId}
       groupName={groupData.name}
       memberList={groupData.members}
+      onPressingEditTitle={() => console.log('edit title has been pressed!')}
       onUpdating={onUpdating}
     />
   )

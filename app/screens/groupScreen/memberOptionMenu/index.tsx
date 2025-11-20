@@ -1,8 +1,8 @@
+import CustomButton from "@/components/ui/CustomButton";
+import RadioButton from "@/components/ui/RadioButton";
+import TextButton from "@/components/ui/TextButton";
 import { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
-import CustomButton from "./CustomButton";
-import RadioButton from "./RadioButton";
-import TextButton from "./TextButton";
 
 export function MemberOptionMenu({
     isStarted,
