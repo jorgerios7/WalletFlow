@@ -1,13 +1,11 @@
 export type MemberRole = 'owner' | 'member';
 
-export interface MemberData {
-  name: string;
-  role: MemberRole
-} 
+export type Action = "none" | "newGroup" | "addMember";
 
-export interface Group {
-  name: string;
-  createdBy: string;
-  members: Record<string, MemberData>;
-  createdAt: string;
-}
+export type Delete = 'none' | "deleteMyself" | "deleteMember";
+
+export interface MemberData { name: string; role: MemberRole }
+
+export interface Creator { id: string; name: string; createdAt: string }
+
+export interface Group { name: string; creation: Creator; members: Record<string, MemberData> }

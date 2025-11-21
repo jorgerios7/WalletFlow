@@ -1,26 +1,17 @@
+import { Delete } from "@/app/types/Group";
 import CustomButton from "@/components/ui/CustomButton";
 import RadioButton from "@/components/ui/RadioButton";
 import TextButton from "@/components/ui/TextButton";
 import { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 
-export function MemberOptionMenu({
-    isStarted,
-    onConfirm,
-    onCancel,
-    selectedItem,
-    currentUid,
-    role,
-    condition
-}: {
-    isStarted: boolean;
-    onConfirm: (action: { member: string, promote: boolean, demote: boolean, delete: boolean }) => void;
+export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, onConfirm, onCancel }: {
+    isStarted: boolean; currentUid: string; role: string; selectedItem: { id: string, name: string, role: string };
+    onConfirm: (action: { member: string, promote: boolean, demote: boolean, delete: { who: Delete, value: boolean } }) => void;
     onCancel: () => void;
-    currentUid: string;
-    role: string;
-    selectedItem: { id: string, name: string, role: string };
-    condition: string;
 }) {
+
+    const CONDITION = "owner";
 
     useEffect(() => {
         if (isStarted) {
@@ -65,59 +56,93 @@ export function MemberOptionMenu({
         <Modal visible={isStarted} animationType="fade" transparent>
             <View style={styles.overlay}>
                 <View style={styles.content}>
-                    {role !== condition ? (
-                        <Text style={{ alignSelf: 'center' }}>
-                            Você ainda não tem permissões para administrar outros membros!
-                        </Text>
-                    ) : (
-                        <>
-                            <Text style={styles.title}>
-                                {selectedItem.name}
-                            </Text>
-                            <RadioButton
-                                initialValue={''}
-                                options={[
-                                    {
-                                        label:
-                                            selectedItem.role === condition
-                                                ? (variables.demote.text)
-                                                : (variables.promote.text),
-                                        value:
-                                            selectedItem.role === condition
-                                                ? (variables.demote.label)
-                                                : (variables.promote.label)
-                                    },
-                                    {
-                                        label: variables.delete.text,
-                                        value: variables.delete.label
-                                    },
-                                ]}
-                                onSelecting={(option) => {
-                                    setVariables((prev) => ({
-                                        member: { ...prev.member, id: selectedItem.id },
-                                        promote: { ...prev.promote, value: option === variables.promote.label },
-                                        demote: { ...prev.demote, value: option === variables.demote.label },
-                                        delete: { ...prev.delete, value: option === variables.delete.label },
-                                    }));
-                                }}
-                            />
-                            {(variables.delete.value || variables.promote.value || variables.demote.value) && (
-                                <CustomButton
-                                    text="Confirmar"
-                                    onPress={() => {
-                                        onConfirm({
-                                            member: variables.member.id,
-                                            promote: variables.promote.value,
-                                            demote: variables.demote.value,
-                                            delete: variables.delete.value,
-                                        });
 
-                                        onCancel();
+                    <Text style={styles.title}>{selectedItem.name}</Text>
+                    
+                    <View style={{ paddingVertical: 40 }}>
+                        {role !== CONDITION ? (
+                            <>
+                                {currentUid === selectedItem.id ? (
+                                    <>
+                                        <RadioButton
+                                            initialValue={''}
+                                            options={[
+                                                {
+                                                    label: variables.delete.text,
+                                                    value: variables.delete.label
+                                                },
+                                            ]}
+                                            onSelecting={(option) => {
+                                                setVariables((prev) => ({
+                                                    ...prev,
+                                                    member: { ...prev.member, id: selectedItem.id },
+                                                    promote: { ...prev.promote, value: option === variables.promote.label },
+                                                    demote: { ...prev.demote, value: option === variables.demote.label },
+                                                    delete: { ...prev.delete, value: option === variables.delete.label },
+                                                }));
+                                            }}
+                                        />
+                                    </>
+                                ) : (
+                                    <Text style={styles.text}>
+                                        Você ainda não possui permissão para administrar outros membros!
+                                    </Text>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <RadioButton
+                                    initialValue={''}
+                                    options={[
+                                        {
+                                            label:
+                                                selectedItem.role === CONDITION
+                                                    ? (variables.demote.text)
+                                                    : (variables.promote.text),
+                                            value:
+                                                selectedItem.role === CONDITION
+                                                    ? (variables.demote.label)
+                                                    : (variables.promote.label)
+                                        },
+                                        {
+                                            label: variables.delete.text,
+                                            value: variables.delete.label
+                                        },
+                                    ]}
+                                    onSelecting={(option) => {
+                                        setVariables((prev) => ({
+                                            member: { ...prev.member, id: selectedItem.id },
+                                            promote: { ...prev.promote, value: option === variables.promote.label },
+                                            demote: { ...prev.demote, value: option === variables.demote.label },
+                                            delete: { ...prev.delete, value: option === variables.delete.label },
+                                        }));
                                     }}
                                 />
-                            )}
-                        </>
+
+                            </>
+                        )}
+                    </View>
+                    {(variables.delete.value || variables.promote.value || variables.demote.value) && (
+                        <CustomButton
+                            text="Confirmar"
+                            onPress={() => {
+                                onConfirm({
+                                    member: variables.member.id,
+                                    promote: variables.promote.value,
+                                    demote: variables.demote.value,
+                                    delete: {
+                                        who: currentUid === selectedItem.id
+                                            ? "deleteMyself"
+                                            : "deleteMember",
+                                        value: variables.delete.value
+                                    }
+                                });
+
+                                onCancel();
+                            }}
+                        />
                     )}
+
                     <TextButton
                         text={(variables.delete.value || variables.promote.value || variables.demote.value)
                             ? ('Cancelar')
@@ -127,7 +152,7 @@ export function MemberOptionMenu({
                     />
                 </View>
             </View>
-        </Modal>
+        </Modal >
     );
 }
 
@@ -136,6 +161,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         alignSelf: "center",
+    },
+    text: {
+        fontSize: 16, textAlign: 'justify'
     },
     overlay: {
         flex: 1,
@@ -148,7 +176,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         padding: 20,
         borderRadius: 12,
-        gap: 20,
+        gap: 10,
         elevation: 4,
     },
 })

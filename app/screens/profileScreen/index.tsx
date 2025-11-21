@@ -1,5 +1,5 @@
 import { LoadScreen } from '@/app/pages/LoadScreen';
-import { FetchGroupData } from '@/app/services/firebase/GroupService';
+import LoadGroup from '@/app/services/firebase/groupService/loadGroup';
 import { FetchUserData } from '@/app/services/firebase/UserService';
 import { Group } from '@/app/types/Group';
 import { User } from '@/app/types/User';
@@ -44,7 +44,7 @@ export default function ProfileScreen({ onLogout, onDeleteAccount, onNavigate }:
         try {
             user_data = await FetchUserData(currentUser.uid);
             if (user_data?.groupId) {
-                group_data = await FetchGroupData(user_data.groupId);
+                group_data = await LoadGroup(user_data.groupId);
             }
 
             setUserData(user_data);

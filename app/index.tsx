@@ -6,7 +6,8 @@ import { LoadScreen } from "./pages/LoadScreen";
 import SplashScreen from "./pages/SplashScreen";
 import GroupSetupScreen from "./screens/GroupSetupScreen";
 import UserAccessScreen from "./screens/userAccessScreen";
-import { CreateGroup, FetchGroupData } from "./services/firebase/GroupService";
+import CreateGroup from "./services/firebase/groupService/createGroup";
+import LoadGroup from "./services/firebase/groupService/loadGroup";
 import { FetchUserData } from "./services/firebase/UserService";
 import { Group } from "./types/Group";
 import { User } from "./types/User";
@@ -17,27 +18,25 @@ export default function AppMain() {
   const [data, setData] = useState({ isLoading: false, user: null as User | null, group: null as Group | null });
 
   const [isGrouped, setIsGrouped] = useState(false);
-  const [isCreateNewGroup, setIsCreateNewGroup] = useState(true);
-  const [newGroup, setNewGroup] = useState({ id: "", name: "" });
 
   const [showError, setShowError] = useState({ snackbarVisible: false, message: "" });
 
-  const loadUserAndGroup = async (update: { isUpdate: boolean }) => {
-    if (!auth.user_id) return;
+  const loadUserAndGroup = async (update: { isUpdateScreen: boolean, isUpdateData: boolean }) => {
+    if (!auth.user_id || !update.isUpdateData) return;
 
     let user: User | null = null;
     let group: Group | null = null;
 
-    if (!update.isUpdate) setData((prev) => ({ ...prev, isLoading: true }));
+    if (update.isUpdateScreen) setData((prev) => ({ ...prev, isLoading: true }));
 
     try {
       user = await FetchUserData(auth.user_id);
 
       if (!user || !user.groupId) {
-        setIsGrouped(false);
+        if (update.isUpdateScreen) setIsGrouped(false);
       } else {
-        group = await FetchGroupData(user.groupId);
-        if (!update.isUpdate) setIsGrouped(true);
+        group = await LoadGroup(user.groupId);
+        if (update.isUpdateScreen) setIsGrouped(true);
       }
     } catch (error) {
       console.error("(Index.tsx) Erro ao buscar dados:", error);
@@ -59,7 +58,7 @@ export default function AppMain() {
   }, []);
 
   useEffect(() => {
-    if (auth.user_id && auth.isAuthenticated && !data.isLoading && !auth.isLoading) loadUserAndGroup({ isUpdate: false });
+    if (auth.user_id && auth.isAuthenticated && !data.isLoading && !auth.isLoading) loadUserAndGroup({ isUpdateScreen: true, isUpdateData: true });
   }, [auth.isAuthenticated]);
 
   if (auth.isLoading) return <SplashScreen />;
@@ -90,23 +89,13 @@ export default function AppMain() {
       <GroupSetupScreen
         isVisible={auth.isAuthenticated && !data.isLoading && !isGrouped}
         onPressingReturnButton={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
-        group={newGroup}
-        isCreateNewGroup={(action) => setIsCreateNewGroup(action)}
-        errorMessage={(message) => setShowError({ snackbarVisible: true, message: message })}
-        whenIsReady={(values) => {
-          if (!auth.user_id) {
-            setShowError({ snackbarVisible: true, message: "Usuário não autenticado." });
-            return;
-          }
-          const updatedGroup = { ...newGroup, ...values };
-
-          setNewGroup(updatedGroup);
+        onReady={({ action, values }) => {
           {
             data.user && (
               CreateGroup(
-                isCreateNewGroup, updatedGroup,
+                action, values,
                 { id: auth.user_id, name: data.user?.identification.name, surname: data.user?.identification.surname },
-                () => loadUserAndGroup({ isUpdate: false }), (visible, message) => setShowError({ snackbarVisible: visible, message: message })
+                () => loadUserAndGroup({ isUpdateScreen: true, isUpdateData: true }), (visible, message) => setShowError({ snackbarVisible: visible, message: message })
               )
             )
           }
@@ -115,7 +104,7 @@ export default function AppMain() {
 
       <TabNavigation
         isVisible={auth.isAuthenticated && !data.isLoading && isGrouped}
-        onUpdating={() => loadUserAndGroup({ isUpdate: true })}
+        onUpdating={(isUpdating) => loadUserAndGroup({ isUpdateScreen: false, isUpdateData: isUpdating })}
         userData={data.user as User}
         groupData={data.group as Group}
         onDismis={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}

@@ -5,152 +5,135 @@ import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
 import { doc, getDoc } from "firebase/firestore";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Snackbar } from "react-native-paper";
 import { db } from "../config/firebaseConfig";
+import { Action } from "../types/Group";
 
 interface Props {
-    isVisible: boolean;
-    group: { id: string, name: string };
-    whenIsReady: (values: Partial<Props["group"]>) => void;
-    isCreateNewGroup: (action: boolean) => void
-    onPressingReturnButton: () => void;
-    errorMessage: (message: string) => void;
+    isVisible: boolean, onReady: (x: { action: Action, values: { id: string, name: string } }) => void,
+    onPressingReturnButton: () => void
 }
 
-const GroupSetupScreen: React.FC<Props> = ({
-    isVisible,
-    group,
-    whenIsReady,
-    isCreateNewGroup,
-    onPressingReturnButton,
-    errorMessage
-}) => {
+const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingReturnButton }) => {
     if (!isVisible) return null;
 
-    const [isQuestionScreen, setIsQuestionScreen] = useState(true);
-    const [isCreateGroup, setCreateGroup] = useState(false);
-    const [data, setData] = useState({ id: '', name: '' })
+    const [isCreateGroup, setIsCreateGroup] = useState(true);
+    const [groupData, setGroupData] = useState({ id: '', name: '' })
+    const [error, setError] = useState({ visible: false, message: "" })
 
     const handleFieldCheck = (field: string) => {
-        if (!field) {
-
-            errorMessage?.("Opa! Preencha o campo")
-            return;
+        if (!field || field === "") {
+            setError({ visible: true, message: "Opa! Preencha o campo" });
+            return false;
         }
-    }
+        return true;
+    };
 
-    const handleCheckingIdExistence = async () => {
-        const groupId = data.id.trim();
-
-        handleFieldCheck(groupId);
-
+    const handleCheckingIdExistence = async (id: string) => {
         try {
-            const docRef = doc(db, "publicGroups", groupId);
+            const docRef = doc(db, "publicGroups", id);
             const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-
-                whenIsReady({ id: groupId, name: '' });
-            } else {
-
-                errorMessage?.("ID não encontrado. ")
+            switch (docSnap.exists()) {
+                case true:
+                    return true;
+                case false: {
+                    setError({ visible: true, message: "ID não encontrado ou não existe!" })
+                    return false
+                }
             }
         } catch (error) {
-            console.log('(HomeSetupScreen) error: ', error);
-            errorMessage?.("Algo deu errado na busca");
+            console.log('(GroupSetupScreen) error: ', error);
+            setError({visible: true, message: "Algo deu errado!"});
         }
     };
 
-    const handleCreateId = () => {
-        const name = data.name.trim();
+    const handleAction = async () => {
+        switch (isCreateGroup) {
+            case true: {
+                const name = groupData.name.trim();
+                if (!handleFieldCheck(name)) return;
 
-        handleFieldCheck(name);
+                return onReady({ action: "newGroup", values: { id: "", name } });
+            }
 
-        whenIsReady({ id: '', name: data.name });
+            case false: {
+                const id = groupData.id.trim();
+                if (!handleFieldCheck(id)) return;
+
+                const isValid = await handleCheckingIdExistence(id);
+                if (isValid) {
+                    return onReady({ action: "addMember", values: { id, name: "" } });
+                }
+            }
+        }
     };
 
+
     return (
-        <BoxInputs>
-            {
-                isQuestionScreen ? (
-                    <View>
-                        <View style={styles.container}>
-                            <Text style={styles.title}>
-                                Configurar grupo
-                            </Text>
-
-                            <View>
-
-                                <DynamicLabelInput
-                                    label="Nome do grupo"
-                                    //value={values.Name}
-                                    onTextChange={(text) => setData({ id: '', name: text })}
-                                />
-
-                                <CustomButton
-                                    text={'Continuar'}
-                                    onPress={handleCreateId}
-                                />
-                            </View>
-
-                            <View style={{ padding: 10, flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'center' }}>
-                                <Text style={styles.text}>
-                                    Se possui um ID_Home
-                                </Text>
-                                <TextButton
-                                    text={'clique aqui'}
-                                    adjustPadding={5}
-                                    textColor={Colors.light.tint}
-                                    onPress={() => {
-                                        setIsQuestionScreen(false)
-                                        setCreateGroup(false);
-                                        isCreateNewGroup(false);
-                                    }}
-                                />
-                            </View>
-                            <TextButton
-                                text={'Sair'}
-                                adjustPadding={5}
-                                adjustMargin={5}
-                                onPress={() => {
-                                    onPressingReturnButton?.();
-                                    isCreateNewGroup(true);
-                                    setData({ id: '', name: '' });
-                                }}
-                            />
-                        </View>
-                    </View>
-                ) : (
-                    !isCreateGroup && (
+        <View style={{flex: 1}}>
+            <BoxInputs>
+                {
+                    isCreateGroup ? (
                         <View>
-                            <Text style={styles.title}> Configurar grupo </Text>
+                            <Text style={styles.title}>Configurar grupo</Text>
 
+                            <View style={styles.container}>
+                                <View style={{ gap: 10 }}>
+                                    <DynamicLabelInput label="Nome do grupo" onTextChange={(text) => setGroupData({ id: '', name: text })} />
+
+                                    <CustomButton text={'Continuar'} onPress={handleAction} />
+                                </View>
+
+                                <TextButton
+                                    text={'Sair'}
+                                    adjustPadding={10}
+                                    adjustMargin={5}
+                                    onPress={() => onPressingReturnButton?.()}
+                                />
+
+                                <View style={{ padding: 10, flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'center' }}>
+                                    <Text style={styles.text}>Se possui um ID </Text>
+
+                                    <Pressable onPress={() => setIsCreateGroup(false)}>
+                                        <Text style={{ color: Colors.light.tint, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
+                                    </Pressable>
+                                </View>
+                            </View>
+                        </View>
+                    ) : (
+                        <View style={{ gap: 10 }}>
                             <DynamicLabelInput
                                 label="ID do grupo"
-                                //value={values.Id_Home}
-                                onTextChange={(text) => setData({ id: text, name: '' })}
+                                onTextChange={(text) => setGroupData({ id: text, name: '' })}
                             />
 
                             <CustomButton
                                 text={'Continuar'}
-                                onPress={handleCheckingIdExistence}
+                                onPress={handleAction}
                             />
 
                             <TextButton
                                 text={'Voltar'}
-                                adjustMargin={15}
-                                adjustPadding={15}
-                                onPress={() => {
-                                    setIsQuestionScreen(true);
-                                    isCreateNewGroup(true);
-                                    setData({ id: '', name: '' })
-                                }}
+                                adjustMargin={0}
+                                adjustPadding={10}
+                                onPress={() => setIsCreateGroup(true)}
                             />
                         </View>
                     )
-                )
-            }
-        </BoxInputs>
+                }
+            </BoxInputs>
+
+            <Snackbar
+                visible={error.visible}
+                onDismiss={() => setError({ visible: false, message: "" })}
+                style={{ backgroundColor: Colors.light.tint }}
+                action={{ label: "Fechar", onPress: () => setError({ visible: false, message: "" }) }}
+            >
+                {error.message}
+            </Snackbar>
+        </View>
     );
 }
 

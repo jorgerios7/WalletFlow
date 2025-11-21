@@ -79,14 +79,13 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
 
   const GroupWrapper = () => (
     <GroupScreen
-      createdAt={groupData.createdAt}
-      createdBy={groupData.createdBy}
+      creator={groupData.creation}
       currentUserId={currentUser.uid}
       groupId={userData.groupId}
       groupName={groupData.name}
       memberList={groupData.members}
-      onPressingEditTitle={() => console.log('edit title has been pressed!')}
       onUpdating={onUpdating}
+      onExiting={onDismis}
     />
   )
 

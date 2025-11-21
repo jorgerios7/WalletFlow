@@ -1,22 +1,26 @@
-import { DeleteMember, PromoteOrDemote } from "@/app/services/firebase/GroupService";
+import DeleteMember from "@/app/services/firebase/groupService/deleteMember";
+import PromoteOrDemote from "@/app/services/firebase/groupService/demote_or_demote";
+import { UpdateField } from "@/app/services/firebase/groupService/updateField";
+import { Creator, Delete } from "@/app/types/Group";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getAuth } from "firebase/auth";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { EditDataViewer } from "./editDataViewer";
 import { MemberOptionMenu } from "./memberOptionMenu";
 import MembersViewer from "./memberViewer";
 
 interface Props {
-    currentUserId: string, groupId: string, groupName: string, createdAt: string, createdBy: string,
-    memberList: FirestoreMemberMap, onPressingEditTitle: () => void, onUpdating: (isUpdate: boolean) => void
+    currentUserId: string, groupId: string, groupName: string, creator: Creator,
+    memberList: FirestoreMemberMap, onUpdating: (isUpdating: boolean) => void, onExiting: () => void
 }
 
 interface FirestoreMemberMap { [userId: string]: { name: string, role: string } }
 
 interface MemberProps { id: string, name: string, role: string }
 
-export default function GroupScreen({ currentUserId, groupId, groupName, createdAt, createdBy, memberList, onPressingEditTitle, onUpdating }: Props) {
+export default function GroupScreen({ currentUserId, groupId, groupName, creator, memberList, onUpdating, onExiting }: Props) {
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
@@ -24,6 +28,7 @@ export default function GroupScreen({ currentUserId, groupId, groupName, created
 
     const [menuItemVisibility, setMenuItemVisibility] = useState(false);
     const [menuItemData, setMenuItemData] = useState({ id: '', name: '', role: '' });
+    const [editDataViewer, setEditDataViewer] = useState(false);
 
     const parsedMembers: MemberProps[] = Object.entries(memberList).map(([id, data]) => ({ id, name: data.name, role: data.role }));
 
@@ -35,18 +40,48 @@ export default function GroupScreen({ currentUserId, groupId, groupName, created
         return role?.role ?? 'member';
     }
 
+    async function memberOptionsMenuActions(
+        variables: { member: string, promote: boolean, demote: boolean, delete: { who: Delete; value: boolean } }
+    ) {
+        if (variables.delete.value) {
+            if (variables.delete.who === "deleteMyself") {
+                await DeleteMember(groupId, variables.member);
+                onExiting()
+            } else if (variables.delete.who === "deleteMember") {
+                await DeleteMember(groupId, variables.member);
+                onUpdating(true);
+            };
+            return;
+        } else if (variables.promote) {
+            await PromoteOrDemote(true, groupId, variables.member);
+            onUpdating(true);
+            return;
+        } else if (variables.demote) {
+            await PromoteOrDemote(false, groupId, variables.member);
+            onUpdating(true);
+            return;
+        }
+    }
+
+    async function handleEditTitleName(newName: string) {
+        await UpdateField({ label: "name", name: newName, groupId: groupId });
+        onUpdating(true);
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>{groupName}</Text>
-                <Pressable style={{ padding: 10 }} onPress={onPressingEditTitle}>
-                    <MaterialIcons name="mode-edit" size={20} color={Colors.light.highlightBackgroun_1} />
-                </Pressable>
+                {renderUserRole() === "owner" && (
+                    <Pressable style={{ padding: 10 }} onPress={() => setEditDataViewer(true)}>
+                        <MaterialIcons name="mode-edit" size={20} color={Colors.light.highlightBackgroun_1} />
+                    </Pressable>)
+                }
             </View>
             <MembersViewer
                 currentUserId={currentUserId}
                 members={parsedMembers}
-                creationData={{ name: "?", date: createdAt }}
+                creationData={{ name: creator.name, date: creator.createdAt }}
                 onSelect={({ id, name, role }) => {
                     setMenuItemData(prev => ({ ...prev, id: id, name: name, role: role }));
                     setMenuItemVisibility(true);
@@ -59,18 +94,18 @@ export default function GroupScreen({ currentUserId, groupId, groupName, created
                 role={renderUserRole()}
                 selectedItem={menuItemData}
                 onCancel={() => setMenuItemVisibility(false)}
-                condition={'owner'}
                 currentUid={currentUserId}
                 onConfirm={(variables) => {
-                    if (variables.delete) {
-                        DeleteMember(groupId, variables.member);
-                    } else if (variables.promote) {
-                        PromoteOrDemote(true, groupId, variables.member)
-                    } else if (variables.demote) {
-                        PromoteOrDemote(false, groupId, variables.member)
-                    }
-                    onUpdating(false);
+                    console.log('variable: ', variables)
+                    memberOptionsMenuActions(variables)
                 }}
+            />
+
+            <EditDataViewer
+                isVisible={editDataViewer}
+                currentName={groupName}
+                onSelected={handleEditTitleName}
+                onDismiss={() => setEditDataViewer(false)}
             />
         </View>
     );
