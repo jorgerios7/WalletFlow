@@ -1,18 +1,19 @@
 import { auth } from "@/app/config/firebaseConfig";
 import { UpdateEmail, UpdateName, UpdatePassword } from "@/app/services/firebase/UserService";
+import { PersonalDataChange } from "@/app/types/User";
 import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
 import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 
-export type Function= '' | 'ChangeName' | 'ChangeEmail' | 'ChangePassword';
+
 
 interface PersonalDataChangeProps {
     groupId: string;
     isVisible: boolean;
     onCancel: () => void;
-    editField: Function;
+    editField: PersonalDataChange
 };
 
 const PersonalDataChangeScreen: React.FC<PersonalDataChangeProps> = ({

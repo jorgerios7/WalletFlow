@@ -10,10 +10,7 @@ import { User } from '@/app/types/User';
 import { Colors } from '@/constants/Colors';
 
 import AnalyticsScreen from '@/app/screens/AnalyticsScreen';
-import { ConfigurationScreen } from '@/app/screens/ConfigurationScreen';
-import { FeedbackScreen } from '@/app/screens/FeedbackScreen';
 import GroupScreen from '@/app/screens/groupScreen';
-import { HelpScreen } from '@/app/screens/HelpScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
 import TransactionsScreen from '@/app/screens/transactionsScreen';
 import CreateTransactionScreen from '@/app/screens/transactionsScreen/transactionEditor/createTransactionScreen';
@@ -25,9 +22,9 @@ import TabButton from './tabButton';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-interface Props {isVisible: boolean, userData: User, groupData: Group, onUpdating: (isUpdating: boolean) => void, onDismis: () => void }
+interface Props { isVisible: boolean, userData: User, groupData: Group, onUpdating: (isUpdating: boolean) => void, onDismis: () => void }
 
-const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdating, onDismis }) => {
+const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpdating, onDismis }) => {
   if (!isVisible) return null;
 
   const auth = getAuth();
@@ -43,7 +40,6 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
   const [showCreateTransaction, setShowCreateTransaction] = useState(false);
   const [transactionType, setTransactionType] = useState<TransactionType>('income');
 
-  // ----- Ações -----
   const handleLogout = () => {
     setDeleteMode(false);
     setShowConfirmation(true);
@@ -58,8 +54,10 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
     setShowConfirmation(false);
     try {
       await signOut(auth);
+
       onDismis();
     } catch (error) {
+
       console.error('(BottomTabs) Erro ao deslogar:', error);
     }
   };
@@ -68,12 +66,10 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
     console.log('(BottomTabs) deleteAccount is called!');
   };
 
-  // ----- Wrappers simplificados -----
   const ProfileWrapper = ({ navigation }: any) => (
     <ProfileScreen
       onLogout={handleLogout}
       onDeleteAccount={handleDeleteAccount}
-      onNavigate={(screen) => navigation.navigate(screen)}
     />
   );
 
@@ -89,25 +85,22 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
     />
   )
 
-  const SimpleWrapper = (ScreenComponent: React.FC<any>) => ({ navigation }: any) => (
-    <ScreenComponent onNavigate={(screen: string) => navigation.navigate(screen)} />
-  );
+  const TransactionsWrapper = () => (<TransactionsScreen group_id={userData.groupId} />);
 
-  const TransactionsWrapper = () => <TransactionsScreen group_id={userData.groupId} />;
-
-  // ----- Tabs -----
   const Tabs = ({ navigation }: any) => (
     <View style={[styles.container, { paddingTop: insets.top }]}>
 
-      {/* Modal de confirmação */}
       <ConfirmationScreen
         isVisible={showConfirmation}
-        message={deleteMode ? 'Deseja realmente excluir sua conta?' : 'Deseja realmente sair?'}
+        message={
+          deleteMode
+            ? 'Deseja realmente excluir sua conta?'
+            : 'Deseja realmente sair?'
+        }
         onConfirm={deleteMode ? deleteAccount : logout}
         onCancel={() => setShowConfirmation(false)}
       />
 
-      {/* Tela de criação de transação */}
       <CreateTransactionScreen
         isVisible={showCreateTransaction}
         type={transactionType}
@@ -115,21 +108,16 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
         onDismiss={() => setShowCreateTransaction(false)}
       />
 
-      {/* Navegação por abas */}
       <Tab.Navigator
         initialRouteName="Analytic"
-        screenOptions={{
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarStyle: styles.tabBar,
-        }}
+        screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarStyle: styles.tabBar }}
       >
         <Tab.Screen
           name="Analytic"
           component={AnalyticsScreen}
           initialParams={{ user: userData }}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName="bar-chart" label="Análise" />,
+            tabBarButton: (props) => <TabButton {...props} iconName="bar-chart" label="Análise" />
           }}
         />
 
@@ -137,7 +125,7 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
           name="Transactions"
           component={TransactionsWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName="list-alt" label="Transações" />,
+            tabBarButton: (props) => <TabButton {...props} iconName="list-alt" label="Transações" />
           }}
         />
 
@@ -161,7 +149,7 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
           name={'Group'}
           component={GroupWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName='group' label='Grupo' />,
+            tabBarButton: (props) => <TabButton {...props} iconName='group' label='Grupo' />
           }}
         />
 
@@ -169,23 +157,17 @@ const TabNavigation: React.FC<Props> = ({isVisible, userData, groupData, onUpdat
           name={'Profile'}
           component={ProfileWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName='verified-user' label='Perfil' />,
+            tabBarButton: (props) => <TabButton {...props} iconName='verified-user' label='Perfil' />
           }}
         />
-
 
       </Tab.Navigator>
     </View >
   );
 
-  // ----- Navegação Stack -----
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
       <Stack.Screen name="Tabs" component={Tabs} />
-      <Stack.Screen name="Profile" component={ProfileWrapper} />
-      <Stack.Screen name="ConfigurationScreen" component={SimpleWrapper(ConfigurationScreen)} />
-      <Stack.Screen name="HelpScreen" component={SimpleWrapper(HelpScreen)} />
-      <Stack.Screen name="FeedbackScreen" component={SimpleWrapper(FeedbackScreen)} />
     </Stack.Navigator>
   );
 };

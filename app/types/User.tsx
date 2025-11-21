@@ -1,3 +1,5 @@
+export type PersonalDataChange = 'none' | 'ChangeName' | 'ChangeEmail' | 'ChangePassword';
+
 export interface BankAccount {
   bank: string;
   accountNumber: string;

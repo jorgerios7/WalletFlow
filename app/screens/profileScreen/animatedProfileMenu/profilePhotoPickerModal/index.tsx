@@ -1,4 +1,6 @@
 import { db, storage } from '@/app/config/firebaseConfig';
+import CustomButton from '@/components/ui/CustomButton';
+import TextButton from '@/components/ui/TextButton';
 import { Colors } from '@/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { getAuth } from 'firebase/auth';
@@ -6,12 +8,10 @@ import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import React, { useState } from 'react';
 import { Alert, Image, Modal, View } from 'react-native';
-import CustomButton from './CustomButton';
-import TextButton from './TextButton';
 
 interface Props { onDismiss?: () => void }
 
-const ProfilePhotoUploader: React.FC<Props> = ({ onDismiss }) => {
+const ProfilePhotoPickerModal: React.FC<Props> = ({ onDismiss }) => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -110,5 +110,5 @@ const ProfilePhotoUploader: React.FC<Props> = ({ onDismiss }) => {
   );
 };
 
-export default ProfilePhotoUploader;
+export default ProfilePhotoPickerModal;
 
