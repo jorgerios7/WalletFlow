@@ -1,10 +1,10 @@
 import { Colors } from "@/constants/Colors";
 import { Modal, StyleSheet, Text, View } from "react-native";
-import CustomButton from "./CustomButton";
-import TextButton from "./TextButton";
+import CustomButton from "../CustomButton";
+import TextButton from "../TextButton";
 
-const ConfirmationScreen: React.FC<{ isVisible: boolean; message: string; onConfirm: () => void; onCancel: () => void; }> = (
-    { isVisible, message, onConfirm, onCancel }
+const ConfirmActionModal: React.FC<{ isVisible: boolean; confirmationMessage: string; onConfirm: () => void; onCancel: () => void; }> = (
+    { isVisible, confirmationMessage, onConfirm, onCancel }
 ) => {
 
     return (
@@ -12,7 +12,7 @@ const ConfirmationScreen: React.FC<{ isVisible: boolean; message: string; onConf
             <View style={styles.modalOverlay}>
                 <View style={styles.modalContent}>
                     <Text style={{ color: 'black', fontSize: 16, textAlign: 'center', fontWeight: 'bold' }}>
-                        {message}
+                        {confirmationMessage}
                     </Text>
                     <CustomButton text={'Confirmar'} onPress={onConfirm} />
                     <TextButton text={'Cancelar'} onPress={onCancel} />
@@ -27,4 +27,4 @@ const styles = StyleSheet.create({
     modalContent: { width: '90%', borderRadius: 10, backgroundColor: Colors.light.background, padding: 20, gap: 20 }
 });
 
-export default ConfirmationScreen;
+export default ConfirmActionModal;

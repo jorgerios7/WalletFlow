@@ -1,4 +1,4 @@
-export type PersonalDataChange = 'none' | 'ChangeName' | 'ChangeEmail' | 'ChangePassword';
+export type PersonalDataChange = 'none' | 'Name' | 'Email' | 'Password' | 'Exit-App' | 'DeleteAccount';
 
 export interface BankAccount {
   bank: string;

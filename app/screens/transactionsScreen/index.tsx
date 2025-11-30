@@ -1,7 +1,7 @@
 import DeleteEntry from '@/app/services/firebase/financeService/deleteEntry';
 import LoadTransactions from '@/app/services/firebase/financeService/loadTransactions';
 import { BalanceValues, Entries, MixedTransactionEntry, Transactions } from '@/app/types/Finance';
-import ConfirmationScreen from '@/components/ui/ConfirmationScreen';
+import ConfirmActionModal from '@/components/ui/confirmActionModal';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -121,9 +121,9 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
         onClose={() => setFinanceReportScreen({ isVisible: false, data: null })}
       />
 
-      <ConfirmationScreen
+      <ConfirmActionModal
         isVisible={confirmationScreen.isVisible}
-        message={confirmationScreen.message}
+        confirmationMessage={confirmationScreen.message}
         onConfirm={() => handleDelete(confirmationScreen.transactionId, confirmationScreen.entryId)}
         onCancel={() => setConfirmationScreen({ isVisible: false, message: "", transactionId: "", entryId: "" })} />
     </View>

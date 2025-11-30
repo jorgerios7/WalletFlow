@@ -1,102 +1,54 @@
-import LoadGroup from '@/app/services/firebase/groupService/loadGroup';
-import { FetchUserData } from '@/app/services/firebase/UserService';
-import { Group } from '@/app/types/Group';
 import { PersonalDataChange, User } from '@/app/types/User';
 import { Colors } from '@/constants/Colors';
-import { getAuth } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AnimatedProfileMenu from './animatedProfileMenu';
-import PersonalDataChangeScreen from './personalDataChangeScreen';
+import EditPersonalDataModal from './editPersonalDataModal';
+import MenuTabButton from './menuTabButton';
+import ProfileMenu from './profileMenu';
 
-interface Props { onLogout: () => void; onDeleteAccount: () => void}
+interface Props { userData: User, onUpdating: () => void, onDismiss: () => void }
 
-export default function ProfileScreen({ onLogout, onDeleteAccount}: Props) {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-
-    if (!currentUser) return;
-
-    const [update, setUpdate] = useState(false);
-
-    useEffect(() => { fetchData() }, [update]);
-
+export default function ProfileScreen({ userData, onUpdating, onDismiss }: Props) {
     const insets = useSafeAreaInsets();
     const { width, height } = useWindowDimensions();
     const [collapseMenu, setCollapseMenu] = useState(false);
-    const [isDataChange, setIsDataChange] = useState(false);
-    const [editField, setEditField] = useState<PersonalDataChange>('none');
-    const [userData, setUserData] = useState<User | null>(null)
-    const [groupData, setGroupData] = useState<Group | null>(null);
-
-    const fetchData = async () => {
-        let user_data: User | null = null;
-        let group_data: Group | null = null;
-
-        try {
-            user_data = await FetchUserData(currentUser.uid);
-            if (user_data?.groupId) {
-                group_data = await LoadGroup(user_data.groupId);
-            }
-
-            setUserData(user_data);
-            setGroupData(group_data);
-
-            setUpdate(false);
-        } catch (error) {
-            console.log('(ProfileScreen.tsx) erro ao baixar dados: ', error);
-        }
-    };
-
-    const onClose = (isLogout: boolean) => {
-        setCollapseMenu(true);
-        setTimeout(() => {
-            setCollapseMenu(false);
-            if (isLogout) {
-                onLogout();
-            } else {
-                onDeleteAccount();
-            };
-        }, 300);
-    };
+    const [editPersonalData, setEditPersonalData] = useState({ isVisible: false, field: "none" as PersonalDataChange });
 
     return (
         <View>
-            <View style={{
-                width: width, height: height, paddingBottom: insets.bottom + 60, gap: 10,
-                backgroundColor: Colors.light.shadow
-            }}>
-                <AnimatedProfileMenu
-                    closedSize={45}
-                    menuHeight={height - insets.bottom - 42}
-                    menuWidth={width - 20}
-                    title={`${userData?.identification.name} ${userData?.identification.surname}`}
-                    subtitle={userData?.identification.email}
-                    topPosition={10}
-                    rightPosition={10}
-                    profilePhoto={userData?.identification.profilePhoto}
-                    collapseMenu={collapseMenu}
-                    onEditingField={setEditField}
-                    onDataChange={setIsDataChange}
-                    onUpdating={setUpdate}
-                    onDismiss={onClose}
+            <View style={{ flex: 1, paddingBottom: insets.bottom + 60, backgroundColor: Colors.light.shadow }}>
+                <View style={{ height: 150, width: width }} />
+
+                <ProfileMenu
+                    screen={{ width: width, height: height - insets.bottom - 110 }}
+                    user={{
+                        name: userData
+                            ? `${userData.identification.name} ${userData.identification.surname}`
+                            : "",
+                        email: userData?.identification.email as string
+                    }}
+                    onSelect={(field) => setEditPersonalData({ isVisible: true, field: field })}
+                    collapse={collapseMenu}
                 />
 
-                <PersonalDataChangeScreen
-                    editField={editField}
+                <EditPersonalDataModal
+                    isVisible={editPersonalData.isVisible}
+                    field={editPersonalData.field}
                     groupId={userData ? userData.groupId : ""}
-                    isVisible={isDataChange}
-                    onCancel={() => {
-                        setIsDataChange(false);
-                        setEditField('none');
-                        setUpdate(true)
-                    }}
+                    onSuccess={onUpdating}
+                    onDismiss={(isBackToInitScreen) => isBackToInitScreen
+                        ? onDismiss
+                        : setEditPersonalData({ isVisible: false, field: "none" })}
                 />
 
                 <View style={{ gap: 10 }}>
+                    <MenuTabButton
+                        iconName='notifications' name={'Notificações'} iconSize={30} onPress={() => console.log('SAFSDF')} />
 
-                    
+                    <MenuTabButton
+                        iconName='color-lens' name={'Aparência'} iconSize={30} onPress={() => console.log('SAFSDF')} />
+
                 </View>
             </View>
         </View>

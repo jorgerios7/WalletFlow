@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/Colors";
+import { getAuth } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Snackbar } from "react-native-paper";
 import TabNavigation from "./navigation/tabNavigation";
@@ -13,12 +14,15 @@ import { Group } from "./types/Group";
 import { User } from "./types/User";
 
 export default function AppMain() {
+  const auth1 = getAuth();
+  const currentUser = auth1.currentUser;
+
   const [auth, setAuth] = useState({ isLoading: true, isAuthenticated: false, user_id: "" });
 
+  //if (!currentUser) setAuth((prev) => ({...prev, isAuthenticated: false}));
+  
   const [data, setData] = useState({ isLoading: false, user: null as User | null, group: null as Group | null });
-
   const [isGrouped, setIsGrouped] = useState(false);
-
   const [showError, setShowError] = useState({ snackbarVisible: false, message: "" });
 
   const loadUserAndGroup = async (update: { isUpdateScreen: boolean, isUpdateData: boolean }) => {
@@ -32,7 +36,7 @@ export default function AppMain() {
     try {
       user = await FetchUserData(auth.user_id);
 
-      if (!user || !user.groupId) {
+      if (!user || !user.groupId || user.groupId === "" || user.groupId === undefined || user.groupId === null) {
         if (update.isUpdateScreen) setIsGrouped(false);
       } else {
         group = await LoadGroup(user.groupId);
@@ -58,7 +62,8 @@ export default function AppMain() {
   }, []);
 
   useEffect(() => {
-    if (auth.user_id && auth.isAuthenticated && !data.isLoading && !auth.isLoading) loadUserAndGroup({ isUpdateScreen: true, isUpdateData: true });
+    if (auth.user_id && auth.isAuthenticated && !data.isLoading && !auth.isLoading)
+      loadUserAndGroup({ isUpdateScreen: true, isUpdateData: true });
   }, [auth.isAuthenticated]);
 
   if (auth.isLoading) return <SplashScreen />;
@@ -107,7 +112,7 @@ export default function AppMain() {
         onUpdating={(isUpdating) => loadUserAndGroup({ isUpdateScreen: false, isUpdateData: isUpdating })}
         userData={data.user as User}
         groupData={data.group as Group}
-        onDismis={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
+        onDismiss={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
       />
     </>
   );
