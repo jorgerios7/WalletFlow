@@ -23,7 +23,7 @@ const ConfirmActionModal: React.FC<{ isVisible: boolean; confirmationMessage: st
 }
 
 const styles = StyleSheet.create({
-    modalOverlay: { flex: 1, backgroundColor: 'rgba(20, 20, 20, 0.4)', justifyContent: 'center', alignItems: 'center', },
+    modalOverlay: { flex: 1, backgroundColor: Colors.light.overlay, justifyContent: 'center', alignItems: 'center', },
     modalContent: { width: '90%', borderRadius: 10, backgroundColor: Colors.light.background, padding: 20, gap: 20 }
 });
 

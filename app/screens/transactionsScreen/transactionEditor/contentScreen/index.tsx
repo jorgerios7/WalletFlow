@@ -27,7 +27,7 @@ export default function ContentScreen(
 }
 
 const styles = StyleSheet.create({
-    overlay: { flex: 1, backgroundColor: 'rgba(175, 172, 172, 0.64)' },
+    overlay: { flex: 1, backgroundColor: Colors.light.overlay },
     container: {
         width: '100%', minHeight: '80%', marginTop: '41%', backgroundColor: Colors.light.background, gap: 50,
         justifyContent: 'center', alignItems: 'center'

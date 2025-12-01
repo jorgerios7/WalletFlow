@@ -1,4 +1,4 @@
-import { Type } from "@/app/screens/addScreen";
+import { TransactionType } from "@/app/types/Finance";
 import { DeleteCategory } from "@/app/utils/categoryManager";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 
 interface Props {
-    isVisible: boolean; categoryToDelete: string; currentType: Type;
+    isVisible: boolean; categoryToDelete: string; currentType: TransactionType;
     onSuccess: () => void; onDismiss: () => void;
 }
 
@@ -57,7 +57,7 @@ export default function DeleteCategoryMenu({ isVisible, categoryToDelete, curren
                         <>
                             <Text style={{ marginBottom: 40, fontSize: 18, textAlign: 'center' }}>
                                 {`Você tem certeza que deseja excluir `}
-                                <Text style={{ fontWeight: "bold", color: Colors.light.highlightBackgroun_1 }}>{categoryToDelete}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors.light.textPrimary }}>{categoryToDelete}</Text>
                                 {` da lista de categorias de ${renderCurrentType()}?`}
                             </Text>
 
@@ -88,7 +88,6 @@ export default function DeleteCategoryMenu({ isVisible, categoryToDelete, curren
                                     setSeccess(false);
                                 }}
                             />
-
                         </>
                     )}
 

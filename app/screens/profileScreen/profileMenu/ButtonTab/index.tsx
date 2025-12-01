@@ -14,7 +14,7 @@ const ButtonTab: React.FC<{
                 alignItems: 'center', borderBottomColor: borderBottomColor ? borderBottomColor : Colors.light.background,
                 borderBottomWidth: 0.5, backgroundColor: 'transparent'
             }}>
-            <Text style={{ color: isHighlightText ? Colors.light.background : 'white', alignSelf: 'center', fontSize: fontSize }}>
+            <Text style={{ color: isHighlightText ? Colors.light.primary : 'white', alignSelf: 'center', fontSize: fontSize }}>
                 {text}
             </Text>
 

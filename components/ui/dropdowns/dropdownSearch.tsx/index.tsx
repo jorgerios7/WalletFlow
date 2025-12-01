@@ -36,7 +36,7 @@ export default function DropdownSearch({
                 <Feather
                     name={'plus-circle'}
                     size={22}
-                    color={Colors.light.highlightBackgroun_1}
+                    color={Colors.light.primary}
                 />
             </Pressable>
         );
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     container: { position: "relative" },
     inputFocused: { outlineColor: "transparent" },
     input: {
-        color: Colors.light.highlightBackgroun_1, borderWidth: 0.5, borderColor: Colors.light.highlightBackgroun_1,
+        color: Colors.light.primary, borderWidth: 0.5, borderColor: Colors.light.border,
         backgroundColor: "transparent", fontWeight: "bold", borderRadius: 10, padding: 14
     }
 

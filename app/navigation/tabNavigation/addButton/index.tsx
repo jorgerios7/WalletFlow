@@ -56,12 +56,12 @@ const LargeButton: React.FC<{ onPress: () => void, expanded: boolean }> = ({ onP
     <TouchableHighlight
       onPress={onPress}
       style={styles.shadowWrapper}
-      underlayColor={Colors.light.shadow}
+      underlayColor={Colors.light.overlay}
     >
       <LinearGradient
         colors={[
-          Colors.light.highlightBackgroun_1,
-          Colors.light.highlightBackgroun_2,
+          Colors.light.primary,
+          Colors.light.secondary,
         ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -81,7 +81,7 @@ const SmallButton: React.FC<{ icon: any, text: string, offset: number, onPress: 
       activeOpacity={0.8}
     >
       <LinearGradient
-        colors={[Colors.light.highlightBackgroun_1, Colors.light.highlightBackgroun_2]}
+        colors={[Colors.light.primary, Colors.light.secondary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.smallButton, { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12 }]}
@@ -114,13 +114,13 @@ const styles = StyleSheet.create({
     borderRadius: BUTTON_SIZE / 2,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: Colors.light.shadow,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 6,
     borderWidth: 1,
-    borderColor: Colors.light.shadow,
+    borderColor: Colors.light.border,
   },
   smallButtonWrapper: {
     position: 'absolute',
@@ -139,11 +139,11 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: Colors.light.border,
   },
   overlay: {
     flex: 1,
-    backgroundColor: "#00000031",
+    backgroundColor: Colors.light.overlay,
     justifyContent: "center",
     alignItems: "center",
   },

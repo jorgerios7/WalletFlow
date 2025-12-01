@@ -26,7 +26,7 @@ export default function StartDateStep(
         dateEntry
         initialText={value}
         label={"Data de início"}
-        colorLabel={Colors.light.shadow}
+        colorLabel={Colors.light.background}
         onTextChange={onSelect}
       />
     </StepScreen>

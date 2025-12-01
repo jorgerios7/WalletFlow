@@ -7,7 +7,7 @@ export function LoadScreen({ marginBottom }: { marginBottom?: number }) {
         <ActivityIndicator
             style={{ flex: 1, backgroundColor: 'transparent', marginBottom: marginBottom ? marginBottom : 0 }}
             size="large"
-            color={Colors.light.highlightBackgroun_1}
+            color={Colors.light.primary}
         />
     );
 }

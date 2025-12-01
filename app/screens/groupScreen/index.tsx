@@ -74,7 +74,7 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
                 <Text style={styles.title}>{groupName}</Text>
                 {renderUserRole() === "owner" && (
                     <Pressable style={{ padding: 10 }} onPress={() => setEditDataViewer(true)}>
-                        <MaterialIcons name="mode-edit" size={20} color={Colors.light.highlightBackgroun_1} />
+                        <MaterialIcons name="mode-edit" size={20} color={Colors.light.primary} />
                     </Pressable>)
                 }
             </View>

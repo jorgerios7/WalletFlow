@@ -17,7 +17,7 @@ export default function DescriptionStep(
             <DynamicLabelInput
                 initialText={value}
                 label={"Descrição (opcional)"}
-                colorLabel={Colors.light.shadow}
+                colorLabel={Colors.light.background}
                 onTextChange={onSelect}
             />
         </StepScreen>

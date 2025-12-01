@@ -30,7 +30,7 @@ export default function TextButton({
     );
 
     const dynamicTextColor = {
-        color: textColor ? textColor : Colors.light.highlightBackgroun_1
+        color: textColor ? textColor : Colors.light.textPrimary
     };
 
     const dynamicAdjust = {
@@ -66,6 +66,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         borderRadius: 10,
         borderWidth: 0.5,
-        borderColor: Colors.light.highlightBackgroun_1,
+        borderColor: Colors.light.primary,
     }
 });

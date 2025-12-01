@@ -24,7 +24,7 @@ export default function Dropdown({ isVisible, items, deleteButtonVisible, onShow
                 <Feather
                     name={"minus-circle"}
                     size={22}
-                    color={Colors.light.highlightBackgroun_1}
+                    color={Colors.light.primary}
                 />
             </Pressable>
         );
@@ -36,7 +36,7 @@ export default function Dropdown({ isVisible, items, deleteButtonVisible, onShow
                 style={{
                     minWidth: 300, flexDirection: "row", alignItems: "center", justifyContent: "space-between",
                     padding: 10, borderBottomWidth: 0.5, borderRadius: 10,
-                    borderBottomColor: Colors.light.highlightBackgroun_1
+                    borderBottomColor: Colors.light.primary
                 }}
             >
                 <Text style={{ flex: 1 }}>{text}</Text>
@@ -83,6 +83,6 @@ export default function Dropdown({ isVisible, items, deleteButtonVisible, onShow
 const styles = StyleSheet.create({
     dropdown: {
         position: "absolute", zIndex: 999, marginTop: 2, backgroundColor: Colors.light.background,
-        borderRadius: 10, borderWidth: 0.5, borderColor: Colors.light.highlightBackgroun_1
+        borderRadius: 10, borderWidth: 0.5, borderColor: Colors.light.primary
     }
 });

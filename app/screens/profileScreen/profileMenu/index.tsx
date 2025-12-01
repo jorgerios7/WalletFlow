@@ -121,7 +121,7 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
 }
 
 const styles = StyleSheet.create({
-    menuContainerDefault: { position: 'absolute', backgroundColor: Colors.light.highlightBackgroun_1 },
+    menuContainerDefault: { zIndex: 999, position: 'absolute', backgroundColor: Colors.light.primary },
     buttonDefault: {
         position: 'absolute', backgroundColor: "transparent", borderColor: Colors.light.background, justifyContent: 'center', alignItems: 'center',
     },

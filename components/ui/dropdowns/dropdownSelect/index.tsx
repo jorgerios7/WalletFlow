@@ -60,7 +60,7 @@ export default function DropdownSelect({ isVisible, setSelection, list, placehol
 const styles = StyleSheet.create({
   container: { position: "relative" }, // importante pra referência do absolute
   dropdownButton: {
-    minWidth: 300, color: Colors.light.highlightBackgroun_1, borderWidth: 0.5, borderColor: Colors.light.highlightBackgroun_1,
+    minWidth: 300, color: Colors.light.primary, borderWidth: 0.5, borderColor: Colors.light.border,
     backgroundColor: "transparent", fontWeight: "bold", borderRadius: 10, padding: 14
   },
   dropdownButtonText: { fontSize: 16, color: "#333" }

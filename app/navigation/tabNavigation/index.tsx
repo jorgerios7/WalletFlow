@@ -30,7 +30,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
   const currentUser = auth.currentUser;
 
   const insets = useSafeAreaInsets();
-  
+
   const [showCreateTransaction, setShowCreateTransaction] = useState(false);
   const [transactionType, setTransactionType] = useState<TransactionType>('income');
 
@@ -131,31 +131,8 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  tabBar: {
-    backgroundColor: Colors.light.background,
-    position: 'absolute',
-    elevation: 20,
-  },
-  profileButton: {
-    width: 45,
-    height: 45,
-    borderRadius: 45 / 2,
-    borderColor: Colors.light.highlightBackgroun_2,
-    backgroundColor: Colors.light.highlightBackgroun_2,
-    position: 'absolute',
-    right: 10,
-    zIndex: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  profileIcon: {
-    backgroundColor: 'white',
-    borderRadius: 45 / 2,
-    padding: 5.5,
-  },
+  container: { flex: 1 },
+  tabBar: { backgroundColor: Colors.light.background, position: 'absolute', elevation: 20 },
 });
 
 export default TabNavigation;

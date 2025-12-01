@@ -1,25 +1,49 @@
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    highlightBackgroun_1: 'rgb(6, 11, 58)',
-    highlightBackgroun_2: 'rgba(24, 24, 49, 0.9)',
-    shadow: 'rgba(85, 82, 82, 0.12)',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-    border: '#fff'
+    background: "#FFFFFF",
+    surface: "#E6E8EB",
+    surfaceVariant: "#F4F5F7",
+
+    textPrimary: "#11181C",
+    textSecondary: "#4B5563",
+    textInverse: "#FFFFFF",
+
+    border: "#4B5563",
+
+    primary: "#060B3A",
+    secondary: "#4B5563",
+
+    shadow: "#000002ff",
+
+    accent: "#0A7EA4",
+    accentHover: "#0890BD",
+    accentPressed: "#066B8A",
+
+    headerBackground: "#060B3A",
+    overlay: "rgba(0,0,0,0.1)"
   },
+
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
+    background: "#0E1116",
+    surface: "#1C1F26",
+    surfaceVariant: "#2A2F38",
+
+    textPrimary: "#FFFFFF",
+    textSecondary: "#CBD5E1",
+    textInverse: "#11181C",
+
+    border: "#2A2D34",
+
+    primary: "#E2E8F0",
+    secondary: "#94A3B8",
+
+    shadow: "#000002ff",
+
+    accent: "#30A6D4",
+    accentHover: "#4CC0EC",
+    accentPressed: "#1B8BB8",
+
+    headerBackground: "#060B3A",
+    overlay: "rgba(0,0,0,0.6)"
+  }
 };

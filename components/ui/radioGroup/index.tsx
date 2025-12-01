@@ -38,10 +38,10 @@ const RadioGroup: React.FC<Props> = ({ isVisible, setSelection, options, childre
                 >
                     <View style={{
                         height: 20, width: 20, borderRadius: 10, borderWidth: 2,
-                        borderColor: Colors.light.highlightBackgroun_1, alignItems: "center", justifyContent: "center",
+                        borderColor: Colors.light.primary, alignItems: "center", justifyContent: "center",
                     }}>
                         {selectedButton === option.value && (
-                            <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.light.highlightBackgroun_2 }} />
+                            <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.light.primary }} />
                         )}
                     </View>
                 </Pressable>

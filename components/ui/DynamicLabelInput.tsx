@@ -71,7 +71,7 @@ export default function DynamicLabelInput({
           <Ionicons
             name={isPasswordVisible ? "eye" : "eye-off"}
             size={18}
-            color={Colors.light.highlightBackgroun_1}
+            color={Colors.light.primary}
           />
         </Pressable>
       )}
@@ -84,7 +84,7 @@ export default function DynamicLabelInput({
           <Ionicons
             name={"calendar"}
             size={18}
-            color={Colors.light.highlightBackgroun_1}
+            color={Colors.light.primary}
           />
         </Pressable>
       )}
@@ -95,7 +95,7 @@ export default function DynamicLabelInput({
 const styles = StyleSheet.create({
   container: { position: "relative" },
   input: {
-    color: Colors.light.highlightBackgroun_1, borderWidth: 0.5, borderColor: Colors.light.highlightBackgroun_1,
+    color: Colors.light.primary, borderWidth: 0.5, borderColor: Colors.light.border,
     backgroundColor: "transparent", fontWeight: "bold", borderRadius: 10, padding: 14
   },
   inputFocused: { outlineColor: "transparent" },

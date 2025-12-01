@@ -16,7 +16,7 @@ export default function Header({ onPress, children, backgroundColor, direction }
     const styleDynamic = {
         backgroundColor: backgroundColor
             ? backgroundColor
-            : Colors.light.shadow
+            : Colors.light.surface
     }
 
     function childrenPosition_1() {

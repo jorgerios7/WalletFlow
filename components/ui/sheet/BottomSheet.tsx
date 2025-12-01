@@ -1,3 +1,4 @@
+import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
 import {
@@ -121,7 +122,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 const styles = StyleSheet.create({
     background: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.4)',
+        backgroundColor: Colors.light.primary,
     },
     sheetContainer: {
         position: 'absolute',
@@ -129,29 +130,29 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: SCREEN_HEIGHT,
-        backgroundColor: '#fff',
+        backgroundColor: Colors.light.background,
         paddingTop: 10,
         paddingHorizontal: 16,
     },
     dragHandle: {
         width: 100,
         height: 10,
-        backgroundColor: '#ccc',
+        backgroundColor: Colors.light.background,
         borderRadius: 4,
         alignSelf: 'center',
         marginVertical: 10,
     },
     butonReturnHeader: {
         width: '100%',
-        backgroundColor: 'white',
-        borderBottomColor: 'grey',
+        backgroundColor: Colors.light.background,
+        borderBottomColor: Colors.light.border,
         borderBottomWidth: 0.5,
         marginBottom: 10
     },
     buttonReturn: {
         width: 40,
         height: 40,
-        backgroundColor: 'white',
+        backgroundColor: Colors.light.background,
         borderRadius: 30,
         alignContent: 'center',
         alignItems: 'center',

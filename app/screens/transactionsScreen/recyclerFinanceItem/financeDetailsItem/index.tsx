@@ -40,7 +40,7 @@ export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEdit
                 >
                     <MaterialIcons
                         name={data.paymentType === "pending" ? "check-circle" : "edit"}
-                        color={Colors.light.highlightBackgroun_1} size={24}
+                        color={Colors.light.primary} size={24}
                     />
                 </Pressable>
 
@@ -51,14 +51,14 @@ export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEdit
                         { paymentType: data.paymentType as string, value: data.value as number })
                     }
                 >
-                    <MaterialIcons name="delete" size={24} color={Colors.light.highlightBackgroun_1} />
+                    <MaterialIcons name="delete" size={24} color={Colors.light.primary} />
                 </Pressable>
 
                 <Pressable
                     style={[styles.actionButton, { backgroundColor: "transparent" }]}
                     onPress={() => onPressingInfo(data as MixedTransactionEntry)}
                 >
-                    <MaterialIcons name="info" size={24} color={Colors.light.highlightBackgroun_1} />
+                    <MaterialIcons name="info" size={24} color={Colors.light.primary} />
                 </Pressable>
             </View>
 
@@ -88,7 +88,7 @@ export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEdit
                     <MaterialIcons
                         name={isOpen ? "chevron-right" : "chevron-left"}
                         size={24}
-                        color={Colors.light.highlightBackgroun_1}
+                        color={Colors.light.primary}
                     />
                 </Pressable>
             </Animated.View>
@@ -101,5 +101,5 @@ const styles = StyleSheet.create({
     actionButton: { width: 40, height: 60, justifyContent: "center", alignItems: "center" },
     card: { backgroundColor: Colors.light.background, borderWidth: 0.5, borderColor: 'transparent', padding: 10, zIndex: 2 },
     cardContent: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" }, textContainer: { width: "40%", backgroundColor: 'transparent' }, text: { marginEnd: 2 },
-    image: { width: 30, height: 30, justifyContent: "center", alignItems: "center", borderColor: Colors.light.shadow, borderWidth: 0.5, borderRadius: 5, backgroundColor: Colors.light.highlightBackgroun_2 },
+    image: { width: 30, height: 30, justifyContent: "center", alignItems: "center", borderColor: Colors.light.shadow, borderWidth: 0.5, borderRadius: 5, backgroundColor: Colors.light.primary },
 });

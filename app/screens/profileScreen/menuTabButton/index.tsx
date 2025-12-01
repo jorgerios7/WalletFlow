@@ -15,17 +15,17 @@ const MenuTabButton: React.FC<{
                 width: '100%',
                 height: 50,
                 gap: 20,
-                backgroundColor: Colors.light.border,
+                backgroundColor: Colors.light.surface,
                 flexDirection: 'row',
                 padding: 10,
-                borderBottomColor: Colors.light.highlightBackgroun_1,
+                borderBottomColor: Colors.light.border,
                 borderBottomWidth: 0.5,
             }}>
 
             <MaterialIcons
                 name={iconName}
                 size={iconSize ? iconSize : 28}
-                color={Colors.light.highlightBackgroun_1}
+                color={Colors.light.primary}
             />
 
             <Text style={{ alignSelf: 'center', fontSize: 14, fontWeight: 'bold' }}>

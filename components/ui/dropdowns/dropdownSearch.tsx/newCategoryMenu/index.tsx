@@ -1,4 +1,4 @@
-import { Type } from "@/app/screens/addScreen";
+import { TransactionType } from "@/app/types/Finance";
 import { AddCategory } from "@/app/utils/categoryManager";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
@@ -8,7 +8,7 @@ import { Modal, Pressable, Text, View } from "react-native";
 
 interface Props {
     isVisible: boolean, categoryToAdd: string,
-    currentType: Type, onSuccess: () => void, onDismiss: () => void
+    currentType: TransactionType, onSuccess: () => void, onDismiss: () => void
 }
 
 export type Action = 'add' | 'delete' | 'update';
@@ -41,7 +41,6 @@ export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType,
                 onSuccess();
                 setSeccess(true);
             }
-
         }
     }
 
@@ -62,7 +61,7 @@ export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType,
                         <>
                             <Text style={{ marginBottom: 40, fontSize: 18, textAlign: 'center' }}>
                                 {`Você tem certeza que deseja adicionar `}
-                                <Text style={{ fontWeight: "bold", color: Colors.light.highlightBackgroun_1 }}>{categoryToAdd}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors.light.textPrimary }}>{categoryToAdd}</Text>
                                 {` a lista de categorias de ${renderCurrentType()}?`}
                             </Text>
 

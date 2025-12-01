@@ -97,7 +97,7 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
                                     <Text style={styles.text}>Se possui um ID </Text>
 
                                     <Pressable onPress={() => setIsCreateGroup(false)}>
-                                        <Text style={{ color: Colors.light.tint, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
+                                        <Text style={{ color: Colors.light.accent, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
                                     </Pressable>
                                 </View>
                             </View>
@@ -128,7 +128,7 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
             <Snackbar
                 visible={error.visible}
                 onDismiss={() => setError({ visible: false, message: "" })}
-                style={{ backgroundColor: Colors.light.tint }}
+                style={{ backgroundColor: Colors.light.accent }}
                 action={{ label: "Fechar", onPress: () => setError({ visible: false, message: "" }) }}
             >
                 {error.message}
@@ -139,7 +139,7 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
 
 const styles = StyleSheet.create({
     title: {
-        color: Colors.light.highlightBackgroun_1,
+        color: Colors.light.textPrimary,
         fontSize: 20,
         fontWeight: 'bold',
         alignSelf: 'center',
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: Colors.light.highlightBackgroun_1,
+        color: Colors.light.textPrimary,
         alignSelf: 'center',
         backgroundColor: 'transparent'
     },

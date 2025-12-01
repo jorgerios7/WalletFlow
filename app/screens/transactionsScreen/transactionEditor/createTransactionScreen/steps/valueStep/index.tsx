@@ -29,7 +29,7 @@ export default function ValueStep(
         numberEntry
         initialNumber={value}
         label={'Valor total'}
-        colorLabel={Colors.light.shadow}
+        colorLabel={Colors.light.background}
         onNumberChange={handleValue}
       />
     </StepScreen>

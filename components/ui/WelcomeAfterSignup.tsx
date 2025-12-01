@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     onSucessText: {
         marginBottom: 40,
         textAlign: 'center',
-        color: Colors.light.background,
+        color: Colors.light.textPrimary,
         fontSize: 14,
         fontWeight: "bold"
     }

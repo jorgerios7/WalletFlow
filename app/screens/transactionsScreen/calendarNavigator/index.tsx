@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
         borderRadius: RADIUS_DEFAULT,
     },
     activeCard: {
-        backgroundColor: Colors.light.highlightBackgroun_1,
+        backgroundColor: Colors.light.primary,
         borderColor: Colors.light.shadow,
         borderWidth: 1,
     },

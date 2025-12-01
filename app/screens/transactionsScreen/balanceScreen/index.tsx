@@ -36,7 +36,7 @@ export default function BalanceScreen({ isLoading, balanceValues }: { isLoading:
         <MaterialIcons
           name={isExpanded ? "expand-less" : "expand-more"}
           size={20}
-          color={Colors.light.highlightBackgroun_1}
+          color={Colors.light.primary}
         />
       </Pressable>
 
@@ -55,7 +55,7 @@ export default function BalanceScreen({ isLoading, balanceValues }: { isLoading:
             <MaterialIcons
               name="expand-less"
               size={20}
-              color={Colors.light.highlightBackgroun_1}
+              color={Colors.light.primary}
             />
           </Pressable>
         </View>

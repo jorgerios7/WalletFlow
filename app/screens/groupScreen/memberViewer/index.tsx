@@ -63,7 +63,7 @@ export default function MembersViewer({ currentUserId, members, creationData, on
                 <View style={styles.header}>
                     <Text style={styles.title}>Membros</Text>
                     <Pressable onPress={onPressAddButton}>
-                        <MaterialIcons name="add" size={24} color={Colors.light.highlightBackgroun_1} />
+                        <MaterialIcons name="add" size={24} color={Colors.light.primary} />
                     </Pressable>
                 </View>
                 
@@ -86,11 +86,11 @@ export default function MembersViewer({ currentUserId, members, creationData, on
 };
 
 const styles = StyleSheet.create({
-    container: { height: "80%", flexDirection: "column", justifyContent: "space-between", gap: 10, backgroundColor: Colors.light.shadow, padding: 10, borderRadius: 10 },
+    container: { height: "80%", flexDirection: "column", justifyContent: "space-between", gap: 10, backgroundColor: Colors.light.surface, padding: 10, borderRadius: 10 },
     header: { flexDirection: "row", justifyContent: "space-between", padding: 10 }, viewer: { gap: 10 },
     text: { fontSize: 12, fontStyle: 'italic' }, footer: { padding: 10 }, title: { fontSize: 16, alignSelf: "center" },
     memberItem: {
-        backgroundColor: Colors.light.highlightBackgroun_1, borderColor: Colors.light.highlightBackgroun_1,
+        backgroundColor: Colors.light.primary, borderColor: Colors.light.border,
         padding: 10, borderRadius: 10, borderWidth: 0.5, flexDirection: "row", justifyContent: "space-between"
     }
 });

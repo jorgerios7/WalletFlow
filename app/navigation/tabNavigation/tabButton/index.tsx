@@ -18,9 +18,9 @@ const TabButton: React.FC<Props> = ({
 
     const dynamicColor = isFocused
         ? Colors.light.background
-        : Colors.light.highlightBackgroun_1;
+        : Colors.light.primary;
     const tabBackgroundColor = isFocused
-        ? Colors.light.highlightBackgroun_1
+        ? Colors.light.primary
         : Colors.light.background;
 
     return (
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         flex: 1, alignItems: 'center', justifyContent: 'center',
         borderRadius: 5, marginHorizontal: 10, marginTop: 5
     },
-    tabLabel: { fontSize: 12, marginTop: 2, color: Colors.light.highlightBackgroun_1},
+    tabLabel: { fontSize: 12, marginTop: 2, color: Colors.light.primary},
 });
 
 export default TabButton

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     button: {
-        backgroundColor: Colors.light.highlightBackgroun_1,
+        backgroundColor: Colors.light.primary,
         borderWidth: 0.5,
         borderColor: Colors.light.shadow,
         borderRadius: 10,
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 
     },
     buttonPressed: {
-        backgroundColor: Colors.light.tabIconDefault,
+        backgroundColor: Colors.light.secondary,
     },
     buttonText: {
         color: Colors.light.background,

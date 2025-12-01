@@ -40,7 +40,7 @@ export default function RadioButton({
 const styles = StyleSheet.create({
     container: {
         alignSelf: 'center',
-        //backgroundColor: 'blue'
+        backgroundColor: 'transaparent'
     },
     radioContainer: {
         flexDirection: "row",
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         width: 20,
         borderRadius: 10,
         borderWidth: 2,
-        borderColor: Colors.light.highlightBackgroun_1,
+        borderColor: Colors.light.primary,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -60,6 +60,6 @@ const styles = StyleSheet.create({
         width: 10,
         height: 10,
         borderRadius: 5,
-        backgroundColor: Colors.light.highlightBackgroun_2
+        backgroundColor: Colors.light.primary
     },
 });

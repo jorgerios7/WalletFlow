@@ -60,7 +60,7 @@ export default function DueDateStep(
           dateEntry
           initialText={value}
           label={'Data do vencimento'}
-          colorLabel={Colors.light.shadow}
+          colorLabel={Colors.light.background}
           onTextChange={onSelect}
         />
       )}

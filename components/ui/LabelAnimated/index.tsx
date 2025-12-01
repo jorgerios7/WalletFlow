@@ -31,7 +31,7 @@ export default function LabelAnimated({ labelText, labelColor, textInput, focuse
 
 const styles = StyleSheet.create({
     label: {
-        left: 18, paddingHorizontal: 10, color: Colors.light.highlightBackgroun_1,
+        left: 18, paddingHorizontal: 10, color: Colors.light.primary,
         zIndex: 2, fontSize: 12, fontWeight: 'bold', padding: 2, position: 'absolute'
     }
 })

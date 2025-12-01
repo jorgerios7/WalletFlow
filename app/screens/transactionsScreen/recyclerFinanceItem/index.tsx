@@ -110,9 +110,9 @@ const FinanceItemRecycler: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  scrollContent: { backgroundColor: Colors.light.shadow },
+  scrollContent: { backgroundColor: Colors.light.surface },
   headerContainer: {
-    width: '95%', backgroundColor: Colors.light.highlightBackgroun_1, padding: 8, gap: 10, alignSelf: 'center', borderRadius: 8, alignContent: 'space-between',
+    width: '95%', backgroundColor: Colors.light.primary, padding: 8, gap: 10, alignSelf: 'center', borderRadius: 8, alignContent: 'space-between',
     flexDirection: 'row', justifyContent: 'space-between'
   },
   textHeader: { fontSize: 12, color: Colors.light.background, alignSelf: 'center', fontStyle: 'italic' }
