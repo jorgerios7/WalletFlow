@@ -9,6 +9,7 @@ export const Colors = {
     textInverse: "#FFFFFF",
 
     border: "#4B5563",
+    borderInvert: "rgba(8, 7, 7, 1)",
 
     primary: "#060B3A",
     secondary: "#4B5563",
@@ -33,6 +34,7 @@ export const Colors = {
     textInverse: "#11181C",
 
     border: "#2A2D34",
+    borderInvert: "#babbbdff",
 
     primary: "#E2E8F0",
     secondary: "#94A3B8",

@@ -1,3 +1,4 @@
+import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -5,6 +6,7 @@ import Dropdown, { OpenDirection } from "..";
 import LabelAnimated from "../../LabelAnimated";
 
 interface Props {
+  theme: ThemeType,
   isVisible: boolean;
   setSelection: string | number;
   list: string[] | number[];
@@ -14,7 +16,7 @@ interface Props {
 
 }
 
-export default function DropdownSelect({ isVisible, setSelection, list, placeholder, onOpeningDropdown, onSelect }: Props) {
+export default function DropdownSelect({ theme, isVisible, setSelection, list, placeholder, onOpeningDropdown, onSelect }: Props) {
   if (!isVisible) return null;
 
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -24,13 +26,13 @@ export default function DropdownSelect({ isVisible, setSelection, list, placehol
     <View style={styles.container}>
 
       <LabelAnimated
+        theme={theme}
         onPress={() => setIsDropdownVisible((prev) => !prev)}
-        labelColor={'white'}
         labelText={placeholder}
         focused={false}
         textInput={selected}
       />
-      
+
       <Pressable
         focusable
         style={styles.dropdownButton}
@@ -38,12 +40,13 @@ export default function DropdownSelect({ isVisible, setSelection, list, placehol
         onBlur={() => setIsDropdownVisible(false)}
         onFocus={() => setIsDropdownVisible(false)}
       >
-        <Text style={styles.dropdownButtonText}>
+        <Text style={[styles.dropdownButtonText, { color: Colors[theme].textSecondary }]}>
           {selected}
         </Text>
       </Pressable>
 
       <Dropdown
+        theme={theme}
         isVisible={isDropdownVisible}
         onShowing={onOpeningDropdown}
         items={list}
@@ -60,8 +63,8 @@ export default function DropdownSelect({ isVisible, setSelection, list, placehol
 const styles = StyleSheet.create({
   container: { position: "relative" }, // importante pra referência do absolute
   dropdownButton: {
-    minWidth: 300, color: Colors.light.primary, borderWidth: 0.5, borderColor: Colors.light.border,
+    minWidth: 300, borderWidth: 0.5, borderColor: Colors.light.border,
     backgroundColor: "transparent", fontWeight: "bold", borderRadius: 10, padding: 14
   },
-  dropdownButtonText: { fontSize: 16, color: "#333" }
+  dropdownButtonText: { fontSize: 16 }
 });

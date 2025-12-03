@@ -1,11 +1,12 @@
+import { ThemeType } from "@/app/types/appearance";
 import { MixedTransactionEntry, Transactions, UpdateEntryValues } from "@/app/types/Finance";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
-export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEditPayment, onPressingDelete, onPressingInfo }: {
-    data: Partial<MixedTransactionEntry>; dynamicBorder: { isFirst: boolean, isLast: boolean },
+export default function FinanceDetailsItem({ data, theme, dynamicBorder, onPressingEditPayment, onPressingDelete, onPressingInfo }: {
+    data: Partial<MixedTransactionEntry>; theme: ThemeType; dynamicBorder: { isFirst: boolean, isLast: boolean },
     onPressingDelete: (id: { transaction: string, entry: string }, values: { paymentType: string, value: number }) => void;
     onPressingInfo: (list: Transactions) => void; onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
 }) {
@@ -40,7 +41,7 @@ export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEdit
                 >
                     <MaterialIcons
                         name={data.paymentType === "pending" ? "check-circle" : "edit"}
-                        color={Colors.light.primary} size={24}
+                        color={Colors[theme].secondary} size={24}
                     />
                 </Pressable>
 
@@ -51,36 +52,36 @@ export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEdit
                         { paymentType: data.paymentType as string, value: data.value as number })
                     }
                 >
-                    <MaterialIcons name="delete" size={24} color={Colors.light.primary} />
+                    <MaterialIcons name="delete" size={24} color={Colors[theme].secondary} />
                 </Pressable>
 
                 <Pressable
                     style={[styles.actionButton, { backgroundColor: "transparent" }]}
                     onPress={() => onPressingInfo(data as MixedTransactionEntry)}
                 >
-                    <MaterialIcons name="info" size={24} color={Colors.light.primary} />
+                    <MaterialIcons name="info" size={24} color={Colors[theme].secondary} />
                 </Pressable>
             </View>
 
-            <Animated.View style={[styles.card, { transform: [{ translateX }], ...DynamicBorders }]}>
+            <Animated.View style={[styles.card, { backgroundColor: Colors[theme].surfaceVariant, transform: [{ translateX }], ...DynamicBorders }]}>
                 <Pressable onPress={handlePress} style={styles.cardContent}>
-                    <View style={styles.image}>
+                    <View style={[styles.image, { backgroundColor: Colors[theme].primary }]}>
                         <MaterialIcons
                             name={data.type === "income" ? "attach-money" : "money-off"}
                             size={16}
-                            color={Colors.light.background}
+                            color={Colors[theme].background}
                         />
                     </View>
 
                     <View style={styles.textContainer}>
-                        <Text style={[styles.text, { fontSize: 16, fontWeight: "bold" }]}>
+                        <Text style={[styles.text, { color: Colors[theme].textPrimary, fontSize: 16, fontWeight: "bold" }]}>
                             {data.type === 'income' ? 'Entrada' : 'Saída'} {data.paymentType === "concluded" ? "concluída" : "pendente"}
                         </Text>
-                        <Text style={styles.text}>{data.category}</Text>
+                        <Text style={[styles.text, { color: Colors[theme].textSecondary }]}>{data.category}</Text>
                     </View>
 
                     <View style={[styles.textContainer, { alignItems: "flex-end" }]}>
-                        <Text style={[styles.text, { fontWeight: "bold" }]}>
+                        <Text style={[styles.text, { color: Colors[theme].textSecondary, fontWeight: "bold" }]}>
                             R$ {data.value?.toFixed(2)}
                         </Text>
                     </View>
@@ -88,7 +89,7 @@ export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEdit
                     <MaterialIcons
                         name={isOpen ? "chevron-right" : "chevron-left"}
                         size={24}
-                        color={Colors.light.primary}
+                        color={Colors[theme].primary}
                     />
                 </Pressable>
             </Animated.View>
@@ -99,7 +100,7 @@ export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEdit
 const styles = StyleSheet.create({
     actionsContainer: { position: "absolute", right: 10, top: 0, bottom: 0, flexDirection: "row", alignItems: "center", zIndex: 0, gap: 8 },
     actionButton: { width: 40, height: 60, justifyContent: "center", alignItems: "center" },
-    card: { backgroundColor: Colors.light.background, borderWidth: 0.5, borderColor: 'transparent', padding: 10, zIndex: 2 },
-    cardContent: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" }, textContainer: { width: "40%", backgroundColor: 'transparent' }, text: { marginEnd: 2 },
-    image: { width: 30, height: 30, justifyContent: "center", alignItems: "center", borderColor: Colors.light.shadow, borderWidth: 0.5, borderRadius: 5, backgroundColor: Colors.light.primary },
+    card: { borderWidth: 0.5, borderColor: 'transparent', padding: 10, zIndex: 2 }, text: { marginEnd: 2 },
+    cardContent: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" }, textContainer: { width: "40%", backgroundColor: 'transparent' },
+    image: { width: 30, height: 30, justifyContent: "center", alignItems: "center", borderWidth: 0.5, borderRadius: 5 }
 });

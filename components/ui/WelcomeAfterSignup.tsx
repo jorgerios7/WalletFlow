@@ -1,14 +1,16 @@
+import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
 import React from 'react';
 import { StyleSheet, Text, View } from "react-native";
 import CustomButton from "./CustomButton";
 
 interface Props {
+    theme: ThemeType;
     onPressingReturnToLoginButton?: () => void;
     shouldRender?: boolean;
 }
 
-const WelcomeAfterSignup: React.FC<Props> = ({ onPressingReturnToLoginButton, shouldRender = true, }) => {
+const WelcomeAfterSignup: React.FC<Props> = ({ theme, onPressingReturnToLoginButton, shouldRender = true, }) => {
     if (!shouldRender) return null;
     
     return (
@@ -19,7 +21,7 @@ const WelcomeAfterSignup: React.FC<Props> = ({ onPressingReturnToLoginButton, sh
             <Text style={styles.onSucessText}>
                 Bem-vindo(a) a uma nova experiência. Agora é só fazer login e aproveitar!
             </Text>
-            <CustomButton text="Ir para o Login" onPress={onPressingReturnToLoginButton} />
+            <CustomButton theme={theme} text="Ir para o Login" onPress={onPressingReturnToLoginButton} />
         </View>
     );
 }

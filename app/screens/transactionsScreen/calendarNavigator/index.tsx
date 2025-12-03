@@ -1,3 +1,4 @@
+import { ThemeType } from '@/app/types/appearance';
 import { Colors } from '@/constants/Colors';
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
@@ -11,7 +12,7 @@ const SPACING_DEFAULT = 25;
 const DEFAULT_SIZE = SPACING_DEFAULT * 2;
 const RADIUS_DEFAULT = 16;
 
-const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ onDateChange }) => {
+const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date) => void }> = ({ theme, onDateChange }) => {
     const scrollRef = useRef<ScrollView>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -57,16 +58,16 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>{months[currentIndex]?.year}</Text>
+        <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
+            <Text style={[styles.title, { backgroundColor: Colors[theme].background, color: Colors[theme].textPrimary }]}>{months[currentIndex]?.year}</Text>
 
-            <View style={styles.ContainerContent}>
+            <View style={[styles.ContainerContent, { backgroundColor: Colors[theme].background }]}>
 
-                <TouchableOpacity style={styles.button} onPress={handlePrevious}>
-                    <Feather name="chevron-left" size={24} color="black" />
+                <TouchableOpacity style={[styles.button, { backgroundColor: Colors[theme].background }]} onPress={handlePrevious}>
+                    <Feather name="chevron-left" size={24} color={Colors[theme].secondary} />
                 </TouchableOpacity>
 
-                <View style={styles.row}>
+                <View style={[styles.row, { backgroundColor: Colors[theme].background }]}>
                     <Animated.ScrollView
                         ref={scrollRef}
                         horizontal
@@ -81,24 +82,27 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
                         {months.map((month, index) => (
                             <Animated.View
                                 key={index}
-                                style={[styles.card, index === currentIndex && styles.activeCard,
-                                {
-                                    transform: [
-                                        {
-                                            scale: scrollX.interpolate({
-                                                inputRange: [
-                                                    (index - 1) * (ITEM_WIDTH + ITEM_SPACING),
-                                                    index * (ITEM_WIDTH + ITEM_SPACING),
-                                                    (index + 1) * (ITEM_WIDTH + ITEM_SPACING),
-                                                ],
-                                                outputRange: [0.9, 1, 0.9],
-                                                extrapolate: 'clamp',
-                                            }),
-                                        },
-                                    ]
+                                style={[styles.card, { backgroundColor: Colors[theme].background },
+                                index === currentIndex && {
+                                    backgroundColor: Colors[theme].surfaceVariant, borderColor: Colors[theme].border
+                                }, {
+                                    transform: [{
+                                        scale: scrollX.interpolate({
+                                            inputRange: [
+                                                (index - 1) * (ITEM_WIDTH + ITEM_SPACING),
+                                                index * (ITEM_WIDTH + ITEM_SPACING),
+                                                (index + 1) * (ITEM_WIDTH + ITEM_SPACING),
+                                            ],
+                                            outputRange: [0.9, 1, 0.9],
+                                            extrapolate: 'clamp',
+                                        }),
+                                    }]
                                 }]}
                             >
-                                <Text style={[styles.monthText, index === currentIndex && styles.activeText]}>
+                                <Text
+                                    style={[styles.monthText, { color: Colors[theme].textSecondary },
+                                    index === currentIndex && [styles.activeText, { color: Colors[theme].textPrimary }]]}
+                                >
                                     {month.label}
                                 </Text>
                             </Animated.View>
@@ -106,8 +110,8 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
                     </Animated.ScrollView>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={handleNext}>
-                    <Feather name="chevron-right" size={24} color="black" />
+                <TouchableOpacity style={[styles.button, { backgroundColor: Colors[theme].background }]} onPress={handleNext}>
+                    <Feather name="chevron-right" size={24} color={Colors[theme].secondary} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -115,65 +119,17 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
 };
 
 const styles = StyleSheet.create({
-    container: { padding: SPACING_DEFAULT, backgroundColor: Colors.light.background },
-    title: { textAlign: 'center', fontWeight: 'bold', fontSize: 16, marginBottom: SPACING_DEFAULT, backgroundColor: Colors.light.background },
-    ContainerContent: {
-        flexDirection: 'row',
-        backgroundColor: Colors.light.background,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    row: {
-        width: SPACING_DEFAULT + ITEM_WIDTH * 2.7,
-        height: DEFAULT_SIZE,
-        backgroundColor: Colors.light.background,
-    },
-    button: {
-        width: DEFAULT_SIZE,
-        height: DEFAULT_SIZE,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: Colors.light.background,
-        borderRadius: RADIUS_DEFAULT
-    },
-    menu: {
-        flexDirection: 'row',
-        backgroundColor: Colors.light.background,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    menuTab: {
-        padding: SPACING_DEFAULT,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: RADIUS_DEFAULT,
-        margin: 5,
-        backgroundColor: Colors.light.background
-    },
+    container: { padding: SPACING_DEFAULT },
+    title: { textAlign: 'center', fontWeight: 'bold', fontSize: 16, marginBottom: SPACING_DEFAULT },
+    ContainerContent: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+    row: { width: SPACING_DEFAULT + ITEM_WIDTH * 2.7, height: DEFAULT_SIZE },
+    button: { width: DEFAULT_SIZE, height: DEFAULT_SIZE, justifyContent: 'center', alignItems: 'center', borderRadius: RADIUS_DEFAULT },
     card: {
-        width: ITEM_WIDTH,
-        height: DEFAULT_SIZE,
-        marginHorizontal: ITEM_SPACING / 2,
-        backgroundColor: Colors.light.background,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: RADIUS_DEFAULT,
+        width: ITEM_WIDTH, height: DEFAULT_SIZE, marginHorizontal: ITEM_SPACING / 2,
+        justifyContent: 'center', alignItems: 'center', borderRadius: RADIUS_DEFAULT
     },
-    activeCard: {
-        backgroundColor: Colors.light.primary,
-        borderColor: Colors.light.shadow,
-        borderWidth: 1,
-    },
-    monthText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#000',
-        textAlign: 'center',
-    },
-    activeText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
+    monthText: { fontSize: 16, fontWeight: '600', textAlign: 'center' },
+    activeText: { fontWeight: 'bold' }
 });
 
 export default CalendarNavigator;

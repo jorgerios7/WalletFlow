@@ -1,3 +1,4 @@
+import { ThemeType } from "@/app/types/appearance";
 import { TransactionType } from "@/app/types/Finance";
 import { DeleteCategory } from "@/app/utils/categoryManager";
 import CustomButton from "@/components/ui/CustomButton";
@@ -7,11 +8,11 @@ import { useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 
 interface Props {
-    isVisible: boolean; categoryToDelete: string; currentType: TransactionType;
+    isVisible: boolean; theme: ThemeType, categoryToDelete: string; currentType: TransactionType;
     onSuccess: () => void; onDismiss: () => void;
 }
 
-export default function DeleteCategoryMenu({ isVisible, categoryToDelete, currentType, onSuccess, onDismiss }: Props) {
+export default function DeleteCategoryMenu({ isVisible, theme, categoryToDelete, currentType, onSuccess, onDismiss }: Props) {
     if (!categoryToDelete) return;
 
     const [success, setSeccess] = useState(false);
@@ -62,12 +63,14 @@ export default function DeleteCategoryMenu({ isVisible, categoryToDelete, curren
                             </Text>
 
                             <CustomButton
+                                theme={theme}
                                 text="Confirmar"
                                 onPress={() => {
                                     handleDeleteCategory();
                                 }}
                             />
                             <TextButton
+                                theme={theme}
                                 text="Cancelar"
                                 onPress={() => {
                                     onDismiss();
@@ -82,6 +85,7 @@ export default function DeleteCategoryMenu({ isVisible, categoryToDelete, curren
                             </Text>
 
                             <CustomButton
+                                theme={theme}
                                 text="Ok"
                                 onPress={() => {
                                     onDismiss();

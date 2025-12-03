@@ -1,3 +1,4 @@
+import { ThemeType } from "@/app/types/appearance";
 import { TransactionType } from "@/app/types/Finance";
 import { LoadCategories } from "@/app/utils/categoryManager";
 import DropdownSearch from "@/components/ui/dropdowns/dropdownSearch.tsx";
@@ -7,10 +8,10 @@ import { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import StepScreen from "../../../stepScreen";
 
-interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
+interface StepsProps { isVisible: boolean; theme: ThemeType, onBack?: () => void; onConfirm: () => void; onCancel: () => void }
 
 export default function CategoryStep(
-    { isVisible, value, type, onConfirm, onBack, onSelect, onCancel }:
+    { isVisible, theme, value, type, onConfirm, onBack, onSelect, onCancel }:
         StepsProps & { value: string; type: TransactionType; onSelect: (value: string) => void }
 ) {
     const [itemsVisible, setItemsVisible] = useState({ newCategoryMenu: false, deleteCategoryMenu: false });
@@ -33,6 +34,7 @@ export default function CategoryStep(
     return (
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <StepScreen
+                theme={theme}
                 isVisible={isVisible}
                 onConfirm={() => {
                     if (text === '' || !text || text !== value) {
@@ -45,6 +47,7 @@ export default function CategoryStep(
                 onCancel={onCancel}
             >
                 <DropdownSearch
+                    theme={theme} 
                     initialValue={value}
                     onOpeningDropdown="openAtBottom"
                     list={categories}
@@ -58,6 +61,7 @@ export default function CategoryStep(
             </StepScreen>
 
             <NewCategoryMenu
+                theme={theme}
                 isVisible={itemsVisible.newCategoryMenu}
                 categoryToAdd={text}
                 currentType={type}
@@ -66,6 +70,7 @@ export default function CategoryStep(
             />
 
             <DeleteCategoryMenu
+                theme={theme}
                 isVisible={itemsVisible.deleteCategoryMenu}
                 currentType={type}
                 categoryToDelete={text}

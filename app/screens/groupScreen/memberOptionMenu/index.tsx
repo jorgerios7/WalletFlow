@@ -1,12 +1,14 @@
+import { ThemeType } from "@/app/types/appearance";
 import { Delete } from "@/app/types/Group";
 import CustomButton from "@/components/ui/CustomButton";
 import RadioButton from "@/components/ui/RadioButton";
 import TextButton from "@/components/ui/TextButton";
+import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 
-export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, onConfirm, onCancel }: {
-    isStarted: boolean; currentUid: string; role: string; selectedItem: { id: string, name: string, role: string };
+export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, role, onConfirm, onCancel }: {
+    theme: ThemeType, isStarted: boolean; currentUid: string; role: string; selectedItem: { id: string, name: string, role: string };
     onConfirm: (action: { member: string, promote: boolean, demote: boolean, delete: { who: Delete, value: boolean } }) => void;
     onCancel: () => void;
 }) {
@@ -54,17 +56,18 @@ export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, on
 
     return (
         <Modal visible={isStarted} animationType="fade" transparent>
-            <View style={styles.overlay}>
+            <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay, }]}>
                 <View style={styles.content}>
 
                     <Text style={styles.title}>{selectedItem.name}</Text>
-                    
+
                     <View style={{ paddingVertical: 40 }}>
                         {role !== CONDITION ? (
                             <>
                                 {currentUid === selectedItem.id ? (
                                     <>
                                         <RadioButton
+                                            theme={theme}
                                             initialValue={''}
                                             options={[
                                                 {
@@ -93,6 +96,7 @@ export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, on
                             <>
                                 <RadioButton
                                     initialValue={''}
+                                    theme={theme}
                                     options={[
                                         {
                                             label:
@@ -125,6 +129,7 @@ export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, on
                     {(variables.delete.value || variables.promote.value || variables.demote.value) && (
                         <CustomButton
                             text="Confirmar"
+                            theme={theme}
                             onPress={() => {
                                 onConfirm({
                                     member: variables.member.id,
@@ -144,6 +149,7 @@ export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, on
                     )}
 
                     <TextButton
+                        theme={theme}
                         text={(variables.delete.value || variables.promote.value || variables.demote.value)
                             ? ('Cancelar')
                             : ('Voltar')
@@ -167,7 +173,6 @@ const styles = StyleSheet.create({
     },
     overlay: {
         flex: 1,
-        backgroundColor: "#00000088",
         justifyContent: "center",
         alignItems: "center",
     },

@@ -1,14 +1,16 @@
+import { ThemeType } from "@/app/types/appearance";
 import { Text, View } from "react-native";
 import StepScreen from "..";
 
-interface ConfirmationScreen { isVisible: boolean; textAbove: string, textBelow: string, onConfirm: () => void }
+interface ConfirmationScreen { isVisible: boolean; theme: ThemeType; textAbove: string, textBelow: string, onConfirm: () => void }
 
-export default function FinalStep({ isVisible, textAbove, textBelow, onConfirm }: ConfirmationScreen) {
+export default function FinalStep({ isVisible, theme, textAbove, textBelow, onConfirm }: ConfirmationScreen) {
     if (!isVisible) return null;
 
     return (
         <StepScreen
             isVisible={isVisible}
+            theme={theme}
             buttonTextConfirm={'Finalizar'}
             onConfirm={onConfirm}
             children={

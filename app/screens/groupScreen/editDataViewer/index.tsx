@@ -1,12 +1,14 @@
+import { ThemeType } from "@/app/types/appearance";
 import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
+import { Colors } from "@/constants/Colors";
 import { useState } from "react";
 import { Alert, Modal, StyleSheet, Text, View } from "react-native";
 
 export function EditDataViewer(
-    { isVisible, currentName, onSelected, onDismiss }:
-        { isVisible: boolean, currentName: string, onSelected: (newName: string) => void, onDismiss: () => void }) {
+    { isVisible, theme, currentName, onSelected, onDismiss }:
+        { isVisible: boolean, theme: ThemeType, currentName: string, onSelected: (newName: string) => void, onDismiss: () => void }) {
 
     if (!isVisible) return null
 
@@ -40,16 +42,17 @@ export function EditDataViewer(
 
     return (
         <Modal visible={isVisible} transparent>
-            <View style={styles.overlay}>
+            <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay, }]}>
                 <View style={styles.content}>
                     <Text style={styles.title}>Editar nome do Grupo</Text>
                     <DynamicLabelInput
+                    theme={theme}
                         initialText={name}
                         label={label}
                         onTextChange={handleNewName}
                     />
-                    <CustomButton text={"Confirmar"} onPress={handleAction} />
-                    <TextButton text={"Cancelar"} onPress={onDismiss} />
+                    <CustomButton text={"Confirmar"} theme={theme} onPress={handleAction} />
+                    <TextButton text={"Cancelar"} theme={theme} onPress={onDismiss} />
 
                 </View>
             </View>
@@ -68,7 +71,6 @@ const styles = StyleSheet.create({
     },
     overlay: {
         flex: 1,
-        backgroundColor: "#00000088",
         justifyContent: "center",
         alignItems: "center",
     },

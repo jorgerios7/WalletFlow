@@ -1,6 +1,7 @@
 import DeleteMember from "@/app/services/firebase/groupService/deleteMember";
 import PromoteOrDemote from "@/app/services/firebase/groupService/demote_or_demote";
 import { UpdateField } from "@/app/services/firebase/groupService/updateField";
+import { ThemeType } from "@/app/types/appearance";
 import { Creator, Delete } from "@/app/types/Group";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -12,7 +13,7 @@ import { MemberOptionMenu } from "./memberOptionMenu";
 import MembersViewer from "./memberViewer";
 
 interface Props {
-    currentUserId: string, groupId: string, groupName: string, creator: Creator,
+    theme: ThemeType, currentUserId: string, groupId: string, groupName: string, creator: Creator,
     memberList: FirestoreMemberMap, onUpdating: (isUpdating: boolean) => void, onExiting: () => void
 }
 
@@ -20,7 +21,7 @@ interface FirestoreMemberMap { [userId: string]: { name: string, role: string } 
 
 interface MemberProps { id: string, name: string, role: string }
 
-export default function GroupScreen({ currentUserId, groupId, groupName, creator, memberList, onUpdating, onExiting }: Props) {
+export default function GroupScreen({ theme, currentUserId, groupId, groupName, creator, memberList, onUpdating, onExiting }: Props) {
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
@@ -69,16 +70,18 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
             <View style={styles.header}>
-                <Text style={styles.title}>{groupName}</Text>
+
+                <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>{groupName}</Text>
                 {renderUserRole() === "owner" && (
                     <Pressable style={{ padding: 10 }} onPress={() => setEditDataViewer(true)}>
-                        <MaterialIcons name="mode-edit" size={20} color={Colors.light.primary} />
+                        <MaterialIcons name="mode-edit" size={20} color={Colors[theme].primary} />
                     </Pressable>)
                 }
             </View>
             <MembersViewer
+                theme={theme}
                 currentUserId={currentUserId}
                 members={parsedMembers}
                 creationData={{ name: creator.name, date: creator.createdAt }}
@@ -90,6 +93,7 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
             />
 
             <MemberOptionMenu
+                theme={theme}
                 isStarted={menuItemVisibility}
                 role={renderUserRole()}
                 selectedItem={menuItemData}
@@ -103,6 +107,7 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
 
             <EditDataViewer
                 isVisible={editDataViewer}
+                theme={theme}
                 currentName={groupName}
                 onSelected={handleEditTitleName}
                 onDismiss={() => setEditDataViewer(false)}

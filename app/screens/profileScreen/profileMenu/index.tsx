@@ -1,3 +1,4 @@
+import { ThemeType } from "@/app/types/appearance";
 import { PersonalDataChange } from "@/app/types/User";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -8,10 +9,10 @@ import UseAnimation from "./useAnimation";
 
 interface Props {
     screen: { width: number, height: number }, user: { name: string, email: string },
-    collapse?: boolean, onSelect: (field: PersonalDataChange) => void
+    theme: ThemeType, collapse?: boolean, onSelect: (field: PersonalDataChange) => void
 }
 
-export default function ProfileMenu({ screen, user, collapse, onSelect }: Props) {
+export default function ProfileMenu({ screen, theme, user, collapse, onSelect }: Props) {
 
     const AnimatedPressableButton = Animated.createAnimatedComponent(Pressable);
 
@@ -34,6 +35,7 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
     return (
         <Animated.View
             style={[styles.menuContainerDefault, {
+                backgroundColor: Colors[theme].surfaceVariant,
                 width: size.menuWidthAnim, height: size.menuHeightAnim, top: position.topMenuAnim,
                 left: position.leftMenuAnim, borderRadius: menuBorderRadiusAnim
             }]}
@@ -43,18 +45,18 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                 onPress={closeMenu}
                 style={{ opacity: opacityAnim, backgroundColor: 'transparent', alignSelf: 'flex-end', padding: 20, borderRadius: 20 }}
             >
-                <MaterialIcons name={'close'} size={28} color={'white'} />
+                <MaterialIcons name={'close'} size={28} color={Colors[theme].primary} />
             </AnimatedPressableButton>
 
             <AnimatedPressableButton
                 onPress={openMenu}
                 style={[styles.buttonDefault, {
-                    top: position.topButtonAnim, left: position.leftButtonAnim, width: size.buttonWidthAnim,
-                    height: size.buttonHeightAnim,
+                    borderColor: Colors[theme].borderInvert, top: position.topButtonAnim, left: position.leftButtonAnim,
+                    width: size.buttonWidthAnim, height: size.buttonHeightAnim,
                 }]}
             >
                 <Animated.View style={[styles.image, { transform: [{ scale: imageScaleAnim }] }]}>
-                    <MaterialIcons name={'person'} size={100} color={'white'} />
+                    <MaterialIcons name={'person'} size={100} color={Colors[theme].primary} />
                 </Animated.View>
             </AnimatedPressableButton>
 
@@ -63,19 +65,22 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                 left: position.leftContainerTextAnim
             }]}>
                 <View style={{ flexDirection: 'row' }}>
-                    {!isExpanded && (<Text style={styles.title}>Olá, </Text>)}
-                    <Text style={styles.title}>{user.name}</Text>
+                    {!isExpanded && (
+                        <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>Olá, </Text>
+                    )}
+                    <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>{user.name}</Text>
                 </View>
 
                 {isExpanded && (
-                    <Animated.Text style={[styles.subtitle, { opacity: opacityAnim }]}>{user.email}</Animated.Text>)}
+                    <Animated.Text style={[styles.subtitle, { opacity: opacityAnim, color: Colors[theme].textSecondary }]}>{user.email}</Animated.Text>)}
             </Animated.View>
 
-            <View style={{ width: '100%', height: 200 }} />
+            <View style={{ width: '100%', height: 200, backgroundColor: "transparent" }} />
 
             {isExpanded && (
                 <View style={{ width: '100%', gap: 5 }}>
                     <ButtonTab
+                        theme={theme}
                         text="Editar Nome"
                         iconName="arrow-right"
                         iconSize={24}
@@ -84,6 +89,7 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                     />
 
                     <ButtonTab
+                        theme={theme}
                         text="Alterar Email"
                         iconName="arrow-right"
                         iconSize={24}
@@ -92,6 +98,7 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                     />
 
                     <ButtonTab
+                        theme={theme}
                         text="Mudar Senha"
                         iconName="arrow-right"
                         iconSize={24}
@@ -100,6 +107,7 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                     />
 
                     <ButtonTab
+                        theme={theme}
                         onPress={() => onSelect('Exit-App')}
                         text="Sair"
                         iconName="exit-to-app"
@@ -108,6 +116,7 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                     />
 
                     <ButtonTab
+                        theme={theme}
                         isHighlightText
                         onPress={() => onSelect('DeleteAccount')}
                         text="Excluir conta"
@@ -121,11 +130,8 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
 }
 
 const styles = StyleSheet.create({
-    menuContainerDefault: { zIndex: 999, position: 'absolute', backgroundColor: Colors.light.primary },
-    buttonDefault: {
-        position: 'absolute', backgroundColor: "transparent", borderColor: Colors.light.background, justifyContent: 'center', alignItems: 'center',
-    },
-    image: { borderRadius: 999, backgroundColor: 'transparent' },
+    menuContainerDefault: { zIndex: 999, position: 'absolute' }, image: { borderRadius: 999, backgroundColor: 'transparent' },
+    buttonDefault: {position: 'absolute', backgroundColor: "transparent", justifyContent: 'center', alignItems: 'center'},
     containerText: { position: 'absolute', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: "transparent" },
-    title: { color: 'white', fontSize: 18 }, subtitle: { color: 'white', fontSize: 12 }
+    title: { fontSize: 18 }, subtitle: { fontSize: 12 }
 });

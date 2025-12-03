@@ -1,3 +1,4 @@
+import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -5,22 +6,20 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 interface MemberProps { id: string, name: string, role: string }
 
 function MemberItem(
-    { currentUserId, member, onPressingItem }: { currentUserId: string, member: MemberProps; onPressingItem: (member: MemberProps) => void }
+    { theme, currentUserId, member, onPressingItem }: { theme: ThemeType, currentUserId: string, member: MemberProps; onPressingItem: (member: MemberProps) => void }
 ) {
     return (
-        <View style={styles.memberItem}>
+        <View style={[styles.memberItem, { backgroundColor: Colors[theme].surfaceVariant, borderColor: Colors[theme].border, }]}>
             <View style={{ flexDirection: "row", gap: 5 }}>
-                <Text style={{ alignSelf: "center", color: Colors.light.background }}>
+                <Text style={{ alignSelf: "center", color: Colors[theme].textPrimary }}>
                     {member.name}
                 </Text>
 
-                {currentUserId === member.id && (
-                    <Text style={{ color: 'white', alignSelf: 'center' }}>(você)</Text>
-                )}
+                {currentUserId === member.id && (<Text style={{ color: Colors[theme].textPrimary, alignSelf: 'center' }}>(você)</Text>)}
 
                 {member.role === "owner" && (
                     <View style={{ alignSelf: 'center' }}>
-                        <MaterialIcons name="people" size={20} color={Colors.light.background} />
+                        <MaterialIcons name="people" size={20} color={Colors[theme].primary} />
                     </View>
                 )}
             </View>
@@ -28,7 +27,7 @@ function MemberItem(
                 style={{ alignSelf: 'center' }}
                 onPress={() => onPressingItem({ id: member.id, name: member.name, role: member.role })}
             >
-                <MaterialIcons name="more-vert" size={20} color={Colors.light.background} />
+                <MaterialIcons name="more-vert" size={20} color={Colors[theme].primary} />
             </Pressable>
         </View>
     );
@@ -51,25 +50,26 @@ function renderDate(createdAt: string) {
     return `${day} de ${monthName} de ${year}`;
 }
 
-export default function MembersViewer({ currentUserId, members, creationData, onSelect, onPressAddButton }:
+export default function MembersViewer({ theme, currentUserId, members, creationData, onSelect, onPressAddButton }:
     {
         currentUserId: string, members: MemberProps[], creationData: { name: string, date: string },
-        onPressAddButton: () => void, onSelect: (member: MemberProps) => void
+        theme: ThemeType, onPressAddButton: () => void, onSelect: (member: MemberProps) => void
     }
 ) {
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: Colors[theme].surface, }]}>
             <View>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Membros</Text>
+                    <Text style={[styles.title, {color: Colors[theme].textPrimary}]}>Membros</Text>
                     <Pressable onPress={onPressAddButton}>
-                        <MaterialIcons name="add" size={24} color={Colors.light.primary} />
+                        <MaterialIcons name="add" size={24} color={Colors[theme].primary} />
                     </Pressable>
                 </View>
-                
+
                 <View style={styles.viewer}>
                     {members.map((member) => (
                         <MemberItem
+                            theme={theme}
                             key={member.id}
                             currentUserId={currentUserId}
                             member={member}
@@ -79,18 +79,17 @@ export default function MembersViewer({ currentUserId, members, creationData, on
                 </View>
             </View>
             <View style={styles.footer}>
-                <Text style={styles.text}>Criado por {creationData.name} em {renderDate(creationData.date)}</Text>
+                <Text style={[styles.text, {color: Colors[theme].textSecondary}]}>Criado por {creationData.name} em {renderDate(creationData.date)}</Text>
             </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { height: "80%", flexDirection: "column", justifyContent: "space-between", gap: 10, backgroundColor: Colors.light.surface, padding: 10, borderRadius: 10 },
+    container: { height: "80%", flexDirection: "column", justifyContent: "space-between", gap: 10, padding: 10, borderRadius: 10 },
     header: { flexDirection: "row", justifyContent: "space-between", padding: 10 }, viewer: { gap: 10 },
     text: { fontSize: 12, fontStyle: 'italic' }, footer: { padding: 10 }, title: { fontSize: 16, alignSelf: "center" },
     memberItem: {
-        backgroundColor: Colors.light.primary, borderColor: Colors.light.border,
         padding: 10, borderRadius: 10, borderWidth: 0.5, flexDirection: "row", justifyContent: "space-between"
     }
 });

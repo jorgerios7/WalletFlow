@@ -1,5 +1,6 @@
 import DeleteEntry from '@/app/services/firebase/financeService/deleteEntry';
 import LoadTransactions from '@/app/services/firebase/financeService/loadTransactions';
+import { ThemeType } from '@/app/types/appearance';
 import { BalanceValues, Entries, MixedTransactionEntry, Transactions } from '@/app/types/Finance';
 import ConfirmActionModal from '@/components/ui/confirmActionModal';
 import React, { useEffect, useState } from 'react';
@@ -12,7 +13,7 @@ import FinanceReportScreen from './recyclerFinanceItem/financeReportScreen';
 import ContentScreen from './transactionEditor/contentScreen';
 import PaymentScreen from './transactionEditor/paymentScreen';
 
-const TransactionsScreen = ({ group_id }: { group_id: string }) => {
+const TransactionsScreen = ({ theme, group_id }: { theme: ThemeType, group_id: string }) => {
   const insets = useSafeAreaInsets();
   const [date, setDate] = useState('');
   const [loadData, setLoadData] = useState(false);
@@ -64,11 +65,12 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
 
   return (
     <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-      <CalendarNavigator onDateChange={(date) => setDate(date.toLocaleDateString('pt-BR'))} />
+      <CalendarNavigator theme={theme} onDateChange={(date) => setDate(date.toLocaleDateString('pt-BR'))} />
 
-      <BalanceScreen isLoading={loading} balanceValues={balance} />
+      <BalanceScreen theme={theme} isLoading={loading} balanceValues={balance} />
 
       <FinanceItemRecycler
+        theme={theme}
         entries_list={entriesList}
         isLoading={loading}
         bottomMargin={insets.bottom + 50}
@@ -92,11 +94,13 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
       />
 
       <ContentScreen
+        theme={theme}
         visible={paymentScreen.isVisible}
         title={'Editar pagamento'}
         uploading={false}
         children={
           <PaymentScreen
+            theme={theme}
             ids={{ group: group_id, transaction: paymentScreen.id.transaction, entry: paymentScreen.id.entry }}
             values={
               {
@@ -116,6 +120,7 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
       />
 
       <FinanceReportScreen
+        theme={theme}
         isVisible={financeReportScreen.isVisible}
         data={financeReportScreen.data as MixedTransactionEntry}
         onClose={() => setFinanceReportScreen({ isVisible: false, data: null })}
@@ -123,6 +128,7 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
 
       <ConfirmActionModal
         isVisible={confirmationScreen.isVisible}
+        theme={theme}
         confirmationMessage={confirmationScreen.message}
         onConfirm={() => handleDelete(confirmationScreen.transactionId, confirmationScreen.entryId)}
         onCancel={() => setConfirmationScreen({ isVisible: false, message: "", transactionId: "", entryId: "" })} />

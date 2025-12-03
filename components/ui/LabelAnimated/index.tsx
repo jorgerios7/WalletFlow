@@ -1,10 +1,11 @@
+import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
 
-interface Props { labelText: string, labelColor?: string, textInput: string | number, focused: boolean, onPress?: () => void }
+interface Props { theme: ThemeType, labelText: string, labelColor?: string, textInput: string | number, focused: boolean, onPress?: () => void }
 
-export default function LabelAnimated({ labelText, labelColor, textInput, focused, onPress }: Props) {
+export default function LabelAnimated({ theme, labelText, labelColor, textInput, focused, onPress }: Props) {
 
     const labelPosition = useState(new Animated.Value(17))[0];
 
@@ -22,7 +23,7 @@ export default function LabelAnimated({ labelText, labelColor, textInput, focuse
     return (
         <Animated.Text
             onPress={onPress}
-            style={[styles.label, { top: labelPosition, backgroundColor: labelColor ? labelColor : Colors.light.background }]}
+            style={[styles.label, { top: labelPosition, color: Colors[theme].textSecondary, backgroundColor: labelColor ? labelColor : Colors[theme].background }]}
         >
             {labelText}
         </Animated.Text>
@@ -30,8 +31,5 @@ export default function LabelAnimated({ labelText, labelColor, textInput, focuse
 }
 
 const styles = StyleSheet.create({
-    label: {
-        left: 18, paddingHorizontal: 10, color: Colors.light.primary,
-        zIndex: 2, fontSize: 12, fontWeight: 'bold', padding: 2, position: 'absolute'
-    }
+    label: { left: 18, paddingHorizontal: 10, zIndex: 2, fontSize: 12, fontWeight: 'bold', padding: 2, position: 'absolute' }
 })

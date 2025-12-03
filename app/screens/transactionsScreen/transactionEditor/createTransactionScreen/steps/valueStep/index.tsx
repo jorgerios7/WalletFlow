@@ -1,12 +1,13 @@
+import { ThemeType } from "@/app/types/appearance";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import { Colors } from "@/constants/Colors";
 import { Alert } from "react-native";
 import StepScreen from "../../../stepScreen";
 
-interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
+interface StepsProps { isVisible: boolean; theme: ThemeType; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
 
 export default function ValueStep(
-  { isVisible, transactionType, value, onConfirm, onBack, onSelect, onCancel }:
+  { isVisible, theme, transactionType, value, onConfirm, onBack, onSelect, onCancel }:
     StepsProps & { transactionType: string, value: number; onSelect: (value: number) => void }
 ) {
 
@@ -15,6 +16,7 @@ export default function ValueStep(
   return (
     <StepScreen
       isVisible={isVisible}
+      theme={theme}
       onConfirm={() => {
         if (value) {
           onConfirm();
@@ -27,6 +29,7 @@ export default function ValueStep(
     >
       <DynamicLabelInput
         numberEntry
+        theme={theme}
         initialNumber={value}
         label={'Valor total'}
         colorLabel={Colors.light.background}

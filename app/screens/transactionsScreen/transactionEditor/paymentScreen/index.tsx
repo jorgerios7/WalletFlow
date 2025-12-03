@@ -1,4 +1,5 @@
 import UpdateEntry from "@/app/services/firebase/financeService/updateEntry";
+import { ThemeType } from "@/app/types/appearance";
 import { PaymentType, UpdateEntryValues } from "@/app/types/Finance";
 import { useState } from "react";
 import { View } from "react-native";
@@ -8,10 +9,10 @@ import PaymentMethodStep from "./steps/paymentMethodStep";
 import PaymentStep from "./steps/paymentStep";
 
 interface Props {
-  ids: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onUpdate: (isUpdating: boolean) => void, onDismiss: () => void
+  theme: ThemeType, ids: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onUpdate: (isUpdating: boolean) => void, onDismiss: () => void
 }
 
-export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Props) {
+export default function PaymentScreen({ theme, ids, values, onUpdate, onDismiss }: Props) {
 
   const [currentStep, setCurrentStep] = useState<'paymentType' | 'paymentDate' | 'paymentMethod' | 'final'>('paymentType');
 
@@ -41,6 +42,7 @@ export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Prop
     <View>
       <PaymentStep
         isVisible={currentStep === 'paymentType'}
+        theme={theme}
         value={entry.paymentType as string}
         onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentType: selected }))}
         onConfirm={() => entry.paymentType === 'pending' as PaymentType && values.paymentType === 'pending' as PaymentType
@@ -54,6 +56,7 @@ export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Prop
 
       <PaymentDateStep
         isVisible={currentStep === 'paymentDate'}
+        theme={theme}
         value={entry.paymentDate as string}
         onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentDate: selected }))}
         onConfirm={() => setCurrentStep("paymentMethod")}
@@ -63,6 +66,7 @@ export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Prop
 
       <PaymentMethodStep
         isVisible={currentStep === 'paymentMethod'}
+        theme={theme}
         values={{
           paymentMethod: entry.paymentMethod as string, paymentBankCard: entry.paymentBankCard as string,
           paymentBank: entry.paymentBank as string
@@ -79,6 +83,7 @@ export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Prop
 
       <FinalStep
         isVisible={currentStep === 'final'}
+        theme={theme}
         textAbove={'Atualização concluída com sucesso!'}
         textBelow={'Toque em confirmar para sair do editor de pagamento.'}
         onConfirm={onDismiss}

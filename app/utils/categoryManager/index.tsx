@@ -1,4 +1,4 @@
-import { Type } from "@/app/screens/addScreen";
+import { TransactionType } from "@/app/types/Finance";
 import categoriesDefault from "@/assets/data/categories.json";
 import * as FileSystem from "expo-file-system/legacy";
 
@@ -17,20 +17,20 @@ async function ensureFileExists() {
 }
 
 // 🔹 Carregar todas as categorias
-export async function LoadCategories(type: Type): Promise<string[]> {
+export async function LoadCategories(type: TransactionType): Promise<string[]> {
   await ensureFileExists();
   const content = await FileSystem.readAsStringAsync(FILE_PATH);
-  const data = JSON.parse(content) as Record<Type, string[]>;
+  const data = JSON.parse(content) as Record<TransactionType, string[]>;
   return data[type] ?? [];
 }
 
 // 🔹 Adicionar categoria
-export async function AddCategory(type: Type, newCategory: string): Promise<string[]> {
+export async function AddCategory(type: TransactionType, newCategory: string): Promise<string[]> {
   await ensureFileExists();
   const content = await FileSystem.readAsStringAsync(FILE_PATH);
-  const data = JSON.parse(content) as Record<Type, string[]>;
+  const data = JSON.parse(content) as Record<TransactionType, string[]>;
 
-  const normalized = newCategory.trim();
+  const normalized = newCategory.trim(); 
   const exists = data[type].some(
     (c) => c.toLowerCase() === normalized.toLowerCase()
   );
@@ -44,10 +44,10 @@ export async function AddCategory(type: Type, newCategory: string): Promise<stri
 }
 
 // 🔹 Remover categoria
-export async function DeleteCategory(type: Type, categoryToDelete: string): Promise<string[]> {
+export async function DeleteCategory(type: TransactionType, categoryToDelete: string): Promise<string[]> {
   await ensureFileExists();
   const content = await FileSystem.readAsStringAsync(FILE_PATH);
-  const data = JSON.parse(content) as Record<Type, string[]>;
+  const data = JSON.parse(content) as Record<TransactionType, string[]>;
 
   data[type] = data[type].filter(
     (c) => c.toLowerCase() !== categoryToDelete.trim().toLowerCase()

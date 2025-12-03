@@ -1,16 +1,18 @@
 import { auth } from "@/app/config/firebaseConfig";
 import { UpdateEmail, UpdateName, UpdatePassword } from "@/app/services/firebase/UserService";
+import { ThemeType } from "@/app/types/appearance";
 import { PersonalDataChange } from "@/app/types/User";
 import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
+import { Colors } from "@/constants/Colors";
 import { signOut } from "firebase/auth";
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 
-interface Props { field: PersonalDataChange, groupId: string, isVisible: boolean, onSuccess: () => void, onDismiss: (isBackToInitScreen: boolean) => void };
+interface Props { theme: ThemeType,field: PersonalDataChange, groupId: string, isVisible: boolean, onSuccess: () => void, onDismiss: (isBackToInitScreen: boolean) => void };
 
-const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onSuccess, onDismiss }) => {
+const EditPersonalDataModal: React.FC<Props> = ({ theme, field, groupId, isVisible, onSuccess, onDismiss }) => {
     if (!isVisible) return null;
 
     const [input, setInput] = useState({ 1: "", 2: "", 3: "" });
@@ -45,9 +47,9 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
 
     return (
         <Modal visible={isVisible} animationType="fade" transparent>
-            <View style={styles.overlay}>
-                <View style={styles.content}>
-                    <Text style={styles.title}>
+            <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay, }]}>
+                <View style={[styles.content, {backgroundColor: Colors[theme].background}]}>
+                    <Text style={[styles.title, {color: Colors[theme].textPrimary, }]}>
                         {field === 'Name' && "Editar nome"}
                         {field === 'Email' && "Alterar email"}
                         {field === 'Password' && "Mudar senha"}
@@ -58,11 +60,13 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
                     {field === 'Name' && (
                         <>
                             <DynamicLabelInput
+                            theme={theme}
                                 label="Seu novo nome"
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 1: value }))}
                             />
 
                             <DynamicLabelInput
+                            theme={theme}
                                 label="Seu novo sobrenome"
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 2: value }))}
                             />
@@ -72,16 +76,19 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
                     {field === 'Email' && (
                         <>
                             <DynamicLabelInput
+                            theme={theme}
                                 label="Seu novo email"
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 1: value }))}
                             />
 
                             <DynamicLabelInput
+                            theme={theme}
                                 label="Repita seu novo email"
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 2: value }))}
                             />
 
                             <DynamicLabelInput
+                            theme={theme}
                                 label="Sua senha"
                                 secureTextEntry
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 3: value }))}
@@ -92,18 +99,21 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
                     {field === 'Password' && (
                         <>
                             <DynamicLabelInput
+                            theme={theme}
                                 secureTextEntry
                                 label="Sua senha atual"
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 1: value }))}
                             />
 
                             <DynamicLabelInput
+                            theme={theme}
                                 secureTextEntry
                                 label="Sua nova senha"
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 2: value }))}
                             />
 
                             <DynamicLabelInput
+                            theme={theme}
                                 secureTextEntry
                                 label="Repita sua nova senha"
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 3: value }))}
@@ -112,19 +122,19 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
                     )}
 
                     {field === "Exit-App" && (
-                        <Text style={styles.text}>
+                        <Text style={[styles.text, {color: Colors[theme].textSecondary}]}>
                             Deseja realmente sair?
                         </Text>
                     )}
 
                     {field === "DeleteAccount" && (
-                        <Text style={styles.text}>
+                        <Text style={[styles.text, {color: Colors[theme].textSecondary}]}>
                             Deseja realmente excluir sua conta?
                         </Text>
                     )}
 
-                    <CustomButton text="Confirmar" onPress={handleConfirm} />
-                    <TextButton text="Cancelar" onPress={() => onDismiss(false)} />
+                    <CustomButton theme={theme} text="Confirmar" onPress={handleConfirm} />
+                    <TextButton theme={theme} text="Cancelar" onPress={() => onDismiss(false)} />
                 </View>
             </View>
         </Modal>
@@ -132,9 +142,9 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
 };
 
 const styles = StyleSheet.create({
-    overlay: { flex: 1, backgroundColor: "#00000088", justifyContent: "center", alignItems: "center" },
-    content: { width: "90%", backgroundColor: "white", padding: 20, borderRadius: 12, gap: 20, elevation: 4 },
-    title: { color: "black", fontSize: 16, textAlign: "center", fontWeight: "bold" },
+    overlay: { flex: 1, justifyContent: "center", alignItems: "center" },
+    content: { width: "90%", padding: 20, borderRadius: 12, gap: 20, elevation: 4 },
+    title: { fontSize: 16, textAlign: "center", fontWeight: "bold" },
     text: { alignSelf: "center", fontSize: 14 }
 });
 

@@ -1,3 +1,4 @@
+import { ThemeType } from "@/app/types/appearance";
 import { RecurrenceFrequency } from "@/app/types/Finance";
 import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
@@ -6,12 +7,12 @@ import { Alert } from "react-native";
 import StepScreen from "../../../stepScreen";
 
 interface Props {
-  isVisible: boolean; startDate: string, recurrenceType: string, recurrenceFrequency: RecurrenceFrequency, value: string;
+  isVisible: boolean; theme: ThemeType, startDate: string, recurrenceType: string, recurrenceFrequency: RecurrenceFrequency, value: string;
   onSelect: (value: string) => void; onBack?: () => void; onConfirm: () => void; onCancel: () => void;
 }
 
 export default function DueDateStep(
-  { isVisible, startDate, recurrenceType, recurrenceFrequency, value, onSelect, onConfirm, onBack, onCancel }: Props
+  { isVisible, theme, startDate, recurrenceType, recurrenceFrequency, value, onSelect, onConfirm, onBack, onCancel }: Props
 ) {
 
   function handleDate(preSelect: boolean, dueDay: string) {
@@ -27,6 +28,7 @@ export default function DueDateStep(
 
   return (
     <StepScreen
+    theme={theme}
       isVisible={isVisible}
       onConfirm={() => {
         if (value) {
@@ -41,6 +43,7 @@ export default function DueDateStep(
       {recurrenceType === 'installment' ? (
         <DropdownSelect
           isVisible
+          theme={theme}
           onOpeningDropdown="openAtBottom"
           placeholder={recurrenceFrequency === "weekly"
             ? "Vencerá sempre neste dia de cada semana"
@@ -58,6 +61,7 @@ export default function DueDateStep(
       ) : (
         <DynamicLabelInput
           dateEntry
+          theme={theme}
           initialText={value}
           label={'Data do vencimento'}
           colorLabel={Colors.light.background}

@@ -1,4 +1,5 @@
 import { db, storage } from '@/app/config/firebaseConfig';
+import { ThemeType } from '@/app/types/appearance';
 import CustomButton from '@/components/ui/CustomButton';
 import TextButton from '@/components/ui/TextButton';
 import { Colors } from '@/constants/Colors';
@@ -9,9 +10,9 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import React, { useState } from 'react';
 import { Alert, Image, Modal, View } from 'react-native';
 
-interface Props { onDismiss?: () => void }
+interface Props { theme: ThemeType, onDismiss?: () => void }
 
-const ProfilePhotoPickerModal: React.FC<Props> = ({ onDismiss }) => {
+const ProfilePhotoPickerModal: React.FC<Props> = ({ theme, onDismiss }) => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -83,7 +84,7 @@ const ProfilePhotoPickerModal: React.FC<Props> = ({ onDismiss }) => {
           width: 300,
           padding: 20,
           borderRadius: 20,
-          backgroundColor: Colors.light.background,
+          backgroundColor: Colors[theme].background,
           alignItems: 'center',
           gap: 20
         }}>
@@ -95,11 +96,13 @@ const ProfilePhotoPickerModal: React.FC<Props> = ({ onDismiss }) => {
           )}
 
           <CustomButton
+            theme={theme}
             text={uploading ? 'Enviando...' : 'Selecionar nova foto de perfil'}
             onPress={() => !uploading ? pickImage() : null}
           />
 
           <TextButton
+            theme={theme}
             text={'Cancelar'}
             onPress={onDismiss}
           />

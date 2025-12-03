@@ -1,4 +1,5 @@
 import UploadTransaction from '@/app/services/firebase/financeService/uploadTransaction';
+import { ThemeType } from '@/app/types/appearance';
 import { Entries, RecurrenceType, Transactions, TransactionType } from '@/app/types/Finance';
 import { getAuth } from 'firebase/auth';
 import { useState } from 'react';
@@ -12,7 +13,7 @@ import StartDateStep from './steps/startDateStep';
 import ValueStep from './steps/valueStep';
 
 export default function CreateTransactionScreen(
-  { isVisible, groupId, type, onDismiss }: { isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void }
+  { theme, isVisible, groupId, type, onDismiss }: { theme: ThemeType, isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void }
 ) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
@@ -56,6 +57,7 @@ export default function CreateTransactionScreen(
 
   return (
     <ContentScreen
+      theme={theme}
       visible={isVisible}
       title={renderTitle()}
       uploading={loading}
@@ -63,6 +65,7 @@ export default function CreateTransactionScreen(
         <>
           <RecurrenceStep
             isVisible={currentStep === "recurrence"}
+            theme={theme}
             transactionType={type}
             values={{
               recurrenceType: transaction.recurrenceType as RecurrenceType, totalEntries: transaction.totalEntries,
@@ -82,6 +85,7 @@ export default function CreateTransactionScreen(
 
           <CategoryStep
             isVisible={currentStep === "category"}
+            theme={theme}
             type={type}
             value={transaction.category}
             onSelect={(selected) => setTransaction((prev) => ({ ...prev, category: selected }))}
@@ -92,6 +96,7 @@ export default function CreateTransactionScreen(
 
           <StartDateStep
             isVisible={currentStep === "startDate"}
+            theme={theme}
             value={transaction.startDate}
             onSelect={(selected) => setTransaction((prev) => ({ ...prev, startDate: selected }))}
             onConfirm={() => setCurrentStep(
@@ -105,6 +110,7 @@ export default function CreateTransactionScreen(
 
           <DueDateStep
             isVisible={currentStep === "dueDate"}
+            theme={theme}
             recurrenceType={transaction.recurrenceType}
             recurrenceFrequency={transaction.recurrenceFrequency}
             value={entries.dueDate as string}
@@ -117,6 +123,7 @@ export default function CreateTransactionScreen(
 
           <ValueStep
             isVisible={currentStep === "totalValue"}
+            theme={theme}
             transactionType={type}
             value={transaction.totalValue}
             onSelect={(selected) => setTransaction((prev) => ({ ...prev, totalValue: selected }))}
@@ -131,6 +138,7 @@ export default function CreateTransactionScreen(
 
           <DescriptionStep
             isVisible={currentStep === "description"}
+            theme={theme}
             value={transaction.description}
             onSelect={(selected) => setTransaction((prev) => ({ ...prev, description: selected }))}
             onConfirm={() => uploadTransaction()}
@@ -140,6 +148,7 @@ export default function CreateTransactionScreen(
 
           <FinalStep
             isVisible={currentStep === "final"}
+            theme={theme}
             onConfirm={onDismiss}
             textAbove={'Todos os passos foram concluídos!'}
             textBelow={'Toque em confirmar para finalizar o cadastro da transação.'}

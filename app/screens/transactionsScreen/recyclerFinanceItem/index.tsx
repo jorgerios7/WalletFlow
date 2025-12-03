@@ -1,5 +1,6 @@
 import { LoadScreen } from '@/app/pages/LoadScreen';
 import NotFoundScreen from '@/app/pages/NotFoundScreen';
+import { ThemeType } from '@/app/types/appearance';
 import { Entries, Transactions, UpdateEntryValues } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import React from 'react';
@@ -9,11 +10,11 @@ import FinanceDetailsItem from './financeDetailsItem';
 interface Props {
   entries_list: Entries[]; bottomMargin?: number; isLoading: boolean; onPressingInfo: (items: Transactions) => void;
   onPressDelete: (id: { transaction: string, entry: string }, values: { paymentType: string, value: number }) => void;
-  onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
+  onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void; theme: ThemeType
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
-  entries_list, bottomMargin = 0, isLoading, onPressingInfo, onPressDelete, onPressingEditPayment
+  entries_list, bottomMargin = 0, isLoading, theme, onPressingInfo, onPressDelete, onPressingEditPayment
 }) => {
 
   const groupByDate = (entries: Entries[]): { title: string; data: Entries[]; value: number }[] => {
@@ -55,11 +56,11 @@ const FinanceItemRecycler: React.FC<Props> = ({
 
   function HeaderSection({ date, value }: { date: string, value: number }) {
     return (
-      <View style={styles.headerContainer}>
-        <Text style={styles.textHeader}>
+      <View style={[styles.headerContainer, { backgroundColor: Colors[theme].surfaceVariant }]}>
+        <Text style={[styles.textHeader, { color: Colors[theme].textSecondary }]}>
           {date}
         </Text>
-        <Text style={styles.textHeader}>
+        <Text style={[styles.textHeader, { color: Colors[theme].textSecondary }]}>
           Total: R$ {value.toFixed(2)}
         </Text>
       </View>
@@ -69,13 +70,13 @@ const FinanceItemRecycler: React.FC<Props> = ({
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <LoadScreen marginBottom={bottomMargin} />
+        <LoadScreen theme={theme} marginBottom={bottomMargin} />
       ) : sections.length === 0 ? (
-        <NotFoundScreen marginBottom={bottomMargin} />
+        <NotFoundScreen theme={theme} marginBottom={bottomMargin} />
       ) : (
         <SectionList
           stickySectionHeadersEnabled
-          style={[styles.scrollContent, { marginBottom: bottomMargin }]}
+          style={{ backgroundColor: Colors[theme].surface, marginBottom: bottomMargin }}
           sections={sections}
           keyExtractor={(item) => item.entrieId}
           renderItem={({ item, index, section }) => {
@@ -84,6 +85,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
             return (
               <FinanceDetailsItem
                 data={item}
+                theme={theme}
                 dynamicBorder={{ isFirst, isLast }}
                 onPressingEditPayment={(id, values) =>
                   onPressingEditPayment(
@@ -110,12 +112,11 @@ const FinanceItemRecycler: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  scrollContent: { backgroundColor: Colors.light.surface },
   headerContainer: {
-    width: '95%', backgroundColor: Colors.light.primary, padding: 8, gap: 10, alignSelf: 'center', borderRadius: 8, alignContent: 'space-between',
-    flexDirection: 'row', justifyContent: 'space-between'
+    width: '95%', padding: 8, gap: 10, alignSelf: 'center', borderRadius: 8,
+    alignContent: 'space-between', flexDirection: 'row', justifyContent: 'space-between'
   },
-  textHeader: { fontSize: 12, color: Colors.light.background, alignSelf: 'center', fontStyle: 'italic' }
+  textHeader: { fontSize: 12, alignSelf: 'center', fontStyle: 'italic' }
 });
 
 export default FinanceItemRecycler;

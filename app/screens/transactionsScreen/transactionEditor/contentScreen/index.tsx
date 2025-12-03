@@ -1,19 +1,20 @@
 import { LoadScreen } from "@/app/pages/LoadScreen";
+import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
 import { ReactNode } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 
 export default function ContentScreen(
-    { visible, title, uploading, children }
+    { theme, visible, title, uploading, children }
         :
-        { visible: boolean, title: string, uploading: boolean, children: ReactNode }) {
+        { theme: ThemeType, visible: boolean, title: string, uploading: boolean, children: ReactNode }) {
 
     return (
         <Modal visible={visible} animationType={"slide"} transparent>
-            <View style={styles.overlay}>
-                <View style={styles.container}>
+            <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay }]}>
+                <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
 
-                    <Text style={{ fontWeight: 'bold', fontSize: 22 }}> {title}</Text>
+                    <Text style={{ color: Colors[theme].textPrimary, fontWeight: 'bold', fontSize: 22 }}> {title}</Text>
 
                     {uploading ? (
                         <LoadScreen />
@@ -27,9 +28,9 @@ export default function ContentScreen(
 }
 
 const styles = StyleSheet.create({
-    overlay: { flex: 1, backgroundColor: Colors.light.overlay },
+    overlay: { flex: 1 },
     container: {
-        width: '100%', minHeight: '80%', marginTop: '41%', backgroundColor: Colors.light.background, gap: 50,
+        width: '100%', minHeight: '80%', marginTop: '41%', gap: 50,
         justifyContent: 'center', alignItems: 'center'
     },
     content: { gap: 50, justifyContent: 'center', alignItems: 'center' }

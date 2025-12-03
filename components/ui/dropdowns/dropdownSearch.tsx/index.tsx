@@ -1,3 +1,4 @@
+import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
 import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -6,7 +7,7 @@ import Dropdown, { OpenDirection } from "..";
 import LabelAnimated from "../../LabelAnimated";
 
 interface Props {
-    list: string[]; label: string; initialValue?: string; onSelectInDropdown: (item: string) => void;
+    theme: ThemeType, list: string[]; label: string; initialValue?: string; onSelectInDropdown: (item: string) => void;
     whenSelectItemToAdd: (item: string) => void; whenSelectItemToDelete: (item: string) => void;
     onTextInputChange: (text: string) => void, menuVisibility: (menu: Menu) => void; onOpeningDropdown: OpenDirection;
 }
@@ -14,7 +15,7 @@ interface Props {
 type Menu = 'newCategoryMenu' | 'deleteCategoryMenu';
 
 export default function DropdownSearch({
-    list, label, initialValue, onSelectInDropdown, whenSelectItemToAdd,
+    theme, list, label, initialValue, onSelectInDropdown, whenSelectItemToAdd,
     whenSelectItemToDelete, onTextInputChange, menuVisibility, onOpeningDropdown
 }: Props) {
     const [text, setText] = useState(initialValue ? initialValue : "");
@@ -36,7 +37,7 @@ export default function DropdownSearch({
                 <Feather
                     name={'plus-circle'}
                     size={22}
-                    color={Colors.light.primary}
+                    color={Colors[theme].primary}
                 />
             </Pressable>
         );
@@ -61,14 +62,14 @@ export default function DropdownSearch({
     return (
         <View style={styles.container}>
             <LabelAnimated
-                labelColor={Colors.light.shadow}
+                theme={theme}
                 labelText={label}
                 focused={isFocused}
                 textInput={text}
             />
 
             <TextInput
-                style={[styles.input, isFocused && styles.inputFocused]}
+                style={[[styles.input, { borderColor: Colors[theme].border, color: Colors[theme].textPrimary }], isFocused && styles.inputFocused]}
                 value={text}
                 maxLength={40}
                 onChangeText={handleSearch}
@@ -79,6 +80,7 @@ export default function DropdownSearch({
             <ButtonAdd isVisible={itemsVisible.buttonAdd} />
 
             <Dropdown
+                theme={theme}
                 deleteButtonVisible
                 isVisible={results.length > 0}
                 onShowing={onOpeningDropdown}
@@ -100,9 +102,6 @@ export default function DropdownSearch({
 const styles = StyleSheet.create({
     container: { position: "relative" },
     inputFocused: { outlineColor: "transparent" },
-    input: {
-        color: Colors.light.primary, borderWidth: 0.5, borderColor: Colors.light.border,
-        backgroundColor: "transparent", fontWeight: "bold", borderRadius: 10, padding: 14
-    }
+    input: { borderWidth: 0.5, backgroundColor: "transparent", fontWeight: "bold", borderRadius: 10, padding: 14 }
 
 });

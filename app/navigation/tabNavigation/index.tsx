@@ -14,6 +14,7 @@ import GroupScreen from '@/app/screens/groupScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
 import TransactionsScreen from '@/app/screens/transactionsScreen';
 import CreateTransactionScreen from '@/app/screens/transactionsScreen/transactionEditor/createTransactionScreen';
+import { ThemeType } from '@/app/types/appearance';
 import { Group } from '@/app/types/Group';
 import AddButton from './addButton';
 import TabButton from './tabButton';
@@ -21,9 +22,11 @@ import TabButton from './tabButton';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-interface Props { isVisible: boolean, userData: User, groupData: Group, onUpdating: (isUpdating: boolean) => void, onDismiss: () => void }
+interface Props { 
+  isVisible: boolean, theme: ThemeType, userData: User, groupData: Group, onUpdating: (isUpdating: boolean) => void, onDismiss: () => void 
+}
 
-const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpdating, onDismiss }) => {
+const TabNavigation: React.FC<Props> = ({ isVisible, theme, userData, groupData, onUpdating, onDismiss }) => {
   if (!isVisible) return null;
 
   const auth = getAuth();
@@ -36,6 +39,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
 
   const ProfileWrapper = () => (
     <ProfileScreen
+      theme={theme}
       userData={userData}
       onUpdating={() => onUpdating(true)}
       onDismiss={onDismiss}
@@ -44,6 +48,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
 
   const GroupWrapper = () => (
     <GroupScreen
+      theme={theme}
       creator={groupData.creation}
       currentUserId={currentUser ? currentUser.uid : ""}
       groupId={userData.groupId}
@@ -54,12 +59,13 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
     />
   )
 
-  const TransactionsWrapper = () => (<TransactionsScreen group_id={userData.groupId} />);
+  const TransactionsWrapper = () => (<TransactionsScreen theme={theme} group_id={userData.groupId} />);
 
   const Tabs = ({ navigation }: any) => (
     <View style={[styles.container, { paddingTop: insets.top }]}>
 
       <CreateTransactionScreen
+        theme={theme}
         isVisible={showCreateTransaction}
         type={transactionType}
         groupId={userData.groupId}
@@ -68,14 +74,14 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
 
       <Tab.Navigator
         initialRouteName="Analytic"
-        screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarStyle: styles.tabBar }}
+        screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarStyle: [styles.tabBar, { backgroundColor: Colors[theme].background }] }}
       >
         <Tab.Screen
           name="Analytic"
           component={AnalyticsScreen}
           initialParams={{ user: userData }}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName="bar-chart" label="Análise" />
+            tabBarButton: (props) => <TabButton {...props} theme={theme} iconName="bar-chart" label="Análise" />
           }}
         />
 
@@ -83,7 +89,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           name="Transactions"
           component={TransactionsWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName="list-alt" label="Transações" />
+            tabBarButton: (props) => <TabButton {...props} theme={theme} iconName="list-alt" label="Transações" />
           }}
         />
 
@@ -92,6 +98,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           options={{
             tabBarButton: () => (
               <AddButton
+                theme={theme}
                 onPress={(value) => {
                   setTransactionType(value);
                   setShowCreateTransaction(true);
@@ -107,7 +114,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           name={'Group'}
           component={GroupWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName='group' label='Grupo' />
+            tabBarButton: (props) => <TabButton {...props} theme={theme} iconName='group' label='Grupo' />
           }}
         />
 
@@ -115,7 +122,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           name={'Profile'}
           component={ProfileWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName='verified-user' label='Perfil' />
+            tabBarButton: (props) => <TabButton {...props} theme={theme} iconName='verified-user' label='Perfil' />
           }}
         />
 
@@ -132,7 +139,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  tabBar: { backgroundColor: Colors.light.background, position: 'absolute', elevation: 20 },
+  tabBar: { position: 'absolute', elevation: 20 },
 });
 
 export default TabNavigation;

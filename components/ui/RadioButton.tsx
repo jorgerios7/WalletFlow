@@ -1,16 +1,14 @@
+import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-type Option = {
-    label: string;
-    value: string;
-};
+type Option = { label: string, value: string };
 
 export default function RadioButton({
-    isHorizontal, gap, options, initialValue, onSelecting
+    isHorizontal, theme, gap, options, initialValue, onSelecting
 }: {
-    isHorizontal?: boolean, gap?: number, options: Option[], initialValue: string, onSelecting: (option: string) => void
+    isHorizontal?: boolean, theme: ThemeType, gap?: number, options: Option[], initialValue: string, onSelecting: (option: string) => void
 }) {
     const [selectedButton, setSelectedButton] = useState<string>(initialValue ? initialValue : "");
 
@@ -27,10 +25,10 @@ export default function RadioButton({
                     style={styles.radioContainer}
                     onPress={() => handleAction(option.value)}
                 >
-                    <View style={styles.radioCircle}>
-                        {selectedButton === option.value && <View style={styles.selectedDot} />}
+                    <View style={[styles.radioCircle, { borderColor: Colors[theme].secondary, }]}>
+                        {selectedButton === option.value && <View style={[styles.selectedDot, { backgroundColor: Colors[theme].primary }]} />}
                     </View>
-                    <Text>{option.label}</Text>
+                    <Text style={{color: Colors[theme].textSecondary}}>{option.label}</Text>
                 </Pressable>
             ))}
         </View>
@@ -52,14 +50,12 @@ const styles = StyleSheet.create({
         width: 20,
         borderRadius: 10,
         borderWidth: 2,
-        borderColor: Colors.light.primary,
         alignItems: "center",
         justifyContent: "center",
     },
     selectedDot: {
         width: 10,
         height: 10,
-        borderRadius: 5,
-        backgroundColor: Colors.light.primary
+        borderRadius: 5
     },
 });

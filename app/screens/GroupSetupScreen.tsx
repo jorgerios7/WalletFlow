@@ -9,13 +9,14 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Snackbar } from "react-native-paper";
 import { db } from "../config/firebaseConfig";
 import { Action } from "../types/Group";
+import { ThemeType } from "../types/appearance";
 
 interface Props {
     isVisible: boolean, onReady: (x: { action: Action, values: { id: string, name: string } }) => void,
-    onPressingReturnButton: () => void
+    theme: ThemeType, onPressingReturnButton: () => void
 }
 
-const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingReturnButton }) => {
+const GroupSetupScreen: React.FC<Props> = ({ isVisible, theme, onReady, onPressingReturnButton }) => {
     if (!isVisible) return null;
 
     const [isCreateGroup, setIsCreateGroup] = useState(true);
@@ -45,7 +46,7 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
             }
         } catch (error) {
             console.log('(GroupSetupScreen) error: ', error);
-            setError({visible: true, message: "Algo deu errado!"});
+            setError({ visible: true, message: "Algo deu errado!" });
         }
     };
 
@@ -72,21 +73,22 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
 
 
     return (
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
             <BoxInputs>
                 {
                     isCreateGroup ? (
                         <View>
-                            <Text style={styles.title}>Configurar grupo</Text>
+                            <Text style={[styles.title, { color: Colors[theme].textPrimary, }]}>Configurar grupo</Text>
 
                             <View style={styles.container}>
                                 <View style={{ gap: 10 }}>
-                                    <DynamicLabelInput label="Nome do grupo" onTextChange={(text) => setGroupData({ id: '', name: text })} />
+                                    <DynamicLabelInput theme={theme} label="Nome do grupo" onTextChange={(text) => setGroupData({ id: '', name: text })} />
 
-                                    <CustomButton text={'Continuar'} onPress={handleAction} />
+                                    <CustomButton theme={theme} text={'Continuar'} onPress={handleAction} />
                                 </View>
 
                                 <TextButton
+                                    theme={theme}
                                     text={'Sair'}
                                     adjustPadding={10}
                                     adjustMargin={5}
@@ -94,10 +96,10 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
                                 />
 
                                 <View style={{ padding: 10, flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'center' }}>
-                                    <Text style={styles.text}>Se possui um ID </Text>
+                                    <Text style={[styles.text, { color: Colors[theme].textPrimary, }]}>Se possui um ID </Text>
 
                                     <Pressable onPress={() => setIsCreateGroup(false)}>
-                                        <Text style={{ color: Colors.light.accent, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
+                                        <Text style={{ color: Colors[theme].accent, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
                                     </Pressable>
                                 </View>
                             </View>
@@ -105,16 +107,19 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
                     ) : (
                         <View style={{ gap: 10 }}>
                             <DynamicLabelInput
+                                theme={theme}
                                 label="ID do grupo"
                                 onTextChange={(text) => setGroupData({ id: text, name: '' })}
                             />
 
                             <CustomButton
+                                theme={theme}
                                 text={'Continuar'}
                                 onPress={handleAction}
                             />
 
                             <TextButton
+                                theme={theme}
                                 text={'Voltar'}
                                 adjustMargin={0}
                                 adjustPadding={10}
@@ -128,7 +133,7 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
             <Snackbar
                 visible={error.visible}
                 onDismiss={() => setError({ visible: false, message: "" })}
-                style={{ backgroundColor: Colors.light.accent }}
+                style={{ backgroundColor: Colors[theme].accent }}
                 action={{ label: "Fechar", onPress: () => setError({ visible: false, message: "" }) }}
             >
                 {error.message}
@@ -139,7 +144,6 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
 
 const styles = StyleSheet.create({
     title: {
-        color: Colors.light.textPrimary,
         fontSize: 20,
         fontWeight: 'bold',
         alignSelf: 'center',
@@ -148,7 +152,6 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: Colors.light.textPrimary,
         alignSelf: 'center',
         backgroundColor: 'transparent'
     },

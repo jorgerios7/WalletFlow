@@ -1,21 +1,25 @@
 import { auth, db } from "@/app/config/firebaseConfig";
-import BoxInputs from "@/components/ui/BoxInputs";
+import { ThemeType } from "@/app/types/appearance";
 import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
-import { Provider as PaperProvider, Snackbar } from "react-native-paper";
+import { View } from "react-native";
+import { Snackbar } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LoginScreen from "./loginScreen";
 import SignupScreen from "./signupScreen";
 
 interface Props {
-    isVisible: boolean, onPress: (isLoged: boolean) => void, onUserId: (id: string) => void
+    isVisible: boolean, theme: ThemeType, onPress: (isLoged: boolean) => void, onUserId: (id: string) => void
 }
 
-const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => {
+const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId }) => {
     if (!isVisible) return null;
+
+    const insets = useSafeAreaInsets();
 
     const [loginInputValue, setLoginInputValue] = useState({ Email: "", Password: "" });
 
@@ -88,70 +92,62 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
             });
 
 
-        setLoginInputValue({
-            Email: "",
-            Password: "",
-        })
+        setLoginInputValue({ Email: "", Password: "" })
     }
 
     const handleReturnToLogin = () => {
         setFunctionSignup(false);
         setLoginCreation(false);
-        setSignupInputValue({
-            FirstName: "",
-            Surname: "",
-            Email: "",
-            BirthDate: "",
-            Password: "",
-            PasswordRepeat: "",
-        });
+        setSignupInputValue({ FirstName: "", Surname: "", Email: "", BirthDate: "", Password: "", PasswordRepeat: "" });
     }
 
     return (
-        <PaperProvider>
-            <BoxInputs>
-                <LoginScreen
-                    shouldRender={!isSignup}
-                    values={loginInputValue}
-                    onChange={(field, value) =>
-                        setLoginInputValue((prev) => ({ ...prev, [field]: value }))
-                    }
-                    onPressingEnterButton={handleEnterButton}
-                    onPressingRegisterButton={() => [setFunctionSignup(true), setLoginCreation(false)]}
-                />
+        <View style={{
+            flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors[theme].background,
+            marginTop: insets.top,
+        }}>
+            <LoginScreen
+                theme={theme}
+                shouldRender={!isSignup}
+                values={loginInputValue}
+                onChange={(field, value) => setLoginInputValue((prev) => ({ ...prev, [field]: value }))}
+                onPressingEnterButton={handleEnterButton}
+                onPressingRegisterButton={() => [setFunctionSignup(true), setLoginCreation(false)]}
+            />
 
-                <SignupScreen
-                    shouldRender={isSignup && !isLoginCreatedSuccessfully}
-                    values={signupInputValue}
-                    whenIsReady={(data) => {
-                        setSignupInputValue((prev) => ({ ...prev, ...data }));
-                        handleCreateLogin();
+            <SignupScreen
+                theme={theme}
+                shouldRender={isSignup && !isLoginCreatedSuccessfully}
+                values={signupInputValue}
+                whenIsReady={(data) => {
+                    setSignupInputValue((prev) => ({ ...prev, ...data }));
+                    handleCreateLogin();
+                }}
+                erroMessage={(message) => {
+                    setMsg(message);
+                    setSnackbarVisible(true);
+                }}
+                onPressingReturnButton={handleReturnToLogin}
+            />
 
-                    }}
-                    erroMessage={(message) => {
-                        setMsg(message);
-                        setSnackbarVisible(true);
-                    }}
-                    onPressingReturnButton={handleReturnToLogin}
-                />
+            <WelcomeAfterSignup
+                theme={theme}
+                onPressingReturnToLoginButton={handleReturnToLogin}
+                shouldRender={isSignup && isLoginCreatedSuccessfully}
+            />
 
-                <WelcomeAfterSignup
-                    onPressingReturnToLoginButton={handleReturnToLogin}
-                    shouldRender={isSignup && isLoginCreatedSuccessfully}
-                />
-            </BoxInputs>
             <Snackbar
                 visible={snackbarVisible}
                 onDismiss={() => setSnackbarVisible(false)}
-                style={{ backgroundColor: Colors.light.tint }}
+                style={{ backgroundColor: Colors[theme].surfaceVariant }}
                 action={{
                     label: "Fechar",
+                    textColor: Colors[theme].textSecondary,
                     onPress: () => setSnackbarVisible(false),
                 }}>
-
                 {msg}
             </Snackbar>
-        </PaperProvider>
+        </View>
     );
 }
 
