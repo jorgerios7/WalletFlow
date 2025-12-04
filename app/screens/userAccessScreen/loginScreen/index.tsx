@@ -23,12 +23,14 @@ const LoginScreen: React.FC<Props> = ({
             <DynamicLabelInput
                 theme={theme}
                 label="Email"
+                colorLabel={Colors[theme].background}
                 onTextChange={(text) => onChange("Email", text)}
             />
             <DynamicLabelInput
                 theme={theme}
                 label="Senha"
                 secureTextEntry
+                colorLabel={Colors[theme].background}
                 onTextChange={(text) => onChange("Password", text)}
             />
             <CustomButton
@@ -40,6 +42,7 @@ const LoginScreen: React.FC<Props> = ({
                 theme={theme}
                 onPress={onPressingRegisterButton}
                 text="Cadastre-se"
+                textColor={Colors[theme].textPrimary}
                 adjustPadding={15}
             />
         </View>

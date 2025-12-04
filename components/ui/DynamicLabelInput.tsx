@@ -57,7 +57,7 @@ export default function DynamicLabelInput({
       <TextInput
         value={numberEntry ? MaskCurrency(number) : dateEntry ? MaskDate(text) : text}
         onChangeText={(value) => handleValueChange(value)}
-        style={[[styles.input, { borderColor: Colors[theme].borderInvert, color: Colors[theme].textPrimary }], isFocused && styles.inputFocused]}
+        style={[[styles.input, { borderColor: Colors[theme].borderInverse, color: Colors[theme].textPrimary }], isFocused && styles.inputFocused]}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         maxLength={dateEntry ? 10 : 40}
         keyboardType={numberEntry || dateEntry ? "numeric" : "default"}
@@ -73,7 +73,7 @@ export default function DynamicLabelInput({
           <Ionicons
             name={isPasswordVisible ? "eye" : "eye-off"}
             size={18}
-            color={Colors[theme].primary}
+            color={Colors[theme].iconPrimary}
           />
         </Pressable>
       )}
@@ -86,7 +86,7 @@ export default function DynamicLabelInput({
           <Ionicons
             name={"calendar"}
             size={18}
-            color={Colors[theme].primary}
+            color={Colors[theme].iconPrimary}
           />
         </Pressable>
       )}

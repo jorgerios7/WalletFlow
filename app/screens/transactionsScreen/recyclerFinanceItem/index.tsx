@@ -8,13 +8,13 @@ import { SectionList, StyleSheet, Text, View } from 'react-native';
 import FinanceDetailsItem from './financeDetailsItem';
 
 interface Props {
-  entries_list: Entries[]; bottomMargin?: number; isLoading: boolean; onPressingInfo: (items: Transactions) => void;
+  entries_list: Entries[]; isLoading: boolean; onPressingInfo: (items: Transactions) => void;
   onPressDelete: (id: { transaction: string, entry: string }, values: { paymentType: string, value: number }) => void;
   onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void; theme: ThemeType
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
-  entries_list, bottomMargin = 0, isLoading, theme, onPressingInfo, onPressDelete, onPressingEditPayment
+  entries_list, isLoading, theme, onPressingInfo, onPressDelete, onPressingEditPayment
 }) => {
 
   const groupByDate = (entries: Entries[]): { title: string; data: Entries[]; value: number }[] => {
@@ -56,11 +56,11 @@ const FinanceItemRecycler: React.FC<Props> = ({
 
   function HeaderSection({ date, value }: { date: string, value: number }) {
     return (
-      <View style={[styles.headerContainer, { backgroundColor: Colors[theme].surfaceVariant }]}>
-        <Text style={[styles.textHeader, { color: Colors[theme].textSecondary }]}>
+      <View style={[styles.headerContainer, { backgroundColor: Colors[theme].headerBackground }]}>
+        <Text style={[styles.textHeader, { color: Colors[theme].textContrast }]}>
           {date}
         </Text>
-        <Text style={[styles.textHeader, { color: Colors[theme].textSecondary }]}>
+        <Text style={[styles.textHeader, { color: Colors[theme].textContrast }]}>
           Total: R$ {value.toFixed(2)}
         </Text>
       </View>
@@ -70,13 +70,13 @@ const FinanceItemRecycler: React.FC<Props> = ({
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <LoadScreen theme={theme} marginBottom={bottomMargin} />
+        <LoadScreen theme={theme} />
       ) : sections.length === 0 ? (
-        <NotFoundScreen theme={theme} marginBottom={bottomMargin} />
+        <NotFoundScreen theme={theme} />
       ) : (
         <SectionList
           stickySectionHeadersEnabled
-          style={{ backgroundColor: Colors[theme].surface, marginBottom: bottomMargin }}
+          style={{ backgroundColor: Colors[theme].background}}
           sections={sections}
           keyExtractor={(item) => item.entrieId}
           renderItem={({ item, index, section }) => {
@@ -113,7 +113,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   headerContainer: {
-    width: '95%', padding: 8, gap: 10, alignSelf: 'center', borderRadius: 8,
+    width: '95%', padding: 10, alignSelf: 'center', borderRadius: 10,
     alignContent: 'space-between', flexDirection: 'row', justifyContent: 'space-between'
   },
   textHeader: { fontSize: 12, alignSelf: 'center', fontStyle: 'italic' }

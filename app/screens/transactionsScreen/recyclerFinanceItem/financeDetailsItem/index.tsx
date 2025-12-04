@@ -17,7 +17,7 @@ export default function FinanceDetailsItem({ data, theme, dynamicBorder, onPress
         if (isOpen) {
             Animated.timing(translateX, { toValue: 0, duration: 300, useNativeDriver: true }).start(() => setIsOpen(false));
         } else {
-            Animated.timing(translateX, { toValue: -160, duration: 300, useNativeDriver: true }).start(() => setIsOpen(true));
+            Animated.timing(translateX, { toValue: -155, duration: 300, useNativeDriver: true }).start(() => setIsOpen(true));
         }
     };
 
@@ -27,21 +27,22 @@ export default function FinanceDetailsItem({ data, theme, dynamicBorder, onPress
     };
 
     return (
-        <View style={{ marginHorizontal: 10, ...DynamicBorders }}>
+        <Animated.View style={{ marginHorizontal: 10, backgroundColor: Colors[theme].surfaceVariant, ...DynamicBorders }}>
             <View style={styles.actionsContainer}>
                 <Pressable
                     style={[styles.actionButton, { backgroundColor: "transparent" }]}
                     onPress={() => onPressingEditPayment(
                         { transaction: data.transactionId as string, entry: data.entrieId as string },
                         {
-                            paymentType: data.paymentType as string, paymentDate: data.paymentDate as string, paymentMethod: data.paymentMethod as string,
-                            paymentBank: data.paymentBank as string, paymentBankCard: data.paymentBankCard as string
+                            paymentType: data.paymentType as string, paymentDate: data.paymentDate as string,
+                            paymentMethod: data.paymentMethod as string, paymentBank: data.paymentBank as string,
+                            paymentBankCard: data.paymentBankCard as string
                         }
                     )}
                 >
                     <MaterialIcons
                         name={data.paymentType === "pending" ? "check-circle" : "edit"}
-                        color={Colors[theme].secondary} size={24}
+                        color={Colors[theme].iconPrimary} size={24}
                     />
                 </Pressable>
 
@@ -52,24 +53,24 @@ export default function FinanceDetailsItem({ data, theme, dynamicBorder, onPress
                         { paymentType: data.paymentType as string, value: data.value as number })
                     }
                 >
-                    <MaterialIcons name="delete" size={24} color={Colors[theme].secondary} />
+                    <MaterialIcons name="delete" size={24} color={Colors[theme].iconPrimary} />
                 </Pressable>
 
                 <Pressable
                     style={[styles.actionButton, { backgroundColor: "transparent" }]}
                     onPress={() => onPressingInfo(data as MixedTransactionEntry)}
                 >
-                    <MaterialIcons name="info" size={24} color={Colors[theme].secondary} />
+                    <MaterialIcons name="info" size={24} color={Colors[theme].iconPrimary} />
                 </Pressable>
             </View>
 
-            <Animated.View style={[styles.card, { backgroundColor: Colors[theme].surfaceVariant, transform: [{ translateX }], ...DynamicBorders }]}>
+            <Animated.View style={[styles.card, { backgroundColor: Colors[theme].surface, transform: [{ translateX }], ...DynamicBorders }]}>
                 <Pressable onPress={handlePress} style={styles.cardContent}>
-                    <View style={[styles.image, { backgroundColor: Colors[theme].primary }]}>
+                    <View style={[styles.image, { backgroundColor: Colors[theme].iconBackgroundPrimary }]}>
                         <MaterialIcons
                             name={data.type === "income" ? "attach-money" : "money-off"}
                             size={16}
-                            color={Colors[theme].background}
+                            color={Colors[theme].iconContrast}
                         />
                     </View>
 
@@ -81,7 +82,7 @@ export default function FinanceDetailsItem({ data, theme, dynamicBorder, onPress
                     </View>
 
                     <View style={[styles.textContainer, { alignItems: "flex-end" }]}>
-                        <Text style={[styles.text, { color: Colors[theme].textSecondary, fontWeight: "bold" }]}>
+                        <Text style={[styles.text, { color: Colors[theme].textPrimary, fontWeight: "bold" }]}>
                             R$ {data.value?.toFixed(2)}
                         </Text>
                     </View>
@@ -89,11 +90,11 @@ export default function FinanceDetailsItem({ data, theme, dynamicBorder, onPress
                     <MaterialIcons
                         name={isOpen ? "chevron-right" : "chevron-left"}
                         size={24}
-                        color={Colors[theme].primary}
+                        color={Colors[theme].iconPrimary}
                     />
                 </Pressable>
             </Animated.View>
-        </View>
+        </Animated.View>
     );
 }
 

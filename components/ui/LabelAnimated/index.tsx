@@ -3,7 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { useEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
 
-interface Props { theme: ThemeType, labelText: string, labelColor?: string, textInput: string | number, focused: boolean, onPress?: () => void }
+interface Props { theme: ThemeType, labelText: string, labelColor?: string, textInput: string | number, focused: boolean, onPress?: () => void };
 
 export default function LabelAnimated({ theme, labelText, labelColor, textInput, focused, onPress }: Props) {
 
@@ -23,7 +23,7 @@ export default function LabelAnimated({ theme, labelText, labelColor, textInput,
     return (
         <Animated.Text
             onPress={onPress}
-            style={[styles.label, { top: labelPosition, color: Colors[theme].textSecondary, backgroundColor: labelColor ? labelColor : Colors[theme].background }]}
+            style={[styles.label, { top: labelPosition, color: Colors[theme].textPrimary, backgroundColor: labelColor ? labelColor : Colors[theme].surface }]}
         >
             {labelText}
         </Animated.Text>

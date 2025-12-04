@@ -1,4 +1,5 @@
 import { ThemeType } from "@/app/types/appearance";
+import { Colors } from "@/constants/Colors";
 import { Text, View } from "react-native";
 import StepScreen from "..";
 
@@ -15,8 +16,8 @@ export default function FinalStep({ isVisible, theme, textAbove, textBelow, onCo
             onConfirm={onConfirm}
             children={
                 <View style={{ justifyContent: 'center', alignItems: 'center', gap: 10 }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'normal', textAlign: 'justify' }}>{textAbove}</Text>
-                    <Text style={{ fontSize: 16, fontWeight: 'normal', textAlign: 'center' }}>{textBelow}</Text>
+                    <Text style={{ color: Colors[theme].textPrimary , fontSize: 16, fontWeight: 'normal', textAlign: 'justify' }}>{textAbove}</Text>
+                    <Text style={{ color: Colors[theme].textSecondary, fontSize: 16, fontWeight: 'normal', textAlign: 'center' }}>{textBelow}</Text>
                 </View>
             }
         />

@@ -1,13 +1,14 @@
 import { Colors } from "@/constants/Colors";
 import React from "react";
 import { ActivityIndicator } from "react-native";
+import { ThemeType } from "../types/appearance";
 
-export function LoadScreen({ marginBottom }: { marginBottom?: number }) {
+export function LoadScreen({theme, marginBottom }: { theme: ThemeType, marginBottom?: number }) {
     return (
         <ActivityIndicator
-            style={{ flex: 1, backgroundColor: 'transparent', marginBottom: marginBottom ? marginBottom : 0 }}
+            style={{ flex: 1, backgroundColor: Colors[theme].background, marginBottom: marginBottom ? marginBottom : 0 }}
             size="large"
-            color={Colors.light.primary}
+            color={Colors[theme].iconPrimary}
         />
     );
 }

@@ -35,7 +35,7 @@ export default function ProfileMenu({ screen, theme, user, collapse, onSelect }:
     return (
         <Animated.View
             style={[styles.menuContainerDefault, {
-                backgroundColor: Colors[theme].surfaceVariant,
+                backgroundColor: Colors[theme].accent,
                 width: size.menuWidthAnim, height: size.menuHeightAnim, top: position.topMenuAnim,
                 left: position.leftMenuAnim, borderRadius: menuBorderRadiusAnim
             }]}
@@ -45,18 +45,18 @@ export default function ProfileMenu({ screen, theme, user, collapse, onSelect }:
                 onPress={closeMenu}
                 style={{ opacity: opacityAnim, backgroundColor: 'transparent', alignSelf: 'flex-end', padding: 20, borderRadius: 20 }}
             >
-                <MaterialIcons name={'close'} size={28} color={Colors[theme].primary} />
+                <MaterialIcons name={'close'} size={28} color={Colors[theme].iconContrast} />
             </AnimatedPressableButton>
 
             <AnimatedPressableButton
                 onPress={openMenu}
                 style={[styles.buttonDefault, {
-                    borderColor: Colors[theme].borderInvert, top: position.topButtonAnim, left: position.leftButtonAnim,
+                    borderColor: Colors[theme].borderInverse, top: position.topButtonAnim, left: position.leftButtonAnim,
                     width: size.buttonWidthAnim, height: size.buttonHeightAnim,
                 }]}
             >
                 <Animated.View style={[styles.image, { transform: [{ scale: imageScaleAnim }] }]}>
-                    <MaterialIcons name={'person'} size={100} color={Colors[theme].primary} />
+                    <MaterialIcons name={'person'} size={100} color={Colors[theme].iconContrast} />
                 </Animated.View>
             </AnimatedPressableButton>
 
@@ -66,13 +66,13 @@ export default function ProfileMenu({ screen, theme, user, collapse, onSelect }:
             }]}>
                 <View style={{ flexDirection: 'row' }}>
                     {!isExpanded && (
-                        <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>Olá, </Text>
+                        <Text style={[styles.title, { color: Colors[theme].textContrast }]}>Olá, </Text>
                     )}
-                    <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>{user.name}</Text>
+                    <Text style={[styles.title, { color: Colors[theme].textContrast }]}>{user.name}</Text>
                 </View>
 
                 {isExpanded && (
-                    <Animated.Text style={[styles.subtitle, { opacity: opacityAnim, color: Colors[theme].textSecondary }]}>{user.email}</Animated.Text>)}
+                    <Animated.Text style={[styles.subtitle, { opacity: opacityAnim, color: Colors[theme].textContrast }]}>{user.email}</Animated.Text>)}
             </Animated.View>
 
             <View style={{ width: '100%', height: 200, backgroundColor: "transparent" }} />
@@ -117,7 +117,6 @@ export default function ProfileMenu({ screen, theme, user, collapse, onSelect }:
 
                     <ButtonTab
                         theme={theme}
-                        isHighlightText
                         onPress={() => onSelect('DeleteAccount')}
                         text="Excluir conta"
                         fontSize={14}

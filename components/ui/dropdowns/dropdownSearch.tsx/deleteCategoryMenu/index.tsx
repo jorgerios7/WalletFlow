@@ -44,21 +44,18 @@ export default function DeleteCategoryMenu({ isVisible, theme, categoryToDelete,
     return (
         <Modal visible={isVisible} animationType="fade" transparent>
             <Pressable
-                style={{
-                    flex: 1, backgroundColor: "#00000031",
-                    justifyContent: 'center', alignItems: 'center'
-                }}
+                style={{ flex: 1, padding: 10, backgroundColor: Colors[theme].overlay, justifyContent: 'center', alignItems: 'center' }}
                 onPress={onDismiss}
             >
                 <View style={{
-                    justifyContent: 'center', alignItems: 'center', marginHorizontal: 20,
-                    gap: 10, padding: 20, backgroundColor: Colors.light.background, borderRadius: 10
+                    justifyContent: 'center', alignItems: 'center', gap: 10, padding: 20,
+                    backgroundColor: Colors[theme].surface, borderRadius: 10
                 }}>
                     {!success ? (
                         <>
-                            <Text style={{ marginBottom: 40, fontSize: 18, textAlign: 'center' }}>
+                            <Text style={{ color: Colors[theme].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
                                 {`Você tem certeza que deseja excluir `}
-                                <Text style={{ fontWeight: "bold", color: Colors.light.textPrimary }}>{categoryToDelete}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors[theme].accent }}>{categoryToDelete}</Text>
                                 {` da lista de categorias de ${renderCurrentType()}?`}
                             </Text>
 
@@ -80,8 +77,10 @@ export default function DeleteCategoryMenu({ isVisible, theme, categoryToDelete,
                         </>
                     ) : (
                         <>
-                            <Text>
-                                {`A categoria ${categoryToDelete} foi exluída com sucesso!`}
+                            <Text style={{ color: Colors[theme].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
+                                {`A categoria `}
+                                <Text style={{ fontWeight: "bold", color: Colors[theme].accent }}>{categoryToDelete}</Text>
+                                {` foi exluída com sucesso!`}
                             </Text>
 
                             <CustomButton

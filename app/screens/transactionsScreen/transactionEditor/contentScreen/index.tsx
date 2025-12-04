@@ -12,12 +12,12 @@ export default function ContentScreen(
     return (
         <Modal visible={visible} animationType={"slide"} transparent>
             <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay }]}>
-                <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
+                <View style={[styles.container, { backgroundColor: Colors[theme].surface }]}>
 
                     <Text style={{ color: Colors[theme].textPrimary, fontWeight: 'bold', fontSize: 22 }}> {title}</Text>
 
                     {uploading ? (
-                        <LoadScreen />
+                        <LoadScreen theme={theme} />
                     ) : (
                         <View style={styles.content}>{children}</View>
                     )}
@@ -29,9 +29,6 @@ export default function ContentScreen(
 
 const styles = StyleSheet.create({
     overlay: { flex: 1 },
-    container: {
-        width: '100%', minHeight: '80%', marginTop: '41%', gap: 50,
-        justifyContent: 'center', alignItems: 'center'
-    },
+    container: { width: '100%', minHeight: '80%', marginTop: '41%', gap: 50, justifyContent: 'center', alignItems: 'center' },
     content: { gap: 50, justifyContent: 'center', alignItems: 'center' }
 });

@@ -1,6 +1,5 @@
 import { ThemeType } from "@/app/types/appearance";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
-import { Colors } from "@/constants/Colors";
 import { Alert } from "react-native";
 import StepScreen from "../../../stepScreen";
 
@@ -32,7 +31,6 @@ export default function ValueStep(
         theme={theme}
         initialNumber={value}
         label={'Valor total'}
-        colorLabel={Colors.light.background}
         onNumberChange={handleValue}
       />
     </StepScreen>

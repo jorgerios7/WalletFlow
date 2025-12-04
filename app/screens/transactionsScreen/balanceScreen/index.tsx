@@ -23,36 +23,36 @@ export default function BalanceScreen({ theme, isLoading, balanceValues }: { the
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: Colors[theme].background, borderTopColor: Colors[theme].borderInvert }]}>
+    <View style={[styles.container, { backgroundColor: Colors[theme].surface, borderTopColor: Colors[theme].border }]}>
       {/* Header */}
-      <Pressable style={[styles.containerContent, { backgroundColor: Colors[theme].background }]} onPress={toggleExpand}>
-        <Text style={[styles.text, { backgroundColor: Colors[theme].background, color: Colors[theme].textSecondary }]}>
+      <Pressable style={[styles.containerContent, { backgroundColor: Colors[theme].surface }]} onPress={toggleExpand}>
+        <Text style={[styles.text, { color: Colors[theme].textSecondary }]}>
           Saldo final:
         </Text>
 
-        <Text style={[styles.text, { backgroundColor: Colors[theme].background, color: Colors[theme].textSecondary }]}>
+        <Text style={[styles.text, { color: Colors[theme].textSecondary }]}>
           {format(isLoading, balanceValues.totalConcludedSum)}
         </Text>
       </Pressable>
 
       {/* Botão */}
-      <Pressable style={[styles.iconBtn, { backgroundColor: Colors[theme].background }]} onPress={toggleExpand}>
-        <MaterialIcons name={isExpanded ? "expand-less" : "expand-more"} size={20} color={Colors[theme].primary} />
+      <Pressable style={[styles.iconBtn, { backgroundColor: Colors[theme].surface }]} onPress={toggleExpand}>
+        <MaterialIcons name={isExpanded ? "expand-less" : "expand-more"} size={20} color={Colors[theme].iconPrimary} />
       </Pressable>
 
       {/* Dropdown */}
       {isExpanded && (
-        <View style={[styles.dropdown, { backgroundColor: Colors[theme].background }]}>
+        <View style={[styles.dropdown, { backgroundColor: Colors[theme].surface }]}>
           {rows.map((item, index) => (
-            <View key={index} style={[styles.item, { backgroundColor: Colors[theme].background }]}>
+            <View key={index} style={[styles.item, { backgroundColor: Colors[theme].surface }]}>
               <Text
-                style={[styles.text, { backgroundColor: Colors[theme].background, color: Colors[theme].textSecondary }]}
+                style={[styles.text, { color: Colors[theme].textSecondary }]}
               >
                 {item.label}
               </Text>
 
               <Text
-                style={[styles.text, { backgroundColor: Colors[theme].background, color: Colors[theme].textSecondary }]}
+                style={[styles.text, { color: Colors[theme].textSecondary }]}
               >
                 {format(isLoading, item.value)}
               </Text>
@@ -60,11 +60,11 @@ export default function BalanceScreen({ theme, isLoading, balanceValues }: { the
           ))}
 
           {/* Fecha ao clicar */}
-          <Pressable style={[styles.iconBtn, { backgroundColor: Colors[theme].background }]} onPress={toggleExpand}>
+          <Pressable style={[styles.iconBtn, { backgroundColor: Colors[theme].surface }]} onPress={toggleExpand}>
             <MaterialIcons
               name="expand-less"
               size={20}
-              color={Colors[theme].primary}
+              color={Colors[theme].iconPrimary}
             />
           </Pressable>
         </View>

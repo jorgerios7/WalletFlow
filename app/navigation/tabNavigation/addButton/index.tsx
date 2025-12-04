@@ -2,7 +2,6 @@ import { ThemeType } from '@/app/types/appearance';
 import { TransactionType } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,10 +16,11 @@ const AddButton: React.FC<{ onPress: (value: TransactionType) => void, theme: Th
   return (
     <>
       <Modal visible={expanded} animationType="fade" transparent>
-        <Pressable style={[styles.overlay, {backgroundColor: Colors[theme].overlay,}]} onPress={() => toggleExpanded()}>
+        <Pressable style={[styles.overlay, { backgroundColor: Colors[theme].overlay, }]} onPress={() => toggleExpanded()}>
+
           <View style={[styles.container, { bottom: insets.bottom + -35 }]}>
             <SmallButton
-            theme={theme}
+              theme={theme}
               text={'Adicionar Receita'}
               icon="attach-money"
               offset={160}
@@ -31,7 +31,7 @@ const AddButton: React.FC<{ onPress: (value: TransactionType) => void, theme: Th
             />
 
             <SmallButton
-            theme={theme}
+              theme={theme}
               text={'Adicionar Despesa'}
               icon="money-off"
               offset={90}
@@ -61,17 +61,9 @@ const LargeButton: React.FC<{ onPress: () => void, theme: ThemeType, expanded: b
       style={styles.shadowWrapper}
       underlayColor={Colors[theme].overlay}
     >
-      <LinearGradient
-        colors={[
-          Colors[theme].primary,
-          Colors[theme].secondary,
-        ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[styles.addButton, {shadowColor: Colors[theme].shadow, borderColor: Colors[theme].border,}]}
-      >
-        <MaterialIcons name={expanded ? 'close' : 'add'} size={28} color={Colors.light.background} />
-      </LinearGradient>
+      <View style={[styles.addButton, { backgroundColor: Colors[theme].accent, shadowColor: Colors[theme].shadow, borderColor: Colors[theme].border }]}>
+        <MaterialIcons name={expanded ? 'close' : 'add'} size={28} color={Colors[theme].iconContrast} />
+      </View>
     </TouchableHighlight>
   );
 }
@@ -87,17 +79,12 @@ const SmallButton: React.FC<
         style={[styles.smallButtonWrapper, { bottom: offset }]}
         activeOpacity={0.8}
       >
-        <LinearGradient
-          colors={[Colors[theme].primary, Colors[theme].secondary]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[styles.smallButton, { borderColor: Colors[theme].border }]}
-        >
-          <MaterialIcons name={icon} size={22} color={Colors[theme].background} />
-          <Text style={{ color: Colors[theme].background, marginLeft: 6, fontSize: 14, fontWeight: "500" }} numberOfLines={1}>
+        <View style={[styles.smallButton, { backgroundColor: Colors[theme].accent, shadowColor: Colors[theme].shadow, borderColor: Colors[theme].border }]}>
+          <MaterialIcons name={icon} size={22} color={Colors[theme].iconContrast} />
+          <Text style={{ color: Colors[theme].textContrast, marginLeft: 6, fontSize: 14, fontWeight: "500" }} numberOfLines={1}>
             {text}
           </Text>
-        </LinearGradient>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -125,7 +112,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 6,
-    borderWidth: 1
+    borderWidth: 0.5
   },
   smallButtonWrapper: {
     position: 'absolute',
@@ -138,13 +125,12 @@ const styles = StyleSheet.create({
     borderRadius: SMALL_BUTTON_SIZE / 2,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 5,
     borderWidth: 1,
-    flexDirection: 'row', 
+    flexDirection: 'row',
     paddingHorizontal: 12
   },
   overlay: {

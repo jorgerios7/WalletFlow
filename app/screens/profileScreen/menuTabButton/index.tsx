@@ -12,19 +12,18 @@ const MenuTabButton: React.FC<{
         <Pressable
             onPress={onPress}
             style={{
-                width: '100%', height: 50, gap: 20, backgroundColor: Colors[theme].surfaceVariant,
-                flexDirection: 'row', padding: 10, borderBottomColor: Colors[theme].border,
-                borderBottomWidth: 0.5
-            }}>
-
+                width: '100%', height: 50, gap: 20, backgroundColor: Colors[theme].surface,
+                flexDirection: 'row', padding: 10, borderRadius: 10
+            }}
+        >
             <MaterialIcons
                 name={iconName}
                 size={iconSize ? iconSize : 28}
-                color={Colors[theme].secondary}
+                color={Colors[theme].iconPrimary}
             />
 
             <Text style={{
-                color: Colors[theme].textSecondary, alignSelf: 'center',
+                color: Colors[theme].textPrimary, alignSelf: 'center',
                 fontSize: 14, fontWeight: 'bold'
             }}
             >

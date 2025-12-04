@@ -2,7 +2,6 @@ import { ThemeType } from "@/app/types/appearance";
 import { RecurrenceFrequency } from "@/app/types/Finance";
 import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
-import { Colors } from "@/constants/Colors";
 import { Alert } from "react-native";
 import StepScreen from "../../../stepScreen";
 
@@ -64,7 +63,6 @@ export default function DueDateStep(
           theme={theme}
           initialText={value}
           label={'Data do vencimento'}
-          colorLabel={Colors.light.background}
           onTextChange={onSelect}
         />
       )}

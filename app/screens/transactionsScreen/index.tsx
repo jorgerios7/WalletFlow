@@ -73,7 +73,6 @@ const TransactionsScreen = ({ theme, group_id }: { theme: ThemeType, group_id: s
         theme={theme}
         entries_list={entriesList}
         isLoading={loading}
-        bottomMargin={insets.bottom + 50}
         onPressingEditPayment={(id, values) => {
           setPaymentScreen({
             isVisible: true,

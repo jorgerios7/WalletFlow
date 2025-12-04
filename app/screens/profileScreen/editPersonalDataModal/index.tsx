@@ -48,7 +48,7 @@ const EditPersonalDataModal: React.FC<Props> = ({ theme, field, groupId, isVisib
     return (
         <Modal visible={isVisible} animationType="fade" transparent>
             <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay, }]}>
-                <View style={[styles.content, {backgroundColor: Colors[theme].background}]}>
+                <View style={[styles.content, {backgroundColor: Colors[theme].surface}]}>
                     <Text style={[styles.title, {color: Colors[theme].textPrimary, }]}>
                         {field === 'Name' && "Editar nome"}
                         {field === 'Email' && "Alterar email"}
@@ -134,7 +134,7 @@ const EditPersonalDataModal: React.FC<Props> = ({ theme, field, groupId, isVisib
                     )}
 
                     <CustomButton theme={theme} text="Confirmar" onPress={handleConfirm} />
-                    <TextButton theme={theme} text="Cancelar" onPress={() => onDismiss(false)} />
+                    <TextButton theme={theme} text="Cancelar" textColor={Colors[theme].textPrimary} onPress={() => onDismiss(false)} />
                 </View>
             </View>
         </Modal>

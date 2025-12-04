@@ -10,7 +10,7 @@ const CENTER_OFFSET = (SCREEN_WIDTH - ITEM_WIDTH) / 4;
 const ITEM_SPACING = 0;
 const SPACING_DEFAULT = 25;
 const DEFAULT_SIZE = SPACING_DEFAULT * 2;
-const RADIUS_DEFAULT = 16;
+const RADIUS_DEFAULT = 99;
 
 const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date) => void }> = ({ theme, onDateChange }) => {
     const scrollRef = useRef<ScrollView>(null);
@@ -58,16 +58,16 @@ const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date)
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
-            <Text style={[styles.title, { backgroundColor: Colors[theme].background, color: Colors[theme].textPrimary }]}>{months[currentIndex]?.year}</Text>
+        <View style={[styles.container, { backgroundColor: Colors[theme].surface }]}>
+            <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>{months[currentIndex]?.year}</Text>
 
-            <View style={[styles.ContainerContent, { backgroundColor: Colors[theme].background }]}>
+            <View style={[styles.ContainerContent, { backgroundColor: Colors[theme].surface }]}>
 
-                <TouchableOpacity style={[styles.button, { backgroundColor: Colors[theme].background }]} onPress={handlePrevious}>
-                    <Feather name="chevron-left" size={24} color={Colors[theme].secondary} />
+                <TouchableOpacity style={[styles.button, { backgroundColor: Colors[theme].accent }]} onPress={handlePrevious}>
+                    <Feather name="chevron-left" size={24} color={Colors[theme].iconContrast} />
                 </TouchableOpacity>
 
-                <View style={[styles.row, { backgroundColor: Colors[theme].background }]}>
+                <View style={[styles.row, { backgroundColor: Colors[theme].surface }]}>
                     <Animated.ScrollView
                         ref={scrollRef}
                         horizontal
@@ -82,9 +82,9 @@ const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date)
                         {months.map((month, index) => (
                             <Animated.View
                                 key={index}
-                                style={[styles.card, { backgroundColor: Colors[theme].background },
+                                style={[styles.card, { backgroundColor: Colors[theme].surface },
                                 index === currentIndex && {
-                                    backgroundColor: Colors[theme].surfaceVariant, borderColor: Colors[theme].border
+                                    backgroundColor: Colors[theme].accent, borderColor: Colors[theme].border
                                 }, {
                                     transform: [{
                                         scale: scrollX.interpolate({
@@ -100,8 +100,8 @@ const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date)
                                 }]}
                             >
                                 <Text
-                                    style={[styles.monthText, { color: Colors[theme].textSecondary },
-                                    index === currentIndex && [styles.activeText, { color: Colors[theme].textPrimary }]]}
+                                    style={[styles.monthText, { color: Colors[theme].textPrimary },
+                                    index === currentIndex && [styles.activeText, { color: Colors[theme].textContrast }]]}
                                 >
                                     {month.label}
                                 </Text>
@@ -110,8 +110,8 @@ const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date)
                     </Animated.ScrollView>
                 </View>
 
-                <TouchableOpacity style={[styles.button, { backgroundColor: Colors[theme].background }]} onPress={handleNext}>
-                    <Feather name="chevron-right" size={24} color={Colors[theme].secondary} />
+                <TouchableOpacity style={[styles.button, { backgroundColor: Colors[theme].accent }]} onPress={handleNext}>
+                    <Feather name="chevron-right" size={24} color={Colors[theme].iconContrast} />
                 </TouchableOpacity>
             </View>
         </View>

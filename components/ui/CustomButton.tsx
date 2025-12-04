@@ -3,20 +3,20 @@ import { Colors } from "@/constants/Colors";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-export default function CustomButton({ theme, text, onPress }: { theme: ThemeType, text: string, onPress?: () => void }) {
+export default function CustomButton({ theme, text, textColor, onPress }: { theme: ThemeType, text: string, textColor?: string, onPress?: () => void }) {
     return (
         <View style={styles.container}>
             <Pressable
                 style={({ pressed }) => [
                     styles.button, {
-                        backgroundColor: Colors[theme].surfaceVariant, borderColor: Colors[theme].border,
-                        outlineColor: Colors[theme].secondary
+                        backgroundColor: Colors[theme].accent, borderColor: Colors[theme].border,
+                        outlineColor: Colors[theme].accentPressed
                     },
-                    pressed && { backgroundColor: Colors[theme].surface, }
+                    pressed && { backgroundColor: Colors[theme].accentPressed, }
                 ]}
                 onPress={onPress}
             >
-                <Text style={[styles.text, { color: Colors[theme].textPrimary, }]}>{text}</Text>
+                <Text style={[styles.text, { color: Colors[theme].textContrast }]}>{text}</Text>
             </Pressable>
         </View>
     );

@@ -22,7 +22,7 @@ export default function Dropdown({ theme, isVisible, items, deleteButtonVisible,
                 style={{ alignSelf: "center", backgroundColor: "transparent", padding: 5 }}
                 onPress={() => onPressDelete && onPressDelete(item)}
             >
-                <Feather name={"minus-circle"} size={22} color={Colors[theme].secondary} />
+                <Feather name={"minus-circle"} size={22} color={Colors[theme].iconPrimary} />
             </Pressable>
         );
     }
@@ -31,12 +31,12 @@ export default function Dropdown({ theme, isVisible, items, deleteButtonVisible,
         return (
             <View
                 style={{
-                    minWidth: 300, flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-                    padding: 10, borderBottomWidth: 0.5, borderRadius: 10,
-                    borderBottomColor: Colors[theme].borderInvert
+                    width: 280, flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+                    paddingVertical: 10, borderBottomWidth: 0.5, backgroundColor: "transparent",
+                    borderBottomColor: Colors[theme].borderInverse
                 }}
             >
-                <Text style={{ flex: 1, color: Colors[theme].textSecondary }}>{text}</Text>
+                <Text style={{ flex: 1, color: Colors[theme].textPrimary }}>{text}</Text>
                 <ButtonDelete item={text} />
             </View>
         );
@@ -53,11 +53,10 @@ export default function Dropdown({ theme, isVisible, items, deleteButtonVisible,
                 bottom: onShowing === 'openAtTop'
                     ? '100%'
                     : undefined
-            }
-            ]}
+            }]}
         >
             <ScrollView
-                style={{ maxHeight: 160 }}
+                style={{ maxHeight: 300, paddingHorizontal: 10, }}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
@@ -80,8 +79,4 @@ export default function Dropdown({ theme, isVisible, items, deleteButtonVisible,
     );
 }
 
-const styles = StyleSheet.create({
-    dropdown: {position: "absolute", zIndex: 999, marginTop: 2,
-        borderRadius: 10, borderWidth: 0.5
-    }
-});
+const styles = StyleSheet.create({ dropdown: { position: "absolute", zIndex: 999, marginTop: 2, borderRadius: 10, borderWidth: 0.5 } });

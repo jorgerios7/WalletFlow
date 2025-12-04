@@ -34,11 +34,7 @@ export default function DropdownSearch({
                     menuVisibility('newCategoryMenu');
                 }}
             >
-                <Feather
-                    name={'plus-circle'}
-                    size={22}
-                    color={Colors[theme].primary}
-                />
+                <Feather name={'plus-circle'} size={22} color={Colors[theme].iconPrimary} />
             </Pressable>
         );
     }
@@ -69,7 +65,10 @@ export default function DropdownSearch({
             />
 
             <TextInput
-                style={[[styles.input, { borderColor: Colors[theme].border, color: Colors[theme].textPrimary }], isFocused && styles.inputFocused]}
+                style={[[
+                    styles.input, { borderColor: Colors[theme].borderInverse, color: Colors[theme].textPrimary }],
+                isFocused && styles.inputFocused
+                ]}
                 value={text}
                 maxLength={40}
                 onChangeText={handleSearch}

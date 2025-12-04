@@ -26,7 +26,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId
     const loginFormLabels = { Email: "Email", Password: "Senha" };
 
     const [signupInputValue, setSignupInputValue] = useState({
-        FirstName: "", Surname: "", Email: "", BirthDate: "", Password: "", PasswordRepeat: "",
+        firstName: "", surname: "", email: "", birthDate: "", password: "", passwordRepeat: "",
     });
 
     const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -35,7 +35,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId
     const [isLoginCreatedSuccessfully, setLoginCreation] = useState(false);
 
     const handleCreateLogin = () => {
-        createUserWithEmailAndPassword(auth, signupInputValue.Email, signupInputValue.Password)
+        createUserWithEmailAndPassword(auth, signupInputValue.email, signupInputValue.password)
             .then((userCredential) => {
                 const user = userCredential.user;
                 handleCreateUserBankData(user.uid);
@@ -51,10 +51,10 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId
         try {
             await setDoc(doc(db, "users", uid), {
                 identification: {
-                    name: signupInputValue.FirstName,
-                    surname: signupInputValue.Surname,
-                    birthDate: signupInputValue.BirthDate,
-                    email: signupInputValue.Email
+                    name: signupInputValue.firstName,
+                    surname: signupInputValue.surname,
+                    birthDate: signupInputValue.birthDate,
+                    email: signupInputValue.email
                 },
                 createdAt: new Date().toISOString()
             });
@@ -98,7 +98,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId
     const handleReturnToLogin = () => {
         setFunctionSignup(false);
         setLoginCreation(false);
-        setSignupInputValue({ FirstName: "", Surname: "", Email: "", BirthDate: "", Password: "", PasswordRepeat: "" });
+        setSignupInputValue({ firstName: "", surname: "", email: "", birthDate: "", password: "", passwordRepeat: "" });
     }
 
     return (

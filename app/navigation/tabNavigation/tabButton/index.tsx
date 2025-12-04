@@ -10,25 +10,25 @@ const TabButton: React.FC<Props> = ({ onPress, theme, iconName, label }) => {
     const isFocused = useIsFocused();
 
     const dynamicColor = isFocused
-        ? Colors[theme].background
-        : Colors[theme].primary;
+        ? Colors[theme].iconInverse
+        : Colors[theme].iconPrimary;
 
     const tabBackgroundColor = isFocused
-        ? Colors[theme].primary
-        : Colors[theme].background;
+        ? Colors[theme].iconBackgroundPrimary
+        : Colors[theme].iconBackgroundSecondary;
 
     return (
         <Pressable
             onPress={onPress}
-            style={styles.tabButton}
+            style={styles.button}
         >
             <MaterialIcons
-                style={{ backgroundColor: tabBackgroundColor, borderRadius: 5, padding: 1 }}
+                style={{ backgroundColor: tabBackgroundColor, borderRadius: 20, padding: 5 }}
                 name={iconName}
                 size={24}
                 color={dynamicColor}
             />
-            <Text style={[styles.tabLabel, {color: Colors[theme].primary}]}>
+            <Text style={[styles.label, { color: Colors[theme].textPrimary }]}>
                 {label}
             </Text>
         </Pressable>
@@ -36,11 +36,7 @@ const TabButton: React.FC<Props> = ({ onPress, theme, iconName, label }) => {
 };
 
 const styles = StyleSheet.create({
-    tabButton: {
-        flex: 1, alignItems: 'center', justifyContent: 'center',
-        borderRadius: 5, marginHorizontal: 10, marginTop: 5
-    },
-    tabLabel: { fontSize: 12, marginTop: 2 },
+    button: { alignItems: 'center', alignContent: 'center', gap: 5 }, label: { fontSize: 12 }
 });
 
 export default TabButton

@@ -25,10 +25,10 @@ export default function RadioButton({
                     style={styles.radioContainer}
                     onPress={() => handleAction(option.value)}
                 >
-                    <View style={[styles.radioCircle, { borderColor: Colors[theme].secondary, }]}>
-                        {selectedButton === option.value && <View style={[styles.selectedDot, { backgroundColor: Colors[theme].primary }]} />}
+                    <View style={[styles.radioCircle, { borderColor: Colors[theme].iconPrimary, }]}>
+                        {selectedButton === option.value && <View style={[styles.selectedDot, { backgroundColor: Colors[theme].iconPrimary }]} />}
                     </View>
-                    <Text style={{color: Colors[theme].textSecondary}}>{option.label}</Text>
+                    <Text style={{color: Colors[theme].textPrimary}}>{option.label}</Text>
                 </Pressable>
             ))}
         </View>
@@ -48,14 +48,15 @@ const styles = StyleSheet.create({
     radioCircle: {
         height: 20,
         width: 20,
+        padding: 1,
         borderRadius: 10,
-        borderWidth: 2,
+        borderWidth: 0.5,
         alignItems: "center",
         justifyContent: "center",
     },
     selectedDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5
+        width: 16,
+        height: 16,
+        borderRadius: 8,
     },
 });

@@ -12,11 +12,11 @@ const ConfirmActionModal: React.FC<{ isVisible: boolean; theme: ThemeType, confi
         <Modal visible={isVisible} animationType="fade" transparent>
             <View style={[styles.modalOverlay, { backgroundColor: Colors[theme].overlay }]}>
                 <View style={[styles.modalContent, {backgroundColor: Colors[theme].background, }]}>
-                    <Text style={{ color: Colors[theme].primary, fontSize: 16, textAlign: 'center', fontWeight: 'bold' }}>
+                    <Text style={{ color: Colors[theme].textPrimary, fontSize: 16, textAlign: 'center', fontWeight: 'bold' }}>
                         {confirmationMessage}
                     </Text>
                     <CustomButton theme={theme} text={'Confirmar'} onPress={onConfirm} />
-                    <TextButton theme={theme} text={'Cancelar'} onPress={onCancel} />
+                    <TextButton theme={theme} text={'Cancelar'} textColor={Colors[theme].textPrimary} onPress={onCancel} />
                 </View>
             </View>
         </Modal>

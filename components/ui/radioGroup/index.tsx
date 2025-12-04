@@ -1,16 +1,14 @@
+import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
 import React, { useState } from "react";
 import { Pressable, View } from "react-native";
 
 interface Props {
-    isVisible?: boolean;
-    setSelection?: string;
-    options: { value: string }[];
-    children: React.ReactNode;
-    onSelect: (value: string) => void;
+    theme: ThemeType; isVisible?: boolean; setSelection?: string; options: { value: string }[];
+    children: React.ReactNode; onSelect: (value: string) => void;
 }
 
-const RadioGroup: React.FC<Props> = ({ isVisible, setSelection, options, children, onSelect }) => {
+const RadioGroup: React.FC<Props> = ({ theme, isVisible, setSelection, options, children, onSelect }) => {
     if (!isVisible) return null;
 
     const safeChildren = React.Children.toArray(children);
@@ -33,15 +31,15 @@ const RadioGroup: React.FC<Props> = ({ isVisible, setSelection, options, childre
         return (
             <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
                 <Pressable
-                    style={{ flexDirection: "row", alignItems: "center"}}
+                    style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={() => onSelectButton(option.value)}
                 >
                     <View style={{
                         height: 20, width: 20, borderRadius: 10, borderWidth: 2,
-                        borderColor: Colors.light.primary, alignItems: "center", justifyContent: "center",
+                        borderColor: Colors.light.iconPrimary, alignItems: "center", justifyContent: "center",
                     }}>
                         {selectedButton === option.value && (
-                            <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.light.primary }} />
+                            <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.light.iconPrimary }} />
                         )}
                     </View>
                 </Pressable>

@@ -18,7 +18,7 @@ export function EditDataViewer(
     function handleNewName(name: string) {
         if (name !== currentName) setLabel("Novo nome");
         setName(name);
-    }
+    };
 
     function handleValidateName() {
         switch (name) {
@@ -29,7 +29,7 @@ export function EditDataViewer(
             default:
                 return "validate";
         }
-    }
+    };
 
     function handleAction() {
         const message = handleValidateName();
@@ -38,21 +38,21 @@ export function EditDataViewer(
         } else {
             onSelected(name);
         }
-    }
+    };
 
     return (
         <Modal visible={isVisible} transparent>
             <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay, }]}>
-                <View style={styles.content}>
-                    <Text style={styles.title}>Editar nome do Grupo</Text>
+                <View style={[styles.content, { backgroundColor: Colors[theme].surface }]}>
+                    <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>Editar nome do Grupo</Text>
                     <DynamicLabelInput
-                    theme={theme}
+                        theme={theme}
                         initialText={name}
                         label={label}
                         onTextChange={handleNewName}
                     />
                     <CustomButton text={"Confirmar"} theme={theme} onPress={handleAction} />
-                    <TextButton text={"Cancelar"} theme={theme} onPress={onDismiss} />
+                    <TextButton text={"Cancelar"} theme={theme} textColor={Colors[theme].textPrimary} onPress={onDismiss} />
 
                 </View>
             </View>
@@ -61,25 +61,8 @@ export function EditDataViewer(
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 18,
-        fontWeight: "bold",
-        alignSelf: "center",
-    },
-    text: {
-        fontSize: 16, textAlign: 'justify'
-    },
-    overlay: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    content: {
-        width: "90%",
-        backgroundColor: "white",
-        padding: 20,
-        borderRadius: 12,
-        gap: 10,
-        elevation: 4,
-    },
+    title: { padding: 20, fontSize: 18, fontWeight: "bold", alignSelf: "center" },
+    text: { fontSize: 16, textAlign: 'justify' },
+    overlay: { flex: 1, justifyContent: "center", alignItems: "center" },
+    content: { padding: 50, borderRadius: 12, gap: 10, elevation: 10 },
 })

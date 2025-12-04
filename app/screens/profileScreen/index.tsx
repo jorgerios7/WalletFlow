@@ -49,9 +49,7 @@ export default function ProfileScreen({ theme, userData, onUpdating, onDismiss }
             />
 
             <AppearanceSettingsMenu
-                //theme={theme}
                 isVisible={appearanceSettingsMenu.isVisible}
-                //onChangingMode={(newMode) => console.log('onChangingMode: ', newMode)}
                 onDismiss={() => setAppearanceSettingsMenu({ isVisible: false })}
             />
 

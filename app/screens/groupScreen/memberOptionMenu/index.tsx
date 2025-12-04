@@ -57,24 +57,19 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
     return (
         <Modal visible={isStarted} animationType="fade" transparent>
             <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay, }]}>
-                <View style={styles.content}>
+                <View style={[styles.content, { backgroundColor: Colors[theme].surface, }]}>
 
-                    <Text style={styles.title}>{selectedItem.name}</Text>
+                    <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>{selectedItem.name}</Text>
 
-                    <View style={{ paddingVertical: 40 }}>
+                    <View style={{ paddingVertical: 20 }}>
                         {role !== CONDITION ? (
                             <>
                                 {currentUid === selectedItem.id ? (
                                     <>
                                         <RadioButton
                                             theme={theme}
-                                            initialValue={''}
-                                            options={[
-                                                {
-                                                    label: variables.delete.text,
-                                                    value: variables.delete.label
-                                                },
-                                            ]}
+                                            initialValue={""}
+                                            options={[{ label: variables.delete.text, value: variables.delete.label }]}
                                             onSelecting={(option) => {
                                                 setVariables((prev) => ({
                                                     ...prev,
@@ -87,7 +82,7 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
                                         />
                                     </>
                                 ) : (
-                                    <Text style={styles.text}>
+                                    <Text style={[styles.text, {color: Colors[theme].textPrimary}]}>
                                         Você ainda não possui permissão para administrar outros membros!
                                     </Text>
                                 )}
@@ -142,7 +137,6 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
                                         value: variables.delete.value
                                     }
                                 });
-
                                 onCancel();
                             }}
                         />
@@ -150,6 +144,7 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
 
                     <TextButton
                         theme={theme}
+                        textColor={Colors[theme].textPrimary}
                         text={(variables.delete.value || variables.promote.value || variables.demote.value)
                             ? ('Cancelar')
                             : ('Voltar')
@@ -163,25 +158,8 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 18,
-        fontWeight: "bold",
-        alignSelf: "center",
-    },
-    text: {
-        fontSize: 16, textAlign: 'justify'
-    },
-    overlay: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    content: {
-        width: "90%",
-        backgroundColor: "white",
-        padding: 20,
-        borderRadius: 12,
-        gap: 10,
-        elevation: 4,
-    },
+    title: { fontSize: 18, fontWeight: "bold", alignSelf: "center" },
+    text: { fontSize: 16, textAlign: 'justify' },
+    overlay: { flex: 1, justifyContent: "center", alignItems: "center" },
+    content: { padding: 40, borderRadius: 12, gap: 10, elevation: 10 }
 })

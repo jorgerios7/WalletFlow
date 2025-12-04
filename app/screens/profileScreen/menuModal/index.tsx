@@ -14,13 +14,13 @@ export default function MenuModal({ isVisible, theme, title, children, onDismiss
             visible={isVisible}
             animationType="slide"
             children={
-                <View style={{backgroundColor: Colors[theme].background}}>
+                <View style={{flex: 1, backgroundColor: Colors[theme].background}}>
                     <View style={{ width: '100%', height: 50, backgroundColor: Colors[theme].background, flexDirection: 'row' }}>
                         <Pressable style={{ position: "absolute", top: 10, left: 10 }} onPress={onDismiss}>
-                            <Feather name={'chevron-left'} size={28} color={Colors[theme].primary} />
+                            <Feather name={'chevron-left'} size={28} color={Colors[theme].iconPrimary} />
                         </Pressable>
                         <View style={{ width: '100%', backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ color: Colors[theme].textSecondary, fontSize: 18, fontWeight: 'bold' }}>
+                            <Text style={{ color: Colors[theme].textPrimary, fontSize: 18, fontWeight: 'bold' }}>
                                 {title}
                             </Text>
                         </View>

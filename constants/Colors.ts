@@ -5,47 +5,64 @@ export const Colors = {
     surfaceVariant: "#F4F5F7",
 
     textPrimary: "#11181C",
-    textSecondary: "#4B5563",
+    textSecondary: "#555555ff",
     textInverse: "#FFFFFF",
+    textContrast: "#FFFFFF",
 
     border: "#4B5563",
-    borderInvert: "rgba(8, 7, 7, 1)",
+    borderInverse: "rgba(8, 7, 7, 1)",
 
-    primary: "#060B3A",
-    secondary: "#4B5563",
+    iconPrimary: "#0A2C63",
+    iconSecondary: "#3D4A5C",
+    // iconTextiary: "#E6E8EB",
+    iconContrast: "#FFFFFF",
+    iconInverse: "#FFFFFF",
+    iconBackgroundPrimary: "#0A2C63",
+    iconBackgroundSecondary: "#E6E8EB",
 
     shadow: "#000002ff",
 
-    accent: "#0A7EA4",
-    accentHover: "#0890BD",
-    accentPressed: "#066B8A",
+    // === Ações (accent) ===
+    accent: "#0F3C7D",
+    accentHover: "#0D3470",
+    accentPressed: "#0A2958",
 
-    headerBackground: "#060B3A",
+    headerBackground: "#0A2C63",
+
     overlay: "rgba(0,0,0,0.1)"
   },
 
   dark: {
-    background: "#0E1116",
-    surface: "#1C1F26",
-    surfaceVariant: "#2A2F38",
+    background: "#000000ff",
+    surface: "#151516ff",
+    surfaceVariant: "#0c0c0cff",
 
-    textPrimary: "#FFFFFF",
-    textSecondary: "#CBD5E1",
-    textInverse: "#11181C",
+    textPrimary: "#ffffffff",
+    textSecondary: "#bebebeff",
+    textInverse: "#000000ff",
+    textContrast: "#ffffffff",
 
-    border: "#2A2D34",
-    borderInvert: "#babbbdff",
+    border: "#404041ff",
+    borderInverse: "rgba(255, 255, 255, 1)",
 
-    primary: "#E2E8F0",
-    secondary: "#94A3B8",
+    iconPrimary: "#ffffffff",
+    iconInverse: "#ffffffff",
+
+
+    iconSecondary: "#3d455cff",
+    iconContrast: "#FFFFFF",
+
+    iconBackgroundPrimary: "#003bbbd5",
+    iconBackgroundSecondary: "#161515ff",
 
     shadow: "#000002ff",
 
-    accent: "#30A6D4",
-    accentHover: "#4CC0EC",
-    accentPressed: "#1B8BB8",
+    // === Ações (accent) ===
+    accent: "#003bbbd5",
+    accentHover: "#003bbba4",
+    accentPressed: "#003bbb75",
 
-    headerBackground: "#060B3A",
-    overlay: "rgba(0,0,0,0.6)"
+    headerBackground: "#3e3f4dc4",
+    overlay: "rgba(0,0,0,0.1)"
   }
 };

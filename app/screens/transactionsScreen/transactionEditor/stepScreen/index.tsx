@@ -2,6 +2,7 @@ import { ThemeType } from "@/app/types/appearance";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
 import TransitionView from "@/components/ui/TransitionView";
+import { Colors } from "@/constants/Colors";
 import { StyleSheet } from "react-native";
 
 export default function StepScreen({
@@ -20,8 +21,8 @@ export default function StepScreen({
 
       <CustomButton theme={theme} text={confirmText} onPress={onConfirm} />
 
-      {onBack && (<TextButton theme={theme} text="Voltar" onPress={onBack} />)}
-      {onCancel && (<TextButton theme={theme} text="Cancelar" onPress={onCancel} />)}
+      {onBack && (<TextButton theme={theme} text="Voltar" textColor={Colors[theme].textPrimary} onPress={onBack} />)}
+      {onCancel && (<TextButton theme={theme} text="Cancelar" textColor={Colors[theme].textPrimary} onPress={onCancel} />)}
     </TransitionView>
   );
 }

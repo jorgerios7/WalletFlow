@@ -22,8 +22,8 @@ import TabButton from './tabButton';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-interface Props { 
-  isVisible: boolean, theme: ThemeType, userData: User, groupData: Group, onUpdating: (isUpdating: boolean) => void, onDismiss: () => void 
+interface Props {
+  isVisible: boolean, theme: ThemeType, userData: User, groupData: Group, onUpdating: (isUpdating: boolean) => void, onDismiss: () => void
 }
 
 const TabNavigation: React.FC<Props> = ({ isVisible, theme, userData, groupData, onUpdating, onDismiss }) => {
@@ -62,7 +62,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, theme, userData, groupData,
   const TransactionsWrapper = () => (<TransactionsScreen theme={theme} group_id={userData.groupId} />);
 
   const Tabs = ({ navigation }: any) => (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { marginTop: insets.top, marginBottom: insets.bottom }]}>
 
       <CreateTransactionScreen
         theme={theme}
@@ -74,7 +74,14 @@ const TabNavigation: React.FC<Props> = ({ isVisible, theme, userData, groupData,
 
       <Tab.Navigator
         initialRouteName="Analytic"
-        screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarStyle: [styles.tabBar, { backgroundColor: Colors[theme].background }] }}
+        screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: [styles.tabBar, {
+            backgroundColor: Colors[theme].surface, borderTopColor: Colors[theme].border, shadowColor: Colors[theme].shadow
+          }],
+          tabBarItemStyle: styles.item
+        }}
       >
         <Tab.Screen
           name="Analytic"
@@ -138,8 +145,8 @@ const TabNavigation: React.FC<Props> = ({ isVisible, theme, userData, groupData,
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  tabBar: { position: 'absolute', elevation: 20 },
+  container: { flex: 1 }, tabBar: { height: 60, elevation: 0.5, borderTopWidth: 0.5 },
+  item: { justifyContent: "center", alignItems: "center", height: 60, backgroundColor: "transparent" }
 });
 
 export default TabNavigation;

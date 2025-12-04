@@ -3,17 +3,18 @@ export type PersonalDataChange = 'none' | 'Name' | 'Email' | 'Password' | 'Exit-
 export interface BankAccount {
   bank: string;
   accountNumber: string;
-}
+};
+
 export interface BankCard {
   accountId: string;
   brand: string;
   lastDigits: string;
-}
+};
 
 export interface Contacts {
   email: string;
   phone: string;
-}
+};
 
 export interface Identification {
   birthDate: string; // formato: "dd/MM/yyyy"
@@ -21,12 +22,12 @@ export interface Identification {
   surname: string;
   email: string;
   profilePhoto: string;
-}
+};
 
 export interface Credentials {
   password: string;
   passwordRepeat: string;
-}
+};
 
 export interface User {
   bankAccounts: Record<string, BankAccount>;
@@ -35,4 +36,13 @@ export interface User {
   createdAt: string; // ISO string
   groupId: string;
   identification: Identification;
-}
+};
+
+export interface UserLogin {
+  firstName: string;
+  surname: string;
+  email: string;
+  birthDate: string;
+  password: string;
+  passwordRepeat: string
+};

@@ -42,16 +42,8 @@ export default function AppearanceSettingsMenu({ isVisible, onDismiss }: Props) 
                 <ThemedView style={{ padding: 20, gap: 10, backgroundColor: Colors[theme].background }}>
 
                     {/* CARD DO DARKMODE */}
-                    <View style={{
-                        height: 130,
-                        gap: 20,
-                        padding: 20,
-                        backgroundColor: Colors[theme].surface,
-                        borderRadius: 10
-                    }}>
-                        <Text style={{ color: Colors[theme].secondary, fontSize: 16, alignSelf: 'center' }}>
-                            Modo escuro
-                        </Text>
+                    <View style={{ height: 130, gap: 20, padding: 20, backgroundColor: Colors[theme].surface, borderRadius: 10 }}>
+                        <Text style={{ color: Colors[theme].iconPrimary, fontSize: 16, alignSelf: 'center' }}>Modo escuro</Text>
 
                         <RadioButton
                             isHorizontal
@@ -74,7 +66,7 @@ export default function AppearanceSettingsMenu({ isVisible, onDismiss }: Props) 
                         backgroundColor: Colors[theme].surface,
                         borderRadius: 10
                     }}>
-                        <Text style={{ color: Colors[theme].secondary, fontSize: 16, alignSelf: 'center' }}>
+                        <Text style={{ color: Colors[theme].iconPrimary, fontSize: 16, alignSelf: 'center' }}>
                             Tamanho da fonte
                         </Text>
 
@@ -108,7 +100,7 @@ export default function AppearanceSettingsMenu({ isVisible, onDismiss }: Props) 
 
                     <CustomButton theme={theme} text="Salvar alterações" onPress={handleConfirm} />
 
-                    <TextButton theme={theme} text="Redefinir alterações" />
+                    <TextButton theme={theme} text="Redefinir alterações" textColor={Colors[theme].textPrimary} />
                 </ThemedView>
             }
         />

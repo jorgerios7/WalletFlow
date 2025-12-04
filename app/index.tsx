@@ -74,7 +74,7 @@ export default function AppMain() {
 
   if (auth.isLoading) return <SplashScreen />;
 
-  if (!auth.isLoading && data.isLoading) return <LoadScreen />;
+  if (!auth.isLoading && data.isLoading) return <LoadScreen theme={theme}/>;
 
   if (showError.snackbarVisible) {
     return (
