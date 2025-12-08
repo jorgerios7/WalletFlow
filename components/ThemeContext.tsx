@@ -8,4 +8,4 @@ export const ThemeContext = createContext({
 
 export function useAppTheme() {
   return useContext(ThemeContext);
-}
+};

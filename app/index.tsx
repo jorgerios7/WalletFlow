@@ -1,8 +1,8 @@
-import { ThemeContext } from "@/components/ThemeContext";
+import { ThemeContext, ThemeProvider } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { getAuth } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { Text } from "react-native";
 import { Snackbar } from "react-native-paper";
 import TabNavigation from "./navigation/tabNavigation";
 import { LoadScreen } from "./pages/LoadScreen";
@@ -12,7 +12,6 @@ import UserAccessScreen from "./screens/userAccessScreen";
 import CreateGroup from "./services/firebase/groupService/createGroup";
 import LoadGroup from "./services/firebase/groupService/loadGroup";
 import { FetchUserData } from "./services/firebase/UserService";
-import { ThemeType } from "./types/appearance";
 import { Group } from "./types/Group";
 import { User } from "./types/User";
 
@@ -22,11 +21,8 @@ export default function AppMain() {
 
   const [auth, setAuth] = useState({ isLoading: true, isAuthenticated: false, user_id: "" });
 
-  const themeDefault = useColorScheme() ?? "light";
-  const [theme, setTheme] = useState<ThemeType>('dark');
+  const { theme } = useContext(ThemeContext);
 
-  //if (!currentUser) setAuth((prev) => ({...prev, isAuthenticated: false}));
-  
   const [data, setData] = useState({ isLoading: false, user: null as User | null, group: null as Group | null });
   const [isGrouped, setIsGrouped] = useState(false);
   const [showError, setShowError] = useState({ snackbarVisible: false, message: "" });
@@ -74,33 +70,33 @@ export default function AppMain() {
 
   if (auth.isLoading) return <SplashScreen />;
 
-  if (!auth.isLoading && data.isLoading) return <LoadScreen theme={theme}/>;
+  if (!auth.isLoading && data.isLoading) return <LoadScreen theme={theme.appearance} />;
 
   if (showError.snackbarVisible) {
     return (
       <Snackbar
         visible
         onDismiss={() => setShowError({ snackbarVisible: false, message: "" })}
-        style={{ backgroundColor: Colors[theme].primary }}
+        style={{ backgroundColor: Colors[theme.appearance].accent }}
         action={{ label: "Fechar", onPress: () => setShowError({ snackbarVisible: false, message: "" }) }}
       >
-        {showError.message}
+        <Text style={{ color: Colors[theme.appearance].textContrast }}>
+          {showError.message}
+        </Text>
       </Snackbar>
     )
-  }
+  };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeProvider>
       <UserAccessScreen
         isVisible={!auth.isAuthenticated}
-        theme={theme}
         onPress={(value) => setAuth((prev) => ({ ...prev, isAuthenticated: value }))}
         onUserId={(id) => setAuth((prev) => ({ ...prev, user_id: id }))}
       />
 
       <GroupSetupScreen
         isVisible={auth.isAuthenticated && !data.isLoading && !isGrouped}
-        theme={theme}
         onPressingReturnButton={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
         onReady={({ action, values }) => {
           {
@@ -117,12 +113,11 @@ export default function AppMain() {
 
       <TabNavigation
         isVisible={auth.isAuthenticated && !data.isLoading && isGrouped}
-        theme={theme}
         onUpdating={(isUpdating) => loadUserAndGroup({ isUpdateScreen: false, isUpdateData: isUpdating })}
         userData={data.user as User}
         groupData={data.group as Group}
         onDismiss={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
       />
-    </ThemeContext.Provider>
+    </ThemeProvider>
   );
 }

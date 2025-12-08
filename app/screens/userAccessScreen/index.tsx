@@ -1,11 +1,11 @@
 import { auth, db } from "@/app/config/firebaseConfig";
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from "firebase/firestore";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { View } from "react-native";
 import { Snackbar } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,13 +13,15 @@ import LoginScreen from "./loginScreen";
 import SignupScreen from "./signupScreen";
 
 interface Props {
-    isVisible: boolean, theme: ThemeType, onPress: (isLoged: boolean) => void, onUserId: (id: string) => void
+    isVisible: boolean, onPress: (isLoged: boolean) => void, onUserId: (id: string) => void
 }
 
-const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId }) => {
+const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => {
     if (!isVisible) return null;
 
     const insets = useSafeAreaInsets();
+
+    const { theme } = useContext(ThemeContext);
 
     const [loginInputValue, setLoginInputValue] = useState({ Email: "", Password: "" });
 
@@ -103,11 +105,11 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId
 
     return (
         <View style={{
-            flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors[theme].background,
+            flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors[theme.appearance].background,
             marginTop: insets.top,
         }}>
             <LoginScreen
-                theme={theme}
+                theme={theme.appearance}
                 shouldRender={!isSignup}
                 values={loginInputValue}
                 onChange={(field, value) => setLoginInputValue((prev) => ({ ...prev, [field]: value }))}
@@ -116,7 +118,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId
             />
 
             <SignupScreen
-                theme={theme}
+                theme={theme.appearance}
                 shouldRender={isSignup && !isLoginCreatedSuccessfully}
                 values={signupInputValue}
                 whenIsReady={(data) => {
@@ -131,7 +133,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId
             />
 
             <WelcomeAfterSignup
-                theme={theme}
+                theme={theme.appearance}
                 onPressingReturnToLoginButton={handleReturnToLogin}
                 shouldRender={isSignup && isLoginCreatedSuccessfully}
             />
@@ -139,10 +141,10 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, theme, onPress, onUserId
             <Snackbar
                 visible={snackbarVisible}
                 onDismiss={() => setSnackbarVisible(false)}
-                style={{ backgroundColor: Colors[theme].surfaceVariant }}
+                style={{ backgroundColor: Colors[theme.appearance].surfaceVariant }}
                 action={{
                     label: "Fechar",
-                    textColor: Colors[theme].textSecondary,
+                    textColor: Colors[theme.appearance].textSecondary,
                     onPress: () => setSnackbarVisible(false),
                 }}>
                 {msg}

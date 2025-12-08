@@ -1,60 +1,61 @@
-import { TextSizeType, ThemeType } from "@/app/types/appearance";
-import { ThemeContext } from "@/components/ThemeContext";
+import { TextSizeType, ThemeSource, ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { ThemedView } from "@/components/ThemedView";
 import CustomButton from "@/components/ui/CustomButton";
 import RadioButton from "@/components/ui/RadioButton";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
 import { useContext, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, useColorScheme, View } from "react-native";
 import MenuModal from "../menuModal";
 
-interface Props {
-    isVisible: boolean;
-    onDismiss: () => void;
-}
+interface Props { isVisible: boolean, onDismiss: () => void };
 
 export default function AppearanceSettingsMenu({ isVisible, onDismiss }: Props) {
-
-    // 🔥 Agora o tema vem do Context global 
+    const systemTheme = useColorScheme();
     const { theme, setTheme } = useContext(ThemeContext);
 
     const [sampleTextSize, setSampleTextSize] = useState<TextSizeType>("small");
 
-    // Estado local do menu (não muda o app até clicar em "Salvar")
-    const [appearanceMode, setAppearanceMode] = useState<ThemeType>(theme);
+    const [themeState, setThemeState] = useState({ source: theme.source as ThemeSource, appearance: theme.appearance as ThemeType });
 
-    function handleConfirm() {
-        // ➜ salva o novo tema globalmente
-        setTheme(appearanceMode);
-
-        // fecha o modal
-        onDismiss();
-    }
+    function handleThemeSource() {
+        setTheme({
+            source: themeState.source,
+            appearance:
+                themeState.source === "system"
+                    ? systemTheme as ThemeType
+                    : themeState.appearance
+        })
+    };
 
     return (
         <MenuModal
-            theme={theme}
+            theme={theme.appearance}
             isVisible={isVisible}
             title={'Aparência'}
             onDismiss={onDismiss}
             children={
-                <ThemedView style={{ padding: 20, gap: 10, backgroundColor: Colors[theme].background }}>
+                <ThemedView style={{ padding: 20, gap: 10, backgroundColor: Colors[theme.appearance].background }}>
 
-                    {/* CARD DO DARKMODE */}
-                    <View style={{ height: 130, gap: 20, padding: 20, backgroundColor: Colors[theme].surface, borderRadius: 10 }}>
-                        <Text style={{ color: Colors[theme].iconPrimary, fontSize: 16, alignSelf: 'center' }}>Modo escuro</Text>
+                    <View style={{ height: 130, gap: 20, padding: 20, backgroundColor: Colors[theme.appearance].surface, borderRadius: 10 }}>
+                        <Text style={{ color: Colors[theme.appearance].textPrimary, fontSize: 16, alignSelf: 'center' }}>Modo escuro</Text>
 
                         <RadioButton
                             isHorizontal
-                            theme={theme}
-                            initialValue={appearanceMode}
+                            theme={theme.appearance}
+                            initialValue={theme.source === "system" ? "system" : theme.appearance}
                             options={[
                                 { label: "Ligado", value: "dark" },
                                 { label: "Desligado", value: "light" },
                                 { label: "Automático", value: "system" },
                             ]}
-                            onSelecting={(mode) => setAppearanceMode(mode as ThemeType)}
+                            onSelecting={(mode) => setThemeState({
+                                source: mode !== "system"
+                                    ? "manual"
+                                    : "system",
+                                appearance: mode as ThemeType
+                            })}
                         />
                     </View>
 
@@ -63,17 +64,17 @@ export default function AppearanceSettingsMenu({ isVisible, onDismiss }: Props) 
                         height: 200,
                         gap: 30,
                         padding: 20,
-                        backgroundColor: Colors[theme].surface,
+                        backgroundColor: Colors[theme.appearance].surface,
                         borderRadius: 10
                     }}>
-                        <Text style={{ color: Colors[theme].iconPrimary, fontSize: 16, alignSelf: 'center' }}>
+                        <Text style={{ color: Colors[theme.appearance].textPrimary, fontSize: 16, alignSelf: 'center' }}>
                             Tamanho da fonte
                         </Text>
 
                         <View style={{ height: 50, justifyContent: 'center' }}>
                             <Text
                                 style={{
-                                    color: Colors[theme].textPrimary,
+                                    color: Colors[theme.appearance].textPrimary,
                                     fontStyle: 'italic',
                                     textAlign: 'center',
                                     fontSize:
@@ -87,7 +88,7 @@ export default function AppearanceSettingsMenu({ isVisible, onDismiss }: Props) 
 
                         <RadioButton
                             isHorizontal
-                            theme={theme}
+                            theme={theme.appearance}
                             initialValue={sampleTextSize}
                             options={[
                                 { label: "Pequeno", value: "small" },
@@ -97,10 +98,8 @@ export default function AppearanceSettingsMenu({ isVisible, onDismiss }: Props) 
                             onSelecting={(value) => setSampleTextSize(value as TextSizeType)}
                         />
                     </View>
-
-                    <CustomButton theme={theme} text="Salvar alterações" onPress={handleConfirm} />
-
-                    <TextButton theme={theme} text="Redefinir alterações" textColor={Colors[theme].textPrimary} />
+                    <CustomButton theme={theme.appearance} text="Salvar alterações" onPress={handleThemeSource} />
+                    <TextButton theme={theme.appearance} text="Redefinir alterações" textColor={Colors[theme.appearance].textPrimary} />
                 </ThemedView>
             }
         />
