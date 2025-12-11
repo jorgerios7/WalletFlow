@@ -1,14 +1,13 @@
-import { ThemeType } from "@/app/types/appearance";
 import { RecurrenceType } from "@/app/types/Finance";
 import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import { useEffect, useState } from "react";
 import StepScreen from "../../../stepScreen";
 
-interface StepsProps { isVisible: boolean; theme: ThemeType; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
+interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
 interface MethodProps { paymentBankCard: string, paymentMethod: string, paymentBank: string }
 
 export default function PaymentMethodStep(
-  { isVisible, theme, values, onSelect, onConfirm, onBack, onCancel }
+  { isVisible, values, onSelect, onConfirm, onBack, onCancel }
     : StepsProps & { values: MethodProps, onSelect: (values: MethodProps) => void }
 ) {
 
@@ -40,14 +39,12 @@ export default function PaymentMethodStep(
   return (
     <StepScreen
       isVisible={isVisible}
-      theme={theme}
       onBack={onBack}
       onConfirm={() => onConfirm()}
       onCancel={onCancel}
     >
       <DropdownSelect
         isVisible
-        theme={theme}
         onOpeningDropdown="openAtBottom"
         placeholder={'Método de pagamento'}
         setSelection={selection.paymentMethod}
@@ -57,7 +54,6 @@ export default function PaymentMethodStep(
 
       <DropdownSelect
         isVisible={selection.paymentMethod === 'Cartão de crédito'}
-        theme={theme}
         onOpeningDropdown="openAtBottom"
         placeholder={'Cartão bancário'}
         setSelection={selection.paymentBankCard}
@@ -71,7 +67,6 @@ export default function PaymentMethodStep(
           selection.paymentMethod === 'Pix' ||
           selection.paymentMethod === 'Transferência bancária'
         }
-        theme={theme}
         onOpeningDropdown="openAtBottom"
         placeholder={'Instituição financeira'}
         setSelection={selection.paymentBank}

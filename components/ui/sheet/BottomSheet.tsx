@@ -1,24 +1,13 @@
-import { ThemeType } from '@/app/types/appearance';
+import { ThemeContext } from '@/components/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useEffect, useRef } from 'react';
-import {
-    Animated,
-    Dimensions,
-    Modal,
-    PanResponder,
-    Pressable,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
-} from 'react-native';
+import React, { useContext, useEffect, useRef } from 'react';
+import { Animated, Dimensions, Modal, PanResponder, Pressable, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface BottomSheetProps {
     visible: boolean;
-    theme: ThemeType;
     onClose: () => void;
     children: React.ReactNode;
     isDragHandleVisible: boolean;
@@ -27,12 +16,13 @@ interface BottomSheetProps {
 
 export const BottomSheet: React.FC<BottomSheetProps> = ({
     visible,
-    theme,
     onClose,
     children,
     isDragHandleVisible,
     isFullHeight,
 }) => {
+
+    const {theme} = useContext(ThemeContext);
 
     const FULL_HEIGHT = 0;
     const PARTIAL_HEIGHT = SCREEN_HEIGHT * 0.5;
@@ -95,11 +85,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     const Header = () => {
         return (
             isDragHandleVisible ?
-                <Pressable style={[styles.dragHandle, { backgroundColor: Colors[theme].background, }]} />
+                <Pressable style={[styles.dragHandle, { backgroundColor: Colors[theme.appearance].background, }]} />
                 :
-                <View style={[styles.butonReturnHeader, { backgroundColor: Colors[theme].background, borderBottomColor: Colors[theme].border, }]}>
-                    <TouchableOpacity style={[styles.buttonReturn, {backgroundColor: Colors[theme].background,}]} onPress={() => animateTo(CLOSED, onClose)}>
-                        <MaterialIcons style={{ marginTop: '20%' }} activeOpacity={0.8} name={'arrow-back'} size={24} color={Colors[theme].primary} />
+                <View style={[styles.butonReturnHeader, { backgroundColor: Colors[theme.appearance].background, borderBottomColor: Colors[theme.appearance].border, }]}>
+                    <TouchableOpacity style={[styles.buttonReturn, { backgroundColor: Colors[theme.appearance].background, }]} onPress={() => animateTo(CLOSED, onClose)}>
+                        <MaterialIcons style={{ marginTop: '20%' }} activeOpacity={0.8} name={'arrow-back'} size={24} color={Colors[theme.appearance].iconPrimary} />
                     </TouchableOpacity>
                 </View>
         );
@@ -108,11 +98,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     return (
         <Modal visible={visible} transparent animationType="fade">
             <TouchableWithoutFeedback onPress={() => animateTo(CLOSED, onClose)}>
-                <View style={[styles.background, { backgroundColor: Colors[theme].overlay }]} />
+                <View style={[styles.background, { backgroundColor: Colors[theme.appearance].overlay }]} />
             </TouchableWithoutFeedback>
 
             <Animated.View {...panResponder.panHandlers}
-                style={[styles.sheetContainer, { backgroundColor: Colors[theme].background, transform: [{ translateY },] }]}
+                style={[styles.sheetContainer, { backgroundColor: Colors[theme.appearance].background, transform: [{ translateY },] }]}
             >
                 <Header />
 

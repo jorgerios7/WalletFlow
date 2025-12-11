@@ -1,15 +1,17 @@
-import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
-import React, { useState } from "react";
+import { Typography } from "@/constants/Typography";
+import React, { useContext, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { ThemeContext } from "../ThemeProvider";
 
 type Option = { label: string, value: string };
 
 export default function RadioButton({
-    isHorizontal, theme, gap, options, initialValue, onSelecting
+    isHorizontal, gap, options, initialValue, onSelecting
 }: {
-    isHorizontal?: boolean, theme: ThemeType, gap?: number, options: Option[], initialValue: string, onSelecting: (option: string) => void
+    isHorizontal?: boolean, gap?: number, options: Option[], initialValue: string, onSelecting: (option: string) => void
 }) {
+    const { theme, fontSizeType } = useContext(ThemeContext);
     const [selectedButton, setSelectedButton] = useState<string>(initialValue ? initialValue : "");
 
     function handleAction(value: string) {
@@ -25,10 +27,16 @@ export default function RadioButton({
                     style={styles.radioContainer}
                     onPress={() => handleAction(option.value)}
                 >
-                    <View style={[styles.radioCircle, { borderColor: Colors[theme].iconPrimary, }]}>
-                        {selectedButton === option.value && <View style={[styles.selectedDot, { backgroundColor: Colors[theme].iconPrimary }]} />}
+                    <View style={[styles.radioCircle, { borderColor: Colors[theme.appearance].iconPrimary, }]}>
+                        {selectedButton === option.value && <View style={[styles.selectedDot, { backgroundColor: Colors[theme.appearance].iconPrimary }]} />}
                     </View>
-                    <Text style={{color: Colors[theme].textPrimary}}>{option.label}</Text>
+                    <Text style={{
+                        color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].md.fontSize,
+                        lineHeight: Typography[fontSizeType].md.lineHeight
+                    }}
+                    >
+                        {option.label}
+                    </Text>
                 </Pressable>
             ))}
         </View>

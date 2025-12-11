@@ -1,20 +1,22 @@
-import { ThemeType } from '@/app/types/appearance';
 import { UserLogin } from '@/app/types/User';
+import { ThemeContext } from '@/components/ThemeProvider';
 import CustomButton from '@/components/ui/CustomButton';
 import DynamicLabelInput from '@/components/ui/DynamicLabelInput';
 import TextButton from '@/components/ui/TextButton';
 import ValidateEmptyFields from '@/components/ValidateEmptyFields';
 import { Colors } from '@/constants/Colors';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View } from "react-native";
 
 interface Props {
-    theme: ThemeType; values: UserLogin; onPressingReturnButton: () => void; shouldRender?: boolean;
+   values: UserLogin; onPressingReturnButton: () => void; shouldRender?: boolean;
     whenIsReady: (values: Partial<Props["values"]>) => void; erroMessage: (message: string) => void;
 }
 
-const SignupScreen: React.FC<Props> = ({ theme, onPressingReturnButton, shouldRender = true, whenIsReady, erroMessage }) => {
+const SignupScreen: React.FC<Props> = ({ onPressingReturnButton, shouldRender = true, whenIsReady, erroMessage }) => {
     if (!shouldRender) return null;
+
+    const {theme, fontSizeType} = useContext(ThemeContext);
 
     const [inputValue, setInputValue] = useState({
         firstName: "", surname: "", email: "", birthDate: "", password: "", passwordRepeat: "",
@@ -42,59 +44,49 @@ const SignupScreen: React.FC<Props> = ({ theme, onPressingReturnButton, shouldRe
     }
 
     return (
-        <View style={{ gap: 10, width: '90%', backgroundColor: Colors[theme].background }}>
+        <View style={{ gap: 10, width: '90%', backgroundColor: Colors[theme.appearance].background }}>
             <DynamicLabelInput
-                theme={theme}
                 label="Primeiro nome"
-                colorLabel={Colors[theme].background}
+                colorLabel={Colors[theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, FirstName: text }))}
             />
             <DynamicLabelInput
-                theme={theme}
                 label="Sobrenome"
-                colorLabel={Colors[theme].background}
+                colorLabel={Colors[theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, Surname: text }))}
             />
             <DynamicLabelInput
-                theme={theme}
                 label="E-mail"
-                colorLabel={Colors[theme].background}
+                colorLabel={Colors[theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, Email: text }))}
             />
             <DynamicLabelInput
-                theme={theme}
                 dateEntry
                 label="Data de Nascimento"
-                colorLabel={Colors[theme].background}
+                colorLabel={Colors[theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, BirthDate: text }))}
             />
             <DynamicLabelInput
-                theme={theme}
                 label="Senha"
                 secureTextEntry
-                colorLabel={Colors[theme].background}
+                colorLabel={Colors[theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, Password: text }))}
             />
             <DynamicLabelInput
-                theme={theme}
                 label="Repetir senha"
                 secureTextEntry
-                colorLabel={Colors[theme].background}
+                colorLabel={Colors[theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, PasswordRepeat: text }))}
             />
 
             <CustomButton
-                theme={theme}
                 text="Criar conta"
                 onPress={validateData}
             />
 
             <TextButton
-                theme={theme}
                 onPress={onPressingReturnButton}
                 text="Voltar"
-                
-                textColor={Colors[theme].textPrimary}
             />
 
         </View>

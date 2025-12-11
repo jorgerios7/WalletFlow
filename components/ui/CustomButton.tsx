@@ -1,22 +1,32 @@
-import { ThemeType } from "@/app/types/appearance";
 import { Colors } from "@/constants/Colors";
-import React from "react";
+import { Typography } from "@/constants/Typography";
+import React, { useContext } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { ThemeContext } from "../ThemeProvider";
 
-export default function CustomButton({ theme, text, textColor, onPress }: { theme: ThemeType, text: string, textColor?: string, onPress?: () => void }) {
+export default function CustomButton({ text, onPress }: { text: string, onPress?: () => void }) {
+    const { theme, fontSizeType } = useContext(ThemeContext);
+
     return (
         <View style={styles.container}>
             <Pressable
                 style={({ pressed }) => [
                     styles.button, {
-                        backgroundColor: Colors[theme].accent, borderColor: Colors[theme].border,
-                        outlineColor: Colors[theme].accentPressed
+                        backgroundColor: Colors[theme.appearance].accent, borderColor: Colors[theme.appearance].border,
+                        outlineColor: Colors[theme.appearance].accentPressed
                     },
-                    pressed && { backgroundColor: Colors[theme].accentPressed, }
+                    pressed && { backgroundColor: Colors[theme.appearance].accentPressed, }
                 ]}
                 onPress={onPress}
             >
-                <Text style={[styles.text, { color: Colors[theme].textContrast }]}>{text}</Text>
+                <Text style={[styles.text, {
+                    color: Colors[theme.appearance].textContrast,
+                    fontSize: Typography[fontSizeType].md.fontSize,
+                    lineHeight: Typography[fontSizeType].md.lineHeight
+                }]}
+                >
+                    {text}
+                </Text>
             </Pressable>
         </View>
     );

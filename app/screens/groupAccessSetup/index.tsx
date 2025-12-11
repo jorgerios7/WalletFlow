@@ -1,3 +1,5 @@
+import { db } from "@/app/config/firebaseConfig";
+import { Action } from "@/app/types/Group";
 import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
@@ -7,15 +9,12 @@ import { doc, getDoc } from "firebase/firestore";
 import { useContext, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Snackbar } from "react-native-paper";
-import { db } from "../config/firebaseConfig";
-import { Action } from "../types/Group";
 
 interface Props {
-    isVisible: boolean, onReady: (x: { action: Action, values: { id: string, name: string } }) => void,
-    onPressingReturnButton: () => void
-}
+    isVisible: boolean, onReady: (x: { action: Action, values: { id: string, name: string } }) => void, onPressingReturnButton: () => void
+};
 
-const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingReturnButton }) => {
+const GroupAccessSetup: React.FC<Props> = ({ isVisible, onReady, onPressingReturnButton }) => {
     if (!isVisible) return null;
 
     const { theme } = useContext(ThemeContext);
@@ -76,18 +75,18 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: Colors[theme.appearance].background, flex: 1, height: "100%", justifyContent: "center", alignItems: "center" }}>
-                
+
                 <Text style={[styles.title, { color: Colors[theme.appearance].textPrimary, }]}>Configurar grupo</Text>
-                
+
                 {
                     isCreateGroup ? (
                         <View style={{ width: "90%", gap: 10 }}>
-                            
+
 
                             <View style={styles.container}>
                                 <View style={{ gap: 10 }}>
-                                    <DynamicLabelInput theme={theme.appearance} label="Nome do grupo" colorLabel={Colors[theme.appearance].background} onTextChange={(text) => setGroupData({ id: "", name: text })} />
-                                    <CustomButton theme={theme.appearance} text={'Continuar'} onPress={handleAction} />
+                                    <DynamicLabelInput label="Nome do grupo" colorLabel={Colors[theme.appearance].background} onTextChange={(text) => setGroupData({ id: "", name: text })} />
+                                    <CustomButton text={'Continuar'} onPress={handleAction} />
                                 </View>
 
                                 <View style={{ padding: 10, flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'center' }}>
@@ -99,10 +98,8 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
                                 </View>
 
                                 <TextButton
-                                    theme={theme.appearance}
                                     text={'Sair'}
                                     adjustPadding={10}
-                                    textColor={Colors[theme.appearance].textPrimary}
                                     onPress={() => onPressingReturnButton?.()}
                                 />
                             </View>
@@ -110,22 +107,18 @@ const GroupSetupScreen: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
                     ) : (
                         <View style={{ width: "90%", gap: 10 }}>
                             <DynamicLabelInput
-                                theme={theme.appearance}
                                 label="ID do grupo"
                                 colorLabel={Colors[theme.appearance].background}
                                 onTextChange={(text) => setGroupData({ id: text, name: '' })}
                             />
 
                             <CustomButton
-                                theme={theme.appearance}
                                 text={'Continuar'}
                                 onPress={handleAction}
                             />
 
                             <TextButton
-                                theme={theme.appearance}
                                 text={'Voltar'}
-                                textColor={Colors[theme.appearance].textPrimary}
                                 adjustPadding={10}
                                 onPress={() => setIsCreateGroup(true)}
                             />
@@ -168,4 +161,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default GroupSetupScreen;
+export default GroupAccessSetup;

@@ -1,19 +1,22 @@
-import { ThemeType } from "@/app/types/appearance";
 import { TransactionType } from "@/app/types/Finance";
 import { DeleteCategory } from "@/app/utils/categoryManager";
+import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
-import { useState } from "react";
+import { Typography } from "@/constants/Typography";
+import { useContext, useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 
 interface Props {
-    isVisible: boolean; theme: ThemeType, categoryToDelete: string; currentType: TransactionType;
+    isVisible: boolean; categoryToDelete: string; currentType: TransactionType;
     onSuccess: () => void; onDismiss: () => void;
 }
 
-export default function DeleteCategoryMenu({ isVisible, theme, categoryToDelete, currentType, onSuccess, onDismiss }: Props) {
+export default function DeleteCategoryMenu({ isVisible,categoryToDelete, currentType, onSuccess, onDismiss }: Props) {
     if (!categoryToDelete) return;
+
+    const {theme, fontSizeType} =  useContext(ThemeContext);
 
     const [success, setSeccess] = useState(false);
 
@@ -39,35 +42,38 @@ export default function DeleteCategoryMenu({ isVisible, theme, categoryToDelete,
             if (isReady) onSuccess();
             setSeccess(true);
         }
-    }
+    };
+
+    const dynamicTextStyle = {
+        fontSize: Typography[fontSizeType].md.fontSize,
+        lineHeight: Typography[fontSizeType].md.lineHeight,
+    };
 
     return (
         <Modal visible={isVisible} animationType="fade" transparent>
             <Pressable
-                style={{ flex: 1, padding: 10, backgroundColor: Colors[theme].overlay, justifyContent: 'center', alignItems: 'center' }}
+                style={{ flex: 1, padding: 10, backgroundColor: Colors[theme.appearance].overlay, justifyContent: 'center', alignItems: 'center' }}
                 onPress={onDismiss}
             >
                 <View style={{
                     justifyContent: 'center', alignItems: 'center', gap: 10, padding: 20,
-                    backgroundColor: Colors[theme].surface, borderRadius: 10
+                    backgroundColor: Colors[theme.appearance].surface, borderRadius: 10
                 }}>
                     {!success ? (
                         <>
-                            <Text style={{ color: Colors[theme].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
+                            <Text style={{ ...dynamicTextStyle, color: Colors[theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
                                 {`Você tem certeza que deseja excluir `}
-                                <Text style={{ fontWeight: "bold", color: Colors[theme].accent }}>{categoryToDelete}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors[theme.appearance].accent }}>{categoryToDelete}</Text>
                                 {` da lista de categorias de ${renderCurrentType()}?`}
                             </Text>
 
                             <CustomButton
-                                theme={theme}
                                 text="Confirmar"
                                 onPress={() => {
                                     handleDeleteCategory();
                                 }}
                             />
                             <TextButton
-                                theme={theme}
                                 text="Cancelar"
                                 onPress={() => {
                                     onDismiss();
@@ -77,14 +83,13 @@ export default function DeleteCategoryMenu({ isVisible, theme, categoryToDelete,
                         </>
                     ) : (
                         <>
-                            <Text style={{ color: Colors[theme].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
+                            <Text style={{...dynamicTextStyle,  color: Colors[theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
                                 {`A categoria `}
-                                <Text style={{ fontWeight: "bold", color: Colors[theme].accent }}>{categoryToDelete}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors[theme.appearance].accent }}>{categoryToDelete}</Text>
                                 {` foi exluída com sucesso!`}
                             </Text>
 
                             <CustomButton
-                                theme={theme}
                                 text="Ok"
                                 onPress={() => {
                                     onDismiss();

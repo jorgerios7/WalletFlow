@@ -1,17 +1,20 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
-import React, { useState } from "react";
+import { Typography } from "@/constants/Typography";
+import React, { useContext, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Dropdown, { OpenDirection } from "..";
 import LabelAnimated from "../../LabelAnimated";
 
 interface Props {
-  theme: ThemeType, isVisible: boolean; setSelection: string | number; list: string[] | number[];
+  isVisible: boolean; setSelection: string | number; list: string[] | number[];
   placeholder: string; onOpeningDropdown: OpenDirection; onSelect: (item: string | number) => void;
 };
 
-export default function DropdownSelect({ theme, isVisible, setSelection, list, placeholder, onOpeningDropdown, onSelect }: Props) {
+export default function DropdownSelect({ isVisible, setSelection, list, placeholder, onOpeningDropdown, onSelect }: Props) {
   if (!isVisible) return null;
+
+  const { theme, fontSizeType } = useContext(ThemeContext);
 
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selected, setSelected] = useState<string | number>(setSelection);
@@ -19,7 +22,6 @@ export default function DropdownSelect({ theme, isVisible, setSelection, list, p
   return (
     <View style={[styles.container, { backgroundColor: '' }]}>
       <LabelAnimated
-        theme={theme}
         onPress={() => setIsDropdownVisible((prev) => !prev)}
         labelText={placeholder}
         focused={false}
@@ -28,18 +30,22 @@ export default function DropdownSelect({ theme, isVisible, setSelection, list, p
 
       <Pressable
         focusable
-        style={[styles.dropdownButton, { borderColor: Colors[theme].borderInverse }]}
+        style={[styles.dropdownButton, { borderColor: Colors[theme.appearance].borderInverse }]}
         onPress={() => setIsDropdownVisible((prev) => !prev)}
         onBlur={() => setIsDropdownVisible(false)}
         onFocus={() => setIsDropdownVisible(false)}
       >
-        <Text style={[styles.dropdownButtonText, { color: Colors[theme].textPrimary }]}>
+        <Text style={[styles.dropdownButtonText, {
+          color: Colors[theme.appearance].textPrimary, 
+          fontSize: Typography[fontSizeType].md.fontSize,
+          lineHeight: Typography[fontSizeType].md.lineHeight
+        }]}
+        >
           {selected}
         </Text>
       </Pressable>
 
       <Dropdown
-        theme={theme}
         isVisible={isDropdownVisible}
         onShowing={onOpeningDropdown}
         items={list}

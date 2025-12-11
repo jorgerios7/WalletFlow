@@ -1,18 +1,22 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
 import { Feather } from "@expo/vector-icons";
+import { useContext } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import TransitionView from "../TransitionView";
 
 export type OpenDirection = 'openAtTop' | 'openAtBottom';
 
 interface Props {
-    theme: ThemeType, isVisible: boolean; items: string[] | number[]; deleteButtonVisible?: boolean; onShowing: OpenDirection;
+    isVisible: boolean; items: string[] | number[]; deleteButtonVisible?: boolean; onShowing: OpenDirection;
     onSelect: (item: string | number) => void; onPressDelete?: (item: string | number) => void;
 }
 
-export default function Dropdown({ theme, isVisible, items, deleteButtonVisible, onShowing, onSelect, onPressDelete }: Props) {
+export default function Dropdown({ isVisible, items, deleteButtonVisible, onShowing, onSelect, onPressDelete }: Props) {
     if (!isVisible) return null;
+
+    const { theme, fontSizeType } = useContext(ThemeContext);
 
     function ButtonDelete({ item }: { item: string | number }) {
         if (!deleteButtonVisible) return null;
@@ -22,7 +26,7 @@ export default function Dropdown({ theme, isVisible, items, deleteButtonVisible,
                 style={{ alignSelf: "center", backgroundColor: "transparent", padding: 5 }}
                 onPress={() => onPressDelete && onPressDelete(item)}
             >
-                <Feather name={"minus-circle"} size={22} color={Colors[theme].iconPrimary} />
+                <Feather name={"minus-circle"} size={22} color={Colors[theme.appearance].iconPrimary} />
             </Pressable>
         );
     }
@@ -33,10 +37,10 @@ export default function Dropdown({ theme, isVisible, items, deleteButtonVisible,
                 style={{
                     width: 280, flexDirection: "row", alignItems: "center", justifyContent: "space-between",
                     paddingVertical: 10, borderBottomWidth: 0.5, backgroundColor: "transparent",
-                    borderBottomColor: Colors[theme].borderInverse
+                    borderBottomColor: Colors[theme.appearance].borderInverse
                 }}
             >
-                <Text style={{ flex: 1, color: Colors[theme].textPrimary }}>{text}</Text>
+                <Text style={{ flex: 1, color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].md.fontSize }}>{text}</Text>
                 <ButtonDelete item={text} />
             </View>
         );
@@ -46,7 +50,7 @@ export default function Dropdown({ theme, isVisible, items, deleteButtonVisible,
         <TransitionView
             style={[styles.dropdown,
             {
-                backgroundColor: Colors[theme].surfaceVariant, borderColor: Colors[theme].border,
+                backgroundColor: Colors[theme.appearance].surfaceVariant, borderColor: Colors[theme.appearance].border,
                 top: onShowing === 'openAtBottom'
                     ? '100%'
                     : undefined,

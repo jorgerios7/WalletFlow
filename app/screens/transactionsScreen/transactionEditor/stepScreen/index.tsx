@@ -1,17 +1,19 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
 import TransitionView from "@/components/ui/TransitionView";
-import { Colors } from "@/constants/Colors";
+import { useContext } from "react";
 import { StyleSheet } from "react-native";
 
 export default function StepScreen({
-  isVisible, theme, children, buttonTextConfirm, onConfirm, onBack, onCancel,
+  isVisible,children, buttonTextConfirm, onConfirm, onBack, onCancel,
 }: {
-  isVisible: boolean; theme: ThemeType, children: React.ReactNode; onConfirm: () => void;
+  isVisible: boolean; children: React.ReactNode; onConfirm: () => void;
   buttonTextConfirm?: string, onBack?: () => void; onCancel?: () => void;
 }) {
   if (!isVisible) return null;
+
+  const { theme, fontSizeType } = useContext(ThemeContext);
 
   const confirmText = buttonTextConfirm || "Confirmar";
 
@@ -19,10 +21,10 @@ export default function StepScreen({
     <TransitionView style={styles.content}>
       {children}
 
-      <CustomButton theme={theme} text={confirmText} onPress={onConfirm} />
+      <CustomButton text={confirmText} onPress={onConfirm} />
 
-      {onBack && (<TextButton theme={theme} text="Voltar" textColor={Colors[theme].textPrimary} onPress={onBack} />)}
-      {onCancel && (<TextButton theme={theme} text="Cancelar" textColor={Colors[theme].textPrimary} onPress={onCancel} />)}
+      {onBack && (<TextButton text="Voltar" onPress={onBack} />)}
+      {onCancel && (<TextButton text="Cancelar" onPress={onCancel} />)}
     </TransitionView>
   );
 }

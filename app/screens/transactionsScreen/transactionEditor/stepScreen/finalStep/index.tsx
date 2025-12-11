@@ -1,23 +1,41 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
+import { useContext } from "react";
 import { Text, View } from "react-native";
 import StepScreen from "..";
 
-interface ConfirmationScreen { isVisible: boolean; theme: ThemeType; textAbove: string, textBelow: string, onConfirm: () => void }
+interface ConfirmationScreen { isVisible: boolean; textAbove: string, textBelow: string, onConfirm: () => void }
 
-export default function FinalStep({ isVisible, theme, textAbove, textBelow, onConfirm }: ConfirmationScreen) {
+export default function FinalStep({ isVisible, textAbove, textBelow, onConfirm }: ConfirmationScreen) {
     if (!isVisible) return null;
+
+    const { theme, fontSizeType } = useContext(ThemeContext);
 
     return (
         <StepScreen
             isVisible={isVisible}
-            theme={theme}
             buttonTextConfirm={'Finalizar'}
             onConfirm={onConfirm}
             children={
                 <View style={{ justifyContent: 'center', alignItems: 'center', gap: 10 }}>
-                    <Text style={{ color: Colors[theme].textPrimary , fontSize: 16, fontWeight: 'normal', textAlign: 'justify' }}>{textAbove}</Text>
-                    <Text style={{ color: Colors[theme].textSecondary, fontSize: 16, fontWeight: 'normal', textAlign: 'center' }}>{textBelow}</Text>
+                    <Text
+                        style={{
+                            color: Colors[theme.appearance].textPrimary, fontWeight: 'normal', textAlign: 'justify',
+                            fontSize: Typography[fontSizeType].md.fontSize, lineHeight: Typography[fontSizeType].md.lineHeight
+                        }}
+                    >
+                        {textAbove}
+                    </Text>
+
+                    <Text
+                        style={{
+                            color: Colors[theme.appearance].textSecondary, fontWeight: 'normal', textAlign: 'center',
+                            fontSize: Typography[fontSizeType].md.fontSize, lineHeight: Typography[fontSizeType].md.lineHeight
+                        }}
+                    >
+                        {textBelow}
+                    </Text>
                 </View>
             }
         />

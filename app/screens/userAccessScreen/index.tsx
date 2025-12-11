@@ -1,6 +1,5 @@
 import { auth, db } from "@/app/config/firebaseConfig";
 import { ThemeContext } from "@/components/ThemeProvider";
-import WelcomeAfterSignup from "@/components/ui/WelcomeAfterSignup";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
@@ -11,6 +10,7 @@ import { Snackbar } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LoginScreen from "./loginScreen";
 import SignupScreen from "./signupScreen";
+import WelcomeScreen from "./welcomeScreen";
 
 interface Props {
     isVisible: boolean, onPress: (isLoged: boolean) => void, onUserId: (id: string) => void
@@ -109,7 +109,6 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
             marginTop: insets.top,
         }}>
             <LoginScreen
-                theme={theme.appearance}
                 shouldRender={!isSignup}
                 values={loginInputValue}
                 onChange={(field, value) => setLoginInputValue((prev) => ({ ...prev, [field]: value }))}
@@ -118,7 +117,6 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
             />
 
             <SignupScreen
-                theme={theme.appearance}
                 shouldRender={isSignup && !isLoginCreatedSuccessfully}
                 values={signupInputValue}
                 whenIsReady={(data) => {
@@ -132,8 +130,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
                 onPressingReturnButton={handleReturnToLogin}
             />
 
-            <WelcomeAfterSignup
-                theme={theme.appearance}
+            <WelcomeScreen
                 onPressingReturnToLoginButton={handleReturnToLogin}
                 shouldRender={isSignup && isLoginCreatedSuccessfully}
             />

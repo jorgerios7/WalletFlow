@@ -1,21 +1,26 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
+import { useContext } from "react";
 import { GestureResponderEvent, Pressable, StyleSheet, Text } from "react-native";
 
-interface Props { onPress?: (event: GestureResponderEvent) => void; theme: ThemeType, iconName: keyof typeof MaterialIcons.glyphMap; label?: string };
+interface Props { onPress?: (event: GestureResponderEvent) => void; iconName: keyof typeof MaterialIcons.glyphMap; label?: string };
 
-const TabButton: React.FC<Props> = ({ onPress, theme, iconName, label }) => {
+const TabButton: React.FC<Props> = ({ onPress, iconName, label }) => {
+
+    const {theme, fontSizeType} = useContext(ThemeContext);
+
     const isFocused = useIsFocused();
 
     const dynamicColor = isFocused
-        ? Colors[theme].iconInverse
-        : Colors[theme].iconPrimary;
+        ? Colors[theme.appearance].iconInverse
+        : Colors[theme.appearance].iconPrimary;
 
     const tabBackgroundColor = isFocused
-        ? Colors[theme].iconBackgroundPrimary
-        : Colors[theme].iconBackgroundSecondary;
+        ? Colors[theme.appearance].iconBackgroundPrimary
+        : Colors[theme.appearance].iconBackgroundSecondary;
 
     return (
         <Pressable
@@ -28,7 +33,13 @@ const TabButton: React.FC<Props> = ({ onPress, theme, iconName, label }) => {
                 size={24}
                 color={dynamicColor}
             />
-            <Text style={[styles.label, { color: Colors[theme].textPrimary }]}>
+            <Text style={[styles.label,
+            {
+                color: Colors[theme.appearance].textPrimary,
+                fontSize: Typography[fontSizeType].xs.fontSize,
+                lineHeight: Typography[fontSizeType].xs.lineHeight
+            }]}
+            >
                 {label}
             </Text>
         </Pressable>

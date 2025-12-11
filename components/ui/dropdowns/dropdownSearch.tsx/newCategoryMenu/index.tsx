@@ -1,21 +1,24 @@
-import { ThemeType } from "@/app/types/appearance";
 import { TransactionType } from "@/app/types/Finance";
 import { AddCategory } from "@/app/utils/categoryManager";
+import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
-import { useState } from "react";
+import { Typography } from "@/constants/Typography";
+import { useContext, useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 
 interface Props {
-    isVisible: boolean, categoryToAdd: string, theme: ThemeType,
+    isVisible: boolean, categoryToAdd: string,
     currentType: TransactionType, onSuccess: () => void, onDismiss: () => void
 }
 
 export type Action = 'add' | 'delete' | 'update';
 
-export default function NewCategoryMenu({ isVisible, theme, categoryToAdd, currentType, onSuccess, onDismiss }: Props) {
+export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType, onSuccess, onDismiss }: Props) {
     if (!categoryToAdd) return;
+
+    const {theme, fontSizeType} =  useContext(ThemeContext);
 
     const [success, setSeccess] = useState(false);
 
@@ -27,7 +30,12 @@ export default function NewCategoryMenu({ isVisible, theme, categoryToAdd, curre
         } else {
             return 'Lucros Financeiros'
         }
-    }
+    };
+
+    const dynamicTextStyle = {
+            fontSize: Typography[fontSizeType].md.fontSize,
+            lineHeight: Typography[fontSizeType].md.lineHeight,
+        };
 
     async function handleFunction() {
         let isReady = false;
@@ -48,44 +56,41 @@ export default function NewCategoryMenu({ isVisible, theme, categoryToAdd, curre
     return (
         <Modal visible={isVisible} animationType="fade" transparent>
             <Pressable
-                style={{ flex: 1, backgroundColor: Colors[theme].overlay, padding: 10, justifyContent: 'center', alignItems: 'center' }}
+                style={{ flex: 1, backgroundColor: Colors[theme.appearance].overlay, padding: 10, justifyContent: 'center', alignItems: 'center' }}
                 onPress={onDismiss}
             >
                 <View style={{
                     justifyContent: 'center', alignItems: 'center',
-                    gap: 10, padding: 20, backgroundColor: Colors[theme].surface, borderRadius: 10
+                    gap: 10, padding: 20, backgroundColor: Colors[theme.appearance].surface, borderRadius: 10
                 }}>
                     {!success ? (
                         <>
-                            <Text style={{ color: Colors[theme].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
+                            <Text style={{...dynamicTextStyle, color: Colors[theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
                                 {`Você tem certeza que deseja adicionar `}
-                                <Text style={{ fontWeight: "bold", color: Colors[theme].accent }}>{categoryToAdd}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors[theme.appearance].accent }}>{categoryToAdd}</Text>
                                 {` a lista de categorias de ${renderCurrentType()}?`}
                             </Text>
 
                             <CustomButton
-                                theme={theme}
                                 text="Confirmar"
                                 onPress={() => {
                                     handleFunction();
                                 }}
                             />
                             <TextButton
-                                theme={theme}
                                 text="Cancelar"
                                 onPress={onDismiss}
                             />
                         </>
                     ) : (
                         <>
-                            <Text style={{ color: Colors[theme].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
+                            <Text style={{...dynamicTextStyle,  color: Colors[theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
                                 {`A categoria `}
-                                <Text style={{ fontWeight: "bold", color: Colors[theme].accent }}>{categoryToAdd}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors[theme.appearance].accent }}>{categoryToAdd}</Text>
                                 {` foi adicionada com sucesso!`}
                             </Text>
 
                             <CustomButton
-                                theme={theme}
                                 text="Ok"
                                 onPress={() => {
                                     onDismiss();

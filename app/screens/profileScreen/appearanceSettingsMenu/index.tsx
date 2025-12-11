@@ -1,10 +1,10 @@
-import { TextSizeType, ThemeSource, ThemeType } from "@/app/types/appearance";
+import { FontSizeType, ThemeSource, ThemeType } from "@/app/types/appearance";
 import { ThemeContext } from "@/components/ThemeProvider";
-import { ThemedView } from "@/components/ThemedView";
 import CustomButton from "@/components/ui/CustomButton";
 import RadioButton from "@/components/ui/RadioButton";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
 import { useContext, useState } from "react";
 import { Text, useColorScheme, View } from "react-native";
 import MenuModal from "../menuModal";
@@ -13,13 +13,12 @@ interface Props { isVisible: boolean, onDismiss: () => void };
 
 export default function AppearanceSettingsMenu({ isVisible, onDismiss }: Props) {
     const systemTheme = useColorScheme();
-    const { theme, setTheme } = useContext(ThemeContext);
-
-    const [sampleTextSize, setSampleTextSize] = useState<TextSizeType>("small");
+    const { theme, fontSizeType, setTheme, setFontSizeType } = useContext(ThemeContext);
 
     const [themeState, setThemeState] = useState({ source: theme.source as ThemeSource, appearance: theme.appearance as ThemeType });
+    const [fontSizeTypeState, setFontSizeTypeState] = useState<FontSizeType>(fontSizeType);
 
-    function handleThemeSource() {
+    function handleTheme() {
         setTheme({
             source: themeState.source,
             appearance:
@@ -29,79 +28,96 @@ export default function AppearanceSettingsMenu({ isVisible, onDismiss }: Props) 
         })
     };
 
+    function handleFontSize() {
+        setFontSizeType(fontSizeTypeState)
+    };
+
     return (
         <MenuModal
-            theme={theme.appearance}
             isVisible={isVisible}
             title={'Aparência'}
+            appearanceSettings={{ appearance: theme.appearance, fontSizeType: fontSizeType }}
             onDismiss={onDismiss}
-            children={
-                <ThemedView style={{ padding: 20, gap: 10, backgroundColor: Colors[theme.appearance].background }}>
+        >
+            <View style={{ padding: 20, gap: 10, backgroundColor: Colors[theme.appearance].background }}>
+                <View style={{ height: 130, gap: 20, padding: 20, backgroundColor: Colors[theme.appearance].surface, borderRadius: 10 }}>
+                    <Text
+                        style={{
+                            color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].lg.fontSize,
+                            lineHeight: Typography[fontSizeType].lg.lineHeight, alignSelf: 'center'
+                        }}
+                    >
+                        Modo escuro
+                    </Text>
 
-                    <View style={{ height: 130, gap: 20, padding: 20, backgroundColor: Colors[theme.appearance].surface, borderRadius: 10 }}>
-                        <Text style={{ color: Colors[theme.appearance].textPrimary, fontSize: 16, alignSelf: 'center' }}>Modo escuro</Text>
+                    <RadioButton
+                        isHorizontal
+                        initialValue={theme.source === "system" ? "system" : theme.appearance}
+                        options={[
+                            { label: "Ligado", value: "dark" },
+                            { label: "Desligado", value: "light" },
+                            { label: "Automático", value: "system" },
+                        ]}
+                        onSelecting={(mode) => setThemeState({
+                            source: mode !== "system"
+                                ? "manual"
+                                : "system",
+                            appearance: mode as ThemeType
+                        })}
+                    />
+                </View>
 
-                        <RadioButton
-                            isHorizontal
-                            theme={theme.appearance}
-                            initialValue={theme.source === "system" ? "system" : theme.appearance}
-                            options={[
-                                { label: "Ligado", value: "dark" },
-                                { label: "Desligado", value: "light" },
-                                { label: "Automático", value: "system" },
-                            ]}
-                            onSelecting={(mode) => setThemeState({
-                                source: mode !== "system"
-                                    ? "manual"
-                                    : "system",
-                                appearance: mode as ThemeType
-                            })}
-                        />
-                    </View>
+                <View style={{
+                    height: 200,
+                    gap: 30,
+                    padding: 20,
+                    backgroundColor: Colors[theme.appearance].surface,
+                    borderRadius: 10
+                }}>
+                    <Text
+                        style={{
+                            color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].lg.fontSize,
+                            lineHeight: Typography[fontSizeType].lg.lineHeight, alignSelf: 'center'
+                        }}>
+                        Tamanho da fonte
+                    </Text>
 
-                    {/* CARD DO TAMANHO DE FONTE */}
-                    <View style={{
-                        height: 200,
-                        gap: 30,
-                        padding: 20,
-                        backgroundColor: Colors[theme.appearance].surface,
-                        borderRadius: 10
-                    }}>
-                        <Text style={{ color: Colors[theme.appearance].textPrimary, fontSize: 16, alignSelf: 'center' }}>
-                            Tamanho da fonte
+                    <View style={{ height: 50, justifyContent: 'center' }}>
+                        <Text
+                            style={{
+                                color: Colors[theme.appearance].textPrimary,
+                                fontStyle: 'italic',
+                                textAlign: 'center',
+                                fontSize:
+                                    fontSizeTypeState === "small" ? 16 :
+                                        fontSizeTypeState === "medium" ? 20 : 24,
+                            }}
+                        >
+                            {"Olá, tudo bem?"}
                         </Text>
-
-                        <View style={{ height: 50, justifyContent: 'center' }}>
-                            <Text
-                                style={{
-                                    color: Colors[theme.appearance].textPrimary,
-                                    fontStyle: 'italic',
-                                    textAlign: 'center',
-                                    fontSize:
-                                        sampleTextSize === "small" ? 16 :
-                                            sampleTextSize === "medium" ? 20 : 24,
-                                }}
-                            >
-                                {"Olá, tudo bem?"}
-                            </Text>
-                        </View>
-
-                        <RadioButton
-                            isHorizontal
-                            theme={theme.appearance}
-                            initialValue={sampleTextSize}
-                            options={[
-                                { label: "Pequeno", value: "small" },
-                                { label: "Médio", value: "medium" },
-                                { label: "Grande", value: "big" }
-                            ]}
-                            onSelecting={(value) => setSampleTextSize(value as TextSizeType)}
-                        />
                     </View>
-                    <CustomButton theme={theme.appearance} text="Salvar alterações" onPress={handleThemeSource} />
-                    <TextButton theme={theme.appearance} text="Redefinir alterações" textColor={Colors[theme.appearance].textPrimary} />
-                </ThemedView>
-            }
-        />
+
+                    <RadioButton
+                        isHorizontal
+                        initialValue={fontSizeType}
+                        options={[
+                            { label: "Pequeno", value: "small" },
+                            { label: "Médio", value: "medium" },
+                            { label: "Grande", value: "big" },
+                            //{ label: "Automático", value: "system" }
+                        ]}
+                        onSelecting={(value) => setFontSizeTypeState(value as FontSizeType)}
+                    />
+                </View>
+                <CustomButton
+                    text="Salvar alterações"
+                    onPress={() => {
+                        handleTheme();
+                        handleFontSize();
+                    }}
+                />
+                <TextButton text="Redefinir alterações" />
+            </View>
+        </MenuModal>
     );
 }

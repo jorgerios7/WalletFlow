@@ -4,6 +4,7 @@ import { UpdateField } from "@/app/services/firebase/groupService/updateField";
 import { Creator, Delete, FirestoreMemberMap, MemberData } from "@/app/types/Group";
 import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getAuth } from "firebase/auth";
 import { useContext, useState } from "react";
@@ -23,7 +24,7 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
 
     if (!currentUser) return null;
 
-    const { theme } = useContext(ThemeContext);
+    const { theme, fontSizeType } = useContext(ThemeContext);
 
     const [menuItemVisibility, setMenuItemVisibility] = useState(false);
     const [menuItemData, setMenuItemData] = useState({ id: '', name: '', role: '' });
@@ -77,7 +78,15 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
                 </View>
 
                 <View style={styles.headerContent}>
-                    <Text style={[styles.title, { color: Colors[theme.appearance].textContrast }]}>{groupName}</Text>
+                    <Text style={[styles.title,
+                    {
+                        color: Colors[theme.appearance].textContrast, fontSize: Typography[fontSizeType].lg.fontSize,
+                        lineHeight: Typography[fontSizeType].lg.lineHeight
+                    }
+                    ]}
+                    >
+                        {groupName}
+                    </Text>
                     {renderUserRole() === "owner" && (
                         <Pressable style={{ padding: 10 }} onPress={() => setEditDataViewer(true)}>
                             <MaterialIcons name="mode-edit" size={20} color={Colors[theme.appearance].iconContrast} />
@@ -88,7 +97,6 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
 
             <View style={[styles.container, { backgroundColor: 'transparent', padding: 10 }]} >
                 <MembersViewer
-                    theme={theme.appearance}
                     currentUserId={currentUserId}
                     members={parsedMembers}
                     creationData={{ name: creator.name, date: creator.createdAt }}
@@ -100,7 +108,6 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
                 />
 
                 <MemberOptionMenu
-                    theme={theme.appearance}
                     isStarted={menuItemVisibility}
                     role={renderUserRole()}
                     selectedItem={menuItemData}
@@ -114,14 +121,12 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
 
                 <EditDataViewer
                     isVisible={editDataViewer}
-                    theme={theme.appearance}
                     currentName={groupName}
                     onSelected={handleEditTitleName}
                     onDismiss={() => setEditDataViewer(false)}
                 />
             </View>
         </View>
-
     );
 }
 

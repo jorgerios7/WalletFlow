@@ -1,7 +1,8 @@
-import { ThemeType } from '@/app/types/appearance';
+import { ThemeContext } from '@/components/ThemeProvider';
 import { Colors } from '@/constants/Colors';
+import { Typography } from '@/constants/Typography';
 import { Feather } from '@expo/vector-icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -12,7 +13,9 @@ const SPACING_DEFAULT = 25;
 const DEFAULT_SIZE = SPACING_DEFAULT * 2;
 const RADIUS_DEFAULT = 99;
 
-const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date) => void }> = ({ theme, onDateChange }) => {
+const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ onDateChange }) => {
+    const { theme, fontSizeType } = useContext(ThemeContext);
+
     const scrollRef = useRef<ScrollView>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -57,17 +60,19 @@ const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date)
         onDateChange(new Date(currentYear, index, 1));
     };
 
+    const dynamicTextStyle = { fontSize: Typography[fontSizeType].md.fontSize, lineHeight: Typography[fontSizeType].md.lineHeight };
+
     return (
-        <View style={[styles.container, { backgroundColor: Colors[theme].surface }]}>
-            <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>{months[currentIndex]?.year}</Text>
+        <View style={[styles.container, { backgroundColor: Colors[theme.appearance].surface }]}>
+            <Text style={[styles.title, dynamicTextStyle, { color: Colors[theme.appearance].textPrimary }]}>{months[currentIndex]?.year}</Text>
 
-            <View style={[styles.ContainerContent, { backgroundColor: Colors[theme].surface }]}>
+            <View style={[styles.ContainerContent, { backgroundColor: Colors[theme.appearance].surface }]}>
 
-                <TouchableOpacity style={[styles.button, { backgroundColor: Colors[theme].accent }]} onPress={handlePrevious}>
-                    <Feather name="chevron-left" size={24} color={Colors[theme].iconContrast} />
+                <TouchableOpacity style={styles.button} onPress={handlePrevious}>
+                    <Feather name="chevron-left" size={24} color={Colors[theme.appearance].iconPrimary} />
                 </TouchableOpacity>
 
-                <View style={[styles.row, { backgroundColor: Colors[theme].surface }]}>
+                <View style={[styles.row, { backgroundColor: Colors[theme.appearance].surface }]}>
                     <Animated.ScrollView
                         ref={scrollRef}
                         horizontal
@@ -82,9 +87,9 @@ const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date)
                         {months.map((month, index) => (
                             <Animated.View
                                 key={index}
-                                style={[styles.card, { backgroundColor: Colors[theme].surface },
+                                style={[styles.card, { backgroundColor: Colors[theme.appearance].surface },
                                 index === currentIndex && {
-                                    backgroundColor: Colors[theme].accent, borderColor: Colors[theme].border
+                                    backgroundColor: Colors[theme.appearance].accent, borderColor: Colors[theme.appearance].border
                                 }, {
                                     transform: [{
                                         scale: scrollX.interpolate({
@@ -100,8 +105,8 @@ const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date)
                                 }]}
                             >
                                 <Text
-                                    style={[styles.monthText, { color: Colors[theme].textPrimary },
-                                    index === currentIndex && [styles.activeText, { color: Colors[theme].textContrast }]]}
+                                    style={[styles.monthText, dynamicTextStyle, { color: Colors[theme.appearance].textPrimary },
+                                    index === currentIndex && [styles.activeText, { color: Colors[theme.appearance].textContrast }]]}
                                 >
                                     {month.label}
                                 </Text>
@@ -110,8 +115,8 @@ const CalendarNavigator: React.FC<{ theme: ThemeType, onDateChange: (date: Date)
                     </Animated.ScrollView>
                 </View>
 
-                <TouchableOpacity style={[styles.button, { backgroundColor: Colors[theme].accent }]} onPress={handleNext}>
-                    <Feather name="chevron-right" size={24} color={Colors[theme].iconContrast} />
+                <TouchableOpacity style={styles.button} onPress={handleNext}>
+                    <Feather name="chevron-right" size={24} color={Colors[theme.appearance].iconPrimary} />
                 </TouchableOpacity>
             </View>
         </View>

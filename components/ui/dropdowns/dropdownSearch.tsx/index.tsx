@@ -1,13 +1,14 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
 import { Feather } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import Dropdown, { OpenDirection } from "..";
 import LabelAnimated from "../../LabelAnimated";
 
 interface Props {
-    theme: ThemeType, list: string[]; label: string; initialValue?: string; onSelectInDropdown: (item: string) => void;
+   list: string[]; label: string; initialValue?: string; onSelectInDropdown: (item: string) => void;
     whenSelectItemToAdd: (item: string) => void; whenSelectItemToDelete: (item: string) => void;
     onTextInputChange: (text: string) => void, menuVisibility: (menu: Menu) => void; onOpeningDropdown: OpenDirection;
 }
@@ -15,9 +16,10 @@ interface Props {
 type Menu = 'newCategoryMenu' | 'deleteCategoryMenu';
 
 export default function DropdownSearch({
-    theme, list, label, initialValue, onSelectInDropdown, whenSelectItemToAdd,
+   list, label, initialValue, onSelectInDropdown, whenSelectItemToAdd,
     whenSelectItemToDelete, onTextInputChange, menuVisibility, onOpeningDropdown
 }: Props) {
+    const {theme, fontSizeType} =  useContext(ThemeContext);
     const [text, setText] = useState(initialValue ? initialValue : "");
     const [results, setResults] = useState<string[]>([]);
     const [itemsVisible, setItemsVisible] = useState({ buttonAdd: false, newCategoryMenu: false, deleteCategoryMenu: false });
@@ -34,10 +36,15 @@ export default function DropdownSearch({
                     menuVisibility('newCategoryMenu');
                 }}
             >
-                <Feather name={'plus-circle'} size={22} color={Colors[theme].iconPrimary} />
+                <Feather name={'plus-circle'} size={22} color={Colors[theme.appearance].iconPrimary} />
             </Pressable>
         );
-    }
+    };
+
+    const dynamicTextStyle = {
+        fontSize: Typography[fontSizeType].md.fontSize,
+        lineHeight: Typography[fontSizeType].md.lineHeight,
+    };
 
     const handleSearch = (value: string) => {
         setItemsVisible(prev => ({ ...prev, buttonAdd: false }));
@@ -58,7 +65,6 @@ export default function DropdownSearch({
     return (
         <View style={styles.container}>
             <LabelAnimated
-                theme={theme}
                 labelText={label}
                 focused={isFocused}
                 textInput={text}
@@ -66,7 +72,7 @@ export default function DropdownSearch({
 
             <TextInput
                 style={[[
-                    styles.input, { borderColor: Colors[theme].borderInverse, color: Colors[theme].textPrimary }],
+                    styles.input, dynamicTextStyle, { borderColor: Colors[theme.appearance].borderInverse, color: Colors[theme.appearance].textPrimary }],
                 isFocused && styles.inputFocused
                 ]}
                 value={text}
@@ -79,7 +85,6 @@ export default function DropdownSearch({
             <ButtonAdd isVisible={itemsVisible.buttonAdd} />
 
             <Dropdown
-                theme={theme}
                 deleteButtonVisible
                 isVisible={results.length > 0}
                 onShowing={onOpeningDropdown}

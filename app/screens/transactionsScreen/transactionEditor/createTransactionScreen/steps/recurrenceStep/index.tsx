@@ -1,14 +1,13 @@
-import { ThemeType } from "@/app/types/appearance";
 import { RecurrenceFrequency, RecurrenceType, RecurrenceValues, TransactionType } from "@/app/types/Finance";
 import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import { useEffect, useState } from "react";
 import StepScreen from "../../../stepScreen";
 
-interface Props { isVisible: boolean; theme: ThemeType; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
+interface Props { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
 
 export default function RecurrenceStep(
     {
-        isVisible, theme, transactionType, values, onConfirm, onCancel, onSelect }:
+        isVisible, transactionType, values, onConfirm, onCancel, onSelect }:
         Props & { transactionType: TransactionType, values: RecurrenceValues, onSelect: (values: RecurrenceValues) => void }
 ) {
     if (!isVisible) return;
@@ -68,14 +67,12 @@ export default function RecurrenceStep(
 
     return (
         <StepScreen
-            theme={theme}
             isVisible={isVisible}
             onConfirm={onConfirm}
             onCancel={onCancel}
         >
             <DropdownSelect
                 isVisible
-                theme={theme}
                 onOpeningDropdown="openAtBottom"
                 placeholder={'Tipo'}
                 setSelection={selection.recurrenceType === "none" ? "" : selection.recurrenceType}
@@ -85,7 +82,6 @@ export default function RecurrenceStep(
 
             <DropdownSelect
                 isVisible={selection.recurrenceType === "installment"}
-                theme={theme}
                 onOpeningDropdown="openAtBottom"
                 placeholder={'Frequência'}
                 setSelection={selection.recurrenceFrequency === "none" ? "" : selection.recurrenceFrequency}
@@ -95,7 +91,6 @@ export default function RecurrenceStep(
 
             <DropdownSelect
                 isVisible
-                theme={theme}
                 onOpeningDropdown="openAtBottom"
                 placeholder={transactionType === 'expense' ? 'Método de compra' : 'Método de recebimento'}
                 setSelection={selection.purchasingMethod}
@@ -107,7 +102,6 @@ export default function RecurrenceStep(
 
             <DropdownSelect
                 isVisible={selection.purchasingMethod === 'Boleto' || selection.purchasingMethod === 'Pix'}
-                theme={theme}
                 onOpeningDropdown="openAtBottom"
                 placeholder={'Instituição financeira'}
                 setSelection={selection.purchaseBank}
@@ -117,7 +111,6 @@ export default function RecurrenceStep(
 
             <DropdownSelect
                 isVisible={selection.recurrenceType === 'installment'}
-                theme={theme}
                 onOpeningDropdown="openAtBottom"
                 placeholder={'Quantidade de parcelas'}
                 setSelection={selection.totalEntries}
@@ -127,7 +120,6 @@ export default function RecurrenceStep(
 
             <DropdownSelect
                 isVisible={selection.purchasingMethod === 'Cartão de crédito'}
-                theme={theme}
                 onOpeningDropdown="openAtBottom"
                 placeholder={'Cartão bancário'}
                 setSelection={selection.purchaseBankCard}

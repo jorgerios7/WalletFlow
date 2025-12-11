@@ -1,20 +1,22 @@
-import { ThemeType } from "@/app/types/appearance";
 import { MaskCurrency, MaskDate } from "@/app/utils/Format";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { ThemeContext } from "../ThemeProvider";
 import LabelAnimated from "./LabelAnimated";
 
 interface Props {
-  theme: ThemeType, initialText?: string, initialNumber?: number, label: string; colorLabel?: string; secureTextEntry?: boolean;
+  initialText?: string, initialNumber?: number, label: string; colorLabel?: string; secureTextEntry?: boolean;
   numberEntry?: boolean; dateEntry?: boolean; onTextChange?: (text: string) => void; onNumberChange?: (number: number) => void;
 }
 
 export default function DynamicLabelInput({
   initialText, initialNumber, label, colorLabel, secureTextEntry,
-  theme, numberEntry, dateEntry, onTextChange, onNumberChange,
+  numberEntry, dateEntry, onTextChange, onNumberChange,
 }: Props) {
+  const { theme, fontSizeType } = useContext(ThemeContext);
   const [isFocused, setIsFocused] = useState(false);
   const [text, setText] = useState(initialText ? initialText : "");
   const [number, setNumber] = useState(initialNumber ? initialNumber.toString() : "");
@@ -47,7 +49,6 @@ export default function DynamicLabelInput({
   return (
     <View style={styles.container}>
       <LabelAnimated
-        theme={theme}
         labelText={label}
         labelColor={colorLabel}
         focused={isFocused}
@@ -57,7 +58,11 @@ export default function DynamicLabelInput({
       <TextInput
         value={numberEntry ? MaskCurrency(number) : dateEntry ? MaskDate(text) : text}
         onChangeText={(value) => handleValueChange(value)}
-        style={[[styles.input, { borderColor: Colors[theme].borderInverse, color: Colors[theme].textPrimary }], isFocused && styles.inputFocused]}
+        style={[[styles.input, {
+          borderColor: Colors[theme.appearance].borderInverse, color: Colors[theme.appearance].textPrimary,
+          fontSize: Typography[fontSizeType].md.fontSize,
+          lineHeight: Typography[fontSizeType].md.lineHeight
+        }], isFocused && styles.inputFocused]}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         maxLength={dateEntry ? 10 : 40}
         keyboardType={numberEntry || dateEntry ? "numeric" : "default"}
@@ -73,7 +78,7 @@ export default function DynamicLabelInput({
           <Ionicons
             name={isPasswordVisible ? "eye" : "eye-off"}
             size={18}
-            color={Colors[theme].iconPrimary}
+            color={Colors[theme.appearance].iconPrimary}
           />
         </Pressable>
       )}
@@ -86,7 +91,7 @@ export default function DynamicLabelInput({
           <Ionicons
             name={"calendar"}
             size={18}
-            color={Colors[theme].iconPrimary}
+            color={Colors[theme.appearance].iconPrimary}
           />
         </Pressable>
       )}

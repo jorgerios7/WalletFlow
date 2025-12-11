@@ -1,21 +1,24 @@
 import { LoadScreen } from '@/app/pages/LoadScreen';
 import NotFoundScreen from '@/app/pages/NotFoundScreen';
-import { ThemeType } from '@/app/types/appearance';
 import { Entries, Transactions, UpdateEntryValues } from '@/app/types/Finance';
+import { ThemeContext } from '@/components/ThemeProvider';
 import { Colors } from '@/constants/Colors';
-import React from 'react';
+import { Typography } from '@/constants/Typography';
+import React, { useContext } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
 import FinanceDetailsItem from './financeDetailsItem';
 
 interface Props {
   entries_list: Entries[]; isLoading: boolean; onPressingInfo: (items: Transactions) => void;
   onPressDelete: (id: { transaction: string, entry: string }, values: { paymentType: string, value: number }) => void;
-  onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void; theme: ThemeType
+  onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
-  entries_list, isLoading, theme, onPressingInfo, onPressDelete, onPressingEditPayment
+  entries_list, isLoading, onPressingInfo, onPressDelete, onPressingEditPayment
 }) => {
+
+  const {theme, fontSizeType} = useContext(ThemeContext)
 
   const groupByDate = (entries: Entries[]): { title: string; data: Entries[]; value: number }[] => {
     const grouped: { [key: string]: Entries[] } = {};
@@ -56,11 +59,20 @@ const FinanceItemRecycler: React.FC<Props> = ({
 
   function HeaderSection({ date, value }: { date: string, value: number }) {
     return (
-      <View style={[styles.headerContainer, { backgroundColor: Colors[theme].headerBackground }]}>
-        <Text style={[styles.textHeader, { color: Colors[theme].textContrast }]}>
+      <View style={[styles.headerContainer, { backgroundColor: Colors[theme.appearance].headerBackground }]}>
+        <Text style={[styles.textHeader, {
+          color: Colors[theme.appearance].textContrast, 
+          fontSize: Typography[fontSizeType].xs.fontSize,
+          lineHeight: Typography[fontSizeType].xs.lineHeight
+        }]}
+        >
           {date}
         </Text>
-        <Text style={[styles.textHeader, { color: Colors[theme].textContrast }]}>
+        <Text style={[styles.textHeader, { 
+          color: Colors[theme.appearance].textContrast,
+          fontSize: Typography[fontSizeType].xs.fontSize,
+          lineHeight: Typography[fontSizeType].xs.lineHeight
+          }]}>
           Total: R$ {value.toFixed(2)}
         </Text>
       </View>
@@ -70,13 +82,13 @@ const FinanceItemRecycler: React.FC<Props> = ({
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <LoadScreen theme={theme} />
+        <LoadScreen theme={theme.appearance} />
       ) : sections.length === 0 ? (
-        <NotFoundScreen theme={theme} />
+        <NotFoundScreen theme={theme.appearance} />
       ) : (
         <SectionList
           stickySectionHeadersEnabled
-          style={{ backgroundColor: Colors[theme].background}}
+          style={{ backgroundColor: Colors[theme.appearance].background }}
           sections={sections}
           keyExtractor={(item) => item.entrieId}
           renderItem={({ item, index, section }) => {
@@ -85,7 +97,6 @@ const FinanceItemRecycler: React.FC<Props> = ({
             return (
               <FinanceDetailsItem
                 data={item}
-                theme={theme}
                 dynamicBorder={{ isFirst, isLast }}
                 onPressingEditPayment={(id, values) =>
                   onPressingEditPayment(

@@ -14,7 +14,6 @@ export const Colors = {
 
     iconPrimary: "#0A2C63",
     iconSecondary: "#3D4A5C",
-    // iconTextiary: "#E6E8EB",
     iconContrast: "#FFFFFF",
     iconInverse: "#FFFFFF",
     iconBackgroundPrimary: "#0A2C63",
@@ -22,7 +21,6 @@ export const Colors = {
 
     shadow: "#000002ff",
 
-    // === Ações (accent) ===
     accent: "#0F3C7D",
     accentHover: "#0D3470",
     accentPressed: "#0A2958",
@@ -56,7 +54,6 @@ export const Colors = {
 
     shadow: "#000002ff",
 
-    // === Ações (accent) ===
     accent: "#003bbbff",
     accentHover: "#003bbba4",
     accentPressed: "#003bbb75",

@@ -1,39 +1,47 @@
-import { ThemeType } from "@/app/types/appearance";
 import { MixedTransactionEntry } from "@/app/types/Finance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { BottomSheet } from "@/components/ui/sheet/BottomSheet";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
+import { useContext } from "react";
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 
-const FinanceReportScreen = ({ theme, data, isVisible, onClose }: { theme: ThemeType, data: MixedTransactionEntry, isVisible: boolean, onClose: () => void }) => {
+const FinanceReportScreen = ({ data, isVisible, onClose }: { data: MixedTransactionEntry, isVisible: boolean, onClose: () => void }) => {
     if (!data) return null;
 
-    function Row({ label, value }: { label: string, value?: string | number }) {
-    if (value === undefined || value === null || value === '') return null;
+    const { theme, fontSizeType } = useContext(ThemeContext);
 
-    return (
-        <View style={styles.row}>
-            <Text style={[styles.label, {color: Colors[theme].textSecondary}]}>{label}</Text>
-            <Text style={[styles.value, {color: Colors[theme].textSecondary}]}>{String(value)}</Text>
-        </View>
-    );
-}
+    function Row({ label, value }: { label: string, value?: string | number }) {
+        if (value === undefined || value === null || value === '') return null;
+
+        const dynamicTextStyle = {
+            fontSize: Typography[fontSizeType].md.fontSize,
+            lineHeight: Typography[fontSizeType].md.lineHeight
+        };
+
+        return (
+            <View style={styles.row}>
+                <Text style={[styles.label, dynamicTextStyle, { color: Colors[theme.appearance].textSecondary }]}>{label}</Text>
+                <Text style={[styles.value, dynamicTextStyle, { color: Colors[theme.appearance].textSecondary }]}>{String(value)}</Text>
+            </View>
+        );
+    }
 
     return (
         <SafeAreaView style={{ position: 'absolute', bottom: 0, width: '100%' }}>
             <BottomSheet
                 visible={isVisible}
-                theme={theme}
                 isFullHeight={true}
                 isDragHandleVisible={false}
                 onClose={onClose}
             >
-                <View style={[styles.header, { backgroundColor: Colors[theme].background }]}>
-                    <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>Relatório Financeiro</Text>
-                    <Text style={[styles.subtitle, { color: Colors[theme].textSecondary }]}>Emitido em: {new Date().toLocaleDateString()}</Text>
+                <View style={[styles.header, { backgroundColor: Colors[theme.appearance].background }]}>
+                    <Text style={[styles.title, { color: Colors[theme.appearance].textPrimary }]}>Relatório Financeiro</Text>
+                    <Text style={[styles.subtitle, { color: Colors[theme.appearance].textSecondary }]}>Emitido em: {new Date().toLocaleDateString()}</Text>
                 </View>
 
-                <View style={[styles.section, { backgroundColor: Colors[theme].background }]}>
-                    <Text style={[styles.sectionTitle, { color: Colors[theme].textPrimary }]}>Detalhes da Transação</Text>
+                <View style={[styles.section, { backgroundColor: Colors[theme.appearance].background }]}>
+                    <Text style={[styles.sectionTitle, { color: Colors[theme.appearance].textPrimary }]}>Detalhes da Transação</Text>
 
                     <Row label={"Id da transação:"} value={data.transactionId} />
 

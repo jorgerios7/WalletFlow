@@ -1,16 +1,19 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
-import { useState } from "react";
+import { Typography } from "@/constants/Typography";
+import { useContext, useState } from "react";
 import { Alert, Modal, StyleSheet, Text, View } from "react-native";
 
 export function EditDataViewer(
-    { isVisible, theme, currentName, onSelected, onDismiss }:
-        { isVisible: boolean, theme: ThemeType, currentName: string, onSelected: (newName: string) => void, onDismiss: () => void }) {
+    { isVisible, currentName, onSelected, onDismiss }:
+        { isVisible: boolean, currentName: string, onSelected: (newName: string) => void, onDismiss: () => void }) {
 
-    if (!isVisible) return null
+    if (!isVisible) return null;
+
+    const {theme, fontSizeType} = useContext(ThemeContext);
 
     const [label, setLabel] = useState("Nome");
     const [name, setName] = useState(currentName);
@@ -42,18 +45,24 @@ export function EditDataViewer(
 
     return (
         <Modal visible={isVisible} transparent>
-            <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay, }]}>
-                <View style={[styles.content, { backgroundColor: Colors[theme].surface }]}>
-                    <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>Editar nome do Grupo</Text>
+            <View style={[styles.overlay, { backgroundColor: Colors[theme.appearance].overlay, }]}>
+                <View style={[styles.content, { backgroundColor: Colors[theme.appearance].surface }]}>
+                    <Text style={[styles.title, {
+                        color: Colors[theme.appearance].textPrimary,
+                        fontSize: Typography[fontSizeType].md.fontSize,
+                        lineHeight: Typography[fontSizeType].md.lineHeight
+                    }
+                    ]}
+                    >
+                        Editar nome do grupo
+                    </Text>
                     <DynamicLabelInput
-                        theme={theme}
                         initialText={name}
                         label={label}
                         onTextChange={handleNewName}
                     />
-                    <CustomButton text={"Confirmar"} theme={theme} onPress={handleAction} />
-                    <TextButton text={"Cancelar"} theme={theme} textColor={Colors[theme].textPrimary} onPress={onDismiss} />
-
+                    <CustomButton text={"Confirmar"} onPress={handleAction} />
+                    <TextButton text={"Cancelar"} onPress={onDismiss} />
                 </View>
             </View>
         </Modal>

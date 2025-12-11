@@ -1,22 +1,30 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
+import { useContext } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 import CustomButton from "../CustomButton";
 import TextButton from "../TextButton";
 
-const ConfirmActionModal: React.FC<{ isVisible: boolean; theme: ThemeType, confirmationMessage: string; onConfirm: () => void; onCancel: () => void; }> = (
-    { isVisible, theme, confirmationMessage, onConfirm, onCancel }
+const ConfirmActionModal: React.FC<{ isVisible: boolean; confirmationMessage: string; onConfirm: () => void; onCancel: () => void; }> = (
+    { isVisible, confirmationMessage, onConfirm, onCancel }
 ) => {
+    const {theme, fontSizeType} = useContext(ThemeContext);
+
+    const dynamicTextStyle = {
+        fontSize: Typography[fontSizeType].md.fontSize,
+        lineHeight: Typography[fontSizeType].md.lineHeight,
+    }
 
     return (
         <Modal visible={isVisible} animationType="fade" transparent>
-            <View style={[styles.modalOverlay, { backgroundColor: Colors[theme].overlay }]}>
-                <View style={[styles.modalContent, {backgroundColor: Colors[theme].background, }]}>
-                    <Text style={{ color: Colors[theme].textPrimary, fontSize: 16, textAlign: 'center', fontWeight: 'bold' }}>
+            <View style={[styles.modalOverlay, { backgroundColor: Colors[theme.appearance].overlay }]}>
+                <View style={[styles.modalContent, {backgroundColor: Colors[theme.appearance].background, }]}>
+                    <Text style={{ color: Colors[theme.appearance].textPrimary, textAlign: 'center', fontWeight: 'bold', ...dynamicTextStyle }}>
                         {confirmationMessage}
                     </Text>
-                    <CustomButton theme={theme} text={'Confirmar'} onPress={onConfirm} />
-                    <TextButton theme={theme} text={'Cancelar'} textColor={Colors[theme].textPrimary} onPress={onCancel} />
+                    <CustomButton text={'Confirmar'} onPress={onConfirm} />
+                    <TextButton text={'Cancelar'} onPress={onCancel} />
                 </View>
             </View>
         </Modal>

@@ -3,7 +3,7 @@ import { Animated } from "react-native";
 
 export default function UseAnimation(screen: { width: number, height: number }) {
 
-    const closed_size = { WIDTH: screen.width, HEIGHT: 150 }
+    const closed_size = { WIDTH: screen.width, HEIGHT: 100 }
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -51,7 +51,7 @@ export default function UseAnimation(screen: { width: number, height: number }) 
                 : 0,
             leftContainerText: open
                 ? 0
-                : 85
+                : screen.width / 4
         };
 
         const size = {
@@ -63,7 +63,7 @@ export default function UseAnimation(screen: { width: number, height: number }) 
                 : closed_size.HEIGHT,
             buttonWidth: open
                 ? screen.width - 20
-                : 100,
+                : screen.width / 4,
             buttonHeight: open
                 ? 150
                 : closed_size.HEIGHT,
@@ -72,7 +72,7 @@ export default function UseAnimation(screen: { width: number, height: number }) 
                 : 0.7,
             containerTxtWidth: open
                 ? screen.width - 20
-                : screen.width / 2.2,
+                : screen.width / 2,
             containerTxtHeight: open
                 ? 50
                 : closed_size.HEIGHT

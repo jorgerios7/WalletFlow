@@ -14,7 +14,7 @@ interface Props { userData: User, onUpdating: () => void, onDismiss: () => void 
 
 export default function ProfileScreen({ userData, onUpdating, onDismiss }: Props) {
     const insets = useSafeAreaInsets();
-    const { theme } = useContext(ThemeContext);
+    const { theme, fontSizeType } = useContext(ThemeContext);
     const { width, height } = useWindowDimensions();
     const [collapseMenu, setCollapseMenu] = useState(false);
     const [editPersonalData, setEditPersonalData] = useState({ isVisible: false, field: "none" as PersonalDataChange });
@@ -26,20 +26,18 @@ export default function ProfileScreen({ userData, onUpdating, onDismiss }: Props
             <View style={{ height: 150, width: width }} />
 
             <ProfileMenu
-                theme={theme.appearance}
-                screen={{ width: width, height: height - insets.bottom - 110 }}
+                screen={{ width: width, height: height - insets.bottom - 120 }}
                 user={{
+                    email: userData?.identification.email as string,
                     name: userData
                         ? `${userData.identification.name} ${userData.identification.surname}`
-                        : "",
-                    email: userData?.identification.email as string
+                        : ""
                 }}
                 onSelect={(field) => setEditPersonalData({ isVisible: true, field: field })}
                 collapse={collapseMenu}
             />
 
             <EditPersonalDataModal
-                theme={theme.appearance}
                 isVisible={editPersonalData.isVisible}
                 field={editPersonalData.field}
                 groupId={userData ? userData.groupId : ""}
@@ -55,20 +53,17 @@ export default function ProfileScreen({ userData, onUpdating, onDismiss }: Props
             />
 
             <NotificationsSettingsMenu
-                theme={theme.appearance}
                 isVisible={notificationsSettingsMenu.isVisible}
                 onDismiss={() => setNotificationsSettingsMenu({ isVisible: false })}
             />
 
             <View style={{ gap: 5 }}>
                 <MenuTabButton
-                    theme={theme.appearance}
                     iconName='color-lens' name={'Aparência'} iconSize={30} onPress={() =>
                         setAppearanceSettingsMenu({ isVisible: true })
                     }
                 />
                 <MenuTabButton
-                    theme={theme.appearance}
                     iconName='notifications' name={'Notificações'} iconSize={30} onPress={() =>
                         setNotificationsSettingsMenu({ isVisible: true })
                     }

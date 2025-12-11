@@ -1,12 +1,13 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
-import { useEffect, useState } from "react";
+import { Typography } from "@/constants/Typography";
+import { useContext, useEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
 
-interface Props { theme: ThemeType, labelText: string, labelColor?: string, textInput: string | number, focused: boolean, onPress?: () => void };
+interface Props { labelText: string, labelColor?: string, textInput: string | number, focused: boolean, onPress?: () => void };
 
-export default function LabelAnimated({ theme, labelText, labelColor, textInput, focused, onPress }: Props) {
-
+export default function LabelAnimated({labelText, labelColor, textInput, focused, onPress }: Props) {
+    const { theme, fontSizeType } = useContext(ThemeContext);
     const labelPosition = useState(new Animated.Value(17))[0];
 
     useEffect(() => {
@@ -23,7 +24,12 @@ export default function LabelAnimated({ theme, labelText, labelColor, textInput,
     return (
         <Animated.Text
             onPress={onPress}
-            style={[styles.label, { top: labelPosition, color: Colors[theme].textPrimary, backgroundColor: labelColor ? labelColor : Colors[theme].surface }]}
+            style={[styles.label, { 
+                top: labelPosition, color: Colors[theme.appearance].textPrimary, 
+                backgroundColor: labelColor ? labelColor : Colors[theme.appearance].surface, 
+                fontSize: Typography[fontSizeType].xs.fontSize,
+                lineHeight: Typography[fontSizeType].xs.lineHeight
+            }]}
         >
             {labelText}
         </Animated.Text>
@@ -31,5 +37,5 @@ export default function LabelAnimated({ theme, labelText, labelColor, textInput,
 }
 
 const styles = StyleSheet.create({
-    label: { left: 18, paddingHorizontal: 10, zIndex: 2, fontSize: 12, fontWeight: 'bold', padding: 2, position: 'absolute' }
+    label: { left: 18, paddingHorizontal: 5, zIndex: 2, fontWeight: 'bold', padding: 2, position: 'absolute' }
 })

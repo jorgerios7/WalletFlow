@@ -1,17 +1,20 @@
-import { ThemeType } from "@/app/types/appearance";
 import { Delete } from "@/app/types/Group";
+import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import RadioButton from "@/components/ui/RadioButton";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
-import { useEffect, useState } from "react";
+import { Typography } from "@/constants/Typography";
+import { useContext, useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 
-export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, role, onConfirm, onCancel }: {
-    theme: ThemeType, isStarted: boolean; currentUid: string; role: string; selectedItem: { id: string, name: string, role: string };
+export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, onConfirm, onCancel }: {
+    isStarted: boolean; currentUid: string; role: string; selectedItem: { id: string, name: string, role: string };
     onConfirm: (action: { member: string, promote: boolean, demote: boolean, delete: { who: Delete, value: boolean } }) => void;
     onCancel: () => void;
 }) {
+
+    const {theme, fontSizeType} = useContext(ThemeContext);
 
     const CONDITION = "owner";
 
@@ -56,10 +59,17 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
 
     return (
         <Modal visible={isStarted} animationType="fade" transparent>
-            <View style={[styles.overlay, { backgroundColor: Colors[theme].overlay, }]}>
-                <View style={[styles.content, { backgroundColor: Colors[theme].surface, }]}>
+            <View style={[styles.overlay, { backgroundColor: Colors[theme.appearance].overlay, }]}>
+                <View style={[styles.content, { backgroundColor: Colors[theme.appearance].surface, }]}>
 
-                    <Text style={[styles.title, { color: Colors[theme].textPrimary }]}>{selectedItem.name}</Text>
+                    <Text style={[styles.title, {
+                        color: Colors[theme.appearance].textPrimary,
+                        fontSize: Typography[fontSizeType].md.fontSize, 
+                        lineHeight: Typography[fontSizeType].md.lineHeight
+                    }]}
+                    >
+                        {selectedItem.name}
+                    </Text>
 
                     <View style={{ paddingVertical: 20 }}>
                         {role !== CONDITION ? (
@@ -67,7 +77,6 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
                                 {currentUid === selectedItem.id ? (
                                     <>
                                         <RadioButton
-                                            theme={theme}
                                             initialValue={""}
                                             options={[{ label: variables.delete.text, value: variables.delete.label }]}
                                             onSelecting={(option) => {
@@ -82,7 +91,7 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
                                         />
                                     </>
                                 ) : (
-                                    <Text style={[styles.text, {color: Colors[theme].textPrimary}]}>
+                                    <Text style={[styles.text, { color: Colors[theme.appearance].textPrimary }]}>
                                         Você ainda não possui permissão para administrar outros membros!
                                     </Text>
                                 )}
@@ -91,7 +100,6 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
                             <>
                                 <RadioButton
                                     initialValue={''}
-                                    theme={theme}
                                     options={[
                                         {
                                             label:
@@ -124,7 +132,6 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
                     {(variables.delete.value || variables.promote.value || variables.demote.value) && (
                         <CustomButton
                             text="Confirmar"
-                            theme={theme}
                             onPress={() => {
                                 onConfirm({
                                     member: variables.member.id,
@@ -143,8 +150,6 @@ export function MemberOptionMenu({ theme, isStarted, selectedItem, currentUid, r
                     )}
 
                     <TextButton
-                        theme={theme}
-                        textColor={Colors[theme].textPrimary}
                         text={(variables.delete.value || variables.promote.value || variables.demote.value)
                             ? ('Cancelar')
                             : ('Voltar')

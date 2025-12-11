@@ -16,7 +16,7 @@ import TransactionsScreen from '@/app/screens/transactionsScreen';
 import CreateTransactionScreen from '@/app/screens/transactionsScreen/transactionEditor/createTransactionScreen';
 import { Group } from '@/app/types/Group';
 import { ThemeContext } from '@/components/ThemeProvider';
-import AddButton from './addButton';
+import FloatingActionMenu from './floatingActionMenu';
 import TabButton from './tabButton';
 
 const Tab = createBottomTabNavigator();
@@ -76,10 +76,8 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
         screenOptions={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarStyle: [styles.tabBar, {
-            backgroundColor: Colors[theme.appearance].surface, borderTopColor: Colors[theme.appearance].border, shadowColor: Colors[theme.appearance].shadow
-          }],
-          tabBarItemStyle: styles.item
+          tabBarItemStyle: styles.item,
+          tabBarStyle: [styles.tabBar, { backgroundColor: Colors[theme.appearance].surface, shadowColor: Colors[theme.appearance].shadow }]
         }}
       >
         <Tab.Screen
@@ -87,7 +85,8 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           component={AnalyticsScreen}
           initialParams={{ user: userData }}
           options={{
-            tabBarButton: (props) => <TabButton {...props} theme={theme.appearance} iconName="bar-chart" label="Análise" />
+            tabBarButton: (props) =>
+              <TabButton {...props}iconName="bar-chart" label="Análise" />
           }}
         />
 
@@ -95,7 +94,8 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           name="Transactions"
           component={TransactionsWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} theme={theme.appearance} iconName="list-alt" label="Transações" />
+            tabBarButton: (props) =>
+              <TabButton {...props} iconName="list-alt" label="Transações" />
           }}
         />
 
@@ -103,8 +103,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           name={"CreateTransaction"}
           options={{
             tabBarButton: () => (
-              <AddButton
-                theme={theme.appearance}
+              <FloatingActionMenu
                 onPress={(value) => {
                   setTransactionType(value);
                   setShowCreateTransaction(true);
@@ -120,7 +119,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           name={'Group'}
           component={GroupWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} theme={theme.appearance} iconName='group' label='Grupo' />
+            tabBarButton: (props) => <TabButton {...props} iconName='group' label='Grupo' />
           }}
         />
 
@@ -128,7 +127,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           name={'Profile'}
           component={ProfileWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} theme={theme.appearance} iconName='verified-user' label='Perfil' />
+            tabBarButton: (props) => <TabButton {...props} iconName='verified-user' label='Perfil' />
           }}
         />
 
@@ -144,8 +143,8 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 }, tabBar: { height: 60, elevation: 0.5, borderTopWidth: 0.5 },
-  item: { justifyContent: "center", alignItems: "center", height: 60, backgroundColor: "transparent" }
+  container: { flex: 1 }, tabBar: { height: 70, elevation: 0.5, borderTopWidth: 0.5 },
+  item: { justifyContent: "center", alignItems: "center", height: 70, backgroundColor: "transparent" }
 });
 
 export default TabNavigation;

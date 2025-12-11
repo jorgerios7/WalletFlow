@@ -1,33 +1,41 @@
-import { ThemeType } from "@/app/types/appearance";
+import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
 import { Feather } from "@expo/vector-icons";
-import { ReactNode } from "react";
+import { ReactNode, useContext } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 
 interface Props {
-    isVisible: boolean, theme: ThemeType, title: string, children: ReactNode, onDismiss: () => void
-}
+    isVisible: boolean, title: string, children: ReactNode, onDismiss: () => void
+};
 
-export default function MenuModal({ isVisible, theme, title, children, onDismiss }: Props) {
+export default function MenuModal({ isVisible, title, children, onDismiss }: Props) {
+    const {theme, fontSizeType} = useContext(ThemeContext);
+
+    if (!theme && !fontSizeType) return null;
+
     return (
-        <Modal
-            visible={isVisible}
-            animationType="slide"
-            children={
-                <View style={{flex: 1, backgroundColor: Colors[theme].background}}>
-                    <View style={{ width: '100%', height: 50, backgroundColor: Colors[theme].background, flexDirection: 'row' }}>
-                        <Pressable style={{ position: "absolute", top: 10, left: 10 }} onPress={onDismiss}>
-                            <Feather name={'chevron-left'} size={28} color={Colors[theme].iconPrimary} />
-                        </Pressable>
-                        <View style={{ width: '100%', backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ color: Colors[theme].textPrimary, fontSize: 18, fontWeight: 'bold' }}>
-                                {title}
-                            </Text>
-                        </View>
+        <Modal visible={isVisible} animationType="slide">
+            <View style={{ flex: 1, backgroundColor: Colors[theme.appearance].background }}>
+                <View style={{ width: '100%', height: 50, backgroundColor: Colors[theme.appearance].background, flexDirection: 'row' }}>
+                    <Pressable style={{ position: "absolute", top: 10, left: 10 }} onPress={onDismiss}>
+                        <Feather name={'chevron-left'} size={28} color={Colors[theme.appearance].iconPrimary} />
+                    </Pressable>
+                    <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                        <Text
+                            style={{
+                                color: Colors[theme.appearance].textPrimary,
+                                fontSize: Typography[fontSizeType].xl.fontSize,
+                                lineHeight: Typography[fontSizeType].xl.lineHeight, fontWeight: 'bold'
+                            }}
+                        >
+                            {title}
+                        </Text>
                     </View>
-                    {children}
                 </View>
-            }
-        />
-    )
+
+                {children}
+            </View>
+        </Modal>
+    );
 }

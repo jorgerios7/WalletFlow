@@ -1,4 +1,3 @@
-import Header from '@/components/ui/Header';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
@@ -88,9 +87,6 @@ export default function AnalysisScreen() {
 
   return (
     <View>
-      <Header direction={'normal'}>
-        <View style={{height: 60}}/>
-      </Header>
       <ScrollView contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 60 }]}>
         <Text style={styles.title}>Entradas por Mês</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>

@@ -1,18 +1,16 @@
-import { ThemeType } from "@/app/types/appearance";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import { Alert } from "react-native";
 import StepScreen from "../../../stepScreen";
 
-interface StepsProps { isVisible: boolean; theme: ThemeType; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
+interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
 
 export default function StartDateStep(
-  { isVisible, theme, value, onConfirm, onBack, onSelect, onCancel }:
+  { isVisible, value, onConfirm, onBack, onSelect, onCancel }:
     StepsProps & { value: string; onSelect: (value: string) => void }
 ) {
   return (
     <StepScreen
       isVisible={isVisible}
-      theme={theme}
       onConfirm={() => {
         if (value) {
           onConfirm();
@@ -25,7 +23,6 @@ export default function StartDateStep(
     >
       <DynamicLabelInput
         dateEntry
-        theme={theme}
         initialText={value}
         label={"Data de início"}
         onTextChange={onSelect}
