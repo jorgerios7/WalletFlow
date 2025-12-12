@@ -2,7 +2,7 @@ import { PersonalDataChange, User } from '@/app/types/User';
 import { ThemeContext } from '@/components/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 import { useContext, useState } from 'react';
-import { useWindowDimensions, View } from 'react-native';
+import { ScrollView, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppearanceSettingsMenu from './appearanceSettingsMenu';
 import EditPersonalDataModal from './editPersonalDataModal';
@@ -14,16 +14,18 @@ interface Props { userData: User, onUpdating: () => void, onDismiss: () => void 
 
 export default function ProfileScreen({ userData, onUpdating, onDismiss }: Props) {
     const insets = useSafeAreaInsets();
-    const { theme, fontSizeType } = useContext(ThemeContext);
+    const { theme } = useContext(ThemeContext);
     const { width, height } = useWindowDimensions();
     const [collapseMenu, setCollapseMenu] = useState(false);
     const [editPersonalData, setEditPersonalData] = useState({ isVisible: false, field: "none" as PersonalDataChange });
-    const [appearanceSettingsMenu, setAppearanceSettingsMenu] = useState({ isVisible: false });
     const [notificationsSettingsMenu, setNotificationsSettingsMenu] = useState({ isVisible: false });
 
+    const [isExpanded, setIsExpanded] = useState(false);
+
     return (
-        <View style={{ flex: 1, backgroundColor: Colors[theme.appearance].background, paddingBottom: insets.bottom + 60 }}>
-            <View style={{ height: 150, width: width }} />
+
+        <View style={{ flex: 1, padding: 10, backgroundColor: Colors[theme.appearance].background, marginBottom: insets.bottom - 48 }}>
+            <View style={{ height: 100, width: width }} />
 
             <ProfileMenu
                 screen={{ width: width, height: height - insets.bottom - 120 }}
@@ -47,28 +49,44 @@ export default function ProfileScreen({ userData, onUpdating, onDismiss }: Props
                     : setEditPersonalData({ isVisible: false, field: "none" })}
             />
 
-            <AppearanceSettingsMenu
-                isVisible={appearanceSettingsMenu.isVisible}
-                onDismiss={() => setAppearanceSettingsMenu({ isVisible: false })}
-            />
-
             <NotificationsSettingsMenu
                 isVisible={notificationsSettingsMenu.isVisible}
                 onDismiss={() => setNotificationsSettingsMenu({ isVisible: false })}
             />
 
-            <View style={{ gap: 5 }}>
-                <MenuTabButton
-                    iconName='color-lens' name={'Aparência'} iconSize={30} onPress={() =>
-                        setAppearanceSettingsMenu({ isVisible: true })
-                    }
-                />
-                <MenuTabButton
-                    iconName='notifications' name={'Notificações'} iconSize={30} onPress={() =>
-                        setNotificationsSettingsMenu({ isVisible: true })
-                    }
-                />
-            </View>
+            <ScrollView
+                nestedScrollEnabled
+                showsVerticalScrollIndicator
+                style={{ flex: 1 }}
+                contentContainerStyle={{ paddingBottom: 20 }}
+            >
+                <View style={{ gap: 10 }}>
+                    <MenuTabButton
+                        openHeightSize={490}
+                        iconName='color-lens' name={'Aparência'} iconSize={30}
+                        onExpanding={(expanded) => setIsExpanded(!expanded)}
+                    >
+                        <AppearanceSettingsMenu expanded={isExpanded} />
+                    </MenuTabButton>
+                    <MenuTabButton
+                        openHeightSize={200}
+                        iconName='notifications' name={'Notificações'} iconSize={30}
+                        onExpanding={() => console.log("notifications isExpanded")}
+                        children={
+                            <View />
+                        }
+                    />
+
+                    <MenuTabButton
+                        openHeightSize={200}
+                        iconName='tune' name={'Preferências'} iconSize={30}
+                        onExpanding={() => console.log("notifications isExpanded")}
+                        children={
+                            <View />
+                        }
+                    />
+                </View>
+            </ScrollView>
         </View>
     );
 }

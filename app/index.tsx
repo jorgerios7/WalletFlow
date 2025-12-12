@@ -73,29 +73,39 @@ export default function AppMain() {
   // 3. UI Routing: ONLY ONE SCREEN AT A TIME
 
   // Loading auth
-  if (auth.isLoading) return <SplashScreen />;
+  if (auth.isLoading)
+    return (
+      <ThemeProvider>
+        <SplashScreen />
+      </ThemeProvider>
+    );
 
   // Not authenticated
   if (!auth.isAuthenticated) {
     return (
+      <ThemeProvider>
         <UserAccessScreen
           isVisible
           onPress={(value) => setAuth((prev) => ({ ...prev, isAuthenticated: value }))}
           onUserId={(id) => setAuth((prev) => ({ ...prev, user_id: id }))}
         />
+      </ThemeProvider>
     );
   }
 
   // Authenticated → loading user & group
   if (data.isLoading || isGrouped === null) {
     return (
+      <ThemeProvider>
         <LoadScreen theme={theme.appearance} />
+      </ThemeProvider>
     );
   }
 
   // Authenticated → no group yet
   if (!isGrouped) {
     return (
+      <ThemeProvider>
         <GroupAccessSetup
           isVisible
           onPressingReturnButton={() =>
@@ -117,6 +127,7 @@ export default function AppMain() {
             }
           }}
         />
+      </ThemeProvider>
     );
   }
 

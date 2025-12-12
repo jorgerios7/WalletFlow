@@ -11,7 +11,7 @@ const SplashScreen = () => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { backgroundColor: Colors[theme.appearance].accent, marginTop: insets.top, marginBottom: insets.bottom }]}>
+    <View style={[styles.container, { backgroundColor: Colors[theme.appearance].background, marginTop: insets.top, marginBottom: insets.bottom }]}>
       <Text style={{ color: Colors[theme.appearance].textContrast, fontSize: Typography[fontSizeType].md.fontSize }}>Bem vindo!</Text>
     </View>
   );

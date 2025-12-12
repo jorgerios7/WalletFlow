@@ -2,41 +2,74 @@ import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useContext } from "react";
-import { Pressable, Text } from "react-native";
+import { ReactNode, useContext, useEffect } from "react";
+import { Animated, Pressable, Text } from "react-native";
+import useAnimation from "./useAnimation";
 
 const MenuTabButton: React.FC<{
-    onPress: () => void; name: string; iconSize?: number
-    iconName: keyof typeof MaterialIcons.glyphMap
+    name: string; iconSize?: number, iconName: keyof typeof MaterialIcons.glyphMap, collapse?: boolean,
+    children: ReactNode, openHeightSize: number, onExpanding: (expanded: boolean) => void
+}> = ({ name, iconName, iconSize, collapse, children, openHeightSize, onExpanding }) => {
 
-}> = ({ onPress, name, iconName, iconSize }) => {
+    const { theme, fontSizeType } = useContext(ThemeContext);
 
-const {theme, fontSizeType} = useContext(ThemeContext);
+    const PressableAnimation = Animated.createAnimatedComponent(Pressable);
+
+    const { toggleMenu, size, isExpanded } = useAnimation({ openHeightSize: openHeightSize });
+
+    useEffect(() => {
+        if (collapse) closeMenu();
+    }, [collapse]);
+
+    const openMenu = () => {
+        if (isExpanded) return;
+        toggleMenu(true);
+    };
+
+    const closeMenu = () => {
+        if (!isExpanded) return;
+        toggleMenu(false);
+    };
 
     return (
-        <Pressable
-            onPress={onPress}
+        <Animated.View
             style={{
-                width: '100%', height: 50, gap: 20, backgroundColor: Colors[theme.appearance].surface,
-                flexDirection: 'row', padding: 10, borderRadius: 10
+                height: size.menuHeightAnim, backgroundColor: Colors[theme.appearance].surfaceVariant, borderRadius: 10
             }}
         >
-            <MaterialIcons
-                name={iconName}
-                size={iconSize ? iconSize : 28}
-                color={Colors[theme.appearance].iconPrimary}
-            />
-
-            <Text style={{
-                color: Colors[theme.appearance].textPrimary, alignSelf: 'center',
-                fontSize: Typography[fontSizeType].sm.fontSize,
-                lineHeight: Typography[fontSizeType].sm.lineHeight,
-                fontWeight: 'bold'
-            }}
+            <PressableAnimation
+                onPress={() => {
+                    onExpanding(isExpanded);
+                    isExpanded
+                        ? closeMenu()
+                        : openMenu()
+                }}
+                style={{
+                    width: '100%', height: 50, gap: 10, backgroundColor: Colors[theme.appearance].surface,
+                    flexDirection: 'row', padding: 10, borderRadius: 10
+                }}
             >
-                {name}
-            </Text>
-        </Pressable>
+                <MaterialIcons
+                    name={iconName}
+                    size={iconSize ? iconSize : 28}
+                    color={Colors[theme.appearance].iconPrimary}
+                    style={{ alignSelf: "center" }}
+                />
+
+                <Text style={{
+                    color: Colors[theme.appearance].textPrimary, alignSelf: 'center',
+                    fontSize: Typography[fontSizeType].sm.fontSize,
+                    lineHeight: Typography[fontSizeType].sm.lineHeight,
+                    fontWeight: 'bold'
+                }}
+                >
+                    {name}
+                </Text>
+            </PressableAnimation>
+
+            {children}
+
+        </Animated.View>
     );
 }
 

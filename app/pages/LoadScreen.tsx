@@ -1,14 +1,22 @@
+import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
-import React from "react";
+import React, { useContext } from "react";
 import { ActivityIndicator } from "react-native";
-import { ThemeType } from "../types/appearance";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export function LoadScreen({theme, marginBottom }: { theme: ThemeType, marginBottom?: number }) {
+export function LoadScreen({ marginBottom }: { marginBottom?: number }) {
+
+    const { theme } = useContext(ThemeContext);
+    const insets = useSafeAreaInsets();
     return (
         <ActivityIndicator
-            style={{ flex: 1, backgroundColor: Colors[theme].background, marginBottom: marginBottom ? marginBottom : 0 }}
             size="large"
-            color={Colors[theme].iconPrimary}
+            color={Colors[theme.appearance].iconPrimary}
+            style={{
+                flex: 1, backgroundColor: Colors[theme.appearance].background,
+                marginBottom: marginBottom ? marginBottom : insets.bottom,
+                marginTop: insets.top
+            }}
         />
     );
 }

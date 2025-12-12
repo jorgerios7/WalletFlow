@@ -14,7 +14,7 @@ export default function UseAnimation(screen: { width: number, height: number }) 
     const leftButtonAnim = useRef(new Animated.Value(0)).current;
 
     const topContainerTextAnim = useRef(new Animated.Value(0)).current;
-    const leftContainerTextAnim = useRef(new Animated.Value(85)).current;
+    const leftContainerTextAnim = useRef(new Animated.Value(screen.width / 4)).current;
 
     const buttonWidthAnim = useRef(new Animated.Value(100)).current;
     const buttonHeightAnim = useRef(new Animated.Value(closed_size.HEIGHT)).current;

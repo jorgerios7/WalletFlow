@@ -38,12 +38,11 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
     return (
         <Animated.View
             style={[styles.menuContainerDefault, {
-                backgroundColor: Colors[theme.appearance].accentHover,
+                backgroundColor: Colors[theme.appearance].accent,
                 width: size.menuWidthAnim, height: size.menuHeightAnim, top: position.topMenuAnim,
                 left: position.leftMenuAnim, borderRadius: menuBorderRadiusAnim
             }]}
         >
-
             <AnimatedPressableButton
                 onPress={closeMenu}
                 style={{ opacity: opacityAnim, backgroundColor: 'transparent', alignSelf: 'flex-end', padding: 20, borderRadius: 20 }}
