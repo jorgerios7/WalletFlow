@@ -83,4 +83,4 @@ export default function Dropdown({ isVisible, items, deleteButtonVisible, onShow
     );
 }
 
-const styles = StyleSheet.create({ dropdown: { position: "absolute", zIndex: 999, marginTop: 2, borderRadius: 10, borderWidth: 0.5 } });
+const styles = StyleSheet.create({ dropdown: { position: "absolute", zIndex: 999, marginTop: 5, borderRadius: 10, borderWidth: 0.5 } });

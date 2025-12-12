@@ -20,7 +20,7 @@ export default function DropdownSelect({ isVisible, setSelection, list, placehol
   const [selected, setSelected] = useState<string | number>(setSelection);
 
   return (
-    <View style={[styles.container, { backgroundColor: '' }]}>
+    <View style={[styles.container, { backgroundColor: 'transparent' }]}>
       <LabelAnimated
         onPress={() => setIsDropdownVisible((prev) => !prev)}
         labelText={placeholder}
@@ -30,7 +30,7 @@ export default function DropdownSelect({ isVisible, setSelection, list, placehol
 
       <Pressable
         focusable
-        style={[styles.dropdownButton, { borderColor: Colors[theme.appearance].borderInverse }]}
+        style={[styles.dropdownButton, { borderColor: Colors[theme.appearance].iconPrimary }]}
         onPress={() => setIsDropdownVisible((prev) => !prev)}
         onBlur={() => setIsDropdownVisible(false)}
         onFocus={() => setIsDropdownVisible(false)}

@@ -3,6 +3,8 @@ export type ThemeType = "light" | "dark";
 export type FontSizeType = "small" | "medium" | "big";
 export type FontWheightType = "light" | "regular" | "medium" | "bold";
 
+export type ScreensType = "analysis" | "transactions" | "group" | "profile";
+
 
 export interface ThemeState {
     source: ThemeSource,

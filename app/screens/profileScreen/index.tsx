@@ -4,10 +4,8 @@ import { Colors } from '@/constants/Colors';
 import { useContext, useState } from 'react';
 import { ScrollView, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AppearanceSettingsMenu from './appearanceSettingsMenu';
+import ConfigurationsMenu from './configurationsMenu';
 import EditPersonalDataModal from './editPersonalDataModal';
-import MenuTabButton from './menuTabButton';
-import NotificationsSettingsMenu from './notificationsSettingsMenu';
 import ProfileMenu from './profileMenu';
 
 interface Props { userData: User, onUpdating: () => void, onDismiss: () => void }
@@ -18,12 +16,8 @@ export default function ProfileScreen({ userData, onUpdating, onDismiss }: Props
     const { width, height } = useWindowDimensions();
     const [collapseMenu, setCollapseMenu] = useState(false);
     const [editPersonalData, setEditPersonalData] = useState({ isVisible: false, field: "none" as PersonalDataChange });
-    const [notificationsSettingsMenu, setNotificationsSettingsMenu] = useState({ isVisible: false });
-
-    const [isExpanded, setIsExpanded] = useState(false);
 
     return (
-
         <View style={{ flex: 1, padding: 10, backgroundColor: Colors[theme.appearance].background, marginBottom: insets.bottom - 48 }}>
             <View style={{ height: 100, width: width }} />
 
@@ -49,43 +43,14 @@ export default function ProfileScreen({ userData, onUpdating, onDismiss }: Props
                     : setEditPersonalData({ isVisible: false, field: "none" })}
             />
 
-            <NotificationsSettingsMenu
-                isVisible={notificationsSettingsMenu.isVisible}
-                onDismiss={() => setNotificationsSettingsMenu({ isVisible: false })}
-            />
-
             <ScrollView
                 nestedScrollEnabled
                 showsVerticalScrollIndicator
                 style={{ flex: 1 }}
-                contentContainerStyle={{ paddingBottom: 20 }}
+                contentContainerStyle={{ paddingBottom: 10 }}
             >
-                <View style={{ gap: 10 }}>
-                    <MenuTabButton
-                        openHeightSize={490}
-                        iconName='color-lens' name={'Aparência'} iconSize={30}
-                        onExpanding={(expanded) => setIsExpanded(!expanded)}
-                    >
-                        <AppearanceSettingsMenu expanded={isExpanded} />
-                    </MenuTabButton>
-                    <MenuTabButton
-                        openHeightSize={200}
-                        iconName='notifications' name={'Notificações'} iconSize={30}
-                        onExpanding={() => console.log("notifications isExpanded")}
-                        children={
-                            <View />
-                        }
-                    />
-
-                    <MenuTabButton
-                        openHeightSize={200}
-                        iconName='tune' name={'Preferências'} iconSize={30}
-                        onExpanding={() => console.log("notifications isExpanded")}
-                        children={
-                            <View />
-                        }
-                    />
-                </View>
+                <ConfigurationsMenu />
+                
             </ScrollView>
         </View>
     );
