@@ -1,4 +1,4 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { Feather } from "@expo/vector-icons";
@@ -16,7 +16,7 @@ interface Props {
 export default function Dropdown({ isVisible, items, deleteButtonVisible, onShowing, onSelect, onPressDelete }: Props) {
     if (!isVisible) return null;
 
-    const { theme, fontSizeType } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     function ButtonDelete({ item }: { item: string | number }) {
         if (!deleteButtonVisible) return null;
@@ -26,7 +26,7 @@ export default function Dropdown({ isVisible, items, deleteButtonVisible, onShow
                 style={{ alignSelf: "center", backgroundColor: "transparent", padding: 5 }}
                 onPress={() => onPressDelete && onPressDelete(item)}
             >
-                <Feather name={"minus-circle"} size={22} color={Colors[theme.appearance].iconPrimary} />
+                <Feather name={"minus-circle"} size={22} color={Colors[preferences.theme.appearance].iconPrimary} />
             </Pressable>
         );
     }
@@ -37,10 +37,10 @@ export default function Dropdown({ isVisible, items, deleteButtonVisible, onShow
                 style={{
                     width: 280, flexDirection: "row", alignItems: "center", justifyContent: "space-between",
                     paddingVertical: 10, borderBottomWidth: 0.5, backgroundColor: "transparent",
-                    borderBottomColor: Colors[theme.appearance].borderInverse
+                    borderBottomColor: Colors[preferences.theme.appearance].borderInverse
                 }}
             >
-                <Text style={{ flex: 1, color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].md.fontSize }}>{text}</Text>
+                <Text style={{ flex: 1, color: Colors[preferences.theme.appearance].textPrimary, fontSize: Typography[preferences.fontSizeType].md.fontSize }}>{text}</Text>
                 <ButtonDelete item={text} />
             </View>
         );
@@ -50,7 +50,7 @@ export default function Dropdown({ isVisible, items, deleteButtonVisible, onShow
         <TransitionView
             style={[styles.dropdown,
             {
-                backgroundColor: Colors[theme.appearance].surfaceVariant, borderColor: Colors[theme.appearance].border,
+                backgroundColor: Colors[preferences.theme.appearance].surfaceVariant, borderColor: Colors[preferences.theme.appearance].border,
                 top: onShowing === 'openAtBottom'
                     ? '100%'
                     : undefined,

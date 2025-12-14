@@ -1,5 +1,5 @@
-import { FontSizeType, ScreensType, ThemeSource, ThemeType } from "@/app/types/appearance";
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
+import { FontSizeType, ScreenActivationTimeState, ScreensType, ThemeSource, ThemeType } from "@/app/types/preferences";
 import CustomButton from "@/components/ui/CustomButton";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
@@ -11,9 +11,14 @@ import ThemeMenu from "./themeMenu";
 export default function ConfigurationsMenu() {
     const systemTheme = useColorScheme();
 
-    const { theme, fontSizeType, setTheme, setFontSizeType } = useContext(ThemeContext);
-    const [themeState, setThemeState] = useState({ source: theme.source as ThemeSource, appearance: theme.appearance as ThemeType });
-    const [fontSizeTypeState, setFontSizeTypeState] = useState<FontSizeType>(fontSizeType);
+    const { preferences, setTheme, setFontSizeType, setInitScreen, setScreenActivationTime } = useContext(PreferencesContext);
+
+    const [themeState, setThemeState] = useState({
+        source: preferences.theme.source as ThemeSource, appearance: preferences.theme.appearance as ThemeType
+    });
+    const [fontSizeTypeState, setFontSizeTypeState] = useState<FontSizeType>(preferences.fontSizeType);
+    const [initScreenState, setInitScreenState] = useState<ScreensType>(preferences.initScreen);
+    const [screenActivationTime, setScreenActivationTimeState] = useState<ScreenActivationTimeState>(preferences.screenActivationTime);
 
     function handleTheme() {
         setTheme({
@@ -25,15 +30,25 @@ export default function ConfigurationsMenu() {
         })
     };
 
-    function handleFontSizeType() { setFontSizeType(fontSizeTypeState) };
+    function handleFontSizeType() {
+        setFontSizeType(fontSizeTypeState)
+    };
+
+    function handleInitScreen() {
+        setInitScreen(initScreenState);
+    };
+
+    function handleScreenActivationTime() {
+        setScreenActivationTime(screenActivationTime);
+    };
 
     const textStyle = {
-        color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].sm.fontSize,
-        lineHeight: Typography[fontSizeType].sm.lineHeight
+        color: Colors[preferences.theme.appearance].textPrimary, fontSize: Typography[preferences.fontSizeType].sm.fontSize,
+        lineHeight: Typography[preferences.fontSizeType].sm.lineHeight
     };
 
     function Line() {
-        return <View style={{ width: "100%", height: 0.5, backgroundColor: Colors[theme.appearance].border }} />
+        return <View style={{ width: "100%", height: 0.5, backgroundColor: Colors[preferences.theme.appearance].border }} />
     };
 
     return (
@@ -49,20 +64,23 @@ export default function ConfigurationsMenu() {
 
             <Text style={textStyle}>Preferências</Text>
 
-            <PreferencesMenu 
-                value={{initScreen: "transactions" as ScreensType, screenOn: true}}
-                onInitScreenChange={(screen) => console.log("initScreen: ", screen)}
-                onScreenStateChange={(screenOn) => console.log("screenOn: ", screenOn)}
+            <PreferencesMenu
+                value={{ initScreen: initScreenState, screenState: screenActivationTime }}
+                onInitScreenChange={setInitScreenState}
+                onScreenStateChange={setScreenActivationTime}
             />
 
+            <Line />
+
             <CustomButton
-                text="Salvar alterações"
+                text={"Salvar alterações"}
                 onPress={() => {
                     handleTheme();
                     handleFontSizeType();
+                    handleInitScreen();
+                    handleScreenActivationTime();
                 }}
             />
-
         </View>
     );
 }

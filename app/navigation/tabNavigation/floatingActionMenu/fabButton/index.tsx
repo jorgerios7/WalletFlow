@@ -1,17 +1,17 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useContext } from "react";
 import { Pressable, StyleSheet } from "react-native";
 
 export const FabButton: React.FC<{ onPress: () => void, expanded: boolean, size: number }> = ({ onPress, expanded, size }) => {
-    const { theme } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const dynamicStyle = {
         width: size, height: size, borderRadius: size / 2,
-        backgroundColor: Colors[theme.appearance].accent,
-        shadowColor: Colors[theme.appearance].shadow,
-        borderColor: Colors[theme.appearance].border
+        backgroundColor: Colors[preferences.theme.appearance].accent,
+        shadowColor: Colors[preferences.theme.appearance].shadow,
+        borderColor: Colors[preferences.theme.appearance].border
     };
 
     return (
@@ -21,7 +21,7 @@ export const FabButton: React.FC<{ onPress: () => void, expanded: boolean, size:
                     ? 'close'
                     : 'add'
                 } size={28}
-                color={Colors[theme.appearance].iconContrast}
+                color={Colors[preferences.theme.appearance].iconContrast}
             />
         </Pressable>
     );

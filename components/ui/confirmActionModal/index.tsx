@@ -1,4 +1,4 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { useContext } from "react";
@@ -9,18 +9,18 @@ import TextButton from "../TextButton";
 const ConfirmActionModal: React.FC<{ isVisible: boolean; confirmationMessage: string; onConfirm: () => void; onCancel: () => void; }> = (
     { isVisible, confirmationMessage, onConfirm, onCancel }
 ) => {
-    const {theme, fontSizeType} = useContext(ThemeContext);
+    const {preferences} = useContext(PreferencesContext);
 
     const dynamicTextStyle = {
-        fontSize: Typography[fontSizeType].md.fontSize,
-        lineHeight: Typography[fontSizeType].md.lineHeight,
+        fontSize: Typography[preferences.fontSizeType].md.fontSize,
+        lineHeight: Typography[preferences.fontSizeType].md.lineHeight,
     }
 
     return (
         <Modal visible={isVisible} animationType="fade" transparent>
-            <View style={[styles.modalOverlay, { backgroundColor: Colors[theme.appearance].overlay }]}>
-                <View style={[styles.modalContent, {backgroundColor: Colors[theme.appearance].background, }]}>
-                    <Text style={{ color: Colors[theme.appearance].textPrimary, textAlign: 'center', fontWeight: 'bold', ...dynamicTextStyle }}>
+            <View style={[styles.modalOverlay, { backgroundColor: Colors[preferences.theme.appearance].overlay }]}>
+                <View style={[styles.modalContent, {backgroundColor: Colors[preferences.theme.appearance].background, }]}>
+                    <Text style={{ color: Colors[preferences.theme.appearance].textPrimary, textAlign: 'center', fontWeight: 'bold', ...dynamicTextStyle }}>
                         {confirmationMessage}
                     </Text>
                     <CustomButton text={'Confirmar'} onPress={onConfirm} />

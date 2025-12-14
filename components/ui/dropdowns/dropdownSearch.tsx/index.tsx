@@ -1,4 +1,4 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { Feather } from "@expo/vector-icons";
@@ -8,7 +8,7 @@ import Dropdown, { OpenDirection } from "..";
 import LabelAnimated from "../../LabelAnimated";
 
 interface Props {
-   list: string[]; label: string; initialValue?: string; onSelectInDropdown: (item: string) => void;
+    list: string[]; label: string; initialValue?: string; onSelectInDropdown: (item: string) => void;
     whenSelectItemToAdd: (item: string) => void; whenSelectItemToDelete: (item: string) => void;
     onTextInputChange: (text: string) => void, menuVisibility: (menu: Menu) => void; onOpeningDropdown: OpenDirection;
 }
@@ -16,10 +16,10 @@ interface Props {
 type Menu = 'newCategoryMenu' | 'deleteCategoryMenu';
 
 export default function DropdownSearch({
-   list, label, initialValue, onSelectInDropdown, whenSelectItemToAdd,
+    list, label, initialValue, onSelectInDropdown, whenSelectItemToAdd,
     whenSelectItemToDelete, onTextInputChange, menuVisibility, onOpeningDropdown
 }: Props) {
-    const {theme, fontSizeType} =  useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
     const [text, setText] = useState(initialValue ? initialValue : "");
     const [results, setResults] = useState<string[]>([]);
     const [itemsVisible, setItemsVisible] = useState({ buttonAdd: false, newCategoryMenu: false, deleteCategoryMenu: false });
@@ -36,14 +36,14 @@ export default function DropdownSearch({
                     menuVisibility('newCategoryMenu');
                 }}
             >
-                <Feather name={'plus-circle'} size={22} color={Colors[theme.appearance].iconPrimary} />
+                <Feather name={'plus-circle'} size={22} color={Colors[preferences.theme.appearance].iconPrimary} />
             </Pressable>
         );
     };
 
     const dynamicTextStyle = {
-        fontSize: Typography[fontSizeType].md.fontSize,
-        lineHeight: Typography[fontSizeType].md.lineHeight,
+        fontSize: Typography[preferences.fontSizeType].md.fontSize,
+        lineHeight: Typography[preferences.fontSizeType].md.lineHeight,
     };
 
     const handleSearch = (value: string) => {
@@ -72,7 +72,7 @@ export default function DropdownSearch({
 
             <TextInput
                 style={[[
-                    styles.input, dynamicTextStyle, { borderColor: Colors[theme.appearance].borderInverse, color: Colors[theme.appearance].textPrimary }],
+                    styles.input, dynamicTextStyle, { borderColor: Colors[preferences.theme.appearance].borderInverse, color: Colors[preferences.theme.appearance].textPrimary }],
                 isFocused && styles.inputFocused
                 ]}
                 value={text}

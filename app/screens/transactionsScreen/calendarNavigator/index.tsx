@@ -1,4 +1,4 @@
-import { ThemeContext } from '@/components/ThemeProvider';
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { Colors } from '@/constants/Colors';
 import { Typography } from '@/constants/Typography';
 import { Feather } from '@expo/vector-icons';
@@ -14,7 +14,7 @@ const DEFAULT_SIZE = SPACING_DEFAULT * 2;
 const RADIUS_DEFAULT = 99;
 
 const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ onDateChange }) => {
-    const { theme, fontSizeType } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const scrollRef = useRef<ScrollView>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -60,19 +60,19 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
         onDateChange(new Date(currentYear, index, 1));
     };
 
-    const dynamicTextStyle = { fontSize: Typography[fontSizeType].md.fontSize, lineHeight: Typography[fontSizeType].md.lineHeight };
+    const dynamicTextStyle = { fontSize: Typography[preferences.fontSizeType].md.fontSize, lineHeight: Typography[preferences.fontSizeType].md.lineHeight };
 
     return (
-        <View style={[styles.container, { backgroundColor: Colors[theme.appearance].surface }]}>
-            <Text style={[styles.title, dynamicTextStyle, { color: Colors[theme.appearance].textPrimary }]}>{months[currentIndex]?.year}</Text>
+        <View style={[styles.container, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
+            <Text style={[styles.title, dynamicTextStyle, { color: Colors[preferences.theme.appearance].textPrimary }]}>{months[currentIndex]?.year}</Text>
 
-            <View style={[styles.ContainerContent, { backgroundColor: Colors[theme.appearance].surface }]}>
+            <View style={[styles.ContainerContent, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
 
                 <TouchableOpacity style={styles.button} onPress={handlePrevious}>
-                    <Feather name="chevron-left" size={24} color={Colors[theme.appearance].iconPrimary} />
+                    <Feather name="chevron-left" size={24} color={Colors[preferences.theme.appearance].iconPrimary} />
                 </TouchableOpacity>
 
-                <View style={[styles.row, { backgroundColor: Colors[theme.appearance].surface }]}>
+                <View style={[styles.row, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
                     <Animated.ScrollView
                         ref={scrollRef}
                         horizontal
@@ -87,9 +87,9 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
                         {months.map((month, index) => (
                             <Animated.View
                                 key={index}
-                                style={[styles.card, { backgroundColor: Colors[theme.appearance].surface },
+                                style={[styles.card, { backgroundColor: Colors[preferences.theme.appearance].surface },
                                 index === currentIndex && {
-                                    backgroundColor: Colors[theme.appearance].accent, borderColor: Colors[theme.appearance].border
+                                    backgroundColor: Colors[preferences.theme.appearance].accent, borderColor: Colors[preferences.theme.appearance].border
                                 }, {
                                     transform: [{
                                         scale: scrollX.interpolate({
@@ -105,8 +105,8 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
                                 }]}
                             >
                                 <Text
-                                    style={[styles.monthText, dynamicTextStyle, { color: Colors[theme.appearance].textPrimary },
-                                    index === currentIndex && [styles.activeText, { color: Colors[theme.appearance].textContrast }]]}
+                                    style={[styles.monthText, dynamicTextStyle, { color: Colors[preferences.theme.appearance].textPrimary },
+                                    index === currentIndex && [styles.activeText, { color: Colors[preferences.theme.appearance].textContrast }]]}
                                 >
                                     {month.label}
                                 </Text>
@@ -116,7 +116,7 @@ const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ o
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleNext}>
-                    <Feather name="chevron-right" size={24} color={Colors[theme.appearance].iconPrimary} />
+                    <Feather name="chevron-right" size={24} color={Colors[preferences.theme.appearance].iconPrimary} />
                 </TouchableOpacity>
             </View>
         </View>

@@ -1,5 +1,6 @@
-import { FontSizeType, ThemeSource, ThemeType } from "@/app/types/appearance";
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
+import { FontSizeType, ThemeSource, ThemeType } from "@/app/types/preferences";
+
 import RadioButton from "@/components/ui/RadioButton";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
@@ -12,17 +13,17 @@ interface Props {
 };
 
 export default function ThemeMenu({ onThemeChange, onFontTypeChange }: Props) {
-    const { theme, fontSizeType } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
-    const [fontSizeTypeState, setFontSizeTypeState] = useState<FontSizeType>(fontSizeType);
+    const [fontSizeTypeState, setFontSizeTypeState] = useState<FontSizeType>(preferences.fontSizeType);
 
     return (
         <View style={{ padding: 10, gap: 10, backgroundColor: "transparent" }}>
-            <View style={{ gap: 10, padding: 10, backgroundColor: Colors[theme.appearance].surface, borderRadius: 10 }}>
+            <View style={{ gap: 10, padding: 10, backgroundColor: Colors[preferences.theme.appearance].surface, borderRadius: 10 }}>
                 <Text
                     style={{
-                        color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].lg.fontSize,
-                        lineHeight: Typography[fontSizeType].lg.lineHeight, alignSelf: 'center'
+                        color: Colors[preferences.theme.appearance].textPrimary, fontSize: Typography[preferences.fontSizeType].lg.fontSize,
+                        lineHeight: Typography[preferences.fontSizeType].lg.lineHeight, alignSelf: 'center'
                     }}
                 >
                     Modo escuro
@@ -30,7 +31,11 @@ export default function ThemeMenu({ onThemeChange, onFontTypeChange }: Props) {
 
                 <RadioButton
                     isHorizontal
-                    initialValue={theme.source === "system" ? "system" : theme.appearance}
+                    initialValue={
+                        preferences.theme.source === "system"
+                            ? "system"
+                            : preferences.theme.appearance
+                    }
                     options={[
                         { label: "Ligado", value: "dark" },
                         { label: "Desligado", value: "light" },
@@ -49,12 +54,12 @@ export default function ThemeMenu({ onThemeChange, onFontTypeChange }: Props) {
             </View>
 
             <View style={{
-                gap: 10, padding: 10, backgroundColor: Colors[theme.appearance].surface, borderRadius: 10
+                gap: 10, padding: 10, backgroundColor: Colors[preferences.theme.appearance].surface, borderRadius: 10
             }}>
                 <Text
                     style={{
-                        color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].lg.fontSize,
-                        lineHeight: Typography[fontSizeType].lg.lineHeight, alignSelf: 'center'
+                        color: Colors[preferences.theme.appearance].textPrimary, fontSize: Typography[preferences.fontSizeType].lg.fontSize,
+                        lineHeight: Typography[preferences.fontSizeType].lg.lineHeight, alignSelf: 'center'
                     }}>
                     Tamanho da fonte
                 </Text>
@@ -62,12 +67,15 @@ export default function ThemeMenu({ onThemeChange, onFontTypeChange }: Props) {
                 <View style={{ height: 50, justifyContent: 'center' }}>
                     <Text
                         style={{
-                            color: Colors[theme.appearance].textPrimary,
+                            color: Colors[preferences.theme.appearance].textPrimary,
                             fontStyle: 'italic',
                             textAlign: 'center',
                             fontSize:
-                                fontSizeTypeState === "small" ? 16 :
-                                    fontSizeTypeState === "medium" ? 20 : 24,
+                                fontSizeTypeState === "small"
+                                    ? 16 :
+                                    fontSizeTypeState === "medium"
+                                        ? 20
+                                        : 24,
                         }}
                     >
                         {"Olá, tudo bem?"}
@@ -76,7 +84,7 @@ export default function ThemeMenu({ onThemeChange, onFontTypeChange }: Props) {
 
                 <RadioButton
                     isHorizontal
-                    initialValue={fontSizeType}
+                    initialValue={preferences.fontSizeType}
                     options={[
                         { label: "Pequeno", value: "small" },
                         { label: "Médio", value: "medium" },

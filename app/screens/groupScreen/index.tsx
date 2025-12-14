@@ -1,8 +1,8 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import DeleteMember from "@/app/services/firebase/groupService/deleteMember";
 import PromoteOrDemote from "@/app/services/firebase/groupService/demote_or_demote";
 import { UpdateField } from "@/app/services/firebase/groupService/updateField";
 import { Creator, Delete, FirestoreMemberMap, MemberData } from "@/app/types/Group";
-import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -24,7 +24,7 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
 
     if (!currentUser) return null;
 
-    const { theme, fontSizeType } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const [menuItemVisibility, setMenuItemVisibility] = useState(false);
     const [menuItemData, setMenuItemData] = useState({ id: '', name: '', role: '' });
@@ -69,19 +69,19 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: Colors[theme.appearance].background }]}>
+        <View style={[styles.container, { backgroundColor: Colors[preferences.theme.appearance].background }]}>
 
-            <View style={[styles.header, { backgroundColor: Colors[theme.appearance].headerBackground }]}>
+            <View style={[styles.header, { backgroundColor: Colors[preferences.theme.appearance].headerBackground }]}>
 
-                <View style={{ borderRadius: 999, backgroundColor: Colors[theme.appearance].accent, alignItems: 'center' }}>
-                    <MaterialIcons name="groups" size={100} color={Colors[theme.appearance].textContrast} />
+                <View style={{ borderRadius: 999, backgroundColor: Colors[preferences.theme.appearance].accent, alignItems: 'center' }}>
+                    <MaterialIcons name="groups" size={100} color={Colors[preferences.theme.appearance].textContrast} />
                 </View>
 
                 <View style={styles.headerContent}>
                     <Text style={[styles.title,
                     {
-                        color: Colors[theme.appearance].textContrast, fontSize: Typography[fontSizeType].lg.fontSize,
-                        lineHeight: Typography[fontSizeType].lg.lineHeight
+                        color: Colors[preferences.theme.appearance].textContrast, fontSize: Typography[preferences.fontSizeType].lg.fontSize,
+                        lineHeight: Typography[preferences.fontSizeType].lg.lineHeight
                     }
                     ]}
                     >
@@ -89,7 +89,7 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
                     </Text>
                     {renderUserRole() === "owner" && (
                         <Pressable style={{ padding: 10 }} onPress={() => setEditDataViewer(true)}>
-                            <MaterialIcons name="mode-edit" size={20} color={Colors[theme.appearance].iconContrast} />
+                            <MaterialIcons name="mode-edit" size={20} color={Colors[preferences.theme.appearance].iconContrast} />
                         </Pressable>)
                     }
                 </View>

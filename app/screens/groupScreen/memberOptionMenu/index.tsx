@@ -1,5 +1,5 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Delete } from "@/app/types/Group";
-import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import RadioButton from "@/components/ui/RadioButton";
 import TextButton from "@/components/ui/TextButton";
@@ -14,7 +14,7 @@ export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, on
     onCancel: () => void;
 }) {
 
-    const {theme, fontSizeType} = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const CONDITION = "owner";
 
@@ -59,13 +59,13 @@ export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, on
 
     return (
         <Modal visible={isStarted} animationType="fade" transparent>
-            <View style={[styles.overlay, { backgroundColor: Colors[theme.appearance].overlay, }]}>
-                <View style={[styles.content, { backgroundColor: Colors[theme.appearance].surface, }]}>
+            <View style={[styles.overlay, { backgroundColor: Colors[preferences.theme.appearance].overlay, }]}>
+                <View style={[styles.content, { backgroundColor: Colors[preferences.theme.appearance].surface, }]}>
 
                     <Text style={[styles.title, {
-                        color: Colors[theme.appearance].textPrimary,
-                        fontSize: Typography[fontSizeType].md.fontSize, 
-                        lineHeight: Typography[fontSizeType].md.lineHeight
+                        color: Colors[preferences.theme.appearance].textPrimary,
+                        fontSize: Typography[preferences.fontSizeType].md.fontSize,
+                        lineHeight: Typography[preferences.fontSizeType].md.lineHeight
                     }]}
                     >
                         {selectedItem.name}
@@ -91,7 +91,7 @@ export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, on
                                         />
                                     </>
                                 ) : (
-                                    <Text style={[styles.text, { color: Colors[theme.appearance].textPrimary }]}>
+                                    <Text style={[styles.text, { color: Colors[preferences.theme.appearance].textPrimary }]}>
                                         Você ainda não possui permissão para administrar outros membros!
                                     </Text>
                                 )}

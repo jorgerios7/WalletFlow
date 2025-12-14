@@ -1,6 +1,6 @@
 import { db } from "@/app/config/firebaseConfig";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Action } from "@/app/types/Group";
-import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
@@ -17,7 +17,7 @@ interface Props {
 const GroupAccessSetup: React.FC<Props> = ({ isVisible, onReady, onPressingReturnButton }) => {
     if (!isVisible) return null;
 
-    const { theme } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const [isCreateGroup, setIsCreateGroup] = useState(true);
     const [groupData, setGroupData] = useState({ id: '', name: '' })
@@ -74,9 +74,9 @@ const GroupAccessSetup: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ backgroundColor: Colors[theme.appearance].background, flex: 1, height: "100%", justifyContent: "center", alignItems: "center" }}>
+            <View style={{ backgroundColor: Colors[preferences.theme.appearance].background, flex: 1, height: "100%", justifyContent: "center", alignItems: "center" }}>
 
-                <Text style={[styles.title, { color: Colors[theme.appearance].textPrimary, }]}>Configurar grupo</Text>
+                <Text style={[styles.title, { color: Colors[preferences.theme.appearance].textPrimary, }]}>Configurar grupo</Text>
 
                 {
                     isCreateGroup ? (
@@ -85,15 +85,15 @@ const GroupAccessSetup: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
 
                             <View style={styles.container}>
                                 <View style={{ gap: 10 }}>
-                                    <DynamicLabelInput label="Nome do grupo" colorLabel={Colors[theme.appearance].background} onTextChange={(text) => setGroupData({ id: "", name: text })} />
+                                    <DynamicLabelInput label="Nome do grupo" colorLabel={Colors[preferences.theme.appearance].background} onTextChange={(text) => setGroupData({ id: "", name: text })} />
                                     <CustomButton text={'Continuar'} onPress={handleAction} />
                                 </View>
 
                                 <View style={{ padding: 10, flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'center' }}>
-                                    <Text style={[styles.text, { color: Colors[theme.appearance].textPrimary, }]}>Se possui um ID </Text>
+                                    <Text style={[styles.text, { color: Colors[preferences.theme.appearance].textPrimary, }]}>Se possui um ID </Text>
 
                                     <Pressable onPress={() => setIsCreateGroup(false)}>
-                                        <Text style={{ color: Colors[theme.appearance].accent, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
+                                        <Text style={{ color: Colors[preferences.theme.appearance].accent, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
                                     </Pressable>
                                 </View>
 
@@ -108,7 +108,7 @@ const GroupAccessSetup: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
                         <View style={{ width: "90%", gap: 10 }}>
                             <DynamicLabelInput
                                 label="ID do grupo"
-                                colorLabel={Colors[theme.appearance].background}
+                                colorLabel={Colors[preferences.theme.appearance].background}
                                 onTextChange={(text) => setGroupData({ id: text, name: '' })}
                             />
 
@@ -130,7 +130,7 @@ const GroupAccessSetup: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
             <Snackbar
                 visible={error.visible}
                 onDismiss={() => setError({ visible: false, message: "" })}
-                style={{ backgroundColor: Colors[theme.appearance].accent }}
+                style={{ backgroundColor: Colors[preferences.theme.appearance].accent }}
                 action={{ label: "Fechar", onPress: () => setError({ visible: false, message: "" }) }}
             >
                 {error.message}

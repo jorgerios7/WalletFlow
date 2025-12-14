@@ -1,6 +1,6 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { TransactionType } from "@/app/types/Finance";
 import { AddCategory } from "@/app/utils/categoryManager";
-import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
@@ -18,7 +18,7 @@ export type Action = 'add' | 'delete' | 'update';
 export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType, onSuccess, onDismiss }: Props) {
     if (!categoryToAdd) return;
 
-    const {theme, fontSizeType} =  useContext(ThemeContext);
+    const {preferences} =  useContext(PreferencesContext);
 
     const [success, setSeccess] = useState(false);
 
@@ -33,8 +33,8 @@ export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType,
     };
 
     const dynamicTextStyle = {
-            fontSize: Typography[fontSizeType].md.fontSize,
-            lineHeight: Typography[fontSizeType].md.lineHeight,
+            fontSize: Typography[preferences.fontSizeType].md.fontSize,
+            lineHeight: Typography[preferences.fontSizeType].md.lineHeight,
         };
 
     async function handleFunction() {
@@ -56,18 +56,18 @@ export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType,
     return (
         <Modal visible={isVisible} animationType="fade" transparent>
             <Pressable
-                style={{ flex: 1, backgroundColor: Colors[theme.appearance].overlay, padding: 10, justifyContent: 'center', alignItems: 'center' }}
+                style={{ flex: 1, backgroundColor: Colors[preferences.theme.appearance].overlay, padding: 10, justifyContent: 'center', alignItems: 'center' }}
                 onPress={onDismiss}
             >
                 <View style={{
                     justifyContent: 'center', alignItems: 'center',
-                    gap: 10, padding: 20, backgroundColor: Colors[theme.appearance].surface, borderRadius: 10
+                    gap: 10, padding: 20, backgroundColor: Colors[preferences.theme.appearance].surface, borderRadius: 10
                 }}>
                     {!success ? (
                         <>
-                            <Text style={{...dynamicTextStyle, color: Colors[theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
+                            <Text style={{...dynamicTextStyle, color: Colors[preferences.theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
                                 {`Você tem certeza que deseja adicionar `}
-                                <Text style={{ fontWeight: "bold", color: Colors[theme.appearance].accent }}>{categoryToAdd}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors[preferences.theme.appearance].accent }}>{categoryToAdd}</Text>
                                 {` a lista de categorias de ${renderCurrentType()}?`}
                             </Text>
 
@@ -84,9 +84,9 @@ export default function NewCategoryMenu({ isVisible, categoryToAdd, currentType,
                         </>
                     ) : (
                         <>
-                            <Text style={{...dynamicTextStyle,  color: Colors[theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
+                            <Text style={{...dynamicTextStyle,  color: Colors[preferences.theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
                                 {`A categoria `}
-                                <Text style={{ fontWeight: "bold", color: Colors[theme.appearance].accent }}>{categoryToAdd}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors[preferences.theme.appearance].accent }}>{categoryToAdd}</Text>
                                 {` foi adicionada com sucesso!`}
                             </Text>
 

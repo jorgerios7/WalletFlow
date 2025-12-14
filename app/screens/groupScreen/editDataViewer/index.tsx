@@ -1,4 +1,4 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
@@ -13,7 +13,7 @@ export function EditDataViewer(
 
     if (!isVisible) return null;
 
-    const {theme, fontSizeType} = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const [label, setLabel] = useState("Nome");
     const [name, setName] = useState(currentName);
@@ -45,12 +45,12 @@ export function EditDataViewer(
 
     return (
         <Modal visible={isVisible} transparent>
-            <View style={[styles.overlay, { backgroundColor: Colors[theme.appearance].overlay, }]}>
-                <View style={[styles.content, { backgroundColor: Colors[theme.appearance].surface }]}>
+            <View style={[styles.overlay, { backgroundColor: Colors[preferences.theme.appearance].overlay, }]}>
+                <View style={[styles.content, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
                     <Text style={[styles.title, {
-                        color: Colors[theme.appearance].textPrimary,
-                        fontSize: Typography[fontSizeType].md.fontSize,
-                        lineHeight: Typography[fontSizeType].md.lineHeight
+                        color: Colors[preferences.theme.appearance].textPrimary,
+                        fontSize: Typography[preferences.fontSizeType].md.fontSize,
+                        lineHeight: Typography[preferences.fontSizeType].md.lineHeight
                     }
                     ]}
                     >

@@ -1,5 +1,5 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { MemberData } from "@/app/types/Group";
-import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -14,19 +14,19 @@ interface Props {
 
 export default function MembersViewer({ currentUserId, members, creationData, onSelect, onPressAddButton }: Props) {
 
-    const {theme, fontSizeType } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     return (
-        <View style={[styles.container, { backgroundColor: Colors[theme.appearance].surface, }]}>
+        <View style={[styles.container, { backgroundColor: Colors[preferences.theme.appearance].surface, }]}>
             <View>
                 <View style={styles.header}>
                     <Text style={[styles.title,
-                    { color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].md.fontSize }]}
+                    { color: Colors[preferences.theme.appearance].textPrimary, fontSize: Typography[preferences.fontSizeType].md.fontSize }]}
                     >
                         Membros
                     </Text>
                     <Pressable onPress={onPressAddButton}>
-                        <MaterialIcons name="add" size={24} color={Colors[theme.appearance].iconPrimary} />
+                        <MaterialIcons name="add" size={24} color={Colors[preferences.theme.appearance].iconPrimary} />
                     </Pressable>
                 </View>
 

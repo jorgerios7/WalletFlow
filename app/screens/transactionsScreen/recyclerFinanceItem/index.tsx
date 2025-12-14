@@ -1,7 +1,7 @@
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { LoadScreen } from '@/app/pages/LoadScreen';
 import NotFoundScreen from '@/app/pages/NotFoundScreen';
 import { Entries, Transactions, UpdateEntryValues } from '@/app/types/Finance';
-import { ThemeContext } from '@/components/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 import { Typography } from '@/constants/Typography';
 import React, { useContext } from 'react';
@@ -18,7 +18,7 @@ const FinanceItemRecycler: React.FC<Props> = ({
   entries_list, isLoading, onPressingInfo, onPressDelete, onPressingEditPayment
 }) => {
 
-  const {theme, fontSizeType} = useContext(ThemeContext)
+  const { preferences } = useContext(PreferencesContext);
 
   const groupByDate = (entries: Entries[]): { title: string; data: Entries[]; value: number }[] => {
     const grouped: { [key: string]: Entries[] } = {};
@@ -59,20 +59,20 @@ const FinanceItemRecycler: React.FC<Props> = ({
 
   function HeaderSection({ date, value }: { date: string, value: number }) {
     return (
-      <View style={[styles.headerContainer, { backgroundColor: Colors[theme.appearance].headerBackground }]}>
+      <View style={[styles.headerContainer, { backgroundColor: Colors[preferences.theme.appearance].headerBackground }]}>
         <Text style={[styles.textHeader, {
-          color: Colors[theme.appearance].textContrast, 
-          fontSize: Typography[fontSizeType].xs.fontSize,
-          lineHeight: Typography[fontSizeType].xs.lineHeight
+          color: Colors[preferences.theme.appearance].textContrast,
+          fontSize: Typography[preferences.fontSizeType].xs.fontSize,
+          lineHeight: Typography[preferences.fontSizeType].xs.lineHeight
         }]}
         >
           {date}
         </Text>
-        <Text style={[styles.textHeader, { 
-          color: Colors[theme.appearance].textContrast,
-          fontSize: Typography[fontSizeType].xs.fontSize,
-          lineHeight: Typography[fontSizeType].xs.lineHeight
-          }]}>
+        <Text style={[styles.textHeader, {
+          color: Colors[preferences.theme.appearance].textContrast,
+          fontSize: Typography[preferences.fontSizeType].xs.fontSize,
+          lineHeight: Typography[preferences.fontSizeType].xs.lineHeight
+        }]}>
           Total: R$ {value.toFixed(2)}
         </Text>
       </View>
@@ -82,13 +82,13 @@ const FinanceItemRecycler: React.FC<Props> = ({
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
-        <LoadScreen theme={theme.appearance} />
+        <LoadScreen />
       ) : sections.length === 0 ? (
-        <NotFoundScreen theme={theme.appearance} />
+        <NotFoundScreen />
       ) : (
         <SectionList
           stickySectionHeadersEnabled
-          style={{ backgroundColor: Colors[theme.appearance].background }}
+          style={{ backgroundColor: Colors[preferences.theme.appearance].background }}
           sections={sections}
           keyExtractor={(item) => item.entrieId}
           renderItem={({ item, index, section }) => {

@@ -1,8 +1,8 @@
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { Colors } from '@/constants/Colors';
 import { Link } from 'expo-router';
 import { useContext } from 'react';
 import { Pressable, StyleSheet, Text } from "react-native";
-import { ThemeContext } from '../ThemeProvider';
 
 interface Props {
     address?: string; text: string; adjustMargin?: number; adjustPaddingBottom?: number;
@@ -13,13 +13,13 @@ export default function TextButton({
     address, text, adjustPaddingBottom, adjustPadding, adjustMargin, textColor, onPress,
 }: Props) {
 
-    const { theme, fontSizeType } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
     
 
     const dynamicTextColor = {
         color: textColor
             ? textColor
-            : Colors[theme.appearance].textPrimary
+            : Colors[preferences.theme.appearance].textPrimary
     };
     const dynamicAdjust = {
         padding: adjustPadding

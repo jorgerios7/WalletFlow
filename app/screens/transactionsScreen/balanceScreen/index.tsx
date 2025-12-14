@@ -1,5 +1,5 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { BalanceValues } from "@/app/types/Finance";
-import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -9,8 +9,8 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 const format = (isLoading: boolean, value: number) => `R$ ${(isLoading ? 0 : value).toFixed(2)}`;
 
 export default function BalanceScreen({ isLoading, balanceValues }: { isLoading: boolean; balanceValues: BalanceValues }) {
-  const {theme, fontSizeType} = useContext(ThemeContext);
-  
+  const { preferences } = useContext(PreferencesContext);
+
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpand = () => setIsExpanded((prev) => !prev);
@@ -27,25 +27,25 @@ export default function BalanceScreen({ isLoading, balanceValues }: { isLoading:
 
   return (
     <View style={[styles.container,
-    { backgroundColor: Colors[theme.appearance].surface, borderTopColor: Colors[theme.appearance].border }
+    { backgroundColor: Colors[preferences.theme.appearance].surface, borderTopColor: Colors[preferences.theme.appearance].border }
     ]}
     >
       {/* Header */}
-      <Pressable style={[styles.containerContent, { backgroundColor: Colors[theme.appearance].surface }]} onPress={toggleExpand}>
+      <Pressable style={[styles.containerContent, { backgroundColor: Colors[preferences.theme.appearance].surface }]} onPress={toggleExpand}>
         <Text
           style={[styles.text, {
-            color: Colors[theme.appearance].textSecondary,
-             fontSize: Typography[fontSizeType].xs.fontSize,
-             lineHeight: Typography[fontSizeType].xs.lineHeight
+            color: Colors[preferences.theme.appearance].textSecondary,
+            fontSize: Typography[preferences.fontSizeType].xs.fontSize,
+            lineHeight: Typography[preferences.fontSizeType].xs.lineHeight
           }]}
         >
           Saldo final:
         </Text>
 
         <Text style={[styles.text, {
-          color: Colors[theme.appearance].textSecondary,
-          fontSize: Typography[fontSizeType].xs.fontSize,
-          lineHeight: Typography[fontSizeType].xs.lineHeight
+          color: Colors[preferences.theme.appearance].textSecondary,
+          fontSize: Typography[preferences.fontSizeType].xs.fontSize,
+          lineHeight: Typography[preferences.fontSizeType].xs.lineHeight
         }]}
         >
           {format(isLoading, balanceValues.totalConcludedSum)}
@@ -53,30 +53,30 @@ export default function BalanceScreen({ isLoading, balanceValues }: { isLoading:
       </Pressable>
 
       {/* Botão */}
-      <Pressable style={[styles.iconBtn, { backgroundColor: Colors[theme.appearance].surface }]} onPress={toggleExpand}>
-        <MaterialIcons name={isExpanded ? "expand-less" : "expand-more"} size={20} color={Colors[theme.appearance].iconPrimary} />
+      <Pressable style={[styles.iconBtn, { backgroundColor: Colors[preferences.theme.appearance].surface }]} onPress={toggleExpand}>
+        <MaterialIcons name={isExpanded ? "expand-less" : "expand-more"} size={20} color={Colors[preferences.theme.appearance].iconPrimary} />
       </Pressable>
 
       {/* Dropdown */}
       {isExpanded && (
-        <View style={[styles.dropdown, { backgroundColor: Colors[theme.appearance].surface }]}>
+        <View style={[styles.dropdown, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
           {rows.map((item, index) => (
-            <View key={index} style={[styles.item, { backgroundColor: Colors[theme.appearance].surface }]}>
+            <View key={index} style={[styles.item, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
               <Text
-                style={[styles.text, { 
-                  color: Colors[theme.appearance].textSecondary, 
-                  fontSize: Typography[fontSizeType].sm.fontSize, 
-                  lineHeight: Typography[fontSizeType].sm.lineHeight
+                style={[styles.text, {
+                  color: Colors[preferences.theme.appearance].textSecondary,
+                  fontSize: Typography[preferences.fontSizeType].sm.fontSize,
+                  lineHeight: Typography[preferences.fontSizeType].sm.lineHeight
                 }]}
               >
                 {item.label}
               </Text>
 
               <Text
-                style={[styles.text, { 
-                  color: Colors[theme.appearance].textSecondary,
-                  fontSize: Typography[fontSizeType].sm.fontSize,
-                  lineHeight: Typography[fontSizeType].sm.lineHeight
+                style={[styles.text, {
+                  color: Colors[preferences.theme.appearance].textSecondary,
+                  fontSize: Typography[preferences.fontSizeType].sm.fontSize,
+                  lineHeight: Typography[preferences.fontSizeType].sm.lineHeight
                 }]}
               >
                 {format(isLoading, item.value)}
@@ -85,11 +85,11 @@ export default function BalanceScreen({ isLoading, balanceValues }: { isLoading:
           ))}
 
           {/* Fecha ao clicar */}
-          <Pressable style={[styles.iconBtn, { backgroundColor: Colors[theme.appearance].surface }]} onPress={toggleExpand}>
+          <Pressable style={[styles.iconBtn, { backgroundColor: Colors[preferences.theme.appearance].surface }]} onPress={toggleExpand}>
             <MaterialIcons
               name="expand-less"
               size={20}
-              color={Colors[theme.appearance].iconPrimary}
+              color={Colors[preferences.theme.appearance].iconPrimary}
             />
           </Pressable>
         </View>

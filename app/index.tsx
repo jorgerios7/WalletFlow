@@ -1,5 +1,5 @@
-import { ThemeContext, ThemeProvider } from "@/components/ThemeProvider";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { PreferencesProvider } from "./context/PreferencesProvider";
 import TabNavigation from "./navigation/tabNavigation";
 import { LoadScreen } from "./pages/LoadScreen";
 import SplashScreen from "./pages/SplashScreen";
@@ -12,8 +12,6 @@ import { Group } from "./types/Group";
 import { User } from "./types/User";
 
 export default function AppMain() {
-  const { theme } = useContext(ThemeContext);
-
   const [auth, setAuth] = useState({
     isLoading: true,
     isAuthenticated: false,
@@ -75,37 +73,37 @@ export default function AppMain() {
   // Loading auth
   if (auth.isLoading)
     return (
-      <ThemeProvider>
+      <PreferencesProvider>
         <SplashScreen />
-      </ThemeProvider>
+      </PreferencesProvider>
     );
 
   // Not authenticated
   if (!auth.isAuthenticated) {
     return (
-      <ThemeProvider>
+      <PreferencesProvider>
         <UserAccessScreen
           isVisible
           onPress={(value) => setAuth((prev) => ({ ...prev, isAuthenticated: value }))}
           onUserId={(id) => setAuth((prev) => ({ ...prev, user_id: id }))}
         />
-      </ThemeProvider>
+      </PreferencesProvider>
     );
   }
 
   // Authenticated → loading user & group
   if (data.isLoading || isGrouped === null) {
     return (
-      <ThemeProvider>
-        <LoadScreen theme={theme.appearance} />
-      </ThemeProvider>
+      <PreferencesProvider>
+        <LoadScreen />
+      </PreferencesProvider>
     );
   }
 
   // Authenticated → no group yet
   if (!isGrouped) {
     return (
-      <ThemeProvider>
+      <PreferencesProvider>
         <GroupAccessSetup
           isVisible
           onPressingReturnButton={() =>
@@ -127,13 +125,13 @@ export default function AppMain() {
             }
           }}
         />
-      </ThemeProvider>
+      </PreferencesProvider>
     );
   }
 
   // Authenticated → grouped → main app
   return (
-    <ThemeProvider>
+    <PreferencesProvider>
       <TabNavigation
         isVisible
         onUpdating={(isUpdating) => isUpdating && loadUserAndGroup()}
@@ -141,6 +139,6 @@ export default function AppMain() {
         groupData={data.group as Group}
         onDismiss={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
       />
-    </ThemeProvider>
+    </PreferencesProvider>
   );
 }

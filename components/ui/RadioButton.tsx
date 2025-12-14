@@ -1,8 +1,8 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import React, { useContext, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { ThemeContext } from "../ThemeProvider";
 
 type Option = { label: string, value: string };
 
@@ -11,7 +11,7 @@ export default function RadioButton({
 }: {
     isHorizontal?: boolean, gap?: number, options: Option[], initialValue: string, onSelecting: (option: string) => void
 }) {
-    const { theme, fontSizeType } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
     const [selectedButton, setSelectedButton] = useState<string>(initialValue ? initialValue : "");
 
     function handleAction(value: string) {
@@ -27,12 +27,12 @@ export default function RadioButton({
                     style={styles.radioContainer}
                     onPress={() => handleAction(option.value)}
                 >
-                    <View style={[styles.radioCircle, { borderColor: Colors[theme.appearance].iconPrimary, }]}>
-                        {selectedButton === option.value && <View style={[styles.selectedDot, { backgroundColor: Colors[theme.appearance].iconPrimary }]} />}
+                    <View style={[styles.radioCircle, { borderColor: Colors[preferences.theme.appearance].iconPrimary, }]}>
+                        {selectedButton === option.value && <View style={[styles.selectedDot, { backgroundColor: Colors[preferences.theme.appearance].iconPrimary }]} />}
                     </View>
                     <Text style={{
-                        color: Colors[theme.appearance].textPrimary, fontSize: Typography[fontSizeType].md.fontSize,
-                        lineHeight: Typography[fontSizeType].md.lineHeight
+                        color: Colors[preferences.theme.appearance].textPrimary, fontSize: Typography[preferences.fontSizeType].md.fontSize,
+                        lineHeight: Typography[preferences.fontSizeType].md.lineHeight
                     }}
                     >
                         {option.label}

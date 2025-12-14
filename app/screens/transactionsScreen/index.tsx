@@ -1,9 +1,8 @@
 import DeleteEntry from '@/app/services/firebase/financeService/deleteEntry';
 import LoadTransactions from '@/app/services/firebase/financeService/loadTransactions';
 import { BalanceValues, Entries, MixedTransactionEntry, Transactions } from '@/app/types/Finance';
-import { ThemeContext } from '@/components/ThemeProvider';
 import ConfirmActionModal from '@/components/ui/confirmActionModal';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BalanceScreen from './balanceScreen';
@@ -15,7 +14,6 @@ import PaymentScreen from './transactionEditor/paymentScreen';
 
 const TransactionsScreen = ({ group_id }: { group_id: string }) => {
   const insets = useSafeAreaInsets();
-  const { theme, fontSizeType } = useContext(ThemeContext);
   const [date, setDate] = useState('');
   const [loadData, setLoadData] = useState(false);
   const [entriesList, setEntriesList] = useState<Entries[]>([]);

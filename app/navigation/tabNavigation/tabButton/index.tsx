@@ -1,4 +1,5 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -10,17 +11,17 @@ interface Props { onPress?: (event: GestureResponderEvent) => void; iconName: ke
 
 const TabButton: React.FC<Props> = ({ onPress, iconName, label }) => {
 
-    const {theme, fontSizeType} = useContext(ThemeContext);
+    const {preferences} = useContext(PreferencesContext);
 
     const isFocused = useIsFocused();
 
     const dynamicColor = isFocused
-        ? Colors[theme.appearance].iconInverse
-        : Colors[theme.appearance].iconPrimary;
+        ? Colors[preferences.theme.appearance].iconInverse
+        : Colors[preferences.theme.appearance].iconPrimary;
 
     const tabBackgroundColor = isFocused
-        ? Colors[theme.appearance].iconBackgroundPrimary
-        : Colors[theme.appearance].iconBackgroundSecondary;
+        ? Colors[preferences.theme.appearance].iconBackgroundPrimary
+        : Colors[preferences.theme.appearance].iconBackgroundSecondary;
 
     return (
         <Pressable
@@ -35,9 +36,9 @@ const TabButton: React.FC<Props> = ({ onPress, iconName, label }) => {
             />
             <Text style={[styles.label,
             {
-                color: Colors[theme.appearance].textPrimary,
-                fontSize: Typography[fontSizeType].xs.fontSize,
-                lineHeight: Typography[fontSizeType].xs.lineHeight
+                color: Colors[preferences.theme.appearance].textPrimary,
+                fontSize: Typography[preferences.fontSizeType].xs.fontSize,
+                lineHeight: Typography[preferences.fontSizeType].xs.lineHeight
             }]}
             >
                 {label}

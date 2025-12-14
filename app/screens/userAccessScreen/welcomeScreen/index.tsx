@@ -1,4 +1,4 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
@@ -14,16 +14,16 @@ interface Props {
 const WelcomeScreen: React.FC<Props> = ({ onPressingReturnToLoginButton, shouldRender = true, }) => {
     if (!shouldRender) return null;
 
-    const { theme, fontSizeType } = useContext(ThemeContext)
+    const { preferences } = useContext(PreferencesContext);
 
     const textStyle = {
-        color: Colors[theme.appearance].textPrimary,
-        fontSize: Typography[fontSizeType].md.fontSize,
-        lineHeight: Typography[fontSizeType].md.lineHeight
+        color: Colors[preferences.theme.appearance].textPrimary,
+        fontSize: Typography[preferences.fontSizeType].md.fontSize,
+        lineHeight: Typography[preferences.fontSizeType].md.lineHeight
     }
 
     return (
-        <View style={{ backgroundColor: Colors[theme.appearance].background }}>
+        <View style={{ backgroundColor: Colors[preferences.theme.appearance].background }}>
             <Text style={[styles.onSucessText, textStyle, { marginTop: 40 }]}>
                 Conta criada com sucesso!
             </Text>

@@ -1,4 +1,4 @@
-import { ThemeContext } from '@/components/ThemeProvider';
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import CustomButton from '@/components/ui/CustomButton';
 import DynamicLabelInput from '@/components/ui/DynamicLabelInput';
 import TextButton from '@/components/ui/TextButton';
@@ -18,19 +18,19 @@ const LoginScreen: React.FC<Props> = ({
 }) => {
     if (!shouldRender) return null;
 
-    const { theme } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     return (
-        <View style={{ gap: 10, width: '90%', backgroundColor: Colors[theme.appearance].background }}>
+        <View style={{ gap: 10, width: '90%', backgroundColor: Colors[preferences.theme.appearance].background }}>
             <DynamicLabelInput
                 label="Email"
-                colorLabel={Colors[theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].background}
                 onTextChange={(text) => onChange("Email", text)}
             />
             <DynamicLabelInput
                 label="Senha"
                 secureTextEntry
-                colorLabel={Colors[theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].background}
                 onTextChange={(text) => onChange("Password", text)}
             />
             <CustomButton

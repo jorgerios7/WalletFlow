@@ -1,4 +1,4 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { Feather } from "@expo/vector-icons";
@@ -10,23 +10,23 @@ interface Props {
 };
 
 export default function MenuModal({ isVisible, title, children, onDismiss }: Props) {
-    const {theme, fontSizeType} = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
-    if (!theme && !fontSizeType) return null;
+    if (!preferences.theme && !preferences.fontSizeType) return null;
 
     return (
         <Modal visible={isVisible} animationType="slide">
-            <View style={{ flex: 1, backgroundColor: Colors[theme.appearance].background }}>
-                <View style={{ width: '100%', height: 50, backgroundColor: Colors[theme.appearance].background, flexDirection: 'row' }}>
+            <View style={{ flex: 1, backgroundColor: Colors[preferences.theme.appearance].background }}>
+                <View style={{ width: '100%', height: 50, backgroundColor: Colors[preferences.theme.appearance].background, flexDirection: 'row' }}>
                     <Pressable style={{ position: "absolute", top: 10, left: 10 }} onPress={onDismiss}>
-                        <Feather name={'chevron-left'} size={28} color={Colors[theme.appearance].iconPrimary} />
+                        <Feather name={'chevron-left'} size={28} color={Colors[preferences.theme.appearance].iconPrimary} />
                     </Pressable>
                     <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                         <Text
                             style={{
-                                color: Colors[theme.appearance].textPrimary,
-                                fontSize: Typography[fontSizeType].xl.fontSize,
-                                lineHeight: Typography[fontSizeType].xl.lineHeight, fontWeight: 'bold'
+                                color: Colors[preferences.theme.appearance].textPrimary,
+                                fontSize: Typography[preferences.fontSizeType].xl.fontSize,
+                                lineHeight: Typography[preferences.fontSizeType].xl.lineHeight, fontWeight: 'bold'
                             }}
                         >
                             {title}

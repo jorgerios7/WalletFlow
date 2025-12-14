@@ -1,4 +1,4 @@
-import { ThemeContext } from '@/components/ThemeProvider';
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useContext, useEffect, useRef } from 'react';
@@ -22,7 +22,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     isFullHeight,
 }) => {
 
-    const {theme} = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const FULL_HEIGHT = 0;
     const PARTIAL_HEIGHT = SCREEN_HEIGHT * 0.5;
@@ -85,11 +85,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     const Header = () => {
         return (
             isDragHandleVisible ?
-                <Pressable style={[styles.dragHandle, { backgroundColor: Colors[theme.appearance].background, }]} />
+                <Pressable style={[styles.dragHandle, { backgroundColor: Colors[preferences.theme.appearance].background, }]} />
                 :
-                <View style={[styles.butonReturnHeader, { backgroundColor: Colors[theme.appearance].background, borderBottomColor: Colors[theme.appearance].border, }]}>
-                    <TouchableOpacity style={[styles.buttonReturn, { backgroundColor: Colors[theme.appearance].background, }]} onPress={() => animateTo(CLOSED, onClose)}>
-                        <MaterialIcons style={{ marginTop: '20%' }} activeOpacity={0.8} name={'arrow-back'} size={24} color={Colors[theme.appearance].iconPrimary} />
+                <View style={[styles.butonReturnHeader, { backgroundColor: Colors[preferences.theme.appearance].background, borderBottomColor: Colors[preferences.theme.appearance].border, }]}>
+                    <TouchableOpacity style={[styles.buttonReturn, { backgroundColor: Colors[preferences.theme.appearance].background, }]} onPress={() => animateTo(CLOSED, onClose)}>
+                        <MaterialIcons style={{ marginTop: '20%' }} activeOpacity={0.8} name={'arrow-back'} size={24} color={Colors[preferences.theme.appearance].iconPrimary} />
                     </TouchableOpacity>
                 </View>
         );
@@ -98,11 +98,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     return (
         <Modal visible={visible} transparent animationType="fade">
             <TouchableWithoutFeedback onPress={() => animateTo(CLOSED, onClose)}>
-                <View style={[styles.background, { backgroundColor: Colors[theme.appearance].overlay }]} />
+                <View style={[styles.background, { backgroundColor: Colors[preferences.theme.appearance].overlay }]} />
             </TouchableWithoutFeedback>
 
             <Animated.View {...panResponder.panHandlers}
-                style={[styles.sheetContainer, { backgroundColor: Colors[theme.appearance].background, transform: [{ translateY },] }]}
+                style={[styles.sheetContainer, { backgroundColor: Colors[preferences.theme.appearance].background, transform: [{ translateY },] }]}
             >
                 <Header />
 

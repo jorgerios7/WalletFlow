@@ -1,6 +1,6 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { TransactionType } from "@/app/types/Finance";
 import { DeleteCategory } from "@/app/utils/categoryManager";
-import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
@@ -13,10 +13,10 @@ interface Props {
     onSuccess: () => void; onDismiss: () => void;
 }
 
-export default function DeleteCategoryMenu({ isVisible,categoryToDelete, currentType, onSuccess, onDismiss }: Props) {
+export default function DeleteCategoryMenu({ isVisible, categoryToDelete, currentType, onSuccess, onDismiss }: Props) {
     if (!categoryToDelete) return;
 
-    const {theme, fontSizeType} =  useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const [success, setSeccess] = useState(false);
 
@@ -45,25 +45,25 @@ export default function DeleteCategoryMenu({ isVisible,categoryToDelete, current
     };
 
     const dynamicTextStyle = {
-        fontSize: Typography[fontSizeType].md.fontSize,
-        lineHeight: Typography[fontSizeType].md.lineHeight,
+        fontSize: Typography[preferences.fontSizeType].md.fontSize,
+        lineHeight: Typography[preferences.fontSizeType].md.lineHeight,
     };
 
     return (
         <Modal visible={isVisible} animationType="fade" transparent>
             <Pressable
-                style={{ flex: 1, padding: 10, backgroundColor: Colors[theme.appearance].overlay, justifyContent: 'center', alignItems: 'center' }}
+                style={{ flex: 1, padding: 10, backgroundColor: Colors[preferences.theme.appearance].overlay, justifyContent: 'center', alignItems: 'center' }}
                 onPress={onDismiss}
             >
                 <View style={{
                     justifyContent: 'center', alignItems: 'center', gap: 10, padding: 20,
-                    backgroundColor: Colors[theme.appearance].surface, borderRadius: 10
+                    backgroundColor: Colors[preferences.theme.appearance].surface, borderRadius: 10
                 }}>
                     {!success ? (
                         <>
-                            <Text style={{ ...dynamicTextStyle, color: Colors[theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
+                            <Text style={{ ...dynamicTextStyle, color: Colors[preferences.theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
                                 {`Você tem certeza que deseja excluir `}
-                                <Text style={{ fontWeight: "bold", color: Colors[theme.appearance].accent }}>{categoryToDelete}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors[preferences.theme.appearance].accent }}>{categoryToDelete}</Text>
                                 {` da lista de categorias de ${renderCurrentType()}?`}
                             </Text>
 
@@ -83,9 +83,9 @@ export default function DeleteCategoryMenu({ isVisible,categoryToDelete, current
                         </>
                     ) : (
                         <>
-                            <Text style={{...dynamicTextStyle,  color: Colors[theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
+                            <Text style={{ ...dynamicTextStyle, color: Colors[preferences.theme.appearance].textPrimary, marginBottom: 30, fontSize: 18, textAlign: 'center' }}>
                                 {`A categoria `}
-                                <Text style={{ fontWeight: "bold", color: Colors[theme.appearance].accent }}>{categoryToDelete}</Text>
+                                <Text style={{ fontWeight: "bold", color: Colors[preferences.theme.appearance].accent }}>{categoryToDelete}</Text>
                                 {` foi exluída com sucesso!`}
                             </Text>
 

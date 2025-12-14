@@ -1,4 +1,4 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { useContext, useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import { Animated, StyleSheet } from "react-native";
 interface Props { labelText: string, labelColor?: string, textInput: string | number, focused: boolean, onPress?: () => void };
 
 export default function LabelAnimated({labelText, labelColor, textInput, focused, onPress }: Props) {
-    const { theme, fontSizeType } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
     const labelPosition = useState(new Animated.Value(17))[0];
 
     useEffect(() => {
@@ -25,10 +25,10 @@ export default function LabelAnimated({labelText, labelColor, textInput, focused
         <Animated.Text
             onPress={onPress}
             style={[styles.label, { 
-                top: labelPosition, color: Colors[theme.appearance].textPrimary, 
-                backgroundColor: labelColor ? labelColor : Colors[theme.appearance].surface, 
-                fontSize: Typography[fontSizeType].xs.fontSize,
-                lineHeight: Typography[fontSizeType].xs.lineHeight
+                top: labelPosition, color: Colors[preferences.theme.appearance].textPrimary, 
+                backgroundColor: labelColor ? labelColor : Colors[preferences.theme.appearance].surface, 
+                fontSize: Typography[preferences.fontSizeType].xs.fontSize,
+                lineHeight: Typography[preferences.fontSizeType].xs.lineHeight
             }]}
         >
             {labelText}

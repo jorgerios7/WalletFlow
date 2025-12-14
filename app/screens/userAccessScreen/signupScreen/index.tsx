@@ -1,5 +1,5 @@
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { UserLogin } from '@/app/types/User';
-import { ThemeContext } from '@/components/ThemeProvider';
 import CustomButton from '@/components/ui/CustomButton';
 import DynamicLabelInput from '@/components/ui/DynamicLabelInput';
 import TextButton from '@/components/ui/TextButton';
@@ -9,14 +9,14 @@ import React, { useContext, useState } from 'react';
 import { View } from "react-native";
 
 interface Props {
-   values: UserLogin; onPressingReturnButton: () => void; shouldRender?: boolean;
+    values: UserLogin; onPressingReturnButton: () => void; shouldRender?: boolean;
     whenIsReady: (values: Partial<Props["values"]>) => void; erroMessage: (message: string) => void;
 }
 
 const SignupScreen: React.FC<Props> = ({ onPressingReturnButton, shouldRender = true, whenIsReady, erroMessage }) => {
     if (!shouldRender) return null;
 
-    const {theme, fontSizeType} = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const [inputValue, setInputValue] = useState({
         firstName: "", surname: "", email: "", birthDate: "", password: "", passwordRepeat: "",
@@ -44,38 +44,38 @@ const SignupScreen: React.FC<Props> = ({ onPressingReturnButton, shouldRender = 
     }
 
     return (
-        <View style={{ gap: 10, width: '90%', backgroundColor: Colors[theme.appearance].background }}>
+        <View style={{ gap: 10, width: '90%', backgroundColor: Colors[preferences.theme.appearance].background }}>
             <DynamicLabelInput
                 label="Primeiro nome"
-                colorLabel={Colors[theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, FirstName: text }))}
             />
             <DynamicLabelInput
                 label="Sobrenome"
-                colorLabel={Colors[theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, Surname: text }))}
             />
             <DynamicLabelInput
                 label="E-mail"
-                colorLabel={Colors[theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, Email: text }))}
             />
             <DynamicLabelInput
                 dateEntry
                 label="Data de Nascimento"
-                colorLabel={Colors[theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, BirthDate: text }))}
             />
             <DynamicLabelInput
                 label="Senha"
                 secureTextEntry
-                colorLabel={Colors[theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, Password: text }))}
             />
             <DynamicLabelInput
                 label="Repetir senha"
                 secureTextEntry
-                colorLabel={Colors[theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].background}
                 onTextChange={(text) => setInputValue(prev => ({ ...prev, PasswordRepeat: text }))}
             />
 

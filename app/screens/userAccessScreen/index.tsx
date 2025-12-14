@@ -1,5 +1,5 @@
 import { auth, db } from "@/app/config/firebaseConfig";
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import ValidateEmptyFields from "@/components/ValidateEmptyFields";
 import { Colors } from "@/constants/Colors";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
@@ -21,7 +21,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
 
     const insets = useSafeAreaInsets();
 
-    const { theme } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const [loginInputValue, setLoginInputValue] = useState({ Email: "", Password: "" });
 
@@ -105,7 +105,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
 
     return (
         <View style={{
-            flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors[theme.appearance].background,
+            flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors[preferences.theme.appearance].background,
             marginTop: insets.top,
         }}>
             <LoginScreen
@@ -138,10 +138,10 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
             <Snackbar
                 visible={snackbarVisible}
                 onDismiss={() => setSnackbarVisible(false)}
-                style={{ backgroundColor: Colors[theme.appearance].surfaceVariant }}
+                style={{ backgroundColor: Colors[preferences.theme.appearance].surfaceVariant }}
                 action={{
                     label: "Fechar",
-                    textColor: Colors[theme.appearance].textSecondary,
+                    textColor: Colors[preferences.theme.appearance].textSecondary,
                     onPress: () => setSnackbarVisible(false),
                 }}>
                 {msg}

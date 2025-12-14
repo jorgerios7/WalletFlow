@@ -1,5 +1,5 @@
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { PersonalDataChange, User } from '@/app/types/User';
-import { ThemeContext } from '@/components/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 import { useContext, useState } from 'react';
 import { ScrollView, useWindowDimensions, View } from 'react-native';
@@ -12,13 +12,13 @@ interface Props { userData: User, onUpdating: () => void, onDismiss: () => void 
 
 export default function ProfileScreen({ userData, onUpdating, onDismiss }: Props) {
     const insets = useSafeAreaInsets();
-    const { theme } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
     const { width, height } = useWindowDimensions();
     const [collapseMenu, setCollapseMenu] = useState(false);
     const [editPersonalData, setEditPersonalData] = useState({ isVisible: false, field: "none" as PersonalDataChange });
 
     return (
-        <View style={{ flex: 1, padding: 10, backgroundColor: Colors[theme.appearance].background, marginBottom: insets.bottom - 48 }}>
+        <View style={{ flex: 1, padding: 10, backgroundColor: Colors[preferences.theme.appearance].background, marginBottom: insets.bottom - 48 }}>
             <View style={{ height: 100, width: width }} />
 
             <ProfileMenu

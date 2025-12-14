@@ -1,4 +1,4 @@
-import { ThemeContext } from "@/components/ThemeProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import React, { useContext, useState } from "react";
@@ -14,7 +14,7 @@ interface Props {
 export default function DropdownSelect({ isVisible, setSelection, list, placeholder, onOpeningDropdown, onSelect }: Props) {
   if (!isVisible) return null;
 
-  const { theme, fontSizeType } = useContext(ThemeContext);
+  const { preferences } = useContext(PreferencesContext);
 
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selected, setSelected] = useState<string | number>(setSelection);
@@ -30,15 +30,15 @@ export default function DropdownSelect({ isVisible, setSelection, list, placehol
 
       <Pressable
         focusable
-        style={[styles.dropdownButton, { borderColor: Colors[theme.appearance].iconPrimary }]}
+        style={[styles.dropdownButton, { borderColor: Colors[preferences.theme.appearance].iconPrimary }]}
         onPress={() => setIsDropdownVisible((prev) => !prev)}
         onBlur={() => setIsDropdownVisible(false)}
         onFocus={() => setIsDropdownVisible(false)}
       >
         <Text style={[styles.dropdownButtonText, {
-          color: Colors[theme.appearance].textPrimary, 
-          fontSize: Typography[fontSizeType].md.fontSize,
-          lineHeight: Typography[fontSizeType].md.lineHeight
+          color: Colors[preferences.theme.appearance].textPrimary, 
+          fontSize: Typography[preferences.fontSizeType].md.fontSize,
+          lineHeight: Typography[preferences.fontSizeType].md.lineHeight
         }]}
         >
           {selected}

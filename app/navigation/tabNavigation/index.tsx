@@ -9,13 +9,13 @@ import { TransactionType } from '@/app/types/Finance';
 import { User } from '@/app/types/User';
 import { Colors } from '@/constants/Colors';
 
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import AnalyticsScreen from '@/app/screens/AnalyticsScreen';
 import GroupScreen from '@/app/screens/groupScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
 import TransactionsScreen from '@/app/screens/transactionsScreen';
 import CreateTransactionScreen from '@/app/screens/transactionsScreen/transactionEditor/createTransactionScreen';
 import { Group } from '@/app/types/Group';
-import { ThemeContext } from '@/components/ThemeProvider';
 import FloatingActionMenu from './floatingActionMenu';
 import TabButton from './tabButton';
 
@@ -32,7 +32,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
-  const { theme } = useContext(ThemeContext);
+  const { preferences } = useContext(PreferencesContext);
 
   const insets = useSafeAreaInsets();
 
@@ -77,7 +77,9 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
           headerShown: false,
           tabBarShowLabel: false,
           tabBarItemStyle: styles.item,
-          tabBarStyle: [styles.tabBar, { backgroundColor: Colors[theme.appearance].surface, shadowColor: Colors[theme.appearance].shadow }]
+          tabBarStyle: [styles.tabBar, { 
+            backgroundColor: Colors[preferences.theme.appearance].surface, shadowColor: Colors[preferences.theme.appearance].shadow 
+          }]
         }}
       >
         <Tab.Screen

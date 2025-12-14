@@ -1,8 +1,6 @@
-import { ThemeContext } from "@/components/ThemeProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
 import TransitionView from "@/components/ui/TransitionView";
-import { useContext } from "react";
 import { StyleSheet } from "react-native";
 
 export default function StepScreen({
@@ -12,8 +10,6 @@ export default function StepScreen({
   buttonTextConfirm?: string, onBack?: () => void; onCancel?: () => void;
 }) {
   if (!isVisible) return null;
-
-  const { theme, fontSizeType } = useContext(ThemeContext);
 
   const confirmText = buttonTextConfirm || "Confirmar";
 

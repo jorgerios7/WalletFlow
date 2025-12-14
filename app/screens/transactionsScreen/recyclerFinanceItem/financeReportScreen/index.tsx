@@ -1,5 +1,5 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { MixedTransactionEntry } from "@/app/types/Finance";
-import { ThemeContext } from "@/components/ThemeProvider";
 import { BottomSheet } from "@/components/ui/sheet/BottomSheet";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
@@ -9,20 +9,20 @@ import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 const FinanceReportScreen = ({ data, isVisible, onClose }: { data: MixedTransactionEntry, isVisible: boolean, onClose: () => void }) => {
     if (!data) return null;
 
-    const { theme, fontSizeType } = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     function Row({ label, value }: { label: string, value?: string | number }) {
         if (value === undefined || value === null || value === '') return null;
 
         const dynamicTextStyle = {
-            fontSize: Typography[fontSizeType].md.fontSize,
-            lineHeight: Typography[fontSizeType].md.lineHeight
+            fontSize: Typography[preferences.fontSizeType].md.fontSize,
+            lineHeight: Typography[preferences.fontSizeType].md.lineHeight
         };
 
         return (
             <View style={styles.row}>
-                <Text style={[styles.label, dynamicTextStyle, { color: Colors[theme.appearance].textSecondary }]}>{label}</Text>
-                <Text style={[styles.value, dynamicTextStyle, { color: Colors[theme.appearance].textSecondary }]}>{String(value)}</Text>
+                <Text style={[styles.label, dynamicTextStyle, { color: Colors[preferences.theme.appearance].textSecondary }]}>{label}</Text>
+                <Text style={[styles.value, dynamicTextStyle, { color: Colors[preferences.theme.appearance].textSecondary }]}>{String(value)}</Text>
             </View>
         );
     }
@@ -35,13 +35,13 @@ const FinanceReportScreen = ({ data, isVisible, onClose }: { data: MixedTransact
                 isDragHandleVisible={false}
                 onClose={onClose}
             >
-                <View style={[styles.header, { backgroundColor: Colors[theme.appearance].background }]}>
-                    <Text style={[styles.title, { color: Colors[theme.appearance].textPrimary }]}>Relatório Financeiro</Text>
-                    <Text style={[styles.subtitle, { color: Colors[theme.appearance].textSecondary }]}>Emitido em: {new Date().toLocaleDateString()}</Text>
+                <View style={[styles.header, { backgroundColor: Colors[preferences.theme.appearance].background }]}>
+                    <Text style={[styles.title, { color: Colors[preferences.theme.appearance].textPrimary }]}>Relatório Financeiro</Text>
+                    <Text style={[styles.subtitle, { color: Colors[preferences.theme.appearance].textSecondary }]}>Emitido em: {new Date().toLocaleDateString()}</Text>
                 </View>
 
-                <View style={[styles.section, { backgroundColor: Colors[theme.appearance].background }]}>
-                    <Text style={[styles.sectionTitle, { color: Colors[theme.appearance].textPrimary }]}>Detalhes da Transação</Text>
+                <View style={[styles.section, { backgroundColor: Colors[preferences.theme.appearance].background }]}>
+                    <Text style={[styles.sectionTitle, { color: Colors[preferences.theme.appearance].textPrimary }]}>Detalhes da Transação</Text>
 
                     <Row label={"Id da transação:"} value={data.transactionId} />
 

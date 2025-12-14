@@ -1,5 +1,5 @@
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { TransactionType } from '@/app/types/Finance';
-import { ThemeContext } from '@/components/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 import React, { useContext, useState } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
@@ -8,8 +8,7 @@ import FabButton from './fabButton';
 import MenuActionButton from './menuActionButton';
 
 const FloatingActionMenu: React.FC<{ onPress: (value: TransactionType) => void }> = ({ onPress }) => {
-
-  const { theme } = useContext(ThemeContext);
+  const { preferences } = useContext(PreferencesContext);
   const insets = useSafeAreaInsets();
   const [expanded, setExpanded] = useState(false);
 
@@ -18,7 +17,7 @@ const FloatingActionMenu: React.FC<{ onPress: (value: TransactionType) => void }
   return (
     <>
       <Modal visible={expanded} animationType="fade" transparent>
-        <Pressable style={[styles.overlay, { backgroundColor: Colors[theme.appearance].overlay, }]} onPress={() => toggleExpanded()}>
+        <Pressable style={[styles.overlay, { backgroundColor: Colors[preferences.theme.appearance].overlay, }]} onPress={() => toggleExpanded()}>
 
           <View style={styles.menuActionButtonContainer}>
             <MenuActionButton

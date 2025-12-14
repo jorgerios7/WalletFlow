@@ -1,5 +1,5 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { PersonalDataChange } from "@/app/types/User";
-import { ThemeContext } from "@/components/ThemeProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -14,8 +14,7 @@ interface Props {
 }
 
 export default function ProfileMenu({ screen, user, collapse, onSelect }: Props) {
-
-    const {theme, fontSizeType} = useContext(ThemeContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const AnimatedPressableButton = Animated.createAnimatedComponent(Pressable);
 
@@ -38,7 +37,7 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
     return (
         <Animated.View
             style={[styles.menuContainerDefault, {
-                backgroundColor: Colors[theme.appearance].accent,
+                backgroundColor: Colors[preferences.theme.appearance].accent,
                 width: size.menuWidthAnim, height: size.menuHeightAnim, top: position.topMenuAnim,
                 left: position.leftMenuAnim, borderRadius: menuBorderRadiusAnim
             }]}
@@ -47,18 +46,18 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                 onPress={closeMenu}
                 style={{ opacity: opacityAnim, backgroundColor: 'transparent', alignSelf: 'flex-end', padding: 20, borderRadius: 20 }}
             >
-                <MaterialIcons name={'close'} size={28} color={Colors[theme.appearance].iconContrast} />
+                <MaterialIcons name={'close'} size={28} color={Colors[preferences.theme.appearance].iconContrast} />
             </AnimatedPressableButton>
 
             <AnimatedPressableButton
                 onPress={openMenu}
                 style={[styles.buttonDefault, {
-                    borderColor: Colors[theme.appearance].borderInverse, top: position.topButtonAnim, left: position.leftButtonAnim,
+                    borderColor: Colors[preferences.theme.appearance].borderInverse, top: position.topButtonAnim, left: position.leftButtonAnim,
                     width: size.buttonWidthAnim, height: size.buttonHeightAnim,
                 }]}
             >
                 <Animated.View style={[styles.image, { transform: [{ scale: imageScaleAnim }] }]}>
-                    <MaterialIcons name={'person'} size={100} color={Colors[theme.appearance].iconContrast} />
+                    <MaterialIcons name={'person'} size={100} color={Colors[preferences.theme.appearance].iconContrast} />
                 </Animated.View>
             </AnimatedPressableButton>
 
@@ -70,9 +69,9 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                     {!isExpanded && (
                         <Text
                             style={[styles.title, {
-                                color: Colors[theme.appearance].textContrast,
-                                fontSize: Typography[fontSizeType].lg.fontSize,
-                                lineHeight: Typography[fontSizeType].lg.lineHeight
+                                color: Colors[preferences.theme.appearance].textContrast,
+                                fontSize: Typography[preferences.fontSizeType].lg.fontSize,
+                                lineHeight: Typography[preferences.fontSizeType].lg.lineHeight
                             }]}
                         >
                             Olá,
@@ -80,9 +79,9 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                     )}
                     <Text
                         style={[styles.title, {
-                            color: Colors[theme.appearance].textContrast,
-                            fontSize: Typography[fontSizeType].lg.fontSize,
-                            lineHeight: Typography[fontSizeType].lg.lineHeight
+                            color: Colors[preferences.theme.appearance].textContrast,
+                            fontSize: Typography[preferences.fontSizeType].lg.fontSize,
+                            lineHeight: Typography[preferences.fontSizeType].lg.lineHeight
                         }]}
                     >
                         {user.name}
@@ -92,9 +91,9 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                 {isExpanded && (
                     <Animated.Text
                         style={[styles.subtitle, {
-                            opacity: opacityAnim, color: Colors[theme.appearance].textContrast,
-                            fontSize: Typography[fontSizeType].xs.fontSize,
-                            lineHeight: Typography[fontSizeType].xs.lineHeight
+                            opacity: opacityAnim, color: Colors[preferences.theme.appearance].textContrast,
+                            fontSize: Typography[preferences.fontSizeType].xs.fontSize,
+                            lineHeight: Typography[preferences.fontSizeType].xs.lineHeight
                         }]}
                     >
                         {user.email}
