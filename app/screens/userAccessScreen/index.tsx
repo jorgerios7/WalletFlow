@@ -106,7 +106,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
     return (
         <View style={{
             flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors[preferences.theme.appearance].background,
-            marginTop: insets.top,
+            marginTop: insets.top, marginBottom: insets.bottom,
         }}>
             <LoginScreen
                 shouldRender={!isSignup}

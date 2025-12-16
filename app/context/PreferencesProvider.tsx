@@ -1,35 +1,58 @@
 import { STORAGE_KEYS } from "@/app/storage/keys";
 import {
-    DEFAULT_PREFERENCES, FontSizeType,
-    ScreenActivationTimeState, ScreensType, ThemeState
+    DEFAULT_PREFERENCES,
+    FontSizeType,
+    ScreenActivationTimeState,
+    ScreensType,
+    ThemeState,
 } from "@/app/types/preferences";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
+import { useColorScheme } from "react-native";
 
 interface Props {
     preferences: {
-        theme: ThemeState, fontSizeType: FontSizeType, initScreen: ScreensType, screenActivationTime: ScreenActivationTimeState
-    },
-    setTheme: (theme: ThemeState) => void, setFontSizeType: (fontSize: FontSizeType) => void,
-    setInitScreen: (initScreen: ScreensType) => void, setScreenActivationTime: (screenState: ScreenActivationTimeState) => void
-};
+        theme: ThemeState;
+        fontSizeType: FontSizeType;
+        initScreen: ScreensType;
+        screenActivationTime: ScreenActivationTimeState;
+    };
+    setFontSizeType: (fontSize: FontSizeType) => void;
+    setInitScreen: (initScreen: ScreensType) => void;
+    setScreenActivationTime: (screenState: ScreenActivationTimeState) => void;
+}
 
 export const PreferencesContext = createContext<Props>({
     preferences: {
-        theme: { source: "system", appearance: "light" }, fontSizeType: "medium", initScreen: "analysis", screenActivationTime: "automatic"
+        theme: { source: "system", appearance: "light" },
+        fontSizeType: "medium",
+        initScreen: "analysis",
+        screenActivationTime: "automatic",
     },
-    setTheme: () => { }, setFontSizeType: () => { }, setInitScreen: () => { }, setScreenActivationTime: () => { }
+    setFontSizeType: () => {},
+    setInitScreen: () => {},
+    setScreenActivationTime: () => {},
 });
 
 export function PreferencesProvider({ children }: { children: React.ReactNode }) {
-    const [preferences, setPreferencesState] = useState(DEFAULT_PREFERENCES);
+    const systemTheme = useColorScheme();
+
+    const [preferences, setPreferencesState] = useState({
+        fontSizeType: DEFAULT_PREFERENCES.fontSizeType,
+        initScreen: DEFAULT_PREFERENCES.initScreen,
+        screenActivationTime: DEFAULT_PREFERENCES.screenActivationTime,
+    });
+
     const [loading, setLoading] = useState(true);
 
-    const setTheme = async (newTheme: ThemeState) => {
-        await AsyncStorage.setItem(STORAGE_KEYS.THEME, newTheme.source + "|" + newTheme.appearance);
-        setPreferencesState((prev) => ({ ...prev, theme: newTheme }));
-    };
+    const theme: ThemeState = useMemo(
+        () => ({
+            source: "system",
+            appearance: systemTheme === "dark" ? "dark" : "light",
+        }),
+        [systemTheme]
+    );
 
     const setFontSizeType = async (newFontSize: FontSizeType) => {
         await AsyncStorage.setItem(STORAGE_KEYS.FONT_SIZE, newFontSize);
@@ -41,34 +64,33 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
         setPreferencesState((prev) => ({ ...prev, initScreen: newInitScreen }));
     };
 
-    const setScreenActivationTime = async (newScreenActivationTime: ScreenActivationTimeState) => {
-        await AsyncStorage.setItem(STORAGE_KEYS.SCREEN_ACTIVATION_TIME, newScreenActivationTime);
-        setPreferencesState((prev) => ({ ...prev, screenActivationTime: newScreenActivationTime }));
+    const setScreenActivationTime = async (
+        newScreenActivationTime: ScreenActivationTimeState
+    ) => {
+        await AsyncStorage.setItem(
+            STORAGE_KEYS.SCREEN_ACTIVATION_TIME,
+            newScreenActivationTime
+        );
+        setPreferencesState((prev) => ({
+            ...prev,
+            screenActivationTime: newScreenActivationTime,
+        }));
     };
 
     useEffect(() => {
         async function loadPreferences() {
             const entries = await AsyncStorage.multiGet([
-                STORAGE_KEYS.THEME,
                 STORAGE_KEYS.FONT_SIZE,
                 STORAGE_KEYS.INIT_SCREEN,
                 STORAGE_KEYS.SCREEN_ACTIVATION_TIME,
             ]);
 
-            const next = { ...DEFAULT_PREFERENCES };
+            const next = { ...preferences };
 
             for (const [key, value] of entries) {
                 if (!value) continue;
 
                 switch (key) {
-                    case STORAGE_KEYS.THEME: {
-                        const [source, appearance] = value.split("|");
-                        next.theme = {
-                            source: source as ThemeState["source"],
-                            appearance: appearance as ThemeState["appearance"],
-                        };
-                        break;
-                    }
                     case STORAGE_KEYS.FONT_SIZE:
                         next.fontSizeType = value as FontSizeType;
                         break;
@@ -78,7 +100,8 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
                         break;
 
                     case STORAGE_KEYS.SCREEN_ACTIVATION_TIME:
-                        next.screenActivationTime = value as ScreenActivationTimeState;
+                        next.screenActivationTime =
+                            value as ScreenActivationTimeState;
                         break;
                 }
             }
@@ -88,12 +111,23 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
         }
 
         loadPreferences();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (loading) return null;
 
     return (
-        <PreferencesContext.Provider value={{ preferences, setTheme, setFontSizeType, setInitScreen, setScreenActivationTime }}>
+        <PreferencesContext.Provider
+            value={{
+                preferences: {
+                    ...preferences,
+                    theme,
+                },
+                setFontSizeType,
+                setInitScreen,
+                setScreenActivationTime,
+            }}
+        >
             {children}
         </PreferencesContext.Provider>
     );

@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { getAuth } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TransactionType } from '@/app/types/Finance';
@@ -10,6 +10,7 @@ import { User } from '@/app/types/User';
 import { Colors } from '@/constants/Colors';
 
 import { PreferencesContext } from '@/app/context/PreferencesProvider';
+import DynamicBackground from '@/app/layout/dynamicBackground';
 import AnalyticsScreen from '@/app/screens/AnalyticsScreen';
 import GroupScreen from '@/app/screens/groupScreen';
 import ProfileScreen from '@/app/screens/profileScreen';
@@ -19,15 +20,15 @@ import { Group } from '@/app/types/Group';
 import FloatingActionMenu from './floatingActionMenu';
 import TabButton from './tabButton';
 
-const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
 interface Props {
   isVisible: boolean, userData: User, groupData: Group, onUpdating: (isUpdating: boolean) => void, onDismiss: () => void
-}
+};
 
 const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpdating, onDismiss }) => {
   if (!isVisible) return null;
+
+  const Tab = createBottomTabNavigator();
+  const Stack = createNativeStackNavigator();
 
   const auth = getAuth();
   const currentUser = auth.currentUser;
@@ -37,7 +38,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
   const insets = useSafeAreaInsets();
 
   const [showCreateTransaction, setShowCreateTransaction] = useState(false);
-  const [transactionType, setTransactionType] = useState<TransactionType>('income');
+  const [transactionType, setTransactionType] = useState<TransactionType>("none");
 
   const ProfileWrapper = () => (
     <ProfileScreen
@@ -62,8 +63,7 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
   const TransactionsWrapper = () => (<TransactionsScreen group_id={userData.groupId} />);
 
   const Tabs = ({ navigation }: any) => (
-    <View style={[styles.container, { marginTop: insets.top, marginBottom: insets.bottom }]}>
-
+    <DynamicBackground styles={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <CreateTransactionScreen
         isVisible={showCreateTransaction}
         type={transactionType}
@@ -72,37 +72,37 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
       />
 
       <Tab.Navigator
-        initialRouteName="Analytic"
+        initialRouteName={preferences.initScreen}
         screenOptions={{
           headerShown: false,
           tabBarShowLabel: false,
           tabBarItemStyle: styles.item,
-          tabBarStyle: [styles.tabBar, { 
-            backgroundColor: Colors[preferences.theme.appearance].surface, shadowColor: Colors[preferences.theme.appearance].shadow 
+          tabBarStyle: [styles.tabBar, {
+            backgroundColor: Colors[preferences.theme.appearance].surface, shadowColor: Colors[preferences.theme.appearance].shadow
           }]
         }}
       >
         <Tab.Screen
-          name="Analytic"
+          name="analysis"
           component={AnalyticsScreen}
           initialParams={{ user: userData }}
           options={{
             tabBarButton: (props) =>
-              <TabButton {...props}iconName="bar-chart" label="Análise" />
+              <TabButton {...props} iconName="home" />
           }}
         />
 
         <Tab.Screen
-          name="Transactions"
+          name="transactions"
           component={TransactionsWrapper}
           options={{
             tabBarButton: (props) =>
-              <TabButton {...props} iconName="list-alt" label="Transações" />
+              <TabButton {...props} iconName="receipt-long" />
           }}
         />
 
         <Tab.Screen
-          name={"CreateTransaction"}
+          name={"createTransaction"}
           options={{
             tabBarButton: () => (
               <FloatingActionMenu
@@ -118,35 +118,35 @@ const TabNavigation: React.FC<Props> = ({ isVisible, userData, groupData, onUpda
         </Tab.Screen>
 
         <Tab.Screen
-          name={'Group'}
+          name={'group'}
           component={GroupWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName='group' label='Grupo' />
+            tabBarButton: (props) => <TabButton {...props} iconName='group' />
           }}
         />
 
         <Tab.Screen
-          name={'Profile'}
+          name={'profile'}
           component={ProfileWrapper}
           options={{
-            tabBarButton: (props) => <TabButton {...props} iconName='verified-user' label='Perfil' />
+            tabBarButton: (props) => <TabButton {...props} iconName='verified-user' />
           }}
         />
 
       </Tab.Navigator>
-    </View >
+    </DynamicBackground >
   );
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
-      <Stack.Screen name="Tabs" component={Tabs} />
+      <Stack.Screen name="tabs" component={Tabs} />
     </Stack.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 }, tabBar: { height: 70, elevation: 0.5, borderTopWidth: 0.5 },
-  item: { justifyContent: "center", alignItems: "center", height: 70, backgroundColor: "transparent" }
+  tabBar: { height: 60, elevation: 0.5, borderTopWidth: 0.5 },
+  item: { justifyContent: "center", alignItems: "center", height: 60, backgroundColor: "transparent" }
 });
 
 export default TabNavigation;

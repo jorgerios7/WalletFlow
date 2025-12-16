@@ -1,17 +1,16 @@
 
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
-import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { useContext } from "react";
-import { GestureResponderEvent, Pressable, StyleSheet, Text } from "react-native";
+import { GestureResponderEvent, Pressable, StyleSheet } from "react-native";
 
 interface Props { onPress?: (event: GestureResponderEvent) => void; iconName: keyof typeof MaterialIcons.glyphMap; label?: string };
 
 const TabButton: React.FC<Props> = ({ onPress, iconName, label }) => {
 
-    const {preferences} = useContext(PreferencesContext);
+    const { preferences } = useContext(PreferencesContext);
 
     const isFocused = useIsFocused();
 
@@ -34,15 +33,6 @@ const TabButton: React.FC<Props> = ({ onPress, iconName, label }) => {
                 size={24}
                 color={dynamicColor}
             />
-            <Text style={[styles.label,
-            {
-                color: Colors[preferences.theme.appearance].textPrimary,
-                fontSize: Typography[preferences.fontSizeType].xs.fontSize,
-                lineHeight: Typography[preferences.fontSizeType].xs.lineHeight
-            }]}
-            >
-                {label}
-            </Text>
         </Pressable>
     );
 };

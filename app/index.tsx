@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { PreferencesProvider } from "./context/PreferencesProvider";
+import { ScreenKeepAwakeController } from "./controllers/screenKeepAwakeController";
+import DynamicBackground from "./layout/dynamicBackground";
 import TabNavigation from "./navigation/tabNavigation";
 import { LoadScreen } from "./pages/LoadScreen";
 import SplashScreen from "./pages/SplashScreen";
@@ -27,7 +29,6 @@ export default function AppMain() {
   const [isGrouped, setIsGrouped] = useState<boolean | null>(null);
   const [showError, setShowError] = useState({ snackbarVisible: false, message: "" });
 
-  // 1. Check login
   useEffect(() => {
     const checkLogin = async () => {
       await new Promise((r) => setTimeout(r, 1000));
@@ -37,7 +38,6 @@ export default function AppMain() {
     checkLogin();
   }, []);
 
-  // 2. Load user + group
   const loadUserAndGroup = async () => {
     if (!auth.user_id) return;
 
@@ -68,77 +68,80 @@ export default function AppMain() {
     if (auth.isAuthenticated) loadUserAndGroup();
   }, [auth.isAuthenticated]);
 
-  // 3. UI Routing: ONLY ONE SCREEN AT A TIME
-
-  // Loading auth
-  if (auth.isLoading)
+  if (auth.isLoading) {
     return (
-      <PreferencesProvider>
-        <SplashScreen />
-      </PreferencesProvider>
+      <DynamicBackground>
+        <PreferencesProvider>
+          <SplashScreen />
+        </PreferencesProvider>
+      </DynamicBackground>
     );
+  }
 
-  // Not authenticated
   if (!auth.isAuthenticated) {
     return (
       <PreferencesProvider>
-        <UserAccessScreen
-          isVisible
-          onPress={(value) => setAuth((prev) => ({ ...prev, isAuthenticated: value }))}
-          onUserId={(id) => setAuth((prev) => ({ ...prev, user_id: id }))}
-        />
+        <DynamicBackground>
+          <UserAccessScreen
+            isVisible
+            onPress={(value) => setAuth((prev) => ({ ...prev, isAuthenticated: value }))}
+            onUserId={(id) => setAuth((prev) => ({ ...prev, user_id: id }))}
+          />
+        </DynamicBackground>
       </PreferencesProvider>
     );
   }
 
-  // Authenticated → loading user & group
   if (data.isLoading || isGrouped === null) {
     return (
       <PreferencesProvider>
-        <LoadScreen />
+        <DynamicBackground>
+          <LoadScreen />
+        </DynamicBackground>
       </PreferencesProvider>
     );
   }
 
-  // Authenticated → no group yet
   if (!isGrouped) {
     return (
       <PreferencesProvider>
-        <GroupAccessSetup
-          isVisible
-          onPressingReturnButton={() =>
-            setAuth((prev) => ({ ...prev, isAuthenticated: false }))
-          }
-          onReady={({ action, values }) => {
-            if (data.user) {
-              CreateGroup(
-                action,
-                values,
-                {
-                  id: auth.user_id,
-                  name: data.user.identification.name,
-                  surname: data.user.identification.surname
-                },
-                () => loadUserAndGroup(),
-                (visible, message) => setShowError({ snackbarVisible: visible, message })
-              );
+        <DynamicBackground>
+          <GroupAccessSetup
+            isVisible
+            onPressingReturnButton={() =>
+              setAuth((prev) => ({ ...prev, isAuthenticated: false }))
             }
-          }}
-        />
+            onReady={({ action, values }) => {
+              if (data.user) {
+                CreateGroup(
+                  action,
+                  values,
+                  {
+                    id: auth.user_id,
+                    name: data.user.identification.name,
+                    surname: data.user.identification.surname
+                  },
+                  () => loadUserAndGroup(),
+                  (visible, message) => setShowError({ snackbarVisible: visible, message })
+                );
+              }
+            }}
+          />
+        </DynamicBackground>
       </PreferencesProvider>
     );
   }
 
-  // Authenticated → grouped → main app
   return (
     <PreferencesProvider>
-      <TabNavigation
-        isVisible
-        onUpdating={(isUpdating) => isUpdating && loadUserAndGroup()}
-        userData={data.user as User}
-        groupData={data.group as Group}
-        onDismiss={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
-      />
+      <ScreenKeepAwakeController />
+        <TabNavigation
+          isVisible
+          onUpdating={(isUpdating) => isUpdating && loadUserAndGroup()}
+          userData={data.user as User}
+          groupData={data.group as Group}
+          onDismiss={() => setAuth((prev) => ({ ...prev, isAuthenticated: false }))}
+        />
     </PreferencesProvider>
   );
 }

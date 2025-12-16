@@ -12,7 +12,7 @@ const SplashScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[preferences.theme.appearance].background, marginTop: insets.top, marginBottom: insets.bottom }]}>
-      <Text style={{ color: Colors[preferences.theme.appearance].textContrast, fontSize: Typography[preferences.fontSizeType].md.fontSize }}>Bem vindo!</Text>
+      <Text style={{ color: Colors[preferences.theme.appearance].textPrimary, fontSize: Typography[preferences.fontSizeType].md.fontSize }}>Bem vindo!</Text>
     </View>
   );
 }

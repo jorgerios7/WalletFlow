@@ -1,5 +1,7 @@
 export const Colors = {
   light: {
+    insetsBackgroundColor: "#ffffffff",
+
     background: "#FFFFFF",
     surface: "#E6E8EB",
     surfaceVariant: "#F4F5F7",
@@ -10,7 +12,7 @@ export const Colors = {
     textContrast: "#FFFFFF",
 
     border: "#4B5563",
-    borderInverse: "rgba(8, 7, 7, 1)",
+    borderInverse: "rgba(8, 7, 7, 0.87)",
 
     iconPrimary: "#0A2C63",
     iconSecondary: "#3D4A5C",
@@ -31,6 +33,8 @@ export const Colors = {
   },
 
   dark: {
+    insetsBackgroundColor: "#050505ff",
+
     background: "#000000ff",
     surface: "#151516ff",
     surfaceVariant: "#0c0c0cff",
