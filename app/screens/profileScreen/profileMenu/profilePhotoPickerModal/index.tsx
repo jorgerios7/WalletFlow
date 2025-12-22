@@ -1,5 +1,5 @@
 import { db, storage } from '@/app/config/firebaseConfig';
-import { ThemeType } from '@/app/types/appearance';
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import CustomButton from '@/components/ui/CustomButton';
 import TextButton from '@/components/ui/TextButton';
 import { Colors } from '@/constants/Colors';
@@ -7,19 +7,29 @@ import * as ImagePicker from 'expo-image-picker';
 import { getAuth } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import React, { useState } from 'react';
-import { Alert, Image, Modal, View } from 'react-native';
+import React, { useCallback, useContext, useState } from 'react';
+import { Alert, Image, Modal, StyleSheet, View } from 'react-native';
 
-interface Props { theme: ThemeType, onDismiss?: () => void }
+interface Props {
+  isVisible: boolean;
+  onDismiss?: () => void;
+}
 
-const ProfilePhotoPickerModal: React.FC<Props> = ({ theme, onDismiss }) => {
+const ProfilePhotoPickerModal: React.FC<Props> = ({ isVisible, onDismiss }) => {
+  const { preferences } = useContext(PreferencesContext);
+
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permissão negada', 'É necessário permitir o acesso à galeria.');
+  const pickImage = useCallback(async () => {
+    if (uploading) return;
+
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(
+        'Permissão negada',
+        'É necessário permitir o acesso à galeria para selecionar uma imagem.'
+      );
       return;
     }
 
@@ -30,17 +40,21 @@ const ProfilePhotoPickerModal: React.FC<Props> = ({ theme, onDismiss }) => {
       quality: 0.8,
     });
 
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-      handleUpload(result.assets[0].uri);
+    if (result.canceled || !result.assets?.length) return;
+
+    const uri = result.assets[0].uri;
+    setImageUri(uri);
+    await uploadProfilePhoto(uri);
+  }, [uploading]);
+
+  const uploadProfilePhoto = useCallback(async (uri: string) => {
+    const uid = getAuth().currentUser?.uid;
+    if (!uid) {
+      Alert.alert('Erro', 'Usuário não autenticado.');
+      return;
     }
-  };
 
-  const handleUpload = async (uri: string) => {
     try {
-      const uid = getAuth().currentUser?.uid;
-      if (!uid) throw new Error('Usuário não autenticado');
-
       setUploading(true);
 
       const response = await fetch(uri);
@@ -52,66 +66,81 @@ const ProfilePhotoPickerModal: React.FC<Props> = ({ theme, onDismiss }) => {
       const downloadURL = await getDownloadURL(fileRef);
       await saveUserProfile(uid, downloadURL);
 
-      Alert.alert('Sucesso', 'Foto enviada com sucesso!');
+      Alert.alert('Sucesso', 'Foto de perfil atualizada com sucesso!');
+      onDismiss?.();
     } catch (error) {
-      console.error('Erro ao processar imagem:', error);
-      Alert.alert('Erro', 'Não foi possível fazer o upload da imagem.');
+      console.error('[ProfilePhotoUpload]', error);
+      Alert.alert(
+        'Erro',
+        'Não foi possível enviar a imagem. Tente novamente.'
+      );
     } finally {
       setUploading(false);
     }
-  };
+  }, [onDismiss]);
 
   const saveUserProfile = async (uid: string, photoURL: string) => {
     const userRef = doc(db, 'users', uid);
 
-    const data = {
-      identification: {
-        profilePhoto: photoURL,
+    await setDoc(
+      userRef,
+      {
+        identification: {
+          profilePhoto: photoURL,
+        },
       },
-    };
-
-    await setDoc(userRef, data, { merge: true });
+      { merge: true }
+    );
   };
 
+  const themeColors = Colors[preferences.theme.appearance];
+
   return (
-    <Modal visible={true} animationType="fade">
-      <View style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-        <View style={{
-          width: 300,
-          padding: 20,
-          borderRadius: 20,
-          backgroundColor: Colors[theme].background,
-          alignItems: 'center',
-          gap: 20
-        }}>
+    <Modal visible={isVisible} animationType="fade" transparent>
+      <View style={styles.overlay}>
+        <View style={[styles.container, { backgroundColor: Colors[preferences.theme.appearance].surfaceVariant }]}>
           {imageUri && (
             <Image
               source={{ uri: imageUri }}
-              style={{ width: 150, height: 150, borderRadius: 75 }}
+              style={styles.image}
             />
           )}
 
           <CustomButton
-            theme={theme}
-            text={uploading ? 'Enviando...' : 'Selecionar nova foto de perfil'}
-            onPress={() => !uploading ? pickImage() : null}
+            text={uploading ? 'Enviando...' : 'Selecionar nova foto'}
+            onPress={pickImage}
+            
           />
 
           <TextButton
-            theme={theme}
-            text={'Cancelar'}
+            text="Cancelar"
             onPress={onDismiss}
+            
           />
         </View>
       </View>
     </Modal>
-
   );
 };
 
 export default ProfilePhotoPickerModal;
 
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    width: 300,
+    padding: 50,
+    borderRadius: 10,
+    alignItems: 'center',
+    gap: 10,
+  },
+  image: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+  },
+});

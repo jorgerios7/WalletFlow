@@ -1,12 +1,15 @@
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Text, View } from "react-native";
+import ProfilePhotoPickerModal from "../profileMenu/profilePhotoPickerModal";
 import { AnimatedBorderAvatar } from "./animatedBorderAvatar";
 
 export default function ProfileHeader({ user }: { user: { name: string, surname: string, email: string } }) {
     const { preferences } = useContext(PreferencesContext);
+
+    const [photoPickerVisible, setPhotoPickerVisible] = useState(false);
 
     const textTitleStyle = {
         color: Colors[preferences.theme.appearance].textPrimary,
@@ -20,11 +23,13 @@ export default function ProfileHeader({ user }: { user: { name: string, surname:
 
     return (
         <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
-            <AnimatedBorderAvatar iconColor={Colors[preferences.theme.appearance].iconPrimary} />
+            <AnimatedBorderAvatar onPressing={() => setPhotoPickerVisible(true)} />
             <View style={{ justifyContent: "center" }}>
                 <Text style={textTitleStyle}>Olá, {user.name} {user.surname}</Text>
                 <Text style={textSubtitleStyle}>{user.email}</Text>
             </View>
+
+            <ProfilePhotoPickerModal isVisible={photoPickerVisible} onDismiss={() => setPhotoPickerVisible(false)} />
         </View>
     );
 }

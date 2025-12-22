@@ -1,10 +1,16 @@
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
+import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useEffect, useRef } from "react";
-import { Animated, View } from "react-native";
+import { useContext, useEffect, useRef } from "react";
+import { Animated, Pressable, View } from "react-native";
 
 const BORDER_COLORS = ["#A7C7E7", "blue", "orange", "red"];
 
-export function AnimatedBorderAvatar({ iconColor }: { iconColor: string }) {
+export function AnimatedBorderAvatar({ onPressing }: { onPressing: () => void }) {
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+  const { preferences } = useContext(PreferencesContext);
+
   const colorAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -32,7 +38,8 @@ export function AnimatedBorderAvatar({ iconColor }: { iconColor: string }) {
   });
 
   return (
-    <Animated.View
+    <AnimatedPressable
+      onPress={onPressing}
       style={{
         width: 80,
         height: 80,
@@ -53,8 +60,8 @@ export function AnimatedBorderAvatar({ iconColor }: { iconColor: string }) {
           padding: 3,
         }}
       >
-        <MaterialIcons name="person" size={65} color={iconColor} />
+        <MaterialIcons name="person" size={65} color={Colors[preferences.theme.appearance].iconPrimary} />
       </View>
-    </Animated.View>
+    </AnimatedPressable>
   );
 }

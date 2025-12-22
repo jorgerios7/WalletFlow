@@ -17,21 +17,13 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, isVisible, onDismiss })
 
     const { preferences } = useContext(PreferencesContext);
 
-    const {
-        user,
-        updateEmail,
-        updatePassword,
-        updateUserName,
-    } = useUser();
+    const { user, updateEmail, updatePassword, updateUserName } = useUser();
 
     if (!user?.groupId) return null;
 
     const [input, setInput] = useState({ 1: "", 2: "", 3: "" });
 
     const handleConfirm = async () => {
-
-        let success = false;
-
         try {
             if (field === 'name') {
                 await updateUserName({ groupId: user?.groupId, newName: input[1], newSurname: input[2] });
@@ -46,13 +38,9 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, isVisible, onDismiss })
                 console.log('(EditPersonalDataModel.tsx) deleteAccount is called!');
                 onDismiss(true);
             }
-
-            success = true;
         }
         catch (error: any) {
             console.error('(PersonaDataChange.tsx) Erro ao atualizar campo: ', error)
-        } finally {
-            //if (success) onSuccess();
         }
     };
 
@@ -71,12 +59,14 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, isVisible, onDismiss })
                     {field === 'name' && (
                         <>
                             <DynamicLabelInput
-                                label="Seu novo nome"
+                                label="Nome"
+                                initialText={user.identification.name}
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 1: value }))}
                             />
 
                             <DynamicLabelInput
-                                label="Seu novo sobrenome"
+                                label="Sobrenome"
+                                initialText={user.identification.surname}
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 2: value }))}
                             />
                         </>

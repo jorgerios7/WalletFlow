@@ -43,8 +43,8 @@ export default function PreferencesMenu({ onInitScreenChange, onScreenStateChang
                 <Text
                     style={{
                         color: Colors[preferences.theme.appearance].textPrimary,
-                        fontSize: Typography[preferences.fontSizeType].lg.fontSize,
-                        lineHeight: Typography[preferences.fontSizeType].lg.lineHeight,
+                        fontSize: Typography[preferences.fontSizeType].md.fontSize,
+                        lineHeight: Typography[preferences.fontSizeType].md.lineHeight,
                         alignSelf: 'flex-start'
                     }}>
                     Tamanho da fonte

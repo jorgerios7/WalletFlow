@@ -1,6 +1,7 @@
 import { PersonalDataChange } from "@/app/types/User";
 import { StyleSheet, View } from "react-native";
-import ButtonTab from "../../profileMenu/ButtonTab";
+import ButtonTab from "./ButtonTab";
+
 
 export default function DataEditorMenu({ onSelect }: { onSelect: (field: PersonalDataChange) => void }) {
     return (

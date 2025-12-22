@@ -20,6 +20,8 @@ export default function ConfigurationsMenu() {
 
     return (
         <View style={{ gap: 10 }}>
+            <Text style={textStyle}>Conta</Text>
+
             <DataEditorMenu
                 onSelect={(field) => setEditPersonalData({ isVisible: true, field: field })}
             />
@@ -39,6 +41,8 @@ export default function ConfigurationsMenu() {
                     setEditPersonalData({ isVisible: false, field: "none" })
                 }
             />
+
+            <View style={{padding: 50}} />
         </View>
     );
 }
