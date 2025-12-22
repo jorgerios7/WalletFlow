@@ -1,8 +1,9 @@
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
+import { useUser } from "@/app/context/UserProvider";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useContext, useEffect, useRef } from "react";
-import { Animated, Pressable, View } from "react-native";
+import { Animated, Image, Pressable, View } from "react-native";
 
 const BORDER_COLORS = ["#A7C7E7", "blue", "orange", "red"];
 
@@ -10,6 +11,7 @@ export function AnimatedBorderAvatar({ onPressing }: { onPressing: () => void })
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
   const { preferences } = useContext(PreferencesContext);
+  const { profilePhotoUri, loadProfilePhoto } = useUser();
 
   const colorAnim = useRef(new Animated.Value(0)).current;
 
@@ -31,6 +33,11 @@ export function AnimatedBorderAvatar({ onPressing }: { onPressing: () => void })
 
     animate();
   }, []);
+
+  useEffect(() => {
+    loadProfilePhoto();
+
+  }, [profilePhotoUri]);
 
   const borderColor = colorAnim.interpolate({
     inputRange: BORDER_COLORS.map((_, i) => i),
@@ -55,13 +62,29 @@ export function AnimatedBorderAvatar({ onPressing }: { onPressing: () => void })
           width: 74,
           height: 74,
           borderRadius: 37,
-          alignItems: "center",
-          justifyContent: "center",
+          alignItems: 'center',
+          justifyContent: 'center',
           padding: 3,
         }}
       >
-        <MaterialIcons name="person" size={65} color={Colors[preferences.theme.appearance].iconPrimary} />
+        {profilePhotoUri ? (
+          <Image
+            source={{ uri: profilePhotoUri }}
+            style={{
+              width: 68,
+              height: 68,
+              borderRadius: 34,
+            }}
+          />
+        ) : (
+          <MaterialIcons
+            name="person"
+            size={65}
+            color={Colors[preferences.theme.appearance].iconPrimary}
+          />
+        )}
       </View>
+
     </AnimatedPressable>
   );
 }

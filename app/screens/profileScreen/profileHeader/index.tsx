@@ -3,8 +3,8 @@ import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { useContext, useState } from "react";
 import { Text, View } from "react-native";
-import ProfilePhotoPickerModal from "../profileMenu/profilePhotoPickerModal";
 import { AnimatedBorderAvatar } from "./animatedBorderAvatar";
+import ProfilePhotoPickerModal from "./profilePhotoPickerModal";
 
 export default function ProfileHeader({ user }: { user: { name: string, surname: string, email: string } }) {
     const { preferences } = useContext(PreferencesContext);

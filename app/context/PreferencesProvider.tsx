@@ -8,6 +8,7 @@ import {
 } from "@/app/types/preferences";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAuth } from "firebase/auth";
 import React, { createContext, useEffect, useMemo, useState } from "react";
 import { useColorScheme } from "react-native";
 
@@ -30,13 +31,18 @@ export const PreferencesContext = createContext<Props>({
         initScreen: "analysis",
         screenActivationTime: "automatic",
     },
-    setFontSizeType: () => {},
-    setInitScreen: () => {},
-    setScreenActivationTime: () => {},
+    setFontSizeType: () => { },
+    setInitScreen: () => { },
+    setScreenActivationTime: () => { },
 });
 
 export function PreferencesProvider({ children }: { children: React.ReactNode }) {
     const systemTheme = useColorScheme();
+
+    const auth = getAuth();
+    const uid = auth.currentUser?.uid;
+
+    const { FONT_SIZE, INIT_SCREEN, SCREEN_ACTIVATION_TIME } = STORAGE_KEYS(uid ? uid : "");
 
     const [preferences, setPreferencesState] = useState({
         fontSizeType: DEFAULT_PREFERENCES.fontSizeType,
@@ -55,12 +61,12 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     );
 
     const setFontSizeType = async (newFontSize: FontSizeType) => {
-        await AsyncStorage.setItem(STORAGE_KEYS.FONT_SIZE, newFontSize);
+        await AsyncStorage.setItem(FONT_SIZE, newFontSize);
         setPreferencesState((prev) => ({ ...prev, fontSizeType: newFontSize }));
     };
 
     const setInitScreen = async (newInitScreen: ScreensType) => {
-        await AsyncStorage.setItem(STORAGE_KEYS.INIT_SCREEN, newInitScreen);
+        await AsyncStorage.setItem(INIT_SCREEN, newInitScreen);
         setPreferencesState((prev) => ({ ...prev, initScreen: newInitScreen }));
     };
 
@@ -68,7 +74,7 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
         newScreenActivationTime: ScreenActivationTimeState
     ) => {
         await AsyncStorage.setItem(
-            STORAGE_KEYS.SCREEN_ACTIVATION_TIME,
+            SCREEN_ACTIVATION_TIME,
             newScreenActivationTime
         );
         setPreferencesState((prev) => ({
@@ -80,9 +86,9 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     useEffect(() => {
         async function loadPreferences() {
             const entries = await AsyncStorage.multiGet([
-                STORAGE_KEYS.FONT_SIZE,
-                STORAGE_KEYS.INIT_SCREEN,
-                STORAGE_KEYS.SCREEN_ACTIVATION_TIME,
+                FONT_SIZE,
+                INIT_SCREEN,
+                SCREEN_ACTIVATION_TIME,
             ]);
 
             const next = { ...preferences };
@@ -91,15 +97,15 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
                 if (!value) continue;
 
                 switch (key) {
-                    case STORAGE_KEYS.FONT_SIZE:
+                    case FONT_SIZE:
                         next.fontSizeType = value as FontSizeType;
                         break;
 
-                    case STORAGE_KEYS.INIT_SCREEN:
+                    case INIT_SCREEN:
                         next.initScreen = value as ScreensType;
                         break;
 
-                    case STORAGE_KEYS.SCREEN_ACTIVATION_TIME:
+                    case SCREEN_ACTIVATION_TIME:
                         next.screenActivationTime =
                             value as ScreenActivationTimeState;
                         break;

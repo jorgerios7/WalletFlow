@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { onAuthStateChanged } from "firebase/auth";
 import React, {
     createContext,
@@ -14,6 +15,7 @@ import LoadUserData from "../services/firebase/userService/loadUserData";
 import UpdateEmail from "../services/firebase/userService/updateEmail";
 import UpdatePassword from "../services/firebase/userService/updatePassword";
 import UpdateUserName from "../services/firebase/userService/updateUserName";
+import { STORAGE_KEYS } from "../storage/keys";
 import { Group } from "../types/Group";
 import {
     UpdateEmailProps,
@@ -27,7 +29,7 @@ const UserContext = createContext<UserContextData | undefined>(undefined);
 
 interface UserDataProviderProps {
     children: ReactNode;
-} 
+}
 
 export default function UserProvider({
     children
@@ -38,6 +40,7 @@ export default function UserProvider({
     const [group, setGroup] = useState<Group | null>(null);
 
     const [loadingUserAndGroup, setLoadingUserAndGroup] = useState<boolean>(false);
+    const [profilePhotoUri, setProfilePhotoUri] = useState<string | null>(null);
     const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
 
     const authenticated = Boolean(userId);
@@ -47,7 +50,16 @@ export default function UserProvider({
     const [error, setError] = useState<Error | null>(null);
 
     const userHasGroup = Boolean(group);
- 
+
+    async function loadProfilePhotoUri(): Promise<void> {
+        if (!userId) return;
+
+        const { PROFILE_PHOTO_KEY } = STORAGE_KEYS(userId);
+        const uri = await AsyncStorage.getItem(PROFILE_PHOTO_KEY);
+
+        setProfilePhotoUri(uri);
+    }
+
     async function updateUserName(value: UpdateUsernameProps) {
         try {
             await UpdateUserName(value);
@@ -142,18 +154,29 @@ export default function UserProvider({
         loadUserAndGroupData();
     }, [loadingAuth, authenticated, loadUserAndGroupData]);
 
+    useEffect(() => {
+        if (!authenticated) {
+            setProfilePhotoUri(null);
+            return;
+        }
+
+        loadProfilePhotoUri();
+    }, [authenticated]);
+
     const value = useMemo<UserContextData>(() => ({
         user,
         group,
         userId,
         userHasGroup,
         loadingUserAndGroup,
+        profilePhotoUri,
         loadingAuth,
         authenticated,
         error,
         updateUserName,
         updateEmail,
         updatePassword,
+        loadProfilePhoto: loadProfilePhotoUri,
         refresh: loadUserAndGroupData
     }), [
         user,
@@ -161,6 +184,7 @@ export default function UserProvider({
         userId,
         userHasGroup,
         loadingUserAndGroup,
+        profilePhotoUri,
         loadingAuth,
         authenticated,
         error,

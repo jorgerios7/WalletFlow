@@ -74,12 +74,14 @@ export interface UserContextData {
   userId: string | null;
   userHasGroup: boolean;
   loadingUserAndGroup: boolean;
+  profilePhotoUri: string | null;
   loadingAuth: boolean;
   authenticated: boolean;
   error: unknown | null;
   updateUserName: (value: UpdateUsernameProps) => Promise<void>;
   updateEmail: (value: UpdateEmailProps) => Promise<void>;
   updatePassword: (value: UpdatePasswordProps) => Promise<void>;
+  loadProfilePhoto: () => Promise<void>;
   refresh: () => Promise<void>;
 };
 
