@@ -44,43 +44,43 @@ const SignupScreen: React.FC<Props> = ({ onPressingReturnButton, shouldRender = 
     }
 
     return (
-        <View style={{ gap: 10, width: '90%', backgroundColor: Colors[preferences.theme.appearance].background }}>
+        <View style={{ gap: 10, width: '100%', backgroundColor: Colors[preferences.theme.appearance].background }}>
             <DynamicLabelInput
                 label="Primeiro nome"
                 colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setInputValue(prev => ({ ...prev, FirstName: text }))}
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, firstName: text }))}
             />
             <DynamicLabelInput
                 label="Sobrenome"
                 colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setInputValue(prev => ({ ...prev, Surname: text }))}
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, surname: text }))}
             />
             <DynamicLabelInput
                 label="E-mail"
                 colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setInputValue(prev => ({ ...prev, Email: text }))}
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, email: text }))}
             />
             <DynamicLabelInput
                 dateEntry
                 label="Data de Nascimento"
                 colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setInputValue(prev => ({ ...prev, BirthDate: text }))}
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, birthDate: text }))}
             />
             <DynamicLabelInput
                 label="Senha"
                 secureTextEntry
                 colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setInputValue(prev => ({ ...prev, Password: text }))}
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, password: text }))}
             />
             <DynamicLabelInput
                 label="Repetir senha"
                 secureTextEntry
                 colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setInputValue(prev => ({ ...prev, PasswordRepeat: text }))}
+                onTextChange={(text) => setInputValue(prev => ({ ...prev, passwordRepeat: text }))}
             />
 
             <CustomButton
-                text="Criar conta"
+                text="Enviar"
                 onPress={validateData}
             />
 

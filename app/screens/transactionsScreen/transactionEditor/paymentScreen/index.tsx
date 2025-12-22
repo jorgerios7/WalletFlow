@@ -1,5 +1,6 @@
+import { useFinancial } from "@/app/context/FinancialProvider";
 import UpdateEntry from "@/app/services/firebase/financeService/updateEntry";
-import { PaymentType, UpdateEntryValues } from "@/app/types/Finance";
+import { PaymentType, UpdateEntryProps, UpdateIdsProps, UpdatePaymentSteps } from "@/app/types/Finance";
 import { useState } from "react";
 import { View } from "react-native";
 import FinalStep from "../stepScreen/finalStep";
@@ -8,44 +9,52 @@ import PaymentMethodStep from "./steps/paymentMethodStep";
 import PaymentStep from "./steps/paymentStep";
 
 interface Props {
-  ids: { group: string, transaction: string, entry: string }, values: UpdateEntryValues, onUpdate: (isUpdating: boolean) => void, onDismiss: () => void
+  id: UpdateIdsProps, values: UpdateEntryProps, onUpdate: (isUpdating: boolean) => void, onDismiss: () => void
 }
 
-export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Props) {
+export default function PaymentScreen({ id, values, onUpdate, onDismiss }: Props) {
+  const { group_id, refresh } = useFinancial();
 
-  const [currentStep, setCurrentStep] = useState<'paymentType' | 'paymentDate' | 'paymentMethod' | 'final'>('paymentType');
+  const [currentStep, setCurrentStep] = useState<UpdatePaymentSteps>('paymentType');
 
-  const [entry, setEntry] = useState<UpdateEntryValues>(
-    {
-      paymentType: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod,
-      paymentBankCard: values.paymentBankCard, paymentBank: values.paymentBank
-    }
-  );
+  const [newEntry, setNewEntry] = useState<UpdateEntryProps>({
+    paymentType: values.paymentType,
+    paymentDate: values.paymentDate,
+    paymentMethod: values.paymentMethod,
+    paymentBankCard: values.paymentBankCard,
+    paymentBank: values.paymentBank
+  });
 
-  async function UpdateNewEntry() {
+  async function handleUpdate() {
     await UpdateEntry({
-      ids: { group: ids.group, transaction: ids.transaction, entry: ids.entry },
-      newEntry: {
-        paymentType: entry.paymentType, paymentDate: entry.paymentDate, paymentMethod: entry.paymentMethod,
-        paymentBank: entry.paymentBank, paymentBankCard: entry.paymentBankCard
+      groupId: group_id,
+      ids: {
+        transaction: id.transaction,
+        entry: id.entry
       },
-      onUpdate: (updating) => {
-        setEntry({ paymentType: "", paymentDate: "", paymentMethod: "", paymentBank: "", paymentBankCard: "" });
-        onUpdate(updating);
-        setCurrentStep("final");
-      }
+      newEntry: {
+        paymentType: newEntry.paymentType,
+        paymentDate: newEntry.paymentDate,
+        paymentMethod: newEntry.paymentMethod,
+        paymentBank: newEntry.paymentBank,
+        paymentBankCard: newEntry.paymentBankCard
+      },
+  
+      onRefresh: refresh
     });
+
+    setCurrentStep("final");
   }
 
   return (
     <View>
       <PaymentStep
         isVisible={currentStep === 'paymentType'}
-        value={entry.paymentType as string}
-        onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentType: selected }))}
-        onConfirm={() => entry.paymentType === 'pending' as PaymentType && values.paymentType === 'pending' as PaymentType
+        value={newEntry.paymentType as string}
+        onSelect={(selected) => setNewEntry((prev) => ({ ...prev, paymentType: selected }))}
+        onConfirm={() => newEntry.paymentType === 'pending' as PaymentType && values.paymentType === 'pending' as PaymentType
           ? console.log('(paymentScreen.tsx) invalid payment type')
-          : entry.paymentType === 'pending'
+          : newEntry.paymentType === 'pending'
             ? console.log('(paymentScreen.tsx) Os dados serão apagados do banco de dados!.')
             : setCurrentStep("paymentDate")
         }
@@ -54,8 +63,8 @@ export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Prop
 
       <PaymentDateStep
         isVisible={currentStep === 'paymentDate'}
-        value={entry.paymentDate as string}
-        onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentDate: selected }))}
+        value={newEntry.paymentDate as string}
+        onSelect={(selected) => setNewEntry((prev) => ({ ...prev, paymentDate: selected }))}
         onConfirm={() => setCurrentStep("paymentMethod")}
         onCancel={onDismiss}
         onBack={() => setCurrentStep('paymentType')}
@@ -64,15 +73,15 @@ export default function PaymentScreen({ ids, values, onUpdate, onDismiss }: Prop
       <PaymentMethodStep
         isVisible={currentStep === 'paymentMethod'}
         values={{
-          paymentMethod: entry.paymentMethod as string, paymentBankCard: entry.paymentBankCard as string,
-          paymentBank: entry.paymentBank as string
+          paymentMethod: newEntry.paymentMethod as string, paymentBankCard: newEntry.paymentBankCard as string,
+          paymentBank: newEntry.paymentBank as string
         }}
         onSelect={(value) => {
-          setEntry((prev) => (
+          setNewEntry((prev) => (
             { ...prev, paymentMethod: value.paymentMethod, paymentBank: value.paymentBank, paymentBankCard: value.paymentBankCard }
           ))
         }}
-        onConfirm={() => UpdateNewEntry()}
+        onConfirm={() => handleUpdate()}
         onCancel={onDismiss}
         onBack={() => setCurrentStep('paymentDate')}
       />

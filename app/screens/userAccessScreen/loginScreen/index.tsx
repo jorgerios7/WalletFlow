@@ -21,7 +21,7 @@ const LoginScreen: React.FC<Props> = ({
     const { preferences } = useContext(PreferencesContext);
 
     return (
-        <View style={{ gap: 10, width: '90%', backgroundColor: Colors[preferences.theme.appearance].background }}>
+        <View style={{ gap: 10, width: '100%', backgroundColor: Colors[preferences.theme.appearance].background }}>
             <DynamicLabelInput
                 label="Email"
                 colorLabel={Colors[preferences.theme.appearance].background}
@@ -39,7 +39,7 @@ const LoginScreen: React.FC<Props> = ({
             />
             <TextButton
                 onPress={onPressingRegisterButton}
-                text="Cadastre-se"
+                text="Criar conta"
                 adjustPadding={15}
             />
         </View>

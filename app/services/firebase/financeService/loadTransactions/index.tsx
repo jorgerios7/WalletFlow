@@ -1,10 +1,10 @@
 import { db } from "@/app/config/firebaseConfig";
-import { BalanceValues, Entries } from "@/app/types/Finance";
+import { BalanceValues, MixedTransactionEntry } from "@/app/types/Finance";
 import { collection, getDocs } from "firebase/firestore";
 
 export default async function LoadTransactions(
     date: string, groupId: string, onLoading: (loading: boolean) => void, onBalanceCalculation?: (balance: BalanceValues) => void
-): Promise<Entries[] | undefined> {
+): Promise<MixedTransactionEntry[] | undefined> {
 
     try {
         onLoading(true);
@@ -16,7 +16,7 @@ export default async function LoadTransactions(
         const transactionsRef = collection(db, `groups/${groupId}/transactions`);
         const transactionsSnapshot = await getDocs(transactionsRef);
 
-        const result: Entries[] = [];
+        const result: MixedTransactionEntry[] = [];
 
         function Balance() {
             // Ordem dos índices:
@@ -48,11 +48,8 @@ export default async function LoadTransactions(
 
             const balance: BalanceValues = {
                 totalIncomeBalance: totalIncome, totalExpenseBalance: totalExpense,
-
                 totalConcludedIncomeBalance: concludedIncome, totalPendingIncomeBalance: pendingIncome,
-
                 totalConcludedExpenseBalance: concludedExpense, totalPendingExpenseBalance: pendingExpense,
-
                 totalConcludedSum: concludedIncome + concludedExpense
             };
 
@@ -67,29 +64,20 @@ export default async function LoadTransactions(
             const entriesSnapshot = await getDocs(entriesRef);
 
             for (const entryDoc of entriesSnapshot.docs) {
-                const entData = entryDoc.data() as Partial<Entries>;
+                const entData = entryDoc.data();
 
                 const [day, month, year] = entData.dueDate?.split("/") ?? ["", "", ""];
 
                 if (month === selectedMonth && year === selectedYear) {
 
                     result.push({
-                        transactionId: transactionDoc.id, category: transData.category, totalValue: transData.totalValue,
-                        startDate: transData.startDate, totalEntries: transData.totalEntries, description: transData.description,
-
-                        entrieId: entryDoc.id, type: entData.type ?? entData.paymentType, paymentType: entData.paymentType,
-                        dueDate: entData.dueDate, paymentBank: entData.paymentBank, payment: entData.paymentType,
-                        paymentDate: entData.paymentDate, paymentMethod: entData.paymentMethod, paymentBankCard: entData.paymentBankCard,
-                        entrieNumber: entData.entrieNumber, value: entData.value ?? 0,
-                        ...entData,
-                    } as Entries);
+                        transactionId: transactionDoc.id, ...transData, ...entData
+                    } as MixedTransactionEntry);
                 }
             }
         }
 
         onBalanceCalculation?.(Balance());
-
-        console.log("(FinanceService.tsx) Transações carregadas com sucesso!");
 
         return result;
 

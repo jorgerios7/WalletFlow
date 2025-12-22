@@ -2,22 +2,36 @@ import { db } from "@/app/config/firebaseConfig";
 import { deleteDoc, doc } from "firebase/firestore";
 import { Alert } from "react-native";
 
-export default async function DeleteEntry(
-    { ids: { group, transaction, entry }, onDelete }:
-        { ids: { group: string, transaction: string, entry: string }, onDelete: (isDeleting: boolean) => void }
-) {
+interface Props {
+    groupId: string;
+    transactionId: string;
+    entryId: string;
+    onDeleting: () => void;
+}
+
+export async function DeleteEntry({
+    groupId,
+    transactionId,
+    entryId,
+    onDeleting
+}: Props) {
+    if (!groupId) return;
+
     try {
-        onDelete(true);
-        const entryRef = doc(db, "groups", group, "transactions", transaction, "entries", entry);
+        const entryRef = doc(
+            db,
+            "groups", groupId,
+            "transactions", transactionId,
+            "entries", entryId
+        );
 
         await deleteDoc(entryRef);
 
-        console.log("(FinanceService.tsx) Entrada deletada com sucesso!");
+        onDeleting();
 
+        console.log("Entrada deletada com sucesso");
     } catch (error: any) {
-        console.error("(FinanceService.tsx) Erro ao deletar:", error);
-        Alert.alert("Erro", error.message || "Não foi possível deletar o documento");
-    } finally {
-        onDelete(false);
+        console.error("Erro ao deletar:", error);
+        Alert.alert("Erro", error?.message ?? "Não foi possível deletar o documento");
     }
 }

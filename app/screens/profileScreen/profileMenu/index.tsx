@@ -109,31 +109,31 @@ export default function ProfileMenu({ screen, user, collapse, onSelect }: Props)
                         text="Editar Nome"
                         iconName="arrow-right"
                         iconSize={24}
-                        onPress={() => onSelect('Name')}
+                        onPress={() => onSelect('name')}
                     />
 
                     <ButtonTab
                         text="Alterar Email"
                         iconName="arrow-right"
                         iconSize={24}
-                        onPress={() => onSelect('Email')}
+                        onPress={() => onSelect('email')}
                     />
 
                     <ButtonTab
                         text="Mudar Senha"
                         iconName="arrow-right"
                         iconSize={24}
-                        onPress={() => onSelect('Password')}
+                        onPress={() => onSelect('password')}
                     />
 
                     <ButtonTab
-                        onPress={() => onSelect('Exit-App')}
+                        onPress={() => onSelect('exit-app')}
                         text="Sair"
                         iconName="exit-to-app"
                     />
 
                     <ButtonTab
-                        onPress={() => onSelect('DeleteAccount')}
+                        onPress={() => onSelect('deleteAccount')}
                         text="Excluir conta"
                         borderBottomColor="transparent"
                     />

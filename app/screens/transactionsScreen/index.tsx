@@ -1,10 +1,16 @@
-import DeleteEntry from '@/app/services/firebase/financeService/deleteEntry';
-import LoadTransactions from '@/app/services/firebase/financeService/loadTransactions';
-import { BalanceValues, Entries, MixedTransactionEntry, Transactions } from '@/app/types/Finance';
+import { useFinancial } from '@/app/context/FinancialProvider';
+import { DeleteEntry } from '@/app/services/firebase/financeService/deleteEntry';
+import {
+  BalanceValues,
+  ConfirmationScreenValues,
+  DeleteEntryProps,
+  MixedTransactionEntry,
+  PaymentScreenValues,
+  ReportScreenValues,
+} from '@/app/types/Finance';
 import ConfirmActionModal from '@/components/ui/confirmActionModal';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BalanceScreen from './balanceScreen';
 import CalendarNavigator from './calendarNavigator';
 import FinanceItemRecycler from './recyclerFinanceItem';
@@ -12,54 +18,25 @@ import FinanceReportScreen from './recyclerFinanceItem/financeReportScreen';
 import ContentScreen from './transactionEditor/contentScreen';
 import PaymentScreen from './transactionEditor/paymentScreen';
 
-const TransactionsScreen = ({ group_id }: { group_id: string }) => {
-  const insets = useSafeAreaInsets();
-  const [date, setDate] = useState('');
-  const [loadData, setLoadData] = useState(false);
-  const [entriesList, setEntriesList] = useState<Entries[]>([]);
-  const [balance, setBalance] = useState({
-    totalIncomeBalance: 0, totalExpenseBalance: 0, totalConcludedIncomeBalance: 0, totalPendingIncomeBalance: 0,
-    totalConcludedExpenseBalance: 0, totalPendingExpenseBalance: 0, totalConcludedSum: 0
-  } as BalanceValues);
-  const [paymentScreen, setPaymentScreen] = useState(
-    {
-      isVisible: false,
-      id: { transaction: '', entry: '' },
-      values: { paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }
-    }
-  );
+const TransactionsScreen = () => {
+  const { entriesData, setDate, loading, group_id, financialBalance, refresh } = useFinancial();
 
-  const [financeReportScreen, setFinanceReportScreen] = useState({ isVisible: false, data: null as Transactions | null });
+  const [screenState, setScreenState] = useState({
+    PaymentScreenValues,
+    ReportScreenValues,
+    ConfirmationScreenValues
+  });
 
-  const [confirmationScreen, setConfirmationScreen] = useState({ isVisible: false, message: '', transactionId: '', entryId: '' });
-
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchEntries = async () => {
-      const entries = await LoadTransactions(date, group_id, setLoading, setBalance);
-      if (isMounted) setEntriesList(entries || []);
-    };
-
-    fetchEntries();
-
-    return () => { isMounted = false };
-  }, [date, loadData]);
-
-  async function handleDelete(transactionId: string, entryId: string) {
-    try {
-      await DeleteEntry({
-        ids: { group: group_id, transaction: transactionId, entry: entryId },
-        onDelete: (isDeleting) => {
-          setLoadData(isDeleting);
-          setConfirmationScreen({ isVisible: false, message: "", transactionId: "", entryId: "" });
-        }
-      });
-    } catch (error) {
-      console.error("(transactionsScreen.tsx) Erro ao deletar entrada: ", error);
-    }
+  async function handleDelete(state: DeleteEntryProps) {
+    await DeleteEntry({
+      groupId: group_id,
+      transactionId: state.ids.transaction,
+      entryId: state.ids.entry,
+      onDeleting: () => {
+        setScreenState((prev) => ({ ...prev, ConfirmationScreenValues }));
+        refresh();
+      }
+    });
   }
 
   return (
@@ -68,66 +45,95 @@ const TransactionsScreen = ({ group_id }: { group_id: string }) => {
 
       <BalanceScreen
         isLoading={loading}
-        balanceValues={balance}
+        balanceValues={financialBalance as BalanceValues}
       />
 
       <FinanceItemRecycler
-        entries_list={entriesList}
+        entries_list={entriesData || []}
         isLoading={loading}
         onPressingEditPayment={(id, values) => {
-          setPaymentScreen({
-            isVisible: true,
-            id: { transaction: id.transaction, entry: id.entry },
-            values: {
-              paymentType: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod,
-              paymentBank: values.paymentBank, paymentBankCard: values.paymentBankCard
+          setScreenState((prev) => ({
+            ...prev,
+            PaymentScreenValues: {
+              isVisible: true,
+              id: {
+                transaction: id.transaction,
+                entry: id.entry
+              },
+              values: {
+                paymentType: values.paymentType,
+                paymentDate: values.paymentDate,
+                paymentMethod: values.paymentMethod,
+                paymentBank: values.paymentBank,
+                paymentBankCard: values.paymentBankCard
+              }
             }
-          });
+          }))
         }}
-        onPressDelete={(id, values) => setConfirmationScreen(
-          {
-            isVisible: true, message: `Tem certeza que deseja excluir esta ${values.paymentType} no valor de R$ ${values.value}?`,
-            transactionId: id.transaction, entryId: id.entry
-          }
-        )}
-        onPressingInfo={(list) => { setFinanceReportScreen({ isVisible: true, data: list }) }}
+        onPressDelete={(id, values) =>
+          setScreenState((prev) => ({
+            ...prev,
+            ConfirmationScreenValues: {
+              isVisible: true,
+              message: `Tem certeza que deseja excluir esta ${values.paymentType} no valor de R$ ${values.value}?`,
+              transactionId: id.transaction,
+              entryId: id.entry
+            }
+          }))
+        }
+        onPressingInfo={(list) => {
+          setScreenState((prev) => ({
+            ...prev,
+            ReportScreenValues: {
+              isVisible: true,
+              data: list
+            }
+          }))
+        }}
       />
 
       <ContentScreen
-        visible={paymentScreen.isVisible}
+        visible={screenState.PaymentScreenValues.isVisible}
         title={'Editar pagamento'}
         uploading={false}
         children={
           <PaymentScreen
-            ids={{ group: group_id, transaction: paymentScreen.id.transaction, entry: paymentScreen.id.entry }}
-            values={
-              {
-                paymentType: paymentScreen.values.paymentType, paymentDate: paymentScreen.values.paymentDate, paymentMethod: paymentScreen.values.paymentMethod,
-                paymentBank: paymentScreen.values.paymentBank, paymentBankCard: paymentScreen.values.paymentBankCard
-              }
-            }
-            onUpdate={setLoadData}
+            id={{
+              transaction: screenState.PaymentScreenValues.id.transaction,
+              entry: screenState.PaymentScreenValues.id.entry
+            }}
+            values={{
+              paymentType: screenState.PaymentScreenValues.values.paymentType,
+              paymentDate: screenState.PaymentScreenValues.values.paymentDate,
+              paymentMethod: screenState.PaymentScreenValues.values.paymentMethod,
+              paymentBank: screenState.PaymentScreenValues.values.paymentBank,
+              paymentBankCard: screenState.PaymentScreenValues.values.paymentBankCard
+            }}
+            onUpdate={() => console.log("asdvsdvs")}
             onDismiss={() => {
-              setPaymentScreen({
-                isVisible: false, id: { transaction: '', entry: '' },
-                values: { paymentType: '', paymentDate: '', paymentMethod: '', paymentBank: '', paymentBankCard: '' }
-              });
+              setScreenState((prev) => ({ ...prev, PaymentScreenValues }));
             }}
           />
         }
       />
 
       <FinanceReportScreen
-        isVisible={financeReportScreen.isVisible}
-        data={financeReportScreen.data as MixedTransactionEntry}
-        onClose={() => setFinanceReportScreen({ isVisible: false, data: null })}
+        isVisible={screenState.ReportScreenValues.isVisible}
+        data={screenState.ReportScreenValues.data as MixedTransactionEntry}
+        onClose={() => setScreenState((prev) => ({ ...prev, ReportScreenValues }))}
       />
 
       <ConfirmActionModal
-        isVisible={confirmationScreen.isVisible}
-        confirmationMessage={confirmationScreen.message}
-        onConfirm={() => handleDelete(confirmationScreen.transactionId, confirmationScreen.entryId)}
-        onCancel={() => setConfirmationScreen({ isVisible: false, message: "", transactionId: "", entryId: "" })} />
+        isVisible={screenState.ConfirmationScreenValues.isVisible}
+        confirmationMessage={screenState.ConfirmationScreenValues.message}
+        onConfirm={() =>
+          handleDelete({
+            ids: {
+              transaction: screenState.ConfirmationScreenValues.transactionId,
+              entry: screenState.ConfirmationScreenValues.entryId
+            }
+          })}
+        onCancel={() => setScreenState((prev) => ({ ...prev, ConfirmationScreenValues }))} />
     </View>
   );
 };

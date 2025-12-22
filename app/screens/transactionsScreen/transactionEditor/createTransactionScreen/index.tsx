@@ -1,5 +1,13 @@
-import UploadTransaction from '@/app/services/firebase/financeService/uploadTransaction';
-import { Entries, RecurrenceType, Transactions, TransactionType } from '@/app/types/Finance';
+import CreateTransaction from '@/app/services/firebase/financeService/createTransaction';
+import {
+  DefTransCreationEntryValues,
+  DefTransCreationValues,
+  Entries,
+  EntryCreationProps,
+  TransactionCreationSteps,
+  Transactions,
+  TransactionType
+} from '@/app/types/Finance';
 import { getAuth } from 'firebase/auth';
 import { useState } from 'react';
 import ContentScreen from '../contentScreen';
@@ -19,40 +27,31 @@ export default function CreateTransactionScreen(
 
   if (!currentUser) return null;
 
-  type Step = 'recurrence' | 'category' | 'startDate' | 'dueDate' | 'totalValue' | 'description' | 'paymentConcluded' | 'final';
+  const [currentStep, setCurrentStep] = useState<TransactionCreationSteps>('recurrence');
 
-  const [currentStep, setCurrentStep] = useState<Step>('recurrence');
-
-  const [transaction, setTransaction] = useState<Transactions>({
-    transactionId: "", createdBy: currentUser.uid, createdAt: new Date().toISOString(), startDate: "", category: "", description: "",
-    recurrenceType: "none", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: "", purchaseBank: "", recurrenceFrequency: "none"
-  });
-
-  const [entries, setEntries] = useState<Partial<Entries>>(
-    { paymentType: "pending", entrieId: "", entrieNumber: 0, dueDate: "", value: 0 }
-  );
+  const [transaction, setTransaction] = useState<Transactions>(DefTransCreationValues);
+  const [entries, setEntries] = useState<EntryCreationProps>(DefTransCreationEntryValues);
 
   const [loading, setLoading] = useState(false);
 
   async function uploadTransaction() {
     if (!currentUser) return null;
 
-    await UploadTransaction(currentUser?.uid, groupId, type, transaction, entries as Entries, setLoading);
+    setTransaction((prev) => ({ ...prev, createdBy: currentUser.uid }))
+
+    await CreateTransaction(currentUser?.uid, groupId, type, transaction, entries as Entries, setLoading);
 
     setCurrentStep('final')
 
-    setTransaction({
-      transactionId: "", createdBy: "", createdAt: "", startDate: "", category: "", purchaseBank: "", recurrenceFrequency: "none",
-      description: "", recurrenceType: "none", totalEntries: 0, totalValue: 0, purchasingMethod: "", purchaseBankCard: ""
-    });
-
-    setEntries({
-      paymentType: "none", entrieId: "", entrieNumber: 0, dueDate: "", value: 0,
-      paymentDate: "", paymentMethod: "", paymentBankCard: "", paymentBank: ""
-    });
+    setTransaction(DefTransCreationValues);
+    setEntries(DefTransCreationEntryValues);
   }
 
-  function renderTitle() { return type === 'income' ? 'Cadastro de Receita' : 'Cadastro de Despesa' }
+  function renderTitle() {
+    return type === 'income'
+      ? 'Cadastro de Receita'
+      : 'Cadastro de Despesa'
+  }
 
   return (
     <ContentScreen
@@ -64,15 +63,16 @@ export default function CreateTransactionScreen(
           <RecurrenceStep
             isVisible={currentStep === "recurrence"}
             transactionType={type}
-            values={{
-              recurrenceType: transaction.recurrenceType as RecurrenceType, totalEntries: transaction.totalEntries,
-              purchasingMethod: transaction.purchasingMethod, purchaseBankCard: transaction.purchaseBankCard,
-              purchaseBank: transaction.purchaseBank, recurrenceFrequency: transaction.recurrenceFrequency
-            }}
-            onSelect={({ recurrenceType, recurrenceFrequency, totalEntries, purchasingMethod, purchaseBankCard, purchaseBank }) => {
+            values={transaction}
+            onSelect={(values) => {
               setTransaction((prev) => ({
-                ...prev, recurrenceType: recurrenceType, totalEntries: totalEntries, recurrenceFrequency: recurrenceFrequency,
-                purchasingMethod: purchasingMethod, purchaseBankCard: purchaseBankCard, purchaseBank: purchaseBank
+                ...prev,
+                recurrenceType: values.recurrenceType,
+                totalEntries: values.totalEntries,
+                recurrenceFrequency: values.recurrenceFrequency,
+                purchasingMethod: values.purchasingMethod,
+                purchaseBankCard: values.purchaseBankCard,
+                purchaseBank: values.purchaseBank,
               }))
             }}
             onConfirm={() => setCurrentStep("category")}

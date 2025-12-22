@@ -4,10 +4,10 @@ import { FormatDateBR, SepareteDate } from "@/app/utils/Format";
 import { addDoc, collection, updateDoc } from "firebase/firestore";
 import { Alert } from "react-native";
 
-export default async function UploadTransaction(
+export default async function CreateTransaction(
     userId: string, groupId: string, type: TransactionType, transactions: Transactions,
     entries: Entries, onUploading: (isUploading: boolean) => void
-) {
+) { 
     try {
         onUploading(true);
 

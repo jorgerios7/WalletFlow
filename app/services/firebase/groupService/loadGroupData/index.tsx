@@ -2,7 +2,7 @@ import { db } from "@/app/config/firebaseConfig";
 import { Group } from "@/app/types/Group";
 import { doc, getDoc } from "firebase/firestore";
 
-export default async function LoadGroup(groupId: string): Promise<Group | null> {
+export default async function LoadGroupData(groupId: string): Promise<Group | null> {
   if (!groupId || groupId.trim() === "") return null;
 
   let data: Group | null = null;
@@ -15,12 +15,8 @@ export default async function LoadGroup(groupId: string): Promise<Group | null> 
       data = groupSnap.data() as Group;
     }
   } catch (error) {
-
     console.error(`(GroupService.tsx) Erro ao buscar Grupo ${groupId}`, error);
-  } finally {
-
-    console.log("(GroupService.tsx) Os dados grupo foram atualizados com sucesso!");
-    
+  } finally {    
     return data;
   }
 }

@@ -1,32 +1,42 @@
-import { RecurrenceFrequency, RecurrenceType, RecurrenceValues, TransactionType } from "@/app/types/Finance";
+import { RecurrenceFrequency, RecurrenceProps, RecurrenceType, TransactionType } from "@/app/types/Finance";
 import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import { useEffect, useState } from "react";
 import StepScreen from "../../../stepScreen";
 
-interface Props { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
+interface Props {
+    transactionType: TransactionType, values: RecurrenceProps, onSelect: (values: RecurrenceProps) => void,
+    isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void
+}
 
-export default function RecurrenceStep(
-    {
-        isVisible, transactionType, values, onConfirm, onCancel, onSelect }:
-        Props & { transactionType: TransactionType, values: RecurrenceValues, onSelect: (values: RecurrenceValues) => void }
-) {
+export default function RecurrenceStep({ isVisible, transactionType, values, onConfirm, onCancel, onSelect }: Props) {
     if (!isVisible) return;
 
-    const [selection, setSelection] = useState(
-        {
-            recurrenceType: values.recurrenceType, recurrenceFrequency: values.recurrenceFrequency, totalEntries: values.totalEntries,
-            purchaseBankCard: values.purchaseBankCard, purchasingMethod: values.purchasingMethod, purchaseBank: values.purchaseBank,
-        }
-    );
+    const [selection, setSelection] = useState<RecurrenceProps>({
+        recurrenceType: values.recurrenceType, recurrenceFrequency: values.recurrenceFrequency, totalEntries: values.totalEntries,
+        purchaseBankCard: values.purchaseBankCard, purchasingMethod: values.purchasingMethod, purchaseBank: values.purchaseBank,
+    });
 
     function handleSelect() {
-        const { recurrenceType, recurrenceFrequency, purchasingMethod, purchaseBankCard, purchaseBank, totalEntries } = selection;
+        const {
+            recurrenceType,
+            recurrenceFrequency,
+            purchasingMethod,
+            purchaseBankCard,
+            purchaseBank,
+            totalEntries
+        } = selection;
 
         const isInstallment = recurrenceType === 'installment';
-
         const entries = isInstallment ? totalEntries : 0;
 
-        const baseSelection = { recurrenceType, recurrenceFrequency, totalEntries: entries, purchasingMethod, purchaseBankCard: "", purchaseBank: "" };
+        const baseSelection = {
+            recurrenceType,
+            recurrenceFrequency,
+            totalEntries: entries,
+            purchasingMethod,
+            purchaseBankCard: "",
+            purchaseBank: ""
+        };
 
         switch (purchasingMethod) {
             case 'Cartão de crédito': case 'Pix': onSelect(

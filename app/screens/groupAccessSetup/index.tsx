@@ -11,12 +11,10 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Snackbar } from "react-native-paper";
 
 interface Props {
-    isVisible: boolean, onReady: (x: { action: Action, values: { id: string, name: string } }) => void, onPressingReturnButton: () => void
+    onReady: (x: { action: Action, values: { id: string, name: string } }) => void, onPressingReturnButton: () => void
 };
 
-const GroupAccessSetup: React.FC<Props> = ({ isVisible, onReady, onPressingReturnButton }) => {
-    if (!isVisible) return null;
-
+const GroupAccessSetup: React.FC<Props> = ({ onReady, onPressingReturnButton }) => {
     const { preferences } = useContext(PreferencesContext);
 
     const [isCreateGroup, setIsCreateGroup] = useState(true);
@@ -73,58 +71,56 @@ const GroupAccessSetup: React.FC<Props> = ({ isVisible, onReady, onPressingRetur
 
 
     return (
-        <View style={{ flex: 1 }}>
-            <View style={{ backgroundColor: Colors[preferences.theme.appearance].background, flex: 1, height: "100%", justifyContent: "center", alignItems: "center" }}>
-
+        <View style={{ flex: 1, padding: 10, backgroundColor: Colors[preferences.theme.appearance].background, }}>
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                 <Text style={[styles.title, { color: Colors[preferences.theme.appearance].textPrimary, }]}>Configurar grupo</Text>
-
-                {
-                    isCreateGroup ? (
-                        <View style={{ width: "90%", gap: 10 }}>
-
-
-                            <View style={styles.container}>
-                                <View style={{ gap: 10 }}>
-                                    <DynamicLabelInput label="Nome do grupo" colorLabel={Colors[preferences.theme.appearance].background} onTextChange={(text) => setGroupData({ id: "", name: text })} />
-                                    <CustomButton text={'Continuar'} onPress={handleAction} />
-                                </View>
-
-                                <View style={{ padding: 10, flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'center' }}>
-                                    <Text style={[styles.text, { color: Colors[preferences.theme.appearance].textPrimary, }]}>Se possui um ID </Text>
-
-                                    <Pressable onPress={() => setIsCreateGroup(false)}>
-                                        <Text style={{ color: Colors[preferences.theme.appearance].accent, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
-                                    </Pressable>
-                                </View>
-
-                                <TextButton
-                                    text={'Sair'}
-                                    adjustPadding={10}
-                                    onPress={() => onPressingReturnButton?.()}
+                {isCreateGroup ? (
+                    <View style={{ width: "100%", gap: 10 }}>
+                        <View style={styles.container}>
+                            <View style={{ gap: 10 }}>
+                                <DynamicLabelInput
+                                    label="Nome do novo grupo"
+                                    colorLabel={Colors[preferences.theme.appearance].background}
+                                    onTextChange={(text) => setGroupData({ id: "", name: text })}
                                 />
+                                <CustomButton text={'Continuar'} onPress={handleAction} />
                             </View>
-                        </View>
-                    ) : (
-                        <View style={{ width: "90%", gap: 10 }}>
-                            <DynamicLabelInput
-                                label="ID do grupo"
-                                colorLabel={Colors[preferences.theme.appearance].background}
-                                onTextChange={(text) => setGroupData({ id: text, name: '' })}
-                            />
 
-                            <CustomButton
-                                text={'Continuar'}
-                                onPress={handleAction}
-                            />
+                            <View style={{ padding: 10, flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'center' }}>
+                                <Text style={[styles.text, { color: Colors[preferences.theme.appearance].textPrimary, }]}>Se possui um ID </Text>
+
+                                <Pressable onPress={() => setIsCreateGroup(false)}>
+                                    <Text style={{ color: Colors[preferences.theme.appearance].accent, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
+                                </Pressable>
+                            </View>
 
                             <TextButton
-                                text={'Voltar'}
+                                text={'Sair'}
                                 adjustPadding={10}
-                                onPress={() => setIsCreateGroup(true)}
+                                onPress={() => onPressingReturnButton?.()}
                             />
                         </View>
-                    )
-                }
+                    </View>
+                ) : (
+                    <View style={{ width: "100%", gap: 10 }}>
+                        <DynamicLabelInput
+                            label="ID do grupo"
+                            colorLabel={Colors[preferences.theme.appearance].background}
+                            onTextChange={(text) => setGroupData({ id: text, name: '' })}
+                        />
+
+                        <CustomButton
+                            text={'Continuar'}
+                            onPress={handleAction}
+                        />
+
+                        <TextButton
+                            text={'Voltar'}
+                            adjustPadding={10}
+                            onPress={() => setIsCreateGroup(true)}
+                        />
+                    </View>
+                )}
             </View>
 
             <Snackbar

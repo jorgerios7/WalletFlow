@@ -1,30 +1,29 @@
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
+import { useUser } from "@/app/context/UserProvider";
 import DeleteMember from "@/app/services/firebase/groupService/deleteMember";
 import PromoteOrDemote from "@/app/services/firebase/groupService/demote_or_demote";
 import { UpdateField } from "@/app/services/firebase/groupService/updateField";
-import { Creator, Delete, FirestoreMemberMap, MemberData } from "@/app/types/Group";
+import { Delete, MemberData } from "@/app/types/Group";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
-import { getAuth } from "firebase/auth";
 import { useContext, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { EditDataViewer } from "./editDataViewer";
 import { MemberOptionMenu } from "./memberOptionMenu";
 import MembersViewer from "./memberViewer";
 
-interface Props {
-    currentUserId: string, groupId: string, groupName: string, creator: Creator,
-    memberList: FirestoreMemberMap, onUpdating: (isUpdating: boolean) => void, onExiting: () => void
-};
-
-export default function GroupScreen({ currentUserId, groupId, groupName, creator, memberList, onUpdating, onExiting }: Props) {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-
-    if (!currentUser) return null;
-
+export default function GroupScreen() {
     const { preferences } = useContext(PreferencesContext);
+    const { userId, user, group, refresh } = useUser();
+
+    if (!user?.groupId || !group?.name || !group?.creation) return null;
+
+    const currentUserId = userId;
+    const groupId = user.groupId;
+    const groupName = group.name;
+    const creator = group.creation;
+    const memberList = group.members;
 
     const [menuItemVisibility, setMenuItemVisibility] = useState(false);
     const [menuItemData, setMenuItemData] = useState({ id: '', name: '', role: '' });
@@ -46,26 +45,26 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
         if (variables.delete.value) {
             if (variables.delete.who === "deleteMyself") {
                 await DeleteMember(groupId, variables.member);
-                onExiting()
+                console.log("GroupScreen.tsx - return to init")
             } else if (variables.delete.who === "deleteMember") {
                 await DeleteMember(groupId, variables.member);
-                onUpdating(true);
+                refresh();
             };
             return;
         } else if (variables.promote) {
             await PromoteOrDemote(true, groupId, variables.member);
-            onUpdating(true);
+            refresh();
             return;
         } else if (variables.demote) {
             await PromoteOrDemote(false, groupId, variables.member);
-            onUpdating(true);
+            refresh();
             return;
         }
     };
 
     async function handleEditTitleName(newName: string) {
         await UpdateField({ label: "name", name: newName, groupId: groupId });
-        onUpdating(true);
+        refresh();
     };
 
     return (
@@ -78,12 +77,10 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
                 </View>
 
                 <View style={styles.headerContent}>
-                    <Text style={[styles.title,
-                    {
+                    <Text style={[styles.title, {
                         color: Colors[preferences.theme.appearance].textContrast, fontSize: Typography[preferences.fontSizeType].lg.fontSize,
                         lineHeight: Typography[preferences.fontSizeType].lg.lineHeight
-                    }
-                    ]}
+                    }]}
                     >
                         {groupName}
                     </Text>
@@ -97,7 +94,7 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
 
             <View style={[styles.container, { backgroundColor: 'transparent', padding: 10 }]} >
                 <MembersViewer
-                    currentUserId={currentUserId}
+                    currentUserId={currentUserId as string}
                     members={parsedMembers}
                     creationData={{ name: creator.name, date: creator.createdAt }}
                     onSelect={({ id, name, role }) => {
@@ -112,7 +109,7 @@ export default function GroupScreen({ currentUserId, groupId, groupName, creator
                     role={renderUserRole()}
                     selectedItem={menuItemData}
                     onCancel={() => setMenuItemVisibility(false)}
-                    currentUid={currentUserId}
+                    currentUid={currentUserId as string}
                     onConfirm={(variables) => {
                         console.log('variable: ', variables)
                         memberOptionsMenuActions(variables)

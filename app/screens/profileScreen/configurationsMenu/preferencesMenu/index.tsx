@@ -1,6 +1,12 @@
 
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
-import { FONT_SIZE_TYPE, FONT_SIZE_VALUES, FontSizeLevel, FontSizeType, ScreenActivationTimeState, ScreensType } from "@/app/types/preferences";
+import {
+    FONT_SIZE_TYPE,
+    FONT_SIZE_VALUES,
+    FontSizeLevel, FontSizeType,
+    ScreenActivationTimeState,
+    ScreensType
+} from "@/app/types/preferences";
 import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
@@ -27,7 +33,7 @@ export default function PreferencesMenu({ onInitScreenChange, onScreenStateChang
         const label = FONT_SIZE_TYPE[value];
 
         setFontSizeTypeStateValue(value);
-        setFontSizeTypeState(label);
+        setFontSizeTypeState(label); 
         onFontTypeChange(label);
     };
 
@@ -36,9 +42,9 @@ export default function PreferencesMenu({ onInitScreenChange, onScreenStateChang
             <View style={[styles.containerContent, dynamicContainerBackground]}>
                 <Text
                     style={{
-                        color: Colors[preferences.theme.appearance].textPrimary, 
+                        color: Colors[preferences.theme.appearance].textPrimary,
                         fontSize: Typography[preferences.fontSizeType].lg.fontSize,
-                        lineHeight: Typography[preferences.fontSizeType].lg.lineHeight, 
+                        lineHeight: Typography[preferences.fontSizeType].lg.lineHeight,
                         alignSelf: 'flex-start'
                     }}>
                     Tamanho da fonte

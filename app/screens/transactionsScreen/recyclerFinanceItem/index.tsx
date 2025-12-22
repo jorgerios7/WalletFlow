@@ -1,7 +1,7 @@
 import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { LoadScreen } from '@/app/pages/LoadScreen';
 import NotFoundScreen from '@/app/pages/NotFoundScreen';
-import { Entries, Transactions, UpdateEntryValues } from '@/app/types/Finance';
+import { Entries, MixedTransactionEntry, Transactions, UpdateEntryProps } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
 import { Typography } from '@/constants/Typography';
 import React, { useContext } from 'react';
@@ -9,9 +9,9 @@ import { SectionList, StyleSheet, Text, View } from 'react-native';
 import FinanceDetailsItem from './financeDetailsItem';
 
 interface Props {
-  entries_list: Entries[]; isLoading: boolean; onPressingInfo: (items: Transactions) => void;
+  entries_list: MixedTransactionEntry[]; isLoading: boolean; onPressingInfo: (items: Transactions) => void;
   onPressDelete: (id: { transaction: string, entry: string }, values: { paymentType: string, value: number }) => void;
-  onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void
+  onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryProps) => void
 }
 
 const FinanceItemRecycler: React.FC<Props> = ({
@@ -99,16 +99,19 @@ const FinanceItemRecycler: React.FC<Props> = ({
                 data={item}
                 dynamicBorder={{ isFirst, isLast }}
                 onPressingEditPayment={(id, values) =>
-                  onPressingEditPayment(
-                    { transaction: id.transaction, entry: id.entry },
-                    {
-                      paymentType: values.paymentType, paymentDate: values.paymentDate, paymentMethod: values.paymentMethod,
-                      paymentBank: values.paymentBank, paymentBankCard: values.paymentBankCard
-                    }
+                  onPressingEditPayment({
+                    transaction: id.transaction, entry: id.entry
+                  }, {
+                    paymentType: values.paymentType,
+                    paymentDate: values.paymentDate,
+                    paymentMethod: values.paymentMethod,
+                    paymentBank: values.paymentBank,
+                    paymentBankCard: values.paymentBankCard
+                  }
                   )
                 }
-                onPressingDelete={(id, values) => onPressDelete(id, values)}
-                onPressingInfo={(selected) => onPressingInfo(selected)}
+                onPressingDelete={onPressDelete}
+                onPressingInfo={onPressingInfo}
               />
             );
           }}

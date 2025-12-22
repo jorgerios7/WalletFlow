@@ -1,6 +1,6 @@
 import { auth } from "@/app/config/firebaseConfig";
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
-import { UpdateEmail, UpdateName, UpdatePassword } from "@/app/services/firebase/UserService";
+import { useUser } from "@/app/context/UserProvider";
 import { PersonalDataChange } from "@/app/types/User";
 import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
@@ -10,12 +10,21 @@ import { signOut } from "firebase/auth";
 import React, { useContext, useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
 
-interface Props { field: PersonalDataChange, groupId: string, isVisible: boolean, onSuccess: () => void, onDismiss: (isBackToInitScreen: boolean) => void };
+interface Props { field: PersonalDataChange, isVisible: boolean, onDismiss: (isBackToInitScreen: boolean) => void };
 
-const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onSuccess, onDismiss }) => {
+const EditPersonalDataModal: React.FC<Props> = ({ field, isVisible, onDismiss }) => {
     if (!isVisible) return null;
 
     const { preferences } = useContext(PreferencesContext);
+
+    const {
+        user,
+        updateEmail,
+        updatePassword,
+        updateUserName,
+    } = useUser();
+
+    if (!user?.groupId) return null;
 
     const [input, setInput] = useState({ 1: "", 2: "", 3: "" });
 
@@ -24,16 +33,16 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
         let success = false;
 
         try {
-            if (field === 'Name') {
-                await UpdateName(groupId, input[1], input[2]);
-            } else if (field === 'Email') {
-                await UpdateEmail(input[3], input[1], input[2]);
-            } else if (field === 'Password') {
-                await UpdatePassword(input[1], input[2], input[3]);
-            } else if (field === "Exit-App") {
+            if (field === 'name') {
+                await updateUserName({ groupId: user?.groupId, newName: input[1], newSurname: input[2] });
+            } else if (field === 'email') {
+                await updateEmail({ newEmail: input[1], repeatNewEmail: input[2], currentPassword: input[3] });
+            } else if (field === 'password') {
+                await updatePassword({ currentPassword: input[1], newPassword: input[2], repeatNewPassword: input[3] });
+            } else if (field === "exit-app") {
                 await signOut(auth);
                 onDismiss(true);
-            } else if (field === "DeleteAccount") {
+            } else if (field === "deleteAccount") {
                 console.log('(EditPersonalDataModel.tsx) deleteAccount is called!');
                 onDismiss(true);
             }
@@ -43,7 +52,7 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
         catch (error: any) {
             console.error('(PersonaDataChange.tsx) Erro ao atualizar campo: ', error)
         } finally {
-            if (success) onSuccess();
+            //if (success) onSuccess();
         }
     };
 
@@ -52,14 +61,14 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
             <View style={[styles.overlay, { backgroundColor: Colors[preferences.theme.appearance].overlay, }]}>
                 <View style={[styles.content, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
                     <Text style={[styles.title, { color: Colors[preferences.theme.appearance].textPrimary, }]}>
-                        {field === 'Name' && "Editar nome"}
-                        {field === 'Email' && "Alterar email"}
-                        {field === 'Password' && "Mudar senha"}
-                        {field === "Exit-App" && "Sair"}
-                        {field === "DeleteAccount" && "Excluir conta"}
+                        {field === 'name' && "Editar nome"}
+                        {field === 'email' && "Alterar email"}
+                        {field === 'password' && "Mudar senha"}
+                        {field === "exit-app" && "Sair"}
+                        {field === "deleteAccount" && "Excluir conta"}
                     </Text>
 
-                    {field === 'Name' && (
+                    {field === 'name' && (
                         <>
                             <DynamicLabelInput
                                 label="Seu novo nome"
@@ -73,7 +82,7 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
                         </>
                     )}
 
-                    {field === 'Email' && (
+                    {field === 'email' && (
                         <>
                             <DynamicLabelInput
                                 label="Seu novo email"
@@ -86,14 +95,14 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
                             />
 
                             <DynamicLabelInput
-                                label="Sua senha"
+                                label="Sua senha atual"
                                 secureTextEntry
                                 onTextChange={(value) => setInput((prev) => ({ ...prev, 3: value }))}
                             />
                         </>
                     )}
 
-                    {field === 'Password' && (
+                    {field === 'password' && (
                         <>
                             <DynamicLabelInput
                                 secureTextEntry
@@ -115,13 +124,13 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, groupId, isVisible, onS
                         </>
                     )}
 
-                    {field === "Exit-App" && (
+                    {field === "exit-app" && (
                         <Text style={[styles.text, { color: Colors[preferences.theme.appearance].textSecondary }]}>
                             Deseja realmente sair?
                         </Text>
                     )}
 
-                    {field === "DeleteAccount" && (
+                    {field === "deleteAccount" && (
                         <Text style={[styles.text, { color: Colors[preferences.theme.appearance].textSecondary }]}>
                             Deseja realmente excluir sua conta?
                         </Text>

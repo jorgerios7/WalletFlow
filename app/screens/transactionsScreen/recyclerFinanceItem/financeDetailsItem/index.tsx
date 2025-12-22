@@ -1,5 +1,5 @@
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
-import { MixedTransactionEntry, Transactions, UpdateEntryValues } from "@/app/types/Finance";
+import { MixedTransactionEntry, Transactions, UpdateEntryProps } from "@/app/types/Finance";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -9,7 +9,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEditPayment, onPressingDelete, onPressingInfo }: {
     data: Partial<MixedTransactionEntry>; dynamicBorder: { isFirst: boolean, isLast: boolean },
     onPressingDelete: (id: { transaction: string, entry: string }, values: { paymentType: string, value: number }) => void;
-    onPressingInfo: (list: Transactions) => void; onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryValues) => void;
+    onPressingInfo: (list: Transactions) => void; onPressingEditPayment: (id: { transaction: string, entry: string }, values: UpdateEntryProps) => void;
 }) {
     const {preferences} = useContext(PreferencesContext);
     const translateX = useRef(new Animated.Value(0)).current;

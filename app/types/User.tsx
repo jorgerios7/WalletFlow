@@ -1,4 +1,7 @@
-export type PersonalDataChange = 'none' | 'Name' | 'Email' | 'Password' | 'Exit-App' | 'DeleteAccount';
+import { Group } from "./Group";
+
+export type PersonalDataChange = 'none' | 'name' | 'email' | 'password' | 'exit-app' | 'deleteAccount';
+export type UserGroupState = "none" | "hasAGroup" | "createGroup";
 
 export interface BankAccount {
   bank: string;
@@ -45,4 +48,55 @@ export interface UserLogin {
   birthDate: string;
   password: string;
   passwordRepeat: string
+};
+
+export interface UpdateUsernameProps {
+  groupId: string,
+  newName: string,
+  newSurname: string
+};
+
+export interface UpdateEmailProps {
+  currentPassword: string,
+  newEmail: string,
+  repeatNewEmail: string
+};
+
+export interface UpdatePasswordProps {
+  currentPassword: string,
+  newPassword: string,
+  repeatNewPassword: string
+};
+
+export interface UserContextData {
+  user: User | null;
+  group: Group | null;
+  userId: string | null;
+  userHasGroup: boolean;
+  loadingUserAndGroup: boolean;
+  loadingAuth: boolean;
+  authenticated: boolean;
+  error: unknown | null;
+  updateUserName: (value: UpdateUsernameProps) => Promise<void>;
+  updateEmail: (value: UpdateEmailProps) => Promise<void>;
+  updatePassword: (value: UpdatePasswordProps) => Promise<void>;
+  refresh: () => Promise<void>;
+};
+
+export const UpdateEmailDefault = {
+  currentPassword: "",
+  newEmail: "",
+  repeatNewEmail: ""
+};
+
+export const UserNameDefault = {
+  groupId: "",
+  newNname: "",
+  newSurname: ""
+};
+
+export const UpdatePasswordDefault = {
+  currentPassword: "",
+  newPassword: "",
+  repeatNewPassword: ""
 };

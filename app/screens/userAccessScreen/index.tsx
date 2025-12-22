@@ -12,12 +12,7 @@ import LoginScreen from "./loginScreen";
 import SignupScreen from "./signupScreen";
 import WelcomeScreen from "./welcomeScreen";
 
-interface Props {
-    isVisible: boolean, onPress: (isLoged: boolean) => void, onUserId: (id: string) => void
-}
-
-const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => {
-    if (!isVisible) return null;
+const UserAccessScreen: React.FC = () => {
 
     const insets = useSafeAreaInsets();
 
@@ -60,7 +55,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
                 },
                 createdAt: new Date().toISOString()
             });
-            onUserId(uid);
+
             setLoginCreation(true);
         } catch (error) {
             console.error("(UserAccessScreen) Erro:", error);
@@ -79,14 +74,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
         }
 
         signInWithEmailAndPassword(auth, loginInputValue.Email, loginInputValue.Password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-
-                if (onUserId) onUserId(user.uid)
-                if (onPress) onPress(true);
-
-                setLoginInputValue({ Email: "", Password: "" });
-            })
+            .then(() => setLoginInputValue({ Email: "", Password: "" }))
             .catch((error) => {
                 console.error('(UserAccessScreen) Erro ao fazer login:', error);
                 setMsg("Erro ao fazer login: " + error.message);
@@ -106,7 +94,7 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
     return (
         <View style={{
             flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors[preferences.theme.appearance].background,
-            marginTop: insets.top, marginBottom: insets.bottom,
+            marginTop: insets.top, marginBottom: insets.bottom, padding: 10
         }}>
             <LoginScreen
                 shouldRender={!isSignup}
@@ -138,12 +126,9 @@ const UserAccessScreen: React.FC<Props> = ({ isVisible, onPress, onUserId }) => 
             <Snackbar
                 visible={snackbarVisible}
                 onDismiss={() => setSnackbarVisible(false)}
-                style={{ backgroundColor: Colors[preferences.theme.appearance].surfaceVariant }}
-                action={{
-                    label: "Fechar",
-                    textColor: Colors[preferences.theme.appearance].textSecondary,
-                    onPress: () => setSnackbarVisible(false),
-                }}>
+                style={{ backgroundColor: Colors[preferences.theme.appearance].accent }}
+                action={{ label: "Fechar", onPress: () => setSnackbarVisible(false) }}
+            >
                 {msg}
             </Snackbar>
         </View>
