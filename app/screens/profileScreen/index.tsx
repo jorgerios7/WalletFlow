@@ -2,7 +2,7 @@ import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { useUser } from '@/app/context/UserProvider';
 import { Colors } from '@/constants/Colors';
 import { useContext } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import ConfigurationsMenu from './configurationsMenu';
 import ProfileHeader from './profileHeader';
 
@@ -17,7 +17,12 @@ export default function ProfileScreen() {
     const userEmail = user.identification.email;
 
     return (
-        <View style={{ flex: 1, gap: 10, padding: 10, backgroundColor: Colors[preferences.theme.appearance].background}}>
+        <View
+            style={[
+                styles.container,
+                { backgroundColor: Colors[preferences.theme.appearance].background }
+            ]}
+        >
             <ProfileHeader
                 user={{
                     name: userName,
@@ -38,3 +43,11 @@ export default function ProfileScreen() {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        gap: 10,
+        padding: 10
+    }
+});

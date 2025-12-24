@@ -5,8 +5,13 @@ import { useContext, useState } from "react";
 import { Text, View } from "react-native";
 import { AnimatedBorderAvatar } from "./animatedBorderAvatar";
 import ProfilePhotoPickerModal from "./profilePhotoPickerModal";
+import { styles } from "./styles";
 
-export default function ProfileHeader({ user }: { user: { name: string, surname: string, email: string } }) {
+interface Props {
+    user: { name: string, surname: string, email: string }
+}
+
+export default function ProfileHeader({ user }: Props) {
     const { preferences } = useContext(PreferencesContext);
 
     const [photoPickerVisible, setPhotoPickerVisible] = useState(false);
@@ -22,14 +27,40 @@ export default function ProfileHeader({ user }: { user: { name: string, surname:
     };
 
     return (
-        <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
-            <AnimatedBorderAvatar onPressing={() => setPhotoPickerVisible(true)} />
-            <View style={{ justifyContent: "center" }}>
-                <Text style={textTitleStyle}>Olá, {user.name} {user.surname}</Text>
-                <Text style={textSubtitleStyle}>{user.email}</Text>
+        <View
+            style={[
+                styles.container,
+                {
+                    backgroundColor: Colors[preferences.theme.appearance].surface,
+                }
+            ]}
+        >
+            <View
+                style={styles.containerContent}
+            >
+                <Text
+                    style={[styles.title, { ...textTitleStyle }]}
+                >
+                    Olá, {user.name} {user.surname}
+                </Text>
+
+                <Text
+                    style={textSubtitleStyle}
+                >
+                    {user.email}
+                </Text>
+
             </View>
 
-            <ProfilePhotoPickerModal isVisible={photoPickerVisible} onDismiss={() => setPhotoPickerVisible(false)} />
+            <AnimatedBorderAvatar
+                onPressing={() => setPhotoPickerVisible(true)}
+            />
+
+            <ProfilePhotoPickerModal
+                isVisible={photoPickerVisible}
+                onDismiss={() => setPhotoPickerVisible(false)}
+            />
+            
         </View>
     );
 }

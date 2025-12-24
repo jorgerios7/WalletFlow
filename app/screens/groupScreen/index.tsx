@@ -5,13 +5,13 @@ import PromoteOrDemote from "@/app/services/firebase/groupService/demote_or_demo
 import { UpdateField } from "@/app/services/firebase/groupService/updateField";
 import { Delete, MemberData } from "@/app/types/Group";
 import { Colors } from "@/constants/Colors";
-import { Typography } from "@/constants/Typography";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useContext, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import { EditDataViewer } from "./editDataViewer";
+import GroupHeader from "./groupHeader";
 import { MemberOptionMenu } from "./memberOptionMenu";
 import MembersViewer from "./memberViewer";
+import { styles } from "./styles";
 
 export default function GroupScreen() {
     const { preferences } = useContext(PreferencesContext);
@@ -22,7 +22,6 @@ export default function GroupScreen() {
     const currentUserId = userId;
     const groupId = user.groupId;
     const groupName = group.name;
-    const creator = group.creation;
     const memberList = group.members;
 
     const [menuItemVisibility, setMenuItemVisibility] = useState(false);
@@ -32,7 +31,9 @@ export default function GroupScreen() {
     const parsedMembers: MemberData[] = Object.entries(memberList).map(([id, data]) => ({ id, name: data.name, role: data.role }));
 
     function renderUserRole() {
-        if (!parsedMembers || parsedMembers.length === 0 || !currentUserId) return 'member';
+        if (!parsedMembers || parsedMembers.length === 0 || !currentUserId) {
+            return 'member'
+        };
 
         const role = parsedMembers.find(member => member.id.trim() === currentUserId.trim());
 
@@ -45,11 +46,12 @@ export default function GroupScreen() {
         if (variables.delete.value) {
             if (variables.delete.who === "deleteMyself") {
                 await DeleteMember(groupId, variables.member);
-                console.log("GroupScreen.tsx - return to init")
+                console.log("GroupScreen.tsx - return to init");
             } else if (variables.delete.who === "deleteMember") {
                 await DeleteMember(groupId, variables.member);
                 refresh();
             };
+
             return;
         } else if (variables.promote) {
             await PromoteOrDemote(true, groupId, variables.member);
@@ -68,40 +70,28 @@ export default function GroupScreen() {
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: Colors[preferences.theme.appearance].background }]}>
+        <View
+            style={[
+                styles.container,
+                { backgroundColor: Colors[preferences.theme.appearance].background }
+            ]}
+        >
+            <GroupHeader
+                userRole={renderUserRole()}
+                onPressButtonEdit={() => setEditDataViewer(true)}
+            />
 
-            <View style={[styles.header, { backgroundColor: Colors[preferences.theme.appearance].headerBackground }]}>
-
-                <View style={{ borderRadius: 999, backgroundColor: Colors[preferences.theme.appearance].accent, alignItems: 'center' }}>
-                    <MaterialIcons name="groups" size={100} color={Colors[preferences.theme.appearance].textContrast} />
-                </View>
-
-                <View style={styles.headerContent}>
-                    <Text style={[styles.title, {
-                        color: Colors[preferences.theme.appearance].textContrast, fontSize: Typography[preferences.fontSizeType].lg.fontSize,
-                        lineHeight: Typography[preferences.fontSizeType].lg.lineHeight
-                    }]}
-                    >
-                        {groupName}
-                    </Text>
-                    {renderUserRole() === "owner" && (
-                        <Pressable style={{ padding: 10 }} onPress={() => setEditDataViewer(true)}>
-                            <MaterialIcons name="mode-edit" size={20} color={Colors[preferences.theme.appearance].iconContrast} />
-                        </Pressable>)
-                    }
-                </View>
-            </View>
-
-            <View style={[styles.container, { backgroundColor: 'transparent', padding: 10 }]} >
+            <View
+                style={styles.content}
+            >
                 <MembersViewer
                     currentUserId={currentUserId as string}
                     members={parsedMembers}
-                    creationData={{ name: creator.name, date: creator.createdAt }}
                     onSelect={({ id, name, role }) => {
                         setMenuItemData(prev => ({ ...prev, id: id, name: name, role: role }));
                         setMenuItemVisibility(true);
                     }}
-                    onPressAddButton={() => console.log('add button has been pressed!')}
+                    onPressAddButton={() => console.log('(GroupScreen.tsx) add button has been pressed!')}
                 />
 
                 <MemberOptionMenu
@@ -126,9 +116,3 @@ export default function GroupScreen() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1 }, title: { fontSize: 18, fontWeight: "bold", alignSelf: "center" }, text: { fontSize: 16, alignSelf: "center" },
-    header: { padding: 30, borderBottomStartRadius: 10, borderBottomEndRadius: 10, justifyContent: 'center' },
-    headerContent: { flexDirection: "row", justifyContent: 'center' }
-});

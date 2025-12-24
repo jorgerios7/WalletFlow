@@ -9,10 +9,10 @@ import PaymentMethodStep from "./steps/paymentMethodStep";
 import PaymentStep from "./steps/paymentStep";
 
 interface Props {
-  id: UpdateIdsProps, values: UpdateEntryProps, onUpdate: (isUpdating: boolean) => void, onDismiss: () => void
+  id: UpdateIdsProps, values: UpdateEntryProps, onDismiss: () => void
 }
 
-export default function PaymentScreen({ id, values, onUpdate, onDismiss }: Props) {
+export default function PaymentScreen({ id, values, onDismiss }: Props) {
   const { group_id, refresh } = useFinancial();
 
   const [currentStep, setCurrentStep] = useState<UpdatePaymentSteps>('paymentType');

@@ -24,7 +24,7 @@ export default function UserFlow({ onError }: Props) {
     if (!userHasGroup) {
         return (
             <GroupAccessSetup
-                onPressingReturnButton={() => console.log("GroupAccessSetup.tsx, button return has been pressed!")}
+                onDismiss={() => console.log("GroupAccessSetup.tsx, button return has been pressed!")}
                 onReady={({ action, values }) => {
                     if (!user) return;
                     

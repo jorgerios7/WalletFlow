@@ -1,9 +1,11 @@
 import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { Colors } from '@/constants/Colors';
 import { Typography } from '@/constants/Typography';
-import { Feather } from '@expo/vector-icons';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Dimensions, ScrollView, Text, View } from 'react-native';
+import MonthViewer from './monthViewer';
+import NavigationButton from './navigationButton';
+import { styles } from './styles';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = SCREEN_WIDTH / 5;
@@ -13,128 +15,138 @@ const SPACING_DEFAULT = 25;
 const DEFAULT_SIZE = SPACING_DEFAULT * 2;
 const RADIUS_DEFAULT = 99;
 
+const MONTH_NAMES = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+];
+
+interface MonthItem {
+    month: string;
+    monthIndex: number;
+    year: number;
+}
+
+const generateMonths = (startYear: number, total: number): MonthItem[] =>
+    Array.from({ length: total }, (_, i) => {
+        const year = startYear + Math.floor(i / 12);
+        const monthIndex = i % 12;
+
+        return {
+            month: MONTH_NAMES[monthIndex],
+            monthIndex,
+            year
+        };
+    });
+
 const CalendarNavigator: React.FC<{ onDateChange: (date: Date) => void }> = ({ onDateChange }) => {
     const { preferences } = useContext(PreferencesContext);
 
     const scrollRef = useRef<ScrollView>(null);
-    const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
 
-    const now = new Date();
-    const currentMonthIndex = now.getMonth();
-    const currentYear = now.getFullYear();
+    const today = new Date();
+    const initialMonthIndex = today.getMonth();
+    const initialYear = today.getFullYear();
 
-    const months = Array.from({ length: 24 }, (_, i) => {
-        const year = currentYear + Math.floor(i / 12);
-        const monthIndex = i % 12;
-        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        return { label: `${monthNames[monthIndex]}`, monthIndex, year };
-    });
+    const dates = useMemo(
+        () => generateMonths(initialYear, 24),
+        [initialYear]
+    );
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const dynamicTextStyle = useMemo(() => ({
+        fontSize: Typography[preferences.fontSizeType].md.fontSize,
+        lineHeight: Typography[preferences.fontSizeType].md.lineHeight
+    }), [preferences.fontSizeType]);
 
     useEffect(() => {
-        scrollToIndex(currentMonthIndex, true);
-        setCurrentIndex(currentMonthIndex);
-        onDateChange(new Date(currentYear, currentMonthIndex, 1));
+        scrollToIndex(initialMonthIndex, true);
+        setCurrentIndex(initialMonthIndex);
+        onDateChange(new Date(initialYear, initialMonthIndex, 1));
     }, []);
 
     const updateToCurrentDate = () => {
-        scrollToIndex(currentMonthIndex, false);
-        setCurrentIndex(currentMonthIndex);
+        scrollToIndex(initialMonthIndex, false);
+        setCurrentIndex(initialMonthIndex);
     }
 
     const scrollToIndex = (index: number, isInit: boolean) => {
-        if (index < 0 || index >= months.length && !isInit) return;
+        if (index < 0 || index >= dates.length && !isInit) return;
         const x = index * (ITEM_WIDTH + ITEM_SPACING);
         scrollRef.current?.scrollTo({ x, animated: true });
         setCurrentIndex(index);
-        onDateChange(new Date(currentYear, index, 1));
+        onDateChange(new Date(initialYear, index, 1));
     };
 
     const handleNext = () => { scrollToIndex(currentIndex + 1, false) }
     const handlePrevious = () => { scrollToIndex(currentIndex - 1, false) }
 
-    const onScrollEnd = (e: any) => {
+    const handleScrollEnd = (e: any) => {
         const x = e.nativeEvent.contentOffset.x;
         const index = Math.round(x / (ITEM_WIDTH + ITEM_SPACING));
         setCurrentIndex(index);
-        onDateChange(new Date(currentYear, index, 1));
+        onDateChange(new Date(initialYear, index, 1));
     };
 
-    const dynamicTextStyle = { fontSize: Typography[preferences.fontSizeType].md.fontSize, lineHeight: Typography[preferences.fontSizeType].md.lineHeight };
-
     return (
-        <View style={[styles.container, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
-            <Text style={[styles.title, dynamicTextStyle, { color: Colors[preferences.theme.appearance].textPrimary }]}>{months[currentIndex]?.year}</Text>
+        <View
+            style={[
+                styles.container,
+                { backgroundColor: Colors[preferences.theme.appearance].background }
+            ]}
+        >
 
-            <View style={[styles.ContainerContent, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
+            <Text
+                style={[
+                    styles.title, dynamicTextStyle,
+                    {
+                        marginBottom: SPACING_DEFAULT,
+                        color: Colors[preferences.theme.appearance].textPrimary
+                    }
+                ]}
+            >
+                Ano {dates[currentIndex]?.year}
+            </Text>
 
-                <TouchableOpacity style={styles.button} onPress={handlePrevious}>
-                    <Feather name="chevron-left" size={24} color={Colors[preferences.theme.appearance].iconPrimary} />
-                </TouchableOpacity>
+            <View
+                style={[
+                    styles.ContainerContent,
+                    { backgroundColor: Colors[preferences.theme.appearance].background }
+                ]}
+            >
 
-                <View style={[styles.row, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
-                    <Animated.ScrollView
-                        ref={scrollRef}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        snapToInterval={ITEM_WIDTH + ITEM_SPACING}
-                        decelerationRate="fast"
-                        contentContainerStyle={{ paddingHorizontal: CENTER_OFFSET }}
-                        onMomentumScrollEnd={onScrollEnd}
-                        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], { useNativeDriver: false })}
-                        scrollEventThrottle={16}
-                    >
-                        {months.map((month, index) => (
-                            <Animated.View
-                                key={index}
-                                style={[styles.card, { backgroundColor: Colors[preferences.theme.appearance].surface },
-                                index === currentIndex && {
-                                    backgroundColor: Colors[preferences.theme.appearance].accent, borderColor: Colors[preferences.theme.appearance].border
-                                }, {
-                                    transform: [{
-                                        scale: scrollX.interpolate({
-                                            inputRange: [
-                                                (index - 1) * (ITEM_WIDTH + ITEM_SPACING),
-                                                index * (ITEM_WIDTH + ITEM_SPACING),
-                                                (index + 1) * (ITEM_WIDTH + ITEM_SPACING),
-                                            ],
-                                            outputRange: [0.9, 1, 0.9],
-                                            extrapolate: 'clamp',
-                                        }),
-                                    }]
-                                }]}
-                            >
-                                <Text
-                                    style={[styles.monthText, dynamicTextStyle, { color: Colors[preferences.theme.appearance].textPrimary },
-                                    index === currentIndex && [styles.activeText, { color: Colors[preferences.theme.appearance].textContrast }]]}
-                                >
-                                    {month.label}
-                                </Text>
-                            </Animated.View>
-                        ))}
-                    </Animated.ScrollView>
-                </View>
+                <NavigationButton direction={"previous"} onPress={handlePrevious} />
 
-                <TouchableOpacity style={styles.button} onPress={handleNext}>
-                    <Feather name="chevron-right" size={24} color={Colors[preferences.theme.appearance].iconPrimary} />
-                </TouchableOpacity>
+                <MonthViewer
+                    centerOffSet={CENTER_OFFSET}
+                    currentIndex={currentIndex}
+                    onScrollEnd={handleScrollEnd}
+                    scrollRef={scrollRef}
+                    scrollX={scrollX}
+                    dates={dates}
+                    rowLayout={{
+                        rowWidth: SPACING_DEFAULT + ITEM_WIDTH * 2.7,
+                        rowHeight: DEFAULT_SIZE,
+                        rowSpacing: ITEM_SPACING
+                    }}
+                    cardLayout={{
+                        cardWidth: ITEM_WIDTH,
+                        cardHeight: DEFAULT_SIZE,
+                        cardMargin: ITEM_SPACING / 2,
+                        cardSpacing: ITEM_SPACING,
+                        cardRadius: RADIUS_DEFAULT
+                    }}
+                />
+
+                <NavigationButton
+                    direction={"next"}
+                    onPress={handleNext}
+                />
+
             </View>
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: { padding: SPACING_DEFAULT },
-    title: { textAlign: 'center', fontWeight: 'bold', fontSize: 16, marginBottom: SPACING_DEFAULT },
-    ContainerContent: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
-    row: { width: SPACING_DEFAULT + ITEM_WIDTH * 2.7, height: DEFAULT_SIZE },
-    button: { width: DEFAULT_SIZE, height: DEFAULT_SIZE, justifyContent: 'center', alignItems: 'center', borderRadius: RADIUS_DEFAULT },
-    card: {
-        width: ITEM_WIDTH, height: DEFAULT_SIZE, marginHorizontal: ITEM_SPACING / 2,
-        justifyContent: 'center', alignItems: 'center', borderRadius: RADIUS_DEFAULT
-    },
-    monthText: { fontSize: 16, fontWeight: '600', textAlign: 'center' },
-    activeText: { fontWeight: 'bold' }
-});
 
 export default CalendarNavigator;

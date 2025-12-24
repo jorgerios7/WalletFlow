@@ -5,20 +5,25 @@ import CustomButton from "@/components/ui/CustomButton";
 import DynamicLabelInput from "@/components/ui/DynamicLabelInput";
 import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
+import { Typography } from "@/constants/Typography";
 import { doc, getDoc } from "firebase/firestore";
 import { useContext, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Snackbar } from "react-native-paper";
+import IdAccessLink from "./IdAccessLink";
+import { styles } from "./styles";
 
 interface Props {
-    onReady: (x: { action: Action, values: { id: string, name: string } }) => void, onPressingReturnButton: () => void
+    onReady: (x: { action: Action, values: { id: string, name: string } }) => void,
+    onDismiss: () => void
 };
 
-const GroupAccessSetup: React.FC<Props> = ({ onReady, onPressingReturnButton }) => {
+const GroupAccessSetup: React.FC<Props> = ({ onReady, onDismiss }) => {
     const { preferences } = useContext(PreferencesContext);
 
     const [isCreateGroup, setIsCreateGroup] = useState(true);
     const [groupData, setGroupData] = useState({ id: '', name: '' })
+
     const [error, setError] = useState({ visible: false, message: "" })
 
     const handleFieldCheck = (field: string) => {
@@ -69,40 +74,42 @@ const GroupAccessSetup: React.FC<Props> = ({ onReady, onPressingReturnButton }) 
         }
     };
 
-
     return (
         <View style={{ flex: 1, padding: 10, backgroundColor: Colors[preferences.theme.appearance].background, }}>
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                <Text style={[styles.title, { color: Colors[preferences.theme.appearance].textPrimary, }]}>Configurar grupo</Text>
+                <Text
+                    style={[styles.title, {
+                        color: Colors[preferences.theme.appearance].textPrimary,
+                        fontSize: Typography[preferences.fontSizeType].lg.fontSize
+                    }]}
+                >
+                    Configurar grupo
+                </Text>
                 {isCreateGroup ? (
-                    <View style={{ width: "100%", gap: 10 }}>
-                        <View style={styles.container}>
-                            <View style={{ gap: 10 }}>
-                                <DynamicLabelInput
-                                    label="Nome do novo grupo"
-                                    colorLabel={Colors[preferences.theme.appearance].background}
-                                    onTextChange={(text) => setGroupData({ id: "", name: text })}
-                                />
-                                <CustomButton text={'Continuar'} onPress={handleAction} />
-                            </View>
+                    <View style={styles.content}>
+                        <DynamicLabelInput
+                            label="Nome do novo grupo"
+                            colorLabel={Colors[preferences.theme.appearance].background}
+                            onTextChange={(text) => setGroupData({ id: "", name: text })}
+                        />
 
-                            <View style={{ padding: 10, flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'center' }}>
-                                <Text style={[styles.text, { color: Colors[preferences.theme.appearance].textPrimary, }]}>Se possui um ID </Text>
+                        <CustomButton
+                            text={'Continuar'}
+                            onPress={handleAction}
+                        />
 
-                                <Pressable onPress={() => setIsCreateGroup(false)}>
-                                    <Text style={{ color: Colors[preferences.theme.appearance].accent, fontWeight: 'bold', fontSize: 16 }}>clique aqui</Text>
-                                </Pressable>
-                            </View>
+                        <IdAccessLink
+                            onPress={() => setIsCreateGroup(false)}
+                        />
 
-                            <TextButton
-                                text={'Sair'}
-                                adjustPadding={10}
-                                onPress={() => onPressingReturnButton?.()}
-                            />
-                        </View>
+                        <TextButton
+                            text={'Sair'}
+                            adjustPadding={10}
+                            onPress={onDismiss}
+                        />
                     </View>
                 ) : (
-                    <View style={{ width: "100%", gap: 10 }}>
+                    <View style={styles.content}>
                         <DynamicLabelInput
                             label="ID do grupo"
                             colorLabel={Colors[preferences.theme.appearance].background}
@@ -134,27 +141,5 @@ const GroupAccessSetup: React.FC<Props> = ({ onReady, onPressingReturnButton }) 
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        alignSelf: 'center',
-        padding: 20
-    },
-    text: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        alignSelf: 'center',
-        backgroundColor: 'transparent'
-    },
-    container: {
-        width: '100%',
-        gap: 10,
-        alignSelf: 'center',
-        flexDirection: 'column',
-        backgroundColor: 'transparent'
-    }
-});
 
 export default GroupAccessSetup;

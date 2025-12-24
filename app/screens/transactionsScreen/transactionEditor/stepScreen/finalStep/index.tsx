@@ -5,9 +5,9 @@ import { useContext } from "react";
 import { Text, View } from "react-native";
 import StepScreen from "..";
 
-interface ConfirmationScreen { isVisible: boolean; textAbove: string, textBelow: string, onConfirm: () => void }
+interface Props { isVisible: boolean; textAbove: string, textBelow: string, onConfirm: () => void }
 
-export default function FinalStep({ isVisible, textAbove, textBelow, onConfirm }: ConfirmationScreen) {
+export default function FinalStep({ isVisible, textAbove, textBelow, onConfirm }: Props) {
     if (!isVisible) return null;
 
     const { preferences } = useContext(PreferencesContext);
@@ -21,8 +21,11 @@ export default function FinalStep({ isVisible, textAbove, textBelow, onConfirm }
                 <View style={{ justifyContent: 'center', alignItems: 'center', gap: 10 }}>
                     <Text
                         style={{
-                            color: Colors[preferences.theme.appearance].textPrimary, fontWeight: 'normal', textAlign: 'justify',
-                            fontSize: Typography[preferences.fontSizeType].md.fontSize, lineHeight: Typography[preferences.fontSizeType].md.lineHeight
+                            fontWeight: 'normal',
+                            textAlign: 'justify',
+                            color: Colors[preferences.theme.appearance].textPrimary,
+                            fontSize: Typography[preferences.fontSizeType].md.fontSize,
+                            lineHeight: Typography[preferences.fontSizeType].md.lineHeight
                         }}
                     >
                         {textAbove}
@@ -30,8 +33,11 @@ export default function FinalStep({ isVisible, textAbove, textBelow, onConfirm }
 
                     <Text
                         style={{
-                            color: Colors[preferences.theme.appearance].textSecondary, fontWeight: 'normal', textAlign: 'center',
-                            fontSize: Typography[preferences.fontSizeType].md.fontSize, lineHeight: Typography[preferences.fontSizeType].md.lineHeight
+                            fontWeight: 'normal',
+                            textAlign: 'center',
+                            color: Colors[preferences.theme.appearance].textSecondary,
+                            fontSize: Typography[preferences.fontSizeType].md.fontSize,
+                            lineHeight: Typography[preferences.fontSizeType].md.lineHeight
                         }}
                     >
                         {textBelow}

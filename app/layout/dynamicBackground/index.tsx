@@ -10,7 +10,9 @@ export default function DynamicBackground({ children, styles }: { children: Reac
   return (
     <View
       style={{
-        flex: 1,backgroundColor: Colors[theme].insetsBackgroundColor, ...styles
+        flex: 1,
+        backgroundColor: Colors[theme].insetsBackgroundColor,
+        ...styles
       }}
     >
       {children}

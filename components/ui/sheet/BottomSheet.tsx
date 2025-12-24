@@ -2,9 +2,21 @@ import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useContext, useEffect, useRef } from 'react';
-import { Animated, Dimensions, Modal, PanResponder, Pressable, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import {
+    Animated,
+    Dimensions,
+    Modal,
+    PanResponder,
+    Pressable,
+    StyleSheet,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from 'react-native';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
+
+const SCREEN_HEIGHT = height;
 
 interface BottomSheetProps {
     visible: boolean;
@@ -84,25 +96,72 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
     const Header = () => {
         return (
-            isDragHandleVisible ?
-                <Pressable style={[styles.dragHandle, { backgroundColor: Colors[preferences.theme.appearance].background, }]} />
-                :
-                <View style={[styles.butonReturnHeader, { backgroundColor: Colors[preferences.theme.appearance].background, borderBottomColor: Colors[preferences.theme.appearance].border, }]}>
-                    <TouchableOpacity style={[styles.buttonReturn, { backgroundColor: Colors[preferences.theme.appearance].background, }]} onPress={() => animateTo(CLOSED, onClose)}>
-                        <MaterialIcons style={{ marginTop: '20%' }} activeOpacity={0.8} name={'arrow-back'} size={24} color={Colors[preferences.theme.appearance].iconPrimary} />
+            isDragHandleVisible ? (
+
+                <Pressable
+                    style={[
+                        styles.dragHandle,
+                        { backgroundColor: Colors[preferences.theme.appearance].background }
+                    ]}
+                />
+
+            ) : (
+
+                <View
+                    style={[
+                        styles.butonReturnHeader,
+                        {
+                            backgroundColor: Colors[preferences.theme.appearance].background,
+                            borderBottomColor: Colors[preferences.theme.appearance].border
+                        }
+                    ]}
+                >
+                    <TouchableOpacity
+                        style={[
+                            styles.buttonReturn,
+                            { backgroundColor: Colors[preferences.theme.appearance].background }
+                        ]}
+                        onPress={() => animateTo(CLOSED, onClose)}
+                    >
+                        <MaterialIcons
+                            style={{ marginTop: '20%' }}
+                            activeOpacity={0.8}
+                            name={'arrow-back'}
+                            size={24}
+                            color={Colors[preferences.theme.appearance].iconPrimary}
+                        />
                     </TouchableOpacity>
                 </View>
+            )
         );
     }
 
     return (
-        <Modal visible={visible} transparent animationType="fade">
-            <TouchableWithoutFeedback onPress={() => animateTo(CLOSED, onClose)}>
-                <View style={[styles.background, { backgroundColor: Colors[preferences.theme.appearance].overlay }]} />
+        <Modal
+            visible={visible}
+            transparent
+            animationType="fade"
+        >
+            <TouchableWithoutFeedback
+                onPress={() => animateTo(CLOSED, onClose)}
+            >
+                <View
+                    style={[
+                        styles.background,
+                        { backgroundColor: Colors[preferences.theme.appearance].overlay }
+                    ]}
+                />
             </TouchableWithoutFeedback>
 
-            <Animated.View {...panResponder.panHandlers}
-                style={[styles.sheetContainer, { backgroundColor: Colors[preferences.theme.appearance].background, transform: [{ translateY },] }]}
+            <Animated.View
+                {...panResponder.panHandlers}
+                style={[
+                    styles.sheetContainer,
+                    {
+                        backgroundColor: Colors[preferences.theme.appearance].background,
+                        transform: [{ translateY }]
+                    }
+                ]}
             >
                 <Header />
 

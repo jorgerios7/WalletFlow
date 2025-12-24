@@ -4,9 +4,13 @@ import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { useContext } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
+import { styles } from "./styles";
 
-interface Props { value: FontSizeLevel; onChange: (value: FontSizeLevel) => void }
+interface Props {
+    value: FontSizeLevel;
+    onChange: (value: FontSizeLevel) => void
+}
 
 export default function FontSizeSelector({ value, onChange }: Props) {
     const { preferences } = useContext(PreferencesContext);
@@ -20,7 +24,7 @@ export default function FontSizeSelector({ value, onChange }: Props) {
                     color={Colors[preferences.theme.appearance].iconPrimary}
                 />
 
-                <View style={{ flex: 1, paddingVertical: 5 }}>
+                <View style={styles.content}>
                     <Slider
                         style={styles.slider}
                         minimumValue={0}
@@ -38,8 +42,12 @@ export default function FontSizeSelector({ value, onChange }: Props) {
                             <View
                                 key={index}
                                 style={[
-                                    styles.dot, { backgroundColor: Colors[preferences.theme.appearance].border },
-                                    index <= value && [styles.dotActive, {backgroundColor: Colors[preferences.theme.appearance].accent}]
+                                    styles.dot,
+                                    { backgroundColor: Colors[preferences.theme.appearance].border },
+                                    index <= value && [
+                                        styles.dotActive,
+                                        { backgroundColor: Colors[preferences.theme.appearance].accent }
+                                    ]
                                 ]}
                             />
                         ))}
@@ -55,35 +63,4 @@ export default function FontSizeSelector({ value, onChange }: Props) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        paddingVertical: 16,
-        paddingHorizontal: 10,
-        borderRadius: 20,
-    },
-    sliderRow: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    slider: {
-        flex: 1,
-        marginHorizontal: 10
-    },
-    dotsRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 5,
-        marginHorizontal: 24
-    },
-    dot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        opacity: 0.4,
-    },
-    dotActive: {
-        opacity: 1
-    },
-});
 

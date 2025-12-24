@@ -7,14 +7,22 @@ import { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import StepScreen from "../../../stepScreen";
 
-interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
+interface Props {
+    isVisible: boolean;
+    value: string;
+    type: TransactionType;
+    onBack?: () => void;
+    onConfirm: () => void;
+    onCancel: () => void;
+    onSelect: (value: string) => void
+}
 
-export default function CategoryStep(
-    { isVisible, value, type, onConfirm, onBack, onSelect, onCancel }:
-        StepsProps & { value: string; type: TransactionType; onSelect: (value: string) => void }
-) {
+export default function CategoryStep({ isVisible, value, type, onConfirm, onBack, onSelect, onCancel }: Props) {
+
     const [itemsVisible, setItemsVisible] = useState({ newCategoryMenu: false, deleteCategoryMenu: false });
+
     const [categories, setCategories] = useState<string[]>([]);
+
     const [text, setText] = useState(value);
 
     useEffect(() => {
@@ -30,17 +38,24 @@ export default function CategoryStep(
         }
     }
 
+    function handleEmptyField() {
+        if (text === '' || !text || text !== value) {
+            Alert.alert('Campo vazio', 'Selecione uma opção para continuar');
+        } else {
+            onConfirm();
+        }
+    }
+
     return (
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <View
+            style={{
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}
+        >
             <StepScreen
                 isVisible={isVisible}
-                onConfirm={() => {
-                    if (text === '' || !text || text !== value) {
-                        Alert.alert('Campo vazio', 'Selecione uma opção para continuar');
-                    } else {
-                        onConfirm();
-                    }
-                }}
+                onConfirm={handleEmptyField}
                 onBack={onBack}
                 onCancel={onCancel}
             >
@@ -61,7 +76,7 @@ export default function CategoryStep(
                 isVisible={itemsVisible.newCategoryMenu}
                 categoryToAdd={text}
                 currentType={type}
-                onSuccess={() => { HandleLoadCategories() }}
+                onSuccess={HandleLoadCategories}
                 onDismiss={() => setItemsVisible(prev => ({ ...prev, newCategoryMenu: false }))}
             />
 
@@ -69,7 +84,7 @@ export default function CategoryStep(
                 isVisible={itemsVisible.deleteCategoryMenu}
                 currentType={type}
                 categoryToDelete={text}
-                onSuccess={() => { HandleLoadCategories() }}
+                onSuccess={HandleLoadCategories}
                 onDismiss={() => setItemsVisible(prev => ({ ...prev, deleteCategoryMenu: false }))}
             />
         </View>

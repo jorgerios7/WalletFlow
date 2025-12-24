@@ -5,9 +5,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PreferencesContext } from "../context/PreferencesProvider";
 
 export function LoadScreen({ marginBottom }: { marginBottom?: number }) {
-
-    const { preferences } = useContext(PreferencesContext);
     const insets = useSafeAreaInsets();
+    const { preferences } = useContext(PreferencesContext);
+
     return (
         <ActivityIndicator
             size="large"

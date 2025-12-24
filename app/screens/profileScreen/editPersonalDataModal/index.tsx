@@ -8,7 +8,8 @@ import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
 import { signOut } from "firebase/auth";
 import React, { useContext, useState } from "react";
-import { Modal, StyleSheet, Text, View } from "react-native";
+import { Modal, Text, View } from "react-native";
+import { styles } from "./styles";
 
 interface Props { field: PersonalDataChange, isVisible: boolean, onDismiss: (isBackToInitScreen: boolean) => void };
 
@@ -26,15 +27,36 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, isVisible, onDismiss })
     const handleConfirm = async () => {
         try {
             if (field === 'name') {
-                await updateUserName({ groupId: user?.groupId, newName: input[1], newSurname: input[2] });
+
+                await updateUserName({
+                    groupId: user?.groupId,
+                    newName: input[1],
+                    newSurname: input[2]
+                });
+
             } else if (field === 'email') {
-                await updateEmail({ newEmail: input[1], repeatNewEmail: input[2], currentPassword: input[3] });
+
+                await updateEmail({
+                    newEmail: input[1],
+                    repeatNewEmail: input[2],
+                    currentPassword: input[3]
+                });
+
             } else if (field === 'password') {
-                await updatePassword({ currentPassword: input[1], newPassword: input[2], repeatNewPassword: input[3] });
+
+                await updatePassword({
+                    currentPassword: input[1],
+                    newPassword: input[2],
+                    repeatNewPassword: input[3]
+                });
+
             } else if (field === "exit-app") {
+
                 await signOut(auth);
                 onDismiss(true);
+
             } else if (field === "deleteAccount") {
+
                 console.log('(EditPersonalDataModel.tsx) deleteAccount is called!');
                 onDismiss(true);
             }
@@ -45,10 +67,29 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, isVisible, onDismiss })
     };
 
     return (
-        <Modal visible={isVisible} animationType="fade" transparent>
-            <View style={[styles.overlay, { backgroundColor: Colors[preferences.theme.appearance].overlay, }]}>
-                <View style={[styles.content, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
-                    <Text style={[styles.title, { color: Colors[preferences.theme.appearance].textPrimary, }]}>
+        <Modal
+            visible={isVisible}
+            animationType="fade"
+            transparent
+        >
+            <View
+                style={[
+                    styles.overlay,
+                    { backgroundColor: Colors[preferences.theme.appearance].overlay }
+                ]}
+            >
+                <View
+                    style={[
+                        styles.content,
+                        { backgroundColor: Colors[preferences.theme.appearance].surface }
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.title,
+                            { color: Colors[preferences.theme.appearance].textPrimary }
+                        ]}
+                    >
                         {field === 'name' && "Editar nome"}
                         {field === 'email' && "Alterar email"}
                         {field === 'password' && "Mudar senha"}
@@ -115,13 +156,23 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, isVisible, onDismiss })
                     )}
 
                     {field === "exit-app" && (
-                        <Text style={[styles.text, { color: Colors[preferences.theme.appearance].textSecondary }]}>
+                        <Text
+                            style={[
+                                styles.text,
+                                { color: Colors[preferences.theme.appearance].textSecondary }
+                            ]}
+                        >
                             Deseja realmente sair?
                         </Text>
                     )}
 
                     {field === "deleteAccount" && (
-                        <Text style={[styles.text, { color: Colors[preferences.theme.appearance].textSecondary }]}>
+                        <Text
+                            style={[
+                                styles.text,
+                                { color: Colors[preferences.theme.appearance].textSecondary }
+                            ]}
+                        >
                             Deseja realmente excluir sua conta?
                         </Text>
                     )}
@@ -134,11 +185,6 @@ const EditPersonalDataModal: React.FC<Props> = ({ field, isVisible, onDismiss })
     );
 };
 
-const styles = StyleSheet.create({
-    overlay: { flex: 1, justifyContent: "center", alignItems: "center" },
-    content: { width: "90%", padding: 20, borderRadius: 12, gap: 20, elevation: 4 },
-    title: { fontSize: 16, textAlign: "center", fontWeight: "bold" },
-    text: { alignSelf: "center", fontSize: 14 }
-});
+
 
 export default EditPersonalDataModal;

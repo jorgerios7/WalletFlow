@@ -3,22 +3,43 @@ import DropdownSelect from "@/components/ui/dropdowns/dropdownSelect";
 import { useEffect, useState } from "react";
 import StepScreen from "../../../stepScreen";
 
-interface StepsProps { isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void }
-interface MethodProps { paymentBankCard: string, paymentMethod: string, paymentBank: string }
+interface MethodProps {
+  paymentBankCard: string;
+  paymentMethod: string;
+  paymentBank: string;
+}
+
+interface Props {
+  isVisible: boolean;
+  values: MethodProps;
+  onSelect: (values: MethodProps) => void;
+  onBack?: () => void;
+  onConfirm: () => void;
+  onCancel: () => void
+}
+
 
 export default function PaymentMethodStep(
-  { isVisible, values, onSelect, onConfirm, onBack, onCancel }
-    : StepsProps & { values: MethodProps, onSelect: (values: MethodProps) => void }
-) {
+  { isVisible, values, onSelect, onConfirm, onBack, onCancel }: Props) {
 
-  const [selection, setSelection] = useState(
-    { paymentMethod: values.paymentMethod, paymentBankCard: values.paymentBankCard, paymentBank: values.paymentBank }
-  );
+  const [selection, setSelection] = useState({
+    paymentMethod: values.paymentMethod,
+    paymentBankCard: values.paymentBankCard,
+    paymentBank: values.paymentBank
+  });
 
   function handleSelect() {
-    const { paymentMethod, paymentBankCard, paymentBank } = selection;
+    const {
+      paymentMethod,
+      paymentBankCard,
+      paymentBank
+    } = selection;
 
-    const baseSelection = { paymentMethod, paymentBankCard: "", paymentBank: "" };
+    const baseSelection = {
+      paymentMethod,
+      paymentBankCard: "",
+      paymentBank: ""
+    };
 
     switch (paymentMethod) {
       case 'Dinheiro': case 'Boleto': onSelect(baseSelection);

@@ -5,13 +5,28 @@ import { Alert } from "react-native";
 import StepScreen from "../../../stepScreen";
 
 interface Props {
-  isVisible: boolean; startDate: string, recurrenceType: string, recurrenceFrequency: RecurrenceFrequency, value: string;
-  onSelect: (value: string) => void; onBack?: () => void; onConfirm: () => void; onCancel: () => void;
+  isVisible: boolean;
+  startDate: string;
+  recurrenceType: string;
+  recurrenceFrequency: RecurrenceFrequency;
+  value: string;
+  onSelect: (value: string) => void;
+  onBack?: () => void;
+  onConfirm: () => void;
+  onCancel: () => void;
 }
 
-export default function DueDateStep(
-  { isVisible, startDate, recurrenceType, recurrenceFrequency, value, onSelect, onConfirm, onBack, onCancel }: Props
-) {
+export default function DueDateStep({
+  isVisible,
+  startDate,
+  recurrenceType,
+  recurrenceFrequency,
+  value,
+  onSelect,
+  onConfirm,
+  onBack,
+  onCancel
+}: Props) {
 
   function handleDate(preSelect: boolean, dueDay: string) {
     const parts = (preSelect ? value : startDate).split("/");
@@ -24,16 +39,18 @@ export default function DueDateStep(
     }
   }
 
+  function handleEmptyField() {
+    if (value) {
+      onConfirm();
+    } else {
+      Alert.alert('Campo vazio', 'Digite uma data para continuar');
+    }
+  }
+
   return (
     <StepScreen
       isVisible={isVisible}
-      onConfirm={() => {
-        if (value) {
-          onConfirm();
-        } else {
-          Alert.alert('Campo vazio', 'Digite uma data para continuar');
-        }
-      }}
+      onConfirm={handleEmptyField}
       onBack={onBack}
       onCancel={onCancel}
     >
@@ -41,17 +58,20 @@ export default function DueDateStep(
         <DropdownSelect
           isVisible
           onOpeningDropdown="openAtBottom"
-          placeholder={recurrenceFrequency === "weekly"
-            ? "Vencerá sempre neste dia de cada semana"
-            : "Vencerá sempre neste dia de cada mês"
+          placeholder={
+            recurrenceFrequency === "weekly"
+              ? "Vencerá sempre neste dia de cada semana"
+              : "Vencerá sempre neste dia de cada mês"
           }
           setSelection={handleDate(true, value)}
-          list={recurrenceFrequency === "weekly"
-            ? ['01', '02', '03', '04', '05', '06', '07']
-            : [
-              '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15',
-              '16', '17', '18', '19', '20', '21', '22', '23', '25', '26', '27', '28', '29', '30', '31'
-            ]}
+          list={
+            recurrenceFrequency === "weekly"
+              ? ['01', '02', '03', '04', '05', '06', '07']
+              : [
+                '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15',
+                '16', '17', '18', '19', '20', '21', '22', '23', '25', '26', '27', '28', '29', '30', '31'
+              ]
+          }
           onSelect={(day) => handleDate(false, day as string)}
         />
       ) : (

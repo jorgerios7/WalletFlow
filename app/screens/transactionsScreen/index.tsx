@@ -19,7 +19,14 @@ import ContentScreen from './transactionEditor/contentScreen';
 import PaymentScreen from './transactionEditor/paymentScreen';
 
 const TransactionsScreen = () => {
-  const { entriesData, setDate, loading, group_id, financialBalance, refresh } = useFinancial();
+  const {
+    entriesData,
+    setDate,
+    loading,
+    group_id,
+    financialBalance,
+    refresh
+  } = useFinancial();
 
   const [screenState, setScreenState] = useState({
     PaymentScreenValues,
@@ -40,8 +47,16 @@ const TransactionsScreen = () => {
   }
 
   return (
-    <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-      <CalendarNavigator onDateChange={(date) => setDate(date.toLocaleDateString('pt-BR'))} />
+    <View
+      style={{
+        flex: 1,
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
+      <CalendarNavigator
+        onDateChange={(date) => setDate(date.toLocaleDateString('pt-BR'))}
+      />
 
       <BalanceScreen
         isLoading={loading}
@@ -109,7 +124,6 @@ const TransactionsScreen = () => {
               paymentBank: screenState.PaymentScreenValues.values.paymentBank,
               paymentBankCard: screenState.PaymentScreenValues.values.paymentBankCard
             }}
-            onUpdate={() => console.log("asdvsdvs")}
             onDismiss={() => {
               setScreenState((prev) => ({ ...prev, PaymentScreenValues }));
             }}

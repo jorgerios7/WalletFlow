@@ -19,7 +19,9 @@ export default function ConfigurationsMenu() {
     const [editPersonalData, setEditPersonalData] = useState({ isVisible: false, field: "none" as PersonalDataChange });
 
     return (
-        <View style={{ gap: 10 }}>
+        <View
+            style={{ gap: 10 }}
+        >
             <Text style={textStyle}>Conta</Text>
 
             <DataEditorMenu
@@ -42,7 +44,9 @@ export default function ConfigurationsMenu() {
                 }
             />
 
-            <View style={{padding: 50}} />
+            <View
+                style={{ padding: 50 }}
+            />
         </View>
     );
 }

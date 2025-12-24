@@ -1,44 +1,43 @@
-
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { useContext } from "react";
-import { GestureResponderEvent, Pressable, StyleSheet } from "react-native";
+import { GestureResponderEvent, Pressable } from "react-native";
+import { styles } from "../styles";
 
-interface Props { onPress?: (event: GestureResponderEvent) => void; iconName: keyof typeof MaterialIcons.glyphMap; label?: string };
 
-const TabButton: React.FC<Props> = ({ onPress, iconName, label }) => {
+interface Props {
+    onPress?: (event: GestureResponderEvent) => void;
+    iconName: keyof typeof MaterialIcons.glyphMap;
+};
 
+const TabButton: React.FC<Props> = ({ onPress, iconName }) => {
     const { preferences } = useContext(PreferencesContext);
 
     const isFocused = useIsFocused();
 
-    const dynamicColor = isFocused
-        ? Colors[preferences.theme.appearance].iconInverse
-        : Colors[preferences.theme.appearance].iconPrimary;
-
-    const tabBackgroundColor = isFocused
+    const dynamicBorderColor = isFocused
         ? Colors[preferences.theme.appearance].iconBackgroundPrimary
-        : Colors[preferences.theme.appearance].iconBackgroundSecondary;
+        : Colors[preferences.theme.appearance].background;
 
     return (
         <Pressable
             onPress={onPress}
-            style={styles.button}
+            style={[styles.tabButton, {
+                borderColor: dynamicBorderColor,
+                backgroundColor: Colors[preferences.theme.appearance].background
+            }]}
         >
             <MaterialIcons
-                style={{ backgroundColor: tabBackgroundColor, borderRadius: 20, padding: 5 }}
                 name={iconName}
-                size={24}
-                color={dynamicColor}
+                size={28}
+                color={Colors[preferences.theme.appearance].iconPrimary}
             />
         </Pressable>
     );
 };
 
-const styles = StyleSheet.create({
-    button: { alignItems: 'center', alignContent: 'center', gap: 5 }, label: { fontSize: 12 }
-});
+
 
 export default TabButton

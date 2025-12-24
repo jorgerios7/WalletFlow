@@ -3,28 +3,45 @@ import TextButton from "@/components/ui/TextButton";
 import TransitionView from "@/components/ui/TransitionView";
 import { StyleSheet } from "react-native";
 
-export default function StepScreen({
-  isVisible,children, buttonTextConfirm, onConfirm, onBack, onCancel,
-}: {
-  isVisible: boolean; children: React.ReactNode; onConfirm: () => void;
-  buttonTextConfirm?: string, onBack?: () => void; onCancel?: () => void;
-}) {
+interface Props {
+  isVisible: boolean;
+  children: React.ReactNode;
+  onConfirm: () => void;
+  buttonTextConfirm?: string,
+  onBack?: () => void;
+  onCancel?: () => void;
+}
+
+export default function StepScreen({ isVisible, children, buttonTextConfirm, onConfirm, onBack, onCancel }: Props) {
   if (!isVisible) return null;
 
   const confirmText = buttonTextConfirm || "Confirmar";
 
   return (
     <TransitionView style={styles.content}>
+
       {children}
 
       <CustomButton text={confirmText} onPress={onConfirm} />
 
-      {onBack && (<TextButton text="Voltar" onPress={onBack} />)}
-      {onCancel && (<TextButton text="Cancelar" onPress={onCancel} />)}
+      {onBack && (
+        <TextButton text="Voltar" onPress={onBack} />
+      )}
+
+      {onCancel && (
+        <TextButton text="Cancelar" onPress={onCancel} />
+      )}
+
     </TransitionView>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { width: 300, backgroundColor: "transparent", flexDirection: "column", gap: 20, alignSelf: "center" }
+  content: { 
+    width: "100%", 
+    flexDirection: "column", 
+    gap: 10, 
+    padding: 10,
+    alignSelf: "center" 
+  }
 });

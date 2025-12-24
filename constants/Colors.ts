@@ -2,9 +2,13 @@ export const Colors = {
   light: {
     insetsBackgroundColor: "#ffffffff",
 
+    bgTranspPrimary: "rgba(223, 223, 223, 0.45)",
+
     background: "#FFFFFF",
     surface: "#E6E8EB",
     surfaceVariant: "#F4F5F7",
+
+    highlight: "#1ddfdfff",
 
     textPrimary: "#11181C",
     textSecondary: "#555555ff",
@@ -20,6 +24,9 @@ export const Colors = {
     iconInverse: "#FFFFFF",
     iconBackgroundPrimary: "#0A2C63",
     iconBackgroundSecondary: "#E6E8EB",
+    
+    expenseColor: "#f15f5fff",
+    incomeColor: "#73ec7dff",
 
     shadow: "#000002ff",
 
@@ -35,6 +42,8 @@ export const Colors = {
   dark: {
     insetsBackgroundColor: "#050505ff",
 
+    bgTranspPrimary: "rgba(51, 51, 51, 0.45)",
+
     background: "#000000ff",
     surface: "#151516ff",
     surfaceVariant: "#0c0c0cff",
@@ -43,6 +52,8 @@ export const Colors = {
     textSecondary: "#bebebeff",
     textInverse: "#000000ff",
     textContrast: "#ffffffff",
+
+    highlight: "#9df3f3ff",
 
     border: "#404041ff",
     borderInverse: "rgba(255, 255, 255, 1)",
@@ -55,6 +66,9 @@ export const Colors = {
 
     iconBackgroundPrimary: "#003bbbff",
     iconBackgroundSecondary: "#161515ff",
+
+    expenseColor: "#ee5252ff",
+    incomeColor: "#00ff15ff",
 
     shadow: "#000002ff",
 

@@ -4,16 +4,25 @@ import { useEffect, useState } from "react";
 import StepScreen from "../../../stepScreen";
 
 interface Props {
-    transactionType: TransactionType, values: RecurrenceProps, onSelect: (values: RecurrenceProps) => void,
-    isVisible: boolean; onBack?: () => void; onConfirm: () => void; onCancel: () => void
+    transactionType: TransactionType;
+    values: RecurrenceProps;
+    onSelect: (values: RecurrenceProps) => void;
+    isVisible: boolean;
+    onBack?: () => void;
+    onConfirm: () => void;
+    onCancel: () => void;
 }
 
 export default function RecurrenceStep({ isVisible, transactionType, values, onConfirm, onCancel, onSelect }: Props) {
     if (!isVisible) return;
 
     const [selection, setSelection] = useState<RecurrenceProps>({
-        recurrenceType: values.recurrenceType, recurrenceFrequency: values.recurrenceFrequency, totalEntries: values.totalEntries,
-        purchaseBankCard: values.purchaseBankCard, purchasingMethod: values.purchasingMethod, purchaseBank: values.purchaseBank,
+        recurrenceType: values.recurrenceType,
+        recurrenceFrequency: values.recurrenceFrequency,
+        totalEntries: values.totalEntries,
+        purchaseBankCard: values.purchaseBankCard,
+        purchasingMethod: values.purchasingMethod,
+        purchaseBank: values.purchaseBank,
     });
 
     function handleSelect() {
@@ -104,9 +113,11 @@ export default function RecurrenceStep({ isVisible, transactionType, values, onC
                 onOpeningDropdown="openAtBottom"
                 placeholder={transactionType === 'expense' ? 'Método de compra' : 'Método de recebimento'}
                 setSelection={selection.purchasingMethod}
-                list={transactionType === 'expense'
-                    ? ['Cartão de crédito', 'Boleto', 'Pix', 'Contrato direto', 'Carnê']
-                    : ['Boleto', 'Carnê', 'Contrato direto', 'Dinheiro', 'Pix', 'Transferência bancária']}
+                list={
+                    transactionType === 'expense'
+                        ? ['Cartão de crédito', 'Boleto', 'Pix', 'Contrato direto', 'Carnê']
+                        : ['Boleto', 'Carnê', 'Contrato direto', 'Dinheiro', 'Pix', 'Transferência bancária']
+                }
                 onSelect={(value) => setSelection((prev) => ({ ...prev, purchasingMethod: value as RecurrenceType }))}
             />
 

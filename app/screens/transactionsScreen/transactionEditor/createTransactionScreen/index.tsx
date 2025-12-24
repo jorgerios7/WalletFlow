@@ -1,3 +1,4 @@
+import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import CreateTransaction from '@/app/services/firebase/financeService/createTransaction';
 import {
   DefTransCreationEntryValues,
@@ -8,9 +9,11 @@ import {
   Transactions,
   TransactionType
 } from '@/app/types/Finance';
+import { Colors } from '@/constants/Colors';
+import { Typography } from '@/constants/Typography';
 import { getAuth } from 'firebase/auth';
-import { useState } from 'react';
-import ContentScreen from '../contentScreen';
+import { useContext, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import FinalStep from '../stepScreen/finalStep';
 import CategoryStep from './steps/categoryStep';
 import DescriptionStep from './steps/descriptionStep';
@@ -19,13 +22,20 @@ import RecurrenceStep from './steps/recurrenceStep';
 import StartDateStep from './steps/startDateStep';
 import ValueStep from './steps/valueStep';
 
-export default function CreateTransactionScreen(
-  { isVisible, groupId, type, onDismiss }: { isVisible: boolean, groupId: string, type: TransactionType, onDismiss: () => void }
-) {
+interface Props {
+  isVisible: boolean;
+  groupId: string;
+  type: TransactionType;
+  onDismiss: () => void;
+}
+
+export default function CreateTransactionScreen({ isVisible, groupId, type, onDismiss }: Props) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
-  if (!currentUser) return null;
+  if (!currentUser || !isVisible) return null;
+
+  const { preferences } = useContext(PreferencesContext);
 
   const [currentStep, setCurrentStep] = useState<TransactionCreationSteps>('recurrence');
 
@@ -53,100 +63,122 @@ export default function CreateTransactionScreen(
       : 'Cadastro de Despesa'
   }
 
+  const title = renderTitle();
+
   return (
-    <ContentScreen
-      visible={isVisible}
-      title={renderTitle()}
-      uploading={loading}
-      children={
-        <>
-          <RecurrenceStep
-            isVisible={currentStep === "recurrence"}
-            transactionType={type}
-            values={transaction}
-            onSelect={(values) => {
-              setTransaction((prev) => ({
-                ...prev,
-                recurrenceType: values.recurrenceType,
-                totalEntries: values.totalEntries,
-                recurrenceFrequency: values.recurrenceFrequency,
-                purchasingMethod: values.purchasingMethod,
-                purchaseBankCard: values.purchaseBankCard,
-                purchaseBank: values.purchaseBank,
-              }))
-            }}
-            onConfirm={() => setCurrentStep("category")}
-            onBack={() => onDismiss()}
-            onCancel={onDismiss}
-          />
-
-          <CategoryStep
-            isVisible={currentStep === "category"}
-            type={type}
-            value={transaction.category}
-            onSelect={(selected) => setTransaction((prev) => ({ ...prev, category: selected }))}
-            onConfirm={() => setCurrentStep("startDate")}
-            onBack={() => setCurrentStep("recurrence")}
-            onCancel={onDismiss}
-          />
-
-          <StartDateStep
-            isVisible={currentStep === "startDate"}
-            value={transaction.startDate}
-            onSelect={(selected) => setTransaction((prev) => ({ ...prev, startDate: selected }))}
-            onConfirm={() => setCurrentStep(
-              transaction.recurrenceFrequency === "daily"
-                ? "totalValue"
-                : "dueDate"
-            )}
-            onBack={() => setCurrentStep("category")}
-            onCancel={onDismiss}
-          />
-
-          <DueDateStep
-            isVisible={currentStep === "dueDate"}
-            recurrenceType={transaction.recurrenceType}
-            recurrenceFrequency={transaction.recurrenceFrequency}
-            value={entries.dueDate as string}
-            onSelect={(selected) => setEntries((prev) => ({ ...prev, dueDate: selected }))}
-            startDate={transaction.startDate}
-            onConfirm={() => setCurrentStep("totalValue")}
-            onBack={() => setCurrentStep("startDate")}
-            onCancel={onDismiss}
-          />
-
-          <ValueStep
-            isVisible={currentStep === "totalValue"}
-            transactionType={type}
-            value={transaction.totalValue}
-            onSelect={(selected) => setTransaction((prev) => ({ ...prev, totalValue: selected }))}
-            onConfirm={() => setCurrentStep("description")}
-            onBack={() => setCurrentStep(
-              transaction.recurrenceFrequency === "daily"
-                ? "category"
-                : "dueDate"
-            )}
-            onCancel={onDismiss}
-          />
-
-          <DescriptionStep
-            isVisible={currentStep === "description"}
-            value={transaction.description}
-            onSelect={(selected) => setTransaction((prev) => ({ ...prev, description: selected }))}
-            onConfirm={() => uploadTransaction()}
-            onBack={() => setCurrentStep("totalValue")}
-            onCancel={onDismiss}
-          />
-
-          <FinalStep
-            isVisible={currentStep === "final"}
-            onConfirm={onDismiss}
-            textAbove={'Todos os passos foram concluídos!'}
-            textBelow={'Toque em confirmar para finalizar o cadastro da transação.'}
-          />
-        </>
-      }
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[preferences.theme.appearance].surface }
+      ]}
     >
-    </ContentScreen>
+
+      <Text
+        style={{
+          fontWeight: '400',
+          color: Colors[preferences.theme.appearance].textPrimary,
+          fontSize: Typography[preferences.fontSizeType].lg.fontSize,
+          lineHeight: Typography[preferences.fontSizeType].lg.lineHeight
+        }}
+      >
+        {title}
+      </Text>
+
+      <RecurrenceStep
+        isVisible={currentStep === "recurrence"}
+        transactionType={type}
+        values={transaction}
+        onSelect={(values) => {
+          setTransaction((prev) => ({
+            ...prev,
+            recurrenceType: values.recurrenceType,
+            totalEntries: values.totalEntries,
+            recurrenceFrequency: values.recurrenceFrequency,
+            purchasingMethod: values.purchasingMethod,
+            purchaseBankCard: values.purchaseBankCard,
+            purchaseBank: values.purchaseBank,
+          }))
+        }}
+        onConfirm={() => setCurrentStep("category")}
+        onBack={() => onDismiss()}
+        onCancel={onDismiss}
+      />
+
+      <CategoryStep
+        isVisible={currentStep === "category"}
+        type={type}
+        value={transaction.category}
+        onSelect={(selected) => setTransaction((prev) => ({ ...prev, category: selected }))}
+        onConfirm={() => setCurrentStep("startDate")}
+        onBack={() => setCurrentStep("recurrence")}
+        onCancel={onDismiss}
+      />
+
+      <StartDateStep
+        isVisible={currentStep === "startDate"}
+        value={transaction.startDate}
+        onSelect={(selected) => setTransaction((prev) => ({ ...prev, startDate: selected }))}
+        onConfirm={() => setCurrentStep(
+          transaction.recurrenceFrequency === "daily"
+            ? "totalValue"
+            : "dueDate"
+        )}
+        onBack={() => setCurrentStep("category")}
+        onCancel={onDismiss}
+      />
+
+      <DueDateStep
+        isVisible={currentStep === "dueDate"}
+        recurrenceType={transaction.recurrenceType}
+        recurrenceFrequency={transaction.recurrenceFrequency}
+        value={entries.dueDate as string}
+        onSelect={(selected) => setEntries((prev) => ({ ...prev, dueDate: selected }))}
+        startDate={transaction.startDate}
+        onConfirm={() => setCurrentStep("totalValue")}
+        onBack={() => setCurrentStep("startDate")}
+        onCancel={onDismiss}
+      />
+
+      <ValueStep
+        isVisible={currentStep === "totalValue"}
+        transactionType={type}
+        value={transaction.totalValue}
+        onSelect={(selected) => setTransaction((prev) => ({ ...prev, totalValue: selected }))}
+        onConfirm={() => setCurrentStep("description")}
+        onBack={() => setCurrentStep(
+          transaction.recurrenceFrequency === "daily"
+            ? "category"
+            : "dueDate"
+        )}
+        onCancel={onDismiss}
+      />
+
+      <DescriptionStep
+        isVisible={currentStep === "description"}
+        value={transaction.description}
+        onSelect={(selected) => setTransaction((prev) => ({ ...prev, description: selected }))}
+        onConfirm={() => uploadTransaction()}
+        onBack={() => setCurrentStep("totalValue")}
+        onCancel={onDismiss}
+      />
+
+      <FinalStep
+        isVisible={currentStep === "final"}
+        onConfirm={onDismiss}
+        textAbove={'Todos os passos foram concluídos!'}
+        textBelow={'Toque em confirmar para finalizar o cadastro da transação.'}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    height: "100%",
+    gap: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10
+  }
+})

@@ -5,7 +5,8 @@ import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { useContext, useState } from "react";
-import { Alert, Modal, StyleSheet, Text, View } from "react-native";
+import { Alert, Modal, Text, View } from "react-native";
+import { styles } from "./styles";
 
 export function EditDataViewer(
     { isVisible, currentName, onSelected, onDismiss }:
@@ -45,14 +46,20 @@ export function EditDataViewer(
 
     return (
         <Modal visible={isVisible} transparent>
-            <View style={[styles.overlay, { backgroundColor: Colors[preferences.theme.appearance].overlay, }]}>
-                <View style={[styles.content, { backgroundColor: Colors[preferences.theme.appearance].surface }]}>
+            <View
+                style={[
+                    styles.overlay,
+                    { backgroundColor: Colors[preferences.theme.appearance].overlay }]}>
+                <View
+                    style={[styles.content, {
+                        backgroundColor: Colors[preferences.theme.appearance].surface
+                    }]}
+                >
                     <Text style={[styles.title, {
                         color: Colors[preferences.theme.appearance].textPrimary,
                         fontSize: Typography[preferences.fontSizeType].md.fontSize,
                         lineHeight: Typography[preferences.fontSizeType].md.lineHeight
-                    }
-                    ]}
+                    }]}
                     >
                         Editar nome do grupo
                     </Text>
@@ -68,10 +75,3 @@ export function EditDataViewer(
         </Modal>
     );
 }
-
-const styles = StyleSheet.create({
-    title: { padding: 20, fontSize: 18, fontWeight: "bold", alignSelf: "center" },
-    text: { fontSize: 16, textAlign: 'justify' },
-    overlay: { flex: 1, justifyContent: "center", alignItems: "center" },
-    content: { padding: 50, borderRadius: 12, gap: 10, elevation: 10 },
-})

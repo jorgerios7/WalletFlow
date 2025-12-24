@@ -2,11 +2,11 @@ import { PersonalDataChange } from "@/app/types/User";
 import { StyleSheet, View } from "react-native";
 import ButtonTab from "./ButtonTab";
 
-
 export default function DataEditorMenu({ onSelect }: { onSelect: (field: PersonalDataChange) => void }) {
     return (
-        <View style={styles.container}>
-
+        <View
+            style={styles.container}
+        >
             <ButtonTab
                 text="Editar Nome"
                 iconName="arrow-right"
@@ -49,5 +49,9 @@ export default function DataEditorMenu({ onSelect }: { onSelect: (field: Persona
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 10, gap: 10 }, containerContent: { padding: 10, borderRadius: 10 }
+    container: {
+        flex: 1,
+        padding: 10,
+        gap: 10
+    }
 });

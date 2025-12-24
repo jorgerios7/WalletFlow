@@ -7,7 +7,8 @@ import { Colors } from '@/constants/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Alert, Image, Modal, StyleSheet, View } from 'react-native';
+import { Alert, Image, Modal, View } from 'react-native';
+import { styles } from './styles';
 
 interface Props {
   isVisible: boolean;
@@ -102,23 +103,3 @@ const ProfilePhotoPickerModal: React.FC<Props> = ({ isVisible, onDismiss }) => {
 };
 
 export default ProfilePhotoPickerModal;
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  container: {
-    width: 300,
-    padding: 16,
-    borderRadius: 20,
-    alignItems: 'center',
-    gap: 12,
-  },
-  image: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-  },
-});

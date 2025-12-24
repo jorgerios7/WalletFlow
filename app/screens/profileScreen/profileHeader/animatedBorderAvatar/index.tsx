@@ -4,6 +4,7 @@ import { Colors } from "@/constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useContext, useEffect, useRef } from "react";
 import { Animated, Image, Pressable, View } from "react-native";
+import { styles } from "./styles";
 
 const BORDER_COLORS = ["#A7C7E7", "blue", "orange", "red"];
 
@@ -16,8 +17,6 @@ export function AnimatedBorderAvatar({ onPressing }: { onPressing: () => void })
   const colorAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    let current = 0;
-
     const animate = () => {
       const next = Math.floor(Math.random() * BORDER_COLORS.length);
 
@@ -26,7 +25,6 @@ export function AnimatedBorderAvatar({ onPressing }: { onPressing: () => void })
         duration: 8000,
         useNativeDriver: false,
       }).start(() => {
-        current = next;
         animate();
       });
     };
@@ -47,34 +45,18 @@ export function AnimatedBorderAvatar({ onPressing }: { onPressing: () => void })
   return (
     <AnimatedPressable
       onPress={onPressing}
-      style={{
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        borderWidth: 1,
-        borderColor,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+      style={[
+        styles.container,
+        { borderColor: borderColor }
+      ]}
     >
       <View
-        style={{
-          width: 74,
-          height: 74,
-          borderRadius: 37,
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 3,
-        }}
+        style={styles.containerImage}
       >
         {profilePhotoUri ? (
           <Image
             source={{ uri: profilePhotoUri }}
-            style={{
-              width: 68,
-              height: 68,
-              borderRadius: 34,
-            }}
+            style={styles.image}
           />
         ) : (
           <MaterialIcons

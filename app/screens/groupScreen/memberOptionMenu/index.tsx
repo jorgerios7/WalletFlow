@@ -6,7 +6,8 @@ import TextButton from "@/components/ui/TextButton";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { useContext, useEffect, useState } from "react";
-import { Modal, StyleSheet, Text, View } from "react-native";
+import { Modal, Text, View } from "react-native";
+import { styles } from "./styles";
 
 export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, onConfirm, onCancel }: {
     isStarted: boolean; currentUid: string; role: string; selectedItem: { id: string, name: string, role: string };
@@ -161,10 +162,3 @@ export function MemberOptionMenu({ isStarted, selectedItem, currentUid, role, on
         </Modal >
     );
 }
-
-const styles = StyleSheet.create({
-    title: { fontSize: 18, fontWeight: "bold", alignSelf: "center" },
-    text: { fontSize: 16, textAlign: 'justify' },
-    overlay: { flex: 1, justifyContent: "center", alignItems: "center" },
-    content: { padding: 40, borderRadius: 12, gap: 10, elevation: 10 }
-})
