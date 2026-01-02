@@ -42,7 +42,7 @@ export interface User {
 };
 
 export interface UserLogin {
-  firstName: string;
+  name: string;
   surname: string;
   email: string;
   birthDate: string;
@@ -102,3 +102,36 @@ export const UpdatePasswordDefault = {
   newPassword: "",
   repeatNewPassword: ""
 };
+
+export const UserLoginDefault = {
+  name: "",
+  surname: "",
+  email: "",
+  birthDate: "",
+  password: "",
+  passwordRepeat: "",
+}
+
+export const LoginInputValueDefault = {
+  email: "",
+  password: ""
+}
+
+export interface LoginInputProps {
+  email: string, 
+  password: string;
+}
+
+export const LoginFormLabelsDefault = {
+  email: "Email",
+  password: "Senha"
+}
+
+export const FormLabelsDefault = {
+  name: "Primeiro nome",
+  surname: "Sobrenome",
+  email: "Email",
+  birthDate: "Data de nascimento",
+  password: "Senha",
+  passwordRepeat: "Repetir senha",
+}

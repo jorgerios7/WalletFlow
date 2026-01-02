@@ -1,6 +1,6 @@
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import { MixedTransactionEntry } from "@/app/types/Finance";
-import { BottomSheet } from "@/components/ui/sheet/BottomSheet";
+import BottomSheet from '@/components/ui/sheet/bottomSheet';
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { useContext } from "react";
@@ -31,7 +31,7 @@ const FinanceReportScreen = ({ data, isVisible, onClose }: { data: MixedTransact
         <SafeAreaView style={{ position: 'absolute', bottom: 0, width: '100%' }}>
             <BottomSheet
                 visible={isVisible}
-                isFullHeight={true}
+                initialSize="full"
                 isDragHandleVisible={false}
                 onClose={onClose}
             >

@@ -1,6 +1,6 @@
 import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { LoadScreen } from '@/app/pages/LoadScreen';
-import { FormLabelsDefault, UserLogin, UserLoginDefault } from '@/app/types/User';
+import { LoginFormLabelsDefault, LoginInputProps, LoginInputValueDefault } from '@/app/types/User';
 import CustomButton from '@/components/ui/CustomButton';
 import DynamicLabelInput from '@/components/ui/DynamicLabelInput';
 import TextButton from '@/components/ui/TextButton';
@@ -8,35 +8,29 @@ import TransitionView from '@/components/ui/TransitionView';
 import ValidateEmptyFields from '@/components/ValidateEmptyFields';
 import { Colors } from '@/constants/Colors';
 import React, { useContext, useState } from 'react';
-import { Text } from "react-native";
+import { Text } from 'react-native';
 import MessageScreen from '../customBottomSheet/messageScreen';
 
 interface Props {
     isVisible: boolean;
     loading: boolean;
+    onConfirm: (values: LoginInputProps) => void;
     onDismiss: () => void;
-    onConfirm: (values: UserLogin) => void;
 }
 
-const SignUpScreen: React.FC<Props> = ({ isVisible, loading, onConfirm, onDismiss, }) => {
+const SignInScreen: React.FC<Props> = ({ isVisible, loading, onConfirm, onDismiss, }) => {
     if (!isVisible) return null;
 
     const { preferences } = useContext(PreferencesContext);
 
-    const [data, setData] = useState(UserLoginDefault);
-
+    const [data, setData] = useState(LoginInputValueDefault);
     const [message, setMessage] = useState<String>("");
 
-    const validateFields = () => {
-        const validated = ValidateEmptyFields(data, FormLabelsDefault);
+    function handleValidateField() {
+        const validated = ValidateEmptyFields(data, LoginFormLabelsDefault);
 
         if (validated) {
             setMessage(validated);
-            return;
-        }
-
-        if (data.password !== data.passwordRepeat) {
-            setMessage("As senhas não coincidem.");
             return;
         }
 
@@ -54,11 +48,12 @@ const SignUpScreen: React.FC<Props> = ({ isVisible, loading, onConfirm, onDismis
 
     if (loading) {
         return (
-        <LoadScreen />
-    );
-}
+            <LoadScreen />
+        );
+    }
 
     return (
+
         <TransitionView
             style={{
                 gap: 10,
@@ -66,68 +61,39 @@ const SignUpScreen: React.FC<Props> = ({ isVisible, loading, onConfirm, onDismis
                 backgroundColor: Colors[preferences.theme.appearance].background
             }}
         >
-
             <Text
                 style={{
                     fontSize: 40,
                     color: Colors[preferences.theme.appearance].textPrimary
                 }}
             >
-                Inscrever-se
+                Login
             </Text>
 
             <DynamicLabelInput
-                label="Primeiro nome"
-                initialText={data.name}
-                colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setData(prev => ({ ...prev, name: text }))}
-            />
-            <DynamicLabelInput
-                label="Sobrenome"
-                initialText={data.surname}
-                colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setData(prev => ({ ...prev, surname: text }))}
-            />
-            <DynamicLabelInput
-                label="E-mail"
+                label="Email"
                 initialText={data.email}
                 colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setData(prev => ({ ...prev, email: text }))}
-            />
-            <DynamicLabelInput
-                dateEntry
-                label="Data de Nascimento"
-                initialText={data.birthDate}
-                colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setData(prev => ({ ...prev, birthDate: text }))}
+                onTextChange={(value) => setData((prev) => ({ ...prev, email: value }))}
+
             />
             <DynamicLabelInput
                 label="Senha"
                 secureTextEntry
                 initialText={data.password}
                 colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setData(prev => ({ ...prev, password: text }))}
+                onTextChange={(value) => setData((prev) => ({ ...prev, password: value }))}
             />
-            <DynamicLabelInput
-                label="Repetir senha"
-                secureTextEntry
-                initialText={data.passwordRepeat}
-                colorLabel={Colors[preferences.theme.appearance].background}
-                onTextChange={(text) => setData(prev => ({ ...prev, passwordRepeat: text }))}
-            />
-
             <CustomButton
-                text="Inscrever-se"
-                onPress={validateFields}
+                text="Entrar"
+                onPress={handleValidateField}
             />
-
             <TextButton
                 onPress={onDismiss}
                 text="Voltar"
             />
-
         </TransitionView>
     );
 };
 
-export default SignUpScreen;
+export default SignInScreen;

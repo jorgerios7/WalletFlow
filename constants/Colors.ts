@@ -45,8 +45,8 @@ export const Colors = {
     bgTranspPrimary: "rgba(51, 51, 51, 0.45)",
 
     background: "#000000ff",
-    surface: "#151516ff",
-    surfaceVariant: "#0c0c0cff",
+    surface: "#2a2a2cff",
+    surfaceVariant: "#161616ff",
 
     textPrimary: "#ffffffff",
     textSecondary: "#bebebeff",

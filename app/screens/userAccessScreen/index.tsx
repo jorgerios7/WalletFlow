@@ -1,136 +1,113 @@
 import { auth, db } from "@/app/config/firebaseConfig";
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
-import ValidateEmptyFields from "@/components/ValidateEmptyFields";
+import { LoginInputProps, UserLogin } from "@/app/types/User";
+import ConfirmActionModal from "@/components/ui/confirmActionModal";
+import { HandleErroMessage } from "@/components/ui/HandleErroMessage";
 import { Colors } from "@/constants/Colors";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from "firebase/firestore";
 import { useContext, useState } from "react";
 import { View } from "react-native";
-import { Snackbar } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import LoginScreen from "./loginScreen";
-import SignupScreen from "./signupScreen";
-import WelcomeScreen from "./welcomeScreen";
+import CustomBottomSheet from "./customBottomSheet";
+import HomeScreen from "./homeScreen";
+import SignInScreen from "./signInScreen";
+import SignUpScreen from "./signUpScreen";
 
 const UserAccessScreen: React.FC = () => {
-
     const insets = useSafeAreaInsets();
 
     const { preferences } = useContext(PreferencesContext);
 
-    const [loginInputValue, setLoginInputValue] = useState({ Email: "", Password: "" });
+    const [currentScreen, setCurrentScreen] = useState<"home" | "signIn" | "signUp">("home");
 
-    const loginFormLabels = { Email: "Email", Password: "Senha" };
+    const [message, setMessage] = useState<String>("");
 
-    const [signupInputValue, setSignupInputValue] = useState({
-        firstName: "", surname: "", email: "", birthDate: "", password: "", passwordRepeat: "",
-    });
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [snackbarVisible, setSnackbarVisible] = useState(false);
-    const [msg, setMsg] = useState("");
-    const [isSignup, setFunctionSignup] = useState(false);
-    const [isLoginCreatedSuccessfully, setLoginCreation] = useState(false);
+    const handleAccountCreation = (data: UserLogin) => {
+        setIsLoading(true);
 
-    const handleCreateLogin = () => {
-        createUserWithEmailAndPassword(auth, signupInputValue.email, signupInputValue.password)
+        createUserWithEmailAndPassword(auth, data.email, data.password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                handleCreateUserBankData(user.uid);
+                handleCreateUserBankData(user.uid, data);
             })
-            .catch((error) => {
-                console.error('Erro ao criar usuário:', error);
-                setMsg("Erro ao criar usuário");
-                setSnackbarVisible(true);
+            .catch((error: any) => {
+                const translatedMessage = HandleErroMessage(error.code)
+                setMessage(translatedMessage);
+
+                setIsLoading(false);
             });
     };
 
-    const handleCreateUserBankData = async (uid: string) => {
+    const handleCreateUserBankData = async (uid: string, data: UserLogin) => {
         try {
             await setDoc(doc(db, "users", uid), {
                 identification: {
-                    name: signupInputValue.firstName,
-                    surname: signupInputValue.surname,
-                    birthDate: signupInputValue.birthDate,
-                    email: signupInputValue.email
+                    name: data.name,
+                    surname: data.surname,
+                    birthDate: data.birthDate,
+                    email: data.email
                 },
                 createdAt: new Date().toISOString()
             });
+        } catch (error: any) {
+            const translatedMessage = HandleErroMessage(error.code)
+            setMessage(translatedMessage);
+        } finally {
 
-            setLoginCreation(true);
-        } catch (error) {
-            console.error("(UserAccessScreen) Erro:", error);
-            setMsg("Erro ao salvar dados do usuário.");
-            setSnackbarVisible(true);
+            setIsLoading(false);
         }
     };
 
-    const handleEnterButton = () => {
-        const validationMsg = ValidateEmptyFields(loginInputValue, loginFormLabels);
+    const handleSignIn = (data: LoginInputProps) => {
+        setIsLoading(true);
 
-        if (validationMsg) {
-            setMsg(validationMsg);
-            setSnackbarVisible(true);
-            return;
-        }
-
-        signInWithEmailAndPassword(auth, loginInputValue.Email, loginInputValue.Password)
-            .then(() => setLoginInputValue({ Email: "", Password: "" }))
+        signInWithEmailAndPassword(auth, data.email, data.password)
+            .then()
             .catch((error) => {
-                console.error('(UserAccessScreen) Erro ao fazer login:', error);
-                setMsg("Erro ao fazer login: " + error.message);
-                setSnackbarVisible(true);
+                const translatedMessage = HandleErroMessage(error.code)
+                setMessage(translatedMessage);
             });
 
-
-        setLoginInputValue({ Email: "", Password: "" })
-    }
-
-    const handleReturnToLogin = () => {
-        setFunctionSignup(false);
-        setLoginCreation(false);
-        setSignupInputValue({ firstName: "", surname: "", email: "", birthDate: "", password: "", passwordRepeat: "" });
+        setIsLoading(false);
     }
 
     return (
-        <View style={{
-            flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors[preferences.theme.appearance].background,
-            marginTop: insets.top, marginBottom: insets.bottom, padding: 10
-        }}>
-            <LoginScreen
-                shouldRender={!isSignup}
-                values={loginInputValue}
-                onChange={(field, value) => setLoginInputValue((prev) => ({ ...prev, [field]: value }))}
-                onPressingEnterButton={handleEnterButton}
-                onPressingRegisterButton={() => [setFunctionSignup(true), setLoginCreation(false)]}
-            />
+        <View
+            style={{
+                flex: 1,
+                backgroundColor: Colors[preferences.theme.appearance].accent,
+                marginTop: insets.top,
+            }}
+        >
+            <CustomBottomSheet>
+                <HomeScreen
+                    isVisible={currentScreen === "home"}
+                    onSelect={setCurrentScreen}
+                />
 
-            <SignupScreen
-                shouldRender={isSignup && !isLoginCreatedSuccessfully}
-                values={signupInputValue}
-                whenIsReady={(data) => {
-                    setSignupInputValue((prev) => ({ ...prev, ...data }));
-                    handleCreateLogin();
-                }}
-                erroMessage={(message) => {
-                    setMsg(message);
-                    setSnackbarVisible(true);
-                }}
-                onPressingReturnButton={handleReturnToLogin}
-            />
+                <SignInScreen
+                    isVisible={currentScreen === "signIn"}
+                    loading={isLoading}
+                    onConfirm={handleSignIn}
+                    onDismiss={() => setCurrentScreen("home")}
+                />
 
-            <WelcomeScreen
-                onPressingReturnToLoginButton={handleReturnToLogin}
-                shouldRender={isSignup && isLoginCreatedSuccessfully}
-            />
+                <SignUpScreen
+                    isVisible={currentScreen === "signUp"}
+                    loading={isLoading}
+                    onConfirm={handleAccountCreation}
+                    onDismiss={() => setCurrentScreen("home")}
+                />
 
-            <Snackbar
-                visible={snackbarVisible}
-                onDismiss={() => setSnackbarVisible(false)}
-                style={{ backgroundColor: Colors[preferences.theme.appearance].accent }}
-                action={{ label: "Fechar", onPress: () => setSnackbarVisible(false) }}
-            >
-                {msg}
-            </Snackbar>
+                <ConfirmActionModal
+                    isVisible={message !== ""}
+                    confirmationMessage={message as string}
+                    onConfirm={() => setMessage("")}
+                />
+            </CustomBottomSheet>
         </View>
     );
 }
