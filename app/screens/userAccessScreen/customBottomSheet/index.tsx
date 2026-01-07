@@ -32,7 +32,7 @@ export const CustomBottomSheet: React.FC<Props> = ({
             <View
                 style={[
                     styles.sheetContainer,
-                    { backgroundColor: theme.background }
+                    { backgroundColor: theme.surface }
                 ]}
             >
                 {children}
@@ -52,5 +52,6 @@ const styles = StyleSheet.create({
     padding: 40,
     borderTopEndRadius: 70,
     gap: 20,
+    elevation: 5
 }
 });

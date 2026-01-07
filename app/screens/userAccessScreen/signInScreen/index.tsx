@@ -1,24 +1,25 @@
+import { auth } from '@/app/config/firebaseConfig';
 import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { LoadScreen } from '@/app/pages/LoadScreen';
-import { LoginFormLabelsDefault, LoginInputProps, LoginInputValueDefault } from '@/app/types/User';
+import { LoginFormLabelsDefault, LoginInputValueDefault } from '@/app/types/User';
 import CustomButton from '@/components/ui/CustomButton';
 import DynamicLabelInput from '@/components/ui/DynamicLabelInput';
+import { HandleErroMessage } from '@/components/ui/HandleErroMessage';
 import TextButton from '@/components/ui/TextButton';
 import TransitionView from '@/components/ui/TransitionView';
 import ValidateEmptyFields from '@/components/ValidateEmptyFields';
 import { Colors } from '@/constants/Colors';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
 import { Text } from 'react-native';
 import MessageScreen from '../customBottomSheet/messageScreen';
 
 interface Props {
     isVisible: boolean;
-    loading: boolean;
-    onConfirm: (values: LoginInputProps) => void;
     onDismiss: () => void;
 }
 
-const SignInScreen: React.FC<Props> = ({ isVisible, loading, onConfirm, onDismiss, }) => {
+const SignInScreen: React.FC<Props> = ({ isVisible, onDismiss, }) => {
     if (!isVisible) return null;
 
     const { preferences } = useContext(PreferencesContext);
@@ -26,15 +27,29 @@ const SignInScreen: React.FC<Props> = ({ isVisible, loading, onConfirm, onDismis
     const [data, setData] = useState(LoginInputValueDefault);
     const [message, setMessage] = useState<String>("");
 
-    function handleValidateField() {
+    const [loading, setLoading] = useState<boolean>(false);
+
+    function handleSignIn() {
+        setLoading(true);
+
         const validated = ValidateEmptyFields(data, LoginFormLabelsDefault);
 
         if (validated) {
             setMessage(validated);
+            setLoading(false);
             return;
         }
 
-        onConfirm(data);
+        signInWithEmailAndPassword(auth, data.email, data.password)
+            .then()
+            .catch((error) => {
+                const translatedMessage = HandleErroMessage(error.code)
+                setMessage(translatedMessage);
+
+                setLoading(false);
+            });
+
+        setLoading(false);
     }
 
     if (message !== "") {
@@ -53,12 +68,11 @@ const SignInScreen: React.FC<Props> = ({ isVisible, loading, onConfirm, onDismis
     }
 
     return (
-
         <TransitionView
             style={{
                 gap: 10,
                 width: '100%',
-                backgroundColor: Colors[preferences.theme.appearance].background
+                backgroundColor: Colors[preferences.theme.appearance].surface
             }}
         >
             <Text
@@ -73,7 +87,7 @@ const SignInScreen: React.FC<Props> = ({ isVisible, loading, onConfirm, onDismis
             <DynamicLabelInput
                 label="Email"
                 initialText={data.email}
-                colorLabel={Colors[preferences.theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].surface}
                 onTextChange={(value) => setData((prev) => ({ ...prev, email: value }))}
 
             />
@@ -81,12 +95,12 @@ const SignInScreen: React.FC<Props> = ({ isVisible, loading, onConfirm, onDismis
                 label="Senha"
                 secureTextEntry
                 initialText={data.password}
-                colorLabel={Colors[preferences.theme.appearance].background}
+                colorLabel={Colors[preferences.theme.appearance].surface}
                 onTextChange={(value) => setData((prev) => ({ ...prev, password: value }))}
             />
             <CustomButton
                 text="Entrar"
-                onPress={handleValidateField}
+                onPress={handleSignIn}
             />
             <TextButton
                 onPress={onDismiss}

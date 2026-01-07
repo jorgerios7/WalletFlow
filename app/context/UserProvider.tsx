@@ -41,6 +41,7 @@ export default function UserProvider({
 
     const [loadingUserAndGroup, setLoadingUserAndGroup] = useState<boolean>(false);
     const [profilePhotoUri, setProfilePhotoUri] = useState<string | null>(null);
+    const [userHasGroup, setUserHasGroup] = useState<boolean | null>(null);
     const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
 
     const authenticated = Boolean(userId);
@@ -48,8 +49,6 @@ export default function UserProvider({
     const [hasInitialized, setHasInitialized] = useState(false);
 
     const [error, setError] = useState<Error | null>(null);
-
-    const userHasGroup = Boolean(group);
 
     async function loadProfilePhotoUri(): Promise<void> {
         if (!userId) return;
@@ -94,6 +93,7 @@ export default function UserProvider({
         if (!userId) {
             setUser(null);
             setGroup(null);
+            setUserHasGroup(null);
             setError(null);
 
             if (!hasInitialized) {
@@ -105,20 +105,25 @@ export default function UserProvider({
         }
 
         try {
+            setUserHasGroup(null);
+
             const userData = await LoadUserData(userId);
 
             if (!userData?.groupId) {
                 setUser(userData);
                 setGroup(null);
+                setUserHasGroup(false);
             } else {
                 const groupData = await LoadGroupData(userData.groupId);
                 setUser(userData);
                 setGroup(groupData);
+                setUserHasGroup(true);
             }
         } catch (err) {
             setError(err as Error);
             setUser(null);
             setGroup(null);
+            setUserHasGroup(null);
         } finally {
             if (!hasInitialized) {
                 setLoadingUserAndGroup(false);
@@ -126,6 +131,7 @@ export default function UserProvider({
             }
         }
     }, [userId, hasInitialized]);
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -147,10 +153,10 @@ export default function UserProvider({
         if (!authenticated) {
             setUser(null);
             setGroup(null);
+            setUserHasGroup(null);
             setLoadingAuth(false);
             return;
         }
-
         loadUserAndGroupData();
     }, [loadingAuth, authenticated, loadUserAndGroupData]);
 

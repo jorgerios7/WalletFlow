@@ -72,7 +72,7 @@ export interface UserContextData {
   user: User | null;
   group: Group | null;
   userId: string | null;
-  userHasGroup: boolean;
+  userHasGroup: boolean | null;
   loadingUserAndGroup: boolean;
   profilePhotoUri: string | null;
   loadingAuth: boolean;

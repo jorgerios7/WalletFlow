@@ -1,48 +1,28 @@
+import BottomSheet from "@/components/ui/sheet/bottomSheet";
 import { useUser } from "../context/UserProvider";
 import TabNavigation from "../navigation/tabNavigation";
 import { LoadScreen } from "../pages/LoadScreen";
 import GroupAccessSetup from "../screens/groupAccessSetup";
-import CreateGroup from "../services/firebase/groupService/createGroup";
 
-interface Props {
-    onError?: (message: string) => void;
-}
-
-export default function UserFlow({ onError }: Props) {
+export default function UserFlow() {
     const {
-        user,
-        userId,
         loadingUserAndGroup,
-        userHasGroup,
-        refresh
-    } = useUser(); 
+        userHasGroup
+    } = useUser();
 
-    if (loadingUserAndGroup) {
+    if (loadingUserAndGroup || userHasGroup === null) {
         return <LoadScreen />;
     }
 
     if (!userHasGroup) {
         return (
-            <GroupAccessSetup
-                onDismiss={() => console.log("GroupAccessSetup.tsx, button return has been pressed!")}
-                onReady={({ action, values }) => {
-                    if (!user) return;
-                    
-                    CreateGroup(
-                        action,
-                        values,
-                        {
-                            id: userId as string,
-                            name: user.identification.name,
-                            surname: user.identification.surname
-                        },
-                        refresh,
-                        (_, message) => onError
-                            ? onError(message)
-                            : console.log("unknow error!")
-                    );
-                }}
-            />
+            <BottomSheet
+                visible
+                initialSize="small"
+                isDragHandleVisible={false}
+            >
+                <GroupAccessSetup />
+            </BottomSheet>
         );
     }
 

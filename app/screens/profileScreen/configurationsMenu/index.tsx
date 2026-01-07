@@ -9,10 +9,16 @@ import DataEditorMenu from "./dataEditorMenu";
 import PreferencesMenu from "./preferencesMenu";
 
 export default function ConfigurationsMenu() {
-    const { preferences, setFontSizeType, setInitScreen, setScreenActivationTime } = useContext(PreferencesContext);
+    const {
+        preferences,
+        setFontSizeType,
+        setInitScreen,
+        setScreenActivationTime
+    } = useContext(PreferencesContext);
 
     const textStyle = {
-        color: Colors[preferences.theme.appearance].textPrimary, fontSize: Typography[preferences.fontSizeType].sm.fontSize,
+        color: Colors[preferences.theme.appearance].textPrimary, 
+        fontSize: Typography[preferences.fontSizeType].sm.fontSize,
         lineHeight: Typography[preferences.fontSizeType].sm.lineHeight
     };
 

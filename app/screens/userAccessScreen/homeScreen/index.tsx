@@ -24,7 +24,7 @@ const HomeScreen: React.FC<Props> = ({ isVisible, onSelect }) => {
             style={{
                 gap: 10,
                 width: '100%',
-                backgroundColor: Colors[preferences.theme.appearance].background
+                backgroundColor: Colors[preferences.theme.appearance].surface
             }}
         >
             <Text

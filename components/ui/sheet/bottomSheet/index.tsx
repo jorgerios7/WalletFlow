@@ -30,7 +30,7 @@ const DRAG_THRESHOLD = 10;
 
 interface BottomSheetProps {
     visible: boolean;
-    onClose: () => void;
+    onClose?: () => void;
     children: React.ReactNode;
     isDragHandleVisible: boolean;
     initialSize: "small" | "medium" | "full";
