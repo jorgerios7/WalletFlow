@@ -4,7 +4,7 @@ import DropdownSearch from "@/components/ui/dropdowns/dropdownSearch.tsx";
 import DeleteCategoryMenu from "@/components/ui/dropdowns/dropdownSearch.tsx/deleteCategoryMenu";
 import NewCategoryMenu from "@/components/ui/dropdowns/dropdownSearch.tsx/newCategoryMenu";
 import { useEffect, useState } from "react";
-import { Alert, View } from "react-native";
+import { Alert } from "react-native";
 import StepScreen from "../../../stepScreen";
 
 interface Props {
@@ -47,12 +47,7 @@ export default function CategoryStep({ isVisible, value, type, onConfirm, onBack
     }
 
     return (
-        <View
-            style={{
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}
-        >
+        <>
             <StepScreen
                 isVisible={isVisible}
                 onConfirm={handleEmptyField}
@@ -87,6 +82,6 @@ export default function CategoryStep({ isVisible, value, type, onConfirm, onBack
                 onSuccess={HandleLoadCategories}
                 onDismiss={() => setItemsVisible(prev => ({ ...prev, deleteCategoryMenu: false }))}
             />
-        </View>
+        </>
     );
 };

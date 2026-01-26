@@ -42,7 +42,7 @@ export default function NavigationButton({ direction, onPress }: NavigationButto
 const styles = StyleSheet.create({
     button: {
         width: 40,
-        height: 40,
+        height: 50,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 20

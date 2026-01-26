@@ -36,7 +36,7 @@ export const Colors = {
 
     headerBackground: "#0A2C63",
 
-    overlay: "rgba(0,0,0,0.1)"
+    overlay: "rgba(0, 0, 0, 0.51)"
   },
 
   dark: {
@@ -77,6 +77,6 @@ export const Colors = {
     accentPressed: "#003bbb75",
 
     headerBackground: "#3e3f4dc4",
-    overlay: "rgba(0,0,0,0.1)"
+    overlay: "rgba(0, 0, 0, 0.4)"
   }
 };

@@ -10,10 +10,9 @@ import {
   TransactionType
 } from '@/app/types/Finance';
 import { Colors } from '@/constants/Colors';
-import { Typography } from '@/constants/Typography';
 import { getAuth } from 'firebase/auth';
 import { useContext, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import FinalStep from '../stepScreen/finalStep';
 import CategoryStep from './steps/categoryStep';
 import DescriptionStep from './steps/descriptionStep';
@@ -57,33 +56,13 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
     setEntries(DefTransCreationEntryValues);
   }
 
-  function renderTitle() {
-    return type === 'income'
-      ? 'Cadastro de Receita'
-      : 'Cadastro de Despesa'
-  }
-
-  const title = renderTitle();
-
   return (
     <View
       style={[
         styles.container,
-        { backgroundColor: Colors[preferences.theme.appearance].surface }
+        { backgroundColor: Colors[preferences.theme.appearance].overlay }
       ]}
     >
-
-      <Text
-        style={{
-          fontWeight: '400',
-          color: Colors[preferences.theme.appearance].textPrimary,
-          fontSize: Typography[preferences.fontSizeType].lg.fontSize,
-          lineHeight: Typography[preferences.fontSizeType].lg.lineHeight
-        }}
-      >
-        {title}
-      </Text>
-
       <RecurrenceStep
         isVisible={currentStep === "recurrence"}
         transactionType={type}
@@ -100,7 +79,7 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
           }))
         }}
         onConfirm={() => setCurrentStep("category")}
-        onBack={() => onDismiss()}
+        onBack={onDismiss}
         onCancel={onDismiss}
       />
 
@@ -174,11 +153,10 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: "100%",
+    flex: 1,
     gap: 10,
     justifyContent: "center",
     alignItems: "center",
-    padding: 10
+    padding: 10,
   }
 })
