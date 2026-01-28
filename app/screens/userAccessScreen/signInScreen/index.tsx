@@ -1,112 +1,156 @@
 import { auth } from '@/app/config/firebaseConfig';
 import { PreferencesContext } from '@/app/context/PreferencesProvider';
 import { LoadScreen } from '@/app/pages/LoadScreen';
-import { LoginFormLabelsDefault, LoginInputValueDefault } from '@/app/types/User';
+import { LoginFormLabelsDefault } from '@/app/types/User';
 import CustomButton from '@/components/ui/CustomButton';
 import DynamicLabelInput from '@/components/ui/DynamicLabelInput';
 import { HandleErroMessage } from '@/components/ui/HandleErroMessage';
-import TextButton from '@/components/ui/TextButton';
-import TransitionView from '@/components/ui/TransitionView';
 import ValidateEmptyFields from '@/components/ValidateEmptyFields';
 import { Colors } from '@/constants/Colors';
+import { Typography } from '@/constants/Typography';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
-import { Text } from 'react-native';
-import MessageScreen from '../customBottomSheet/messageScreen';
+import { Pressable, Switch, Text, View } from 'react-native';
+import InfoCard from '../infoCard';
+
 
 interface Props {
     isVisible: boolean;
-    onDismiss: () => void;
 }
 
-const SignInScreen: React.FC<Props> = ({ isVisible, onDismiss, }) => {
+const SignInScreen: React.FC<Props> = ({ isVisible }) => {
     if (!isVisible) return null;
 
-    const { preferences } = useContext(PreferencesContext);
+    const {
+        preferences,
+        setUserEmailReminder,
+    } = useContext(PreferencesContext);
 
-    const [data, setData] = useState(LoginInputValueDefault);
-    const [message, setMessage] = useState<String>("");
+    const [remember, setRemember] = useState(preferences.userEmailReminder !== "");
 
-    const [loading, setLoading] = useState<boolean>(false);
+    const [data, setData] = useState({
+        email: remember
+            ? preferences.userEmailReminder
+            : "",
+        password: ""
+    });
+    const [message, setMessage] = useState<string>('');
+    const [loading, setLoading] = useState(false);
 
-    function handleSignIn() {
-        setLoading(true);
 
+    const theme = Colors[preferences.theme.appearance];
+    const typography = Typography[preferences.fontSizeType];
+
+    const handleSignIn = async () => {
         const validated = ValidateEmptyFields(data, LoginFormLabelsDefault);
-
         if (validated) {
             setMessage(validated);
-            setLoading(false);
             return;
         }
 
-        signInWithEmailAndPassword(auth, data.email, data.password)
-            .then()
-            .catch((error) => {
-                const translatedMessage = HandleErroMessage(error.code)
-                setMessage(translatedMessage);
+        try {
+            setLoading(true);
+            await signInWithEmailAndPassword(auth, data.email, data.password);
 
-                setLoading(false);
-            });
+            { remember && setUserEmailReminder(data.email) }
+        } catch (error: any) {
+            setMessage(HandleErroMessage(error.code));
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        setLoading(false);
-    }
+    if (loading) return <LoadScreen />;
 
-    if (message !== "") {
+    {/*if (message) {
         return (
             <MessageScreen
-                message={message as string}
-                onDismiss={() => setMessage("")}
+                message={message}
+                onDismiss={() => setMessage('')}
             />
         );
-    }
-
-    if (loading) {
-        return (
-            <LoadScreen />
-        );
-    }
+    }*/}
 
     return (
-        <TransitionView
-            style={{
-                gap: 10,
-                width: '100%',
-                backgroundColor: Colors[preferences.theme.appearance].surface
-            }}
-        >
-            <Text
+        <View style={{ width: "100%", gap: 20 }}>
+            <View style={{ gap: 14 }}>
+                <DynamicLabelInput
+                    label="Email"
+                    initialText={data.email}
+                    colorLabel={theme.background}
+                    onTextChange={(email) =>
+                        setData(prev => ({ ...prev, email }))
+                    }
+                />
+
+                <DynamicLabelInput
+                    label="Senha"
+                    secureTextEntry
+                    initialText={data.password}
+                    colorLabel={theme.background}
+                    onTextChange={(password) =>
+                        setData(prev => ({ ...prev, password }))
+                    }
+                />
+
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: "center"
+                    }}
+                >
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 8
+                        }}
+                    >
+                        <Switch
+                            value={remember}
+                            onValueChange={setRemember}
+                            thumbColor={theme.accent}
+                        />
+                        <Text
+                            style={{
+                                color: theme.textPrimary,
+                                fontSize: typography.md.fontSize,
+                                fontWeight: "500"
+                            }}
+                        >
+                            Lembrar-me
+                        </Text>
+                    </View>
+
+                    <Pressable>
+                        <Text
+                            style={{
+                                color: theme.textPrimary,
+                                fontSize: typography.md.fontSize,
+                                fontWeight: "500"
+                            }}
+                        >
+                            Esqueceu a senha?
+                        </Text>
+                    </Pressable>
+                </View>
+
+                <CustomButton text="Entrar" onPress={handleSignIn} />
+            </View>
+
+            <View
                 style={{
-                    fontSize: 40,
-                    color: Colors[preferences.theme.appearance].textPrimary
+                    flexDirection: 'row',
+                    gap: 10,
+                    justifyContent: 'center'
                 }}
             >
-                Login
-            </Text>
-
-            <DynamicLabelInput
-                label="Email"
-                initialText={data.email}
-                colorLabel={Colors[preferences.theme.appearance].surface}
-                onTextChange={(value) => setData((prev) => ({ ...prev, email: value }))}
-
-            />
-            <DynamicLabelInput
-                label="Senha"
-                secureTextEntry
-                initialText={data.password}
-                colorLabel={Colors[preferences.theme.appearance].surface}
-                onTextChange={(value) => setData((prev) => ({ ...prev, password: value }))}
-            />
-            <CustomButton
-                text="Entrar"
-                onPress={handleSignIn}
-            />
-            <TextButton
-                onPress={onDismiss}
-                text="Voltar"
-            />
-        </TransitionView>
+                <InfoCard icon="shield" label="Seguro" />
+                <InfoCard icon="flash-auto" label="Rápido" />
+                <InfoCard icon="insights" label="Insights" />
+            </View>
+        </View>
     );
 };
 

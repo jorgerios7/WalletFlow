@@ -44,5 +44,6 @@ export const DEFAULT_PREFERENCES = {
     theme: { source: "system", appearance: "light" } as ThemeState,
     fontSizeType: "medium" as FontSizeType,
     initScreen: "analysis" as ScreensType,
-    screenActivationTime: "automatic" as ScreenActivationTimeState
+    screenActivationTime: "automatic" as ScreenActivationTimeState, 
+    userEmailReminder: ""
 };

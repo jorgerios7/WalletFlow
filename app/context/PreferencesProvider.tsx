@@ -18,10 +18,12 @@ interface Props {
         fontSizeType: FontSizeType;
         initScreen: ScreensType;
         screenActivationTime: ScreenActivationTimeState;
+        userEmailReminder: string;
     };
     setFontSizeType: (fontSize: FontSizeType) => void;
     setInitScreen: (initScreen: ScreensType) => void;
     setScreenActivationTime: (screenState: ScreenActivationTimeState) => void;
+    setUserEmailReminder: (email: string) => void;
 }
 
 export const PreferencesContext = createContext<Props>({
@@ -30,10 +32,12 @@ export const PreferencesContext = createContext<Props>({
         fontSizeType: "medium",
         initScreen: "analysis",
         screenActivationTime: "automatic",
+        userEmailReminder: ""
     },
     setFontSizeType: () => { },
     setInitScreen: () => { },
     setScreenActivationTime: () => { },
+    setUserEmailReminder: () => { },
 });
 
 export function PreferencesProvider({ children }: { children: React.ReactNode }) {
@@ -42,12 +46,13 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     const auth = getAuth();
     const uid = auth.currentUser?.uid;
 
-    const { FONT_SIZE, INIT_SCREEN, SCREEN_ACTIVATION_TIME } = STORAGE_KEYS(uid ? uid : "");
+    const { FONT_SIZE, INIT_SCREEN, SCREEN_ACTIVATION_TIME, USER_EMAIL_REMINDER } = STORAGE_KEYS(uid ? uid : "");
 
     const [preferences, setPreferencesState] = useState({
         fontSizeType: DEFAULT_PREFERENCES.fontSizeType,
         initScreen: DEFAULT_PREFERENCES.initScreen,
         screenActivationTime: DEFAULT_PREFERENCES.screenActivationTime,
+        userEmailReminder: DEFAULT_PREFERENCES.userEmailReminder
     });
 
     const [loading, setLoading] = useState(true);
@@ -78,9 +83,18 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
             newScreenActivationTime
         );
         setPreferencesState((prev) => ({
-            ...prev,
-            screenActivationTime: newScreenActivationTime,
+            ...prev, screenActivationTime: newScreenActivationTime,
         }));
+    };
+
+    const setUserEmailReminder = async (newEmail: string) => {
+        await AsyncStorage.setItem(
+            USER_EMAIL_REMINDER,
+            newEmail
+        );
+        setPreferencesState((prev) => ({
+            ...prev, userEmailReminder: newEmail
+        }))
     };
 
     useEffect(() => {
@@ -132,6 +146,7 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
                 setFontSizeType,
                 setInitScreen,
                 setScreenActivationTime,
+                setUserEmailReminder
             }}
         >
             {children}

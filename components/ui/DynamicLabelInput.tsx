@@ -5,7 +5,6 @@ import { Typography } from "@/constants/Typography";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useContext, useState } from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
-import LabelAnimated from "./LabelAnimated";
 
 interface Props {
   initialText?: string, initialNumber?: number, label: string; colorLabel?: string; secureTextEntry?: boolean;
@@ -22,6 +21,9 @@ export default function DynamicLabelInput({
   const [number, setNumber] = useState(initialNumber ? initialNumber.toString() : "");
   const [isPasswordVisible, setIsPasswordVisible] = useState(!secureTextEntry);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+
+  const theme = Colors[preferences.theme.appearance];
+  const typography = Typography[preferences.fontSizeType];
 
   const handleValueChange = (newValue: string) => {
     if (!numberEntry) {
@@ -47,22 +49,21 @@ export default function DynamicLabelInput({
   };
 
   return (
-    <View style={styles.container}>
-      <LabelAnimated
-        labelText={label}
-        labelColor={colorLabel}
-        focused={isFocused}
-        textInput={text ? text : number}
-      />
-
+    <View style={[styles.container, { backgroundColor: theme.surface, borderColor: theme.border, }]}>
       <TextInput
         value={numberEntry ? MaskCurrency(number) : dateEntry ? MaskDate(text) : text}
+        placeholder={label}
+        placeholderTextColor={theme.textSecondary}
         onChangeText={(value) => handleValueChange(value)}
-        style={[[styles.input, {
-          borderColor: Colors[preferences.theme.appearance].borderInverse, color: Colors[preferences.theme.appearance].textPrimary,
-          fontSize: Typography[preferences.fontSizeType].md.fontSize,
-          lineHeight: Typography[preferences.fontSizeType].md.lineHeight
-        }], isFocused && styles.inputFocused]}
+        style={[
+          [
+            styles.input, {
+              color: theme.textPrimary,
+              fontSize: typography.md.fontSize,
+              lineHeight: typography.md.lineHeight
+            }],
+          isFocused && [styles.inputFocused, {borderColor: theme.accent, }]
+        ]}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         maxLength={dateEntry ? 10 : 40}
         keyboardType={numberEntry || dateEntry ? "numeric" : "default"}
@@ -78,7 +79,7 @@ export default function DynamicLabelInput({
           <Ionicons
             name={isPasswordVisible ? "eye" : "eye-off"}
             size={18}
-            color={Colors[preferences.theme.appearance].iconPrimary}
+            color={theme.iconPrimary}
           />
         </Pressable>
       )}
@@ -91,7 +92,7 @@ export default function DynamicLabelInput({
           <Ionicons
             name={"calendar"}
             size={18}
-            color={Colors[preferences.theme.appearance].iconPrimary}
+            color={theme.iconPrimary}
           />
         </Pressable>
       )}
@@ -100,8 +101,8 @@ export default function DynamicLabelInput({
 }
 
 const styles = StyleSheet.create({
-  container: { position: "relative" },
-  input: { borderWidth: 0.5, backgroundColor: "transparent", fontWeight: "bold", borderRadius: 10, padding: 14 },
-  inputFocused: { outlineColor: "transparent" },
+  container: { flexGrow: 1, position: "relative", borderWidth: 0.5, borderRadius: 10 },
+  input: { backgroundColor: "transparent", fontWeight: "bold" , padding: 14 },
+  inputFocused: { outlineColor: "transparent", borderWidth: 1, borderRadius: 10 },
   imageButton: { position: "absolute", right: 18, top: "55%", transform: [{ translateY: -12 }], outlineColor: "transparent" },
 });

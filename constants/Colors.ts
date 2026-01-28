@@ -6,12 +6,12 @@ export const Colors = {
 
     background: "#FFFFFF",
     surface: "#E6E8EB",
-    surfaceVariant: "#F4F5F7",
+    surfaceVariant: "#ccccce",
 
-    highlight: "#1ddfdfff",
+    highlight: "rgb(98, 191, 244)",
 
     textPrimary: "#11181C",
-    textSecondary: "#555555ff",
+    textSecondary: "rgb(90, 90, 90)",
     textInverse: "#FFFFFF",
     textContrast: "#FFFFFF",
 

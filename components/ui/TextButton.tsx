@@ -52,5 +52,5 @@ export default function TextButton({
 const styles = StyleSheet.create({
     link: { padding: 0.1 },
     text: { textAlign: 'center', alignSelf: 'center', fontSize: 16, fontWeight: "bold"},
-    button: { width: '100%', alignSelf: 'center', backgroundColor: 'transparent' }
+    button: { flexGrow: 1, alignSelf: 'center', backgroundColor: 'transparent' }
 });

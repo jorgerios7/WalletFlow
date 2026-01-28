@@ -33,6 +33,6 @@ export default function CustomButton({ text, onPress }: { text: string, onPress?
 }
 
 const styles = StyleSheet.create({
-    container: { justifyContent: 'center' }, text: { fontWeight: 'bold' },
+    container: { flexGrow: 1, justifyContent: 'center' }, text: { fontWeight: 'bold' },
     button: { borderWidth: 0.5, borderRadius: 10, padding: 14, alignItems: 'center', justifyContent: 'center' }
 });
