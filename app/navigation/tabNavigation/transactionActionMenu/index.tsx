@@ -44,7 +44,7 @@ const TransactionActionMenu: React.FC = () => {
         transparent
       >
         <Pressable
-          onPress={closeMenu}
+          onPress={() => !createTransVisible && closeMenu()}
           style={[
             styles.overlay,
             { backgroundColor: Colors[preferences.theme.appearance].overlay },
