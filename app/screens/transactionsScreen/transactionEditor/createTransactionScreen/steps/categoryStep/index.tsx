@@ -10,6 +10,7 @@ import StepScreen from "../../../stepScreen";
 interface Props {
     isVisible: boolean;
     value: string;
+    step: { total: number, current: number }
     type: TransactionType;
     onBack?: () => void;
     onConfirm: () => void;
@@ -17,7 +18,7 @@ interface Props {
     onSelect: (value: string) => void
 }
 
-export default function CategoryStep({ isVisible, value, type, onConfirm, onBack, onSelect, onCancel }: Props) {
+export default function CategoryStep({ isVisible, value, step, type, onConfirm, onBack, onSelect, onCancel }: Props) {
 
     const [itemsVisible, setItemsVisible] = useState({ newCategoryMenu: false, deleteCategoryMenu: false });
 
@@ -50,6 +51,8 @@ export default function CategoryStep({ isVisible, value, type, onConfirm, onBack
         <>
             <StepScreen
                 isVisible={isVisible}
+                title={"Cadastrar receita ou despesa?"}
+                step={step}
                 onConfirm={handleEmptyField}
                 onBack={onBack}
                 onCancel={onCancel}

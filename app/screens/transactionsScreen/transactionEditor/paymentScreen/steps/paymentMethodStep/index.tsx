@@ -12,6 +12,7 @@ interface MethodProps {
 interface Props {
   isVisible: boolean;
   values: MethodProps;
+  step: { total: number, current: number }
   onSelect: (values: MethodProps) => void;
   onBack?: () => void;
   onConfirm: () => void;
@@ -20,7 +21,7 @@ interface Props {
 
 
 export default function PaymentMethodStep(
-  { isVisible, values, onSelect, onConfirm, onBack, onCancel }: Props) {
+  { isVisible, values, step, onSelect, onConfirm, onBack, onCancel }: Props) {
 
   const [selection, setSelection] = useState({
     paymentMethod: values.paymentMethod,
@@ -60,6 +61,8 @@ export default function PaymentMethodStep(
   return (
     <StepScreen
       isVisible={isVisible}
+      step={step}
+      title={"Editar transação"}
       onBack={onBack}
       onConfirm={() => onConfirm()}
       onCancel={onCancel}

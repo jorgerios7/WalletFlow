@@ -5,13 +5,14 @@ import StepScreen from "../../../stepScreen";
 interface Props {
   isVisible: boolean;
   value: string;
+  step: { total: number, current: number }
   onSelect: (value: string) => void
   onBack?: () => void;
   onConfirm: () => void;
   onCancel: () => void
 }
 
-export default function StartDateStep({ isVisible, value, onConfirm, onBack, onSelect, onCancel }: Props) {
+export default function StartDateStep({ isVisible, value, step, onConfirm, onBack, onSelect, onCancel }: Props) {
 
   function handleEmptyField() {
     if (value) {
@@ -24,6 +25,8 @@ export default function StartDateStep({ isVisible, value, onConfirm, onBack, onS
   return (
     <StepScreen
       isVisible={isVisible}
+      title={"Cadastrar receita ou despesa?"}
+      step={step}
       onConfirm={handleEmptyField}
       onBack={onBack}
       onCancel={onCancel}

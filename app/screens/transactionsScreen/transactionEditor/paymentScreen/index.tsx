@@ -1,23 +1,35 @@
 import { useFinancial } from "@/app/context/FinancialProvider";
+import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import UpdateEntry from "@/app/services/firebase/financeService/updateEntry";
-import { PaymentType, UpdateEntryProps, UpdateIdsProps, UpdatePaymentSteps } from "@/app/types/Finance";
-import { useState } from "react";
-import { View } from "react-native";
+import { UpdateEntryProps, UpdateIdsProps, UpdatePaymentSteps } from "@/app/types/Finance";
+import { Colors } from "@/constants/Colors";
+import { useContext, useState } from "react";
+import { Modal, StyleSheet, View } from "react-native";
 import FinalStep from "../stepScreen/finalStep";
 import PaymentDateStep from "./steps/paymentDateStep";
 import PaymentMethodStep from "./steps/paymentMethodStep";
 import PaymentStep from "./steps/paymentStep";
 
 interface Props {
-  id: UpdateIdsProps, values: UpdateEntryProps, onDismiss: () => void
+  isVisible: boolean;
+  id: UpdateIdsProps;
+  values: UpdateEntryProps;
+  onDismiss: () => void;
 }
 
-export default function PaymentScreen({ id, values, onDismiss }: Props) {
-  const { group_id, refresh } = useFinancial();
+export default function PaymentScreen({ isVisible, id, values, onDismiss }: Props) {
+  if (!isVisible) return null;
+
+  const { preferences } = useContext(PreferencesContext);
+
+  const {
+    group_id,
+    refresh
+  } = useFinancial();
 
   const [currentStep, setCurrentStep] = useState<UpdatePaymentSteps>('paymentType');
 
-  const [newEntry, setNewEntry] = useState<UpdateEntryProps>({
+  const [entry, setEntry] = useState<UpdateEntryProps>({
     paymentType: values.paymentType,
     paymentDate: values.paymentDate,
     paymentMethod: values.paymentMethod,
@@ -27,19 +39,9 @@ export default function PaymentScreen({ id, values, onDismiss }: Props) {
 
   async function handleUpdate() {
     await UpdateEntry({
+      ids: id,
       groupId: group_id,
-      ids: {
-        transaction: id.transaction,
-        entry: id.entry
-      },
-      newEntry: {
-        paymentType: newEntry.paymentType,
-        paymentDate: newEntry.paymentDate,
-        paymentMethod: newEntry.paymentMethod,
-        paymentBank: newEntry.paymentBank,
-        paymentBankCard: newEntry.paymentBankCard
-      },
-  
+      data: { entry: values, newEntry: entry },
       onRefresh: refresh
     });
 
@@ -47,51 +49,80 @@ export default function PaymentScreen({ id, values, onDismiss }: Props) {
   }
 
   return (
-    <View>
-      <PaymentStep
-        isVisible={currentStep === 'paymentType'}
-        value={newEntry.paymentType as string}
-        onSelect={(selected) => setNewEntry((prev) => ({ ...prev, paymentType: selected }))}
-        onConfirm={() => newEntry.paymentType === 'pending' as PaymentType && values.paymentType === 'pending' as PaymentType
-          ? console.log('(paymentScreen.tsx) invalid payment type')
-          : newEntry.paymentType === 'pending'
-            ? console.log('(paymentScreen.tsx) Os dados serão apagados do banco de dados!.')
-            : setCurrentStep("paymentDate")
-        }
-        onCancel={onDismiss}
-      />
-
-      <PaymentDateStep
-        isVisible={currentStep === 'paymentDate'}
-        value={newEntry.paymentDate as string}
-        onSelect={(selected) => setNewEntry((prev) => ({ ...prev, paymentDate: selected }))}
-        onConfirm={() => setCurrentStep("paymentMethod")}
-        onCancel={onDismiss}
-        onBack={() => setCurrentStep('paymentType')}
-      />
-
-      <PaymentMethodStep
-        isVisible={currentStep === 'paymentMethod'}
-        values={{
-          paymentMethod: newEntry.paymentMethod as string, paymentBankCard: newEntry.paymentBankCard as string,
-          paymentBank: newEntry.paymentBank as string
+    <Modal
+      visible={isVisible}
+      animationType={"fade"}
+      transparent
+    >
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: Colors[preferences.theme.appearance].overlay
         }}
-        onSelect={(value) => {
-          setNewEntry((prev) => (
-            { ...prev, paymentMethod: value.paymentMethod, paymentBank: value.paymentBank, paymentBankCard: value.paymentBankCard }
-          ))
-        }}
-        onConfirm={() => handleUpdate()}
-        onCancel={onDismiss}
-        onBack={() => setCurrentStep('paymentDate')}
-      />
+      >
+        <View
+          style={
+            styles.container
+          }
+        >
+          <PaymentStep
+            isVisible={currentStep === 'paymentType'}
+            step={{ total: 3, current: 1 }}
+            value={entry.paymentType}
+            onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentType: selected }))}
+            onConfirm={() => {
+              entry.paymentType === "pending"
+                ? handleUpdate()
+                : setCurrentStep("paymentDate")
+            }}
+            onCancel={onDismiss}
+          />
 
-      <FinalStep
-        isVisible={currentStep === 'final'}
-        textAbove={'Atualização concluída com sucesso!'}
-        textBelow={'Toque em confirmar para sair do editor de pagamento.'}
-        onConfirm={onDismiss}
-      />
-    </View>
+          <PaymentDateStep
+            isVisible={currentStep === 'paymentDate'}
+            step={{ total: 3, current: 2 }}
+            value={entry.paymentDate}
+            onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentDate: selected }))}
+            onConfirm={() => setCurrentStep("paymentMethod")}
+            onCancel={onDismiss}
+            onBack={() => setCurrentStep('paymentType')}
+          />
+
+          <PaymentMethodStep
+            isVisible={currentStep === 'paymentMethod'}
+            step={{ total: 3, current: 3 }}
+            values={{
+              paymentMethod: entry.paymentMethod as string, paymentBankCard: entry.paymentBankCard as string,
+              paymentBank: entry.paymentBank as string
+            }}
+            onSelect={(value) => {
+              setEntry((prev) => (
+                { ...prev, paymentMethod: value.paymentMethod, paymentBank: value.paymentBank, paymentBankCard: value.paymentBankCard }
+              ))
+            }}
+            onConfirm={() => handleUpdate()}
+            onCancel={onDismiss}
+            onBack={() => setCurrentStep('paymentDate')}
+          />
+
+          <FinalStep
+            isVisible={currentStep === 'final'}
+            title={"Editar transação"}
+            textAbove={'Atualização concluída com sucesso!'}
+            textBelow={'Toque em confirmar para sair do editor de pagamento.'}
+            onConfirm={onDismiss}
+          />
+        </View>
+      </View>
+    </Modal>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10
+  }
+})

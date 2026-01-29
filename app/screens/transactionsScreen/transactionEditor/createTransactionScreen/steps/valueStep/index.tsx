@@ -6,6 +6,7 @@ interface Props {
   isVisible: boolean;
   transactionType: string,
   value: number;
+  step: { total: number, current: number }
   onSelect: (value: number) => void;
   onBack?: () => void;
   onConfirm: () => void;
@@ -13,7 +14,7 @@ interface Props {
 }
 
 export default function ValueStep(
-  { isVisible, transactionType, value, onConfirm, onBack, onSelect, onCancel }: Props) {
+  { isVisible, transactionType, value, step, onConfirm, onBack, onSelect, onCancel }: Props) {
 
   function handleValue(value: number) {
     onSelect(
@@ -34,6 +35,8 @@ export default function ValueStep(
   return (
     <StepScreen
       isVisible={isVisible}
+      title={"Cadastrar receita ou despesa?"}
+      step={step}
       onConfirm={handleEmptyField}
       onBack={onBack}
       onCancel={onCancel}

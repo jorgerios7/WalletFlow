@@ -10,6 +10,7 @@ interface Props {
   recurrenceType: string;
   recurrenceFrequency: RecurrenceFrequency;
   value: string;
+  step: { total: number, current: number }
   onSelect: (value: string) => void;
   onBack?: () => void;
   onConfirm: () => void;
@@ -22,6 +23,7 @@ export default function DueDateStep({
   recurrenceType,
   recurrenceFrequency,
   value,
+  step,
   onSelect,
   onConfirm,
   onBack,
@@ -50,6 +52,8 @@ export default function DueDateStep({
   return (
     <StepScreen
       isVisible={isVisible}
+      title={"Cadastrar receita ou despesa?"}
+      step={step}
       onConfirm={handleEmptyField}
       onBack={onBack}
       onCancel={onCancel}

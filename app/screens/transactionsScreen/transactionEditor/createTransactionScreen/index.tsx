@@ -9,7 +9,6 @@ import {
   Transactions,
   TransactionType
 } from '@/app/types/Finance';
-import { Colors } from '@/constants/Colors';
 import { getAuth } from 'firebase/auth';
 import { useContext, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -58,13 +57,13 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
 
   return (
     <View
-      style={[
-        styles.container,
-        { backgroundColor: Colors[preferences.theme.appearance].overlay }
-      ]}
+      style={
+        styles.container
+      }
     >
       <RecurrenceStep
         isVisible={currentStep === "recurrence"}
+        step={{total: 6, current: 1}}
         transactionType={type}
         values={transaction}
         onSelect={(values) => {
@@ -85,6 +84,7 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
 
       <CategoryStep
         isVisible={currentStep === "category"}
+        step={{total: 6, current: 2}}
         type={type}
         value={transaction.category}
         onSelect={(selected) => setTransaction((prev) => ({ ...prev, category: selected }))}
@@ -95,6 +95,7 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
 
       <StartDateStep
         isVisible={currentStep === "startDate"}
+        step={{total: 6, current: 3}}
         value={transaction.startDate}
         onSelect={(selected) => setTransaction((prev) => ({ ...prev, startDate: selected }))}
         onConfirm={() => setCurrentStep(
@@ -108,6 +109,7 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
 
       <DueDateStep
         isVisible={currentStep === "dueDate"}
+        step={{total: 6, current: 4}}
         recurrenceType={transaction.recurrenceType}
         recurrenceFrequency={transaction.recurrenceFrequency}
         value={entries.dueDate as string}
@@ -120,6 +122,7 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
 
       <ValueStep
         isVisible={currentStep === "totalValue"}
+        step={{total: 6, current: 5}}
         transactionType={type}
         value={transaction.totalValue}
         onSelect={(selected) => setTransaction((prev) => ({ ...prev, totalValue: selected }))}
@@ -134,6 +137,7 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
 
       <DescriptionStep
         isVisible={currentStep === "description"}
+        step={{total: 6, current: 6}}
         value={transaction.description}
         onSelect={(selected) => setTransaction((prev) => ({ ...prev, description: selected }))}
         onConfirm={() => uploadTransaction()}
@@ -143,6 +147,7 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
 
       <FinalStep
         isVisible={currentStep === "final"}
+        title={"Cadastrar receita ou despesa?"}
         onConfirm={onDismiss}
         textAbove={'Todos os passos foram concluídos!'}
         textBelow={'Toque em confirmar para finalizar o cadastro da transação.'}
@@ -154,7 +159,6 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 10,
     justifyContent: "center",
     alignItems: "center",
     padding: 10,

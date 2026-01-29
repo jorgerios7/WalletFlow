@@ -6,6 +6,7 @@ import StepScreen from "../../../stepScreen";
 interface Props {
     transactionType: TransactionType;
     values: RecurrenceProps;
+    step: { total: number, current: number }
     onSelect: (values: RecurrenceProps) => void;
     isVisible: boolean;
     onBack?: () => void;
@@ -13,7 +14,7 @@ interface Props {
     onCancel: () => void;
 }
 
-export default function RecurrenceStep({ isVisible, transactionType, values, onConfirm, onCancel, onSelect }: Props) {
+export default function RecurrenceStep({ isVisible, transactionType, values, step, onConfirm, onCancel, onSelect }: Props) {
     if (!isVisible) return;
 
     const [selection, setSelection] = useState<RecurrenceProps>({
@@ -87,6 +88,8 @@ export default function RecurrenceStep({ isVisible, transactionType, values, onC
     return (
         <StepScreen
             isVisible={isVisible}
+            title={"Cadastrar receita ou despesa?"}
+            step={step}
             onConfirm={onConfirm}
             onCancel={onCancel}
         >

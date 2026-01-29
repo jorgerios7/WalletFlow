@@ -15,7 +15,6 @@ import BalanceScreen from './balanceScreen';
 import CalendarNavigator from './calendarNavigator';
 import FinanceItemRecycler from './recyclerFinanceItem';
 import FinanceReportScreen from './recyclerFinanceItem/financeReportScreen';
-import ContentScreen from './transactionEditor/contentScreen';
 import PaymentScreen from './transactionEditor/paymentScreen';
 
 const TransactionsScreen = () => {
@@ -106,29 +105,22 @@ const TransactionsScreen = () => {
           }))
         }}
       />
-
-      <ContentScreen
-        visible={screenState.PaymentScreenValues.isVisible}
-        title={'Editar pagamento'}
-        uploading={false}
-        children={
-          <PaymentScreen
-            id={{
-              transaction: screenState.PaymentScreenValues.id.transaction,
-              entry: screenState.PaymentScreenValues.id.entry
-            }}
-            values={{
-              paymentType: screenState.PaymentScreenValues.values.paymentType,
-              paymentDate: screenState.PaymentScreenValues.values.paymentDate,
-              paymentMethod: screenState.PaymentScreenValues.values.paymentMethod,
-              paymentBank: screenState.PaymentScreenValues.values.paymentBank,
-              paymentBankCard: screenState.PaymentScreenValues.values.paymentBankCard
-            }}
-            onDismiss={() => {
-              setScreenState((prev) => ({ ...prev, PaymentScreenValues }));
-            }}
-          />
-        }
+      <PaymentScreen
+        isVisible={screenState.PaymentScreenValues.isVisible}
+        id={{
+          transaction: screenState.PaymentScreenValues.id.transaction,
+          entry: screenState.PaymentScreenValues.id.entry
+        }}
+        values={{
+          paymentType: screenState.PaymentScreenValues.values.paymentType,
+          paymentDate: screenState.PaymentScreenValues.values.paymentDate,
+          paymentMethod: screenState.PaymentScreenValues.values.paymentMethod,
+          paymentBank: screenState.PaymentScreenValues.values.paymentBank,
+          paymentBankCard: screenState.PaymentScreenValues.values.paymentBankCard
+        }}
+        onDismiss={() => {
+          setScreenState((prev) => ({ ...prev, PaymentScreenValues }));
+        }}
       />
 
       <FinanceReportScreen

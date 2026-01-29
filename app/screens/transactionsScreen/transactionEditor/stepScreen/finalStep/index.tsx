@@ -5,9 +5,15 @@ import { useContext } from "react";
 import { Text, View } from "react-native";
 import StepScreen from "..";
 
-interface Props { isVisible: boolean; textAbove: string, textBelow: string, onConfirm: () => void }
+interface Props {
+    isVisible: boolean;
+    title: string;
+    textAbove: string,
+    textBelow: string,
+    onConfirm: () => void
+}
 
-export default function FinalStep({ isVisible, textAbove, textBelow, onConfirm }: Props) {
+export default function FinalStep({ isVisible, title, textAbove, textBelow, onConfirm }: Props) {
     if (!isVisible) return null;
 
     const { preferences } = useContext(PreferencesContext);
@@ -15,6 +21,7 @@ export default function FinalStep({ isVisible, textAbove, textBelow, onConfirm }
     return (
         <StepScreen
             isVisible={isVisible}
+            title={title}
             buttonTextConfirm={'Finalizar'}
             onConfirm={onConfirm}
             children={

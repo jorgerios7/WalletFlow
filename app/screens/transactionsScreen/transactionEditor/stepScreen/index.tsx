@@ -1,7 +1,6 @@
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
 import CustomButton from "@/components/ui/CustomButton";
 import TextButton from "@/components/ui/TextButton";
-import TransitionView from "@/components/ui/TransitionView";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { useContext } from "react";
@@ -9,22 +8,21 @@ import { StyleSheet, Text, View } from "react-native";
 
 interface Props {
   isVisible: boolean;
+  title: string;
+  step?: { total: number, current: number }
+  buttonTextConfirm?: string,
   children: React.ReactNode;
   onConfirm: () => void;
-  buttonTextConfirm?: string,
   onBack?: () => void;
   onCancel?: () => void;
 }
 
-export default function StepScreen({ isVisible, children, buttonTextConfirm, onConfirm, onBack, onCancel }: Props) {
+export default function StepScreen({ isVisible, title, step, buttonTextConfirm, children, onConfirm, onBack, onCancel }: Props) {
   if (!isVisible) return null;
 
   const { preferences } = useContext(PreferencesContext);
 
   const confirmText = buttonTextConfirm || "Confirmar";
-
-  const totalSteps= 7;
-  const currentStep = 1;
 
   const dynamicTextStyle = {
     color: Colors[preferences.theme.appearance].textPrimary,
@@ -33,7 +31,7 @@ export default function StepScreen({ isVisible, children, buttonTextConfirm, onC
   }
 
   return (
-    <TransitionView
+    <View
       style={[
         styles.content,
         { backgroundColor: Colors[preferences.theme.appearance].surface }
@@ -48,29 +46,31 @@ export default function StepScreen({ isVisible, children, buttonTextConfirm, onC
         <Text
           style={dynamicTextStyle}
         >
-          Cadastro de receita
+          {title}
         </Text>
- 
-        <Text
+
+        {step && <Text
           style={dynamicTextStyle}
         >
-          {currentStep} de {totalSteps}
-        </Text>
+          {step.current} de {step.total}
+        </Text>}
+      </View>
+      <View style={styles.childrenContainer}>
+        {children}
       </View>
 
-      {children}
+      <View style={styles.btContainer}>
+        <CustomButton text={confirmText} onPress={onConfirm} />
 
-      <CustomButton text={confirmText} onPress={onConfirm} />
+        {onBack && (
+          <TextButton text="Voltar" onPress={onBack} />
+        )}
 
-      {onBack && (
-        <TextButton text="Voltar" onPress={onBack} />
-      )}
-
-      {onCancel && (
-        <TextButton text="Cancelar" onPress={onCancel} />
-      )}
-
-    </TransitionView>
+        {onCancel && (
+          <TextButton text="Cancelar" onPress={onCancel} />
+        )}
+      </View>
+    </View>
   );
 }
 
@@ -78,9 +78,17 @@ const styles = StyleSheet.create({
   content: {
     width: "100%",
     flexDirection: "column",
-    gap: 10,
+    gap: 40,
     padding: 20,
     alignSelf: "center",
     borderRadius: 10
+  },
+  childrenContainer: {
+    width: "100%",
+    gap: 10
+  },
+  btContainer: {
+    width: "100%",
+    gap: 10
   }
 });
