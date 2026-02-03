@@ -9,6 +9,7 @@ import FinalStep from "../stepScreen/finalStep";
 import PaymentDateStep from "./steps/paymentDateStep";
 import PaymentMethodStep from "./steps/paymentMethodStep";
 import PaymentStep from "./steps/paymentStep";
+import PaymentValueStep from "./steps/paymentValueStep";
 
 interface Props {
   isVisible: boolean;
@@ -34,7 +35,8 @@ export default function PaymentScreen({ isVisible, id, values, onDismiss }: Prop
     paymentDate: values.paymentDate,
     paymentMethod: values.paymentMethod,
     paymentBankCard: values.paymentBankCard,
-    paymentBank: values.paymentBank
+    paymentBank: values.paymentBank,
+    value: values.value
   });
 
   async function handleUpdate() {
@@ -67,7 +69,7 @@ export default function PaymentScreen({ isVisible, id, values, onDismiss }: Prop
         >
           <PaymentStep
             isVisible={currentStep === 'paymentType'}
-            step={{ total: 3, current: 1 }}
+            step={{ total: 4, current: 1 }}
             value={entry.paymentType}
             onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentType: selected }))}
             onConfirm={() => {
@@ -80,7 +82,7 @@ export default function PaymentScreen({ isVisible, id, values, onDismiss }: Prop
 
           <PaymentDateStep
             isVisible={currentStep === 'paymentDate'}
-            step={{ total: 3, current: 2 }}
+            step={{ total: 4, current: 2 }}
             value={entry.paymentDate}
             onSelect={(selected) => setEntry((prev) => ({ ...prev, paymentDate: selected }))}
             onConfirm={() => setCurrentStep("paymentMethod")}
@@ -90,19 +92,32 @@ export default function PaymentScreen({ isVisible, id, values, onDismiss }: Prop
 
           <PaymentMethodStep
             isVisible={currentStep === 'paymentMethod'}
-            step={{ total: 3, current: 3 }}
+            step={{ total: 4, current: 3 }}
             values={{
               paymentMethod: entry.paymentMethod as string, paymentBankCard: entry.paymentBankCard as string,
               paymentBank: entry.paymentBank as string
             }}
-            onSelect={(value) => {
-              setEntry((prev) => (
-                { ...prev, paymentMethod: value.paymentMethod, paymentBank: value.paymentBank, paymentBankCard: value.paymentBankCard }
-              ))
-            }}
-            onConfirm={() => handleUpdate()}
+            onSelect={(value) => setEntry((prev) => (
+              {
+                ...prev,
+                paymentMethod: value.paymentMethod,
+                paymentBank: value.paymentBank,
+                paymentBankCard: value.paymentBankCard
+              }
+            ))}
+            onConfirm={() => setCurrentStep("paymentValue")}
             onCancel={onDismiss}
             onBack={() => setCurrentStep('paymentDate')}
+          />
+
+          <PaymentValueStep
+            visible={currentStep === "paymentValue"}
+            step={{ total: 4, current: 4 }}
+            value={entry.value}
+            onSelect={(value) => setEntry((prev) => ({ ...prev, value: value }))}
+            onConfirm={handleUpdate}
+            onBack={() => setCurrentStep("paymentMethod")}
+            onCancel={onDismiss}
           />
 
           <FinalStep

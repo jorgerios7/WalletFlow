@@ -10,8 +10,9 @@ interface Props {
     onRefresh: () => void;
 }
 
-type UpdateEntryFirestore =
-    Partial<Record<keyof UpdateEntryProps, string | FieldValue>>;
+type UpdateEntryFirestore = Partial<
+    Record<keyof UpdateEntryProps, unknown | FieldValue>
+>;
 
 export default async function UpdateEntry({
     ids: { transaction, entry },
@@ -21,7 +22,7 @@ export default async function UpdateEntry({
 }: Props) {
     try {
         const { newEntry, entry: currentEntry } = data;
-        const { paymentType, paymentDate, paymentMethod, paymentBank } = newEntry;
+        const { paymentType, paymentDate, paymentMethod, paymentBank, value } = newEntry;
 
         let entriesDataToUpdate: UpdateEntryFirestore;
 
@@ -38,6 +39,7 @@ export default async function UpdateEntry({
                 paymentType,
                 paymentDate,
                 paymentMethod,
+                value,
                 paymentBank: deleteField(),
                 paymentBankCard: deleteField()
             };
@@ -47,6 +49,7 @@ export default async function UpdateEntry({
                 paymentDate,
                 paymentMethod,
                 paymentBank,
+                value,
                 paymentBankCard: deleteField()
             };
         } else {

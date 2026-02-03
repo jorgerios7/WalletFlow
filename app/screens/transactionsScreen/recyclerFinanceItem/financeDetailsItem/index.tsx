@@ -80,7 +80,8 @@ export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEdit
                         paymentDate: data.paymentDate as string,
                         paymentMethod: data.paymentMethod as string,
                         paymentBank: data.paymentBank as string,
-                        paymentBankCard: data.paymentBankCard as string
+                        paymentBankCard: data.paymentBankCard as string, 
+                        value: data.value as number
                     })}
                 >
                     <MaterialIcons

@@ -79,7 +79,8 @@ const TransactionsScreen = () => {
                 paymentDate: values.paymentDate,
                 paymentMethod: values.paymentMethod,
                 paymentBank: values.paymentBank,
-                paymentBankCard: values.paymentBankCard
+                paymentBankCard: values.paymentBankCard, 
+                value: values.value
               }
             }
           }))
@@ -116,7 +117,8 @@ const TransactionsScreen = () => {
           paymentDate: screenState.PaymentScreenValues.values.paymentDate,
           paymentMethod: screenState.PaymentScreenValues.values.paymentMethod,
           paymentBank: screenState.PaymentScreenValues.values.paymentBank,
-          paymentBankCard: screenState.PaymentScreenValues.values.paymentBankCard
+          paymentBankCard: screenState.PaymentScreenValues.values.paymentBankCard, 
+          value: screenState.PaymentScreenValues.values.value
         }}
         onDismiss={() => {
           setScreenState((prev) => ({ ...prev, PaymentScreenValues }));
