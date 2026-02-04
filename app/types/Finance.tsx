@@ -41,11 +41,11 @@ export const DefTransCreationEntryValues = {
 export interface MixedTransactionEntry extends Transactions, Entries { }
 
 export interface UpdateEntryProps {
-  paymentType: string, paymentDate: string, paymentMethod: string, paymentBank: string, paymentBankCard: string, value: number
+  type: TransactionType, paymentType: string, paymentDate: string, paymentMethod: string, paymentBank: string, paymentBankCard: string, value: number
 }
 
 export const DefaultUpdateEntryValues = {
-  paymentType: "", paymentDate: "", paymentMethod: "", paymentBank: "", paymentBankCard: "", value: 0
+  type: "", paymentType: "", paymentDate: "", paymentMethod: "", paymentBank: "", paymentBankCard: "", value: 0
 }
 
 export interface UpdateIdsProps {
@@ -90,6 +90,7 @@ export const PaymentScreenValues = {
     entry: ""
   },
   values: {
+    type: "",
     paymentType: "",
     paymentDate: "",
     paymentMethod: "",

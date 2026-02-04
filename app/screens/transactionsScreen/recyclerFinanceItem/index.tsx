@@ -53,6 +53,7 @@ const FinanceItemRecycler: React.FC<Props> = ({ entries_list, isLoading, onPress
                   onPressingEditPayment({
                     transaction: id.transaction, entry: id.entry
                   }, {
+                    type: values.type,
                     paymentType: values.paymentType,
                     paymentDate: values.paymentDate,
                     paymentMethod: values.paymentMethod,

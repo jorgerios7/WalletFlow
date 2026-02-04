@@ -4,7 +4,6 @@ import StepScreen from "../../../stepScreen";
 
 interface Props {
   isVisible: boolean;
-  transactionType: string,
   value: number;
   step: { total: number, current: number }
   onSelect: (value: number) => void;
@@ -14,14 +13,10 @@ interface Props {
 }
 
 export default function ValueStep(
-  { isVisible, transactionType, value, step, onConfirm, onBack, onSelect, onCancel }: Props) {
+  { isVisible, value, step, onConfirm, onBack, onSelect, onCancel }: Props) {
 
   function handleValue(value: number) {
-    onSelect(
-      transactionType === 'expense'
-        ? - value
-        : value
-    )
+    onSelect(value)
   }
 
   function handleEmptyField() {

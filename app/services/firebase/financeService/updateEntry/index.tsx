@@ -22,9 +22,13 @@ export default async function UpdateEntry({
 }: Props) {
     try {
         const { newEntry, entry: currentEntry } = data;
-        const { paymentType, paymentDate, paymentMethod, paymentBank, value } = newEntry;
+        const { type, paymentType, paymentDate, paymentMethod, paymentBank, paymentBankCard, value } = newEntry;
 
         let entriesDataToUpdate: UpdateEntryFirestore;
+
+        function getSignedValue() {
+            return type === "expense" ? -value : value;
+        }
 
         if (paymentType === "pending") {
             entriesDataToUpdate = {
@@ -34,14 +38,23 @@ export default async function UpdateEntry({
                 paymentBank: deleteField(),
                 paymentBankCard: deleteField()
             };
+        } else if (["Cartão de crédito"].includes(paymentMethod)) {
+            entriesDataToUpdate = {
+                paymentType,
+                paymentDate,
+                paymentMethod,
+                paymentBank,
+                paymentBankCard,
+                value: getSignedValue()
+            };
         } else if (["Dinheiro", "Boleto"].includes(paymentMethod)) {
             entriesDataToUpdate = {
                 paymentType,
                 paymentDate,
                 paymentMethod,
-                value,
                 paymentBank: deleteField(),
-                paymentBankCard: deleteField()
+                paymentBankCard: deleteField(),
+                value: getSignedValue(),
             };
         } else if (["Pix", "Transfência bancária"].includes(paymentMethod)) {
             entriesDataToUpdate = {
@@ -49,8 +62,8 @@ export default async function UpdateEntry({
                 paymentDate,
                 paymentMethod,
                 paymentBank,
-                value,
-                paymentBankCard: deleteField()
+                paymentBankCard: deleteField(),
+                value: getSignedValue(),
             };
         } else {
             entriesDataToUpdate = Object.fromEntries(

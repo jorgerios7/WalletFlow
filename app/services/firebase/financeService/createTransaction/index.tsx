@@ -7,7 +7,7 @@ import { Alert } from "react-native";
 export default async function CreateTransaction(
     userId: string, groupId: string, type: TransactionType, transactions: Transactions,
     entries: Entries, onUploading: (isUploading: boolean) => void
-) { 
+) {
     try {
         onUploading(true);
 
@@ -17,10 +17,18 @@ export default async function CreateTransaction(
         const transactionRef = collection(db, "groups", groupId, "transactions");
 
         const transactionDocRef = await addDoc(transactionRef, {
-            ...transactionDataCleaned, createdBy: userId, createdAt: new Date().toISOString(), totalValue: transactions.totalValue,
+            ...transactionDataCleaned,
+            createdBy: userId,
+            createdAt: new Date().toISOString(),
+            totalValue: type === "expense"
+                ? - transactions.totalValue
+                : transactions.totalValue
         });
 
-        await updateDoc(transactionDocRef, { transactionId: transactionDocRef.id });
+        await updateDoc(
+            transactionDocRef, {
+            transactionId: transactionDocRef.id
+        });
 
         const entriesRef = collection(db, "groups", groupId, "transactions", transactionDocRef.id, "entries");
 
@@ -50,14 +58,15 @@ export default async function CreateTransaction(
                     break;
             }
 
-
             const entryDocRef = await addDoc(entriesRef, {
                 ...entriesDataCleaned,
                 type,
-                entrieNumber: (i + 1),
-                value,
-                dueDate: FormatDateBR(dueDate),
                 createdAt: new Date().toISOString(),
+                entrieNumber: (i + 1),
+                dueDate: FormatDateBR(dueDate),
+                value: type === "expense"
+                    ? - value
+                    : value
             });
 
             await updateDoc(entryDocRef, { entrieId: entryDocRef.id });

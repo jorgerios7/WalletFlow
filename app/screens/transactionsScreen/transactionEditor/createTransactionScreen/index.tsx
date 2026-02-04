@@ -123,7 +123,6 @@ export default function CreateTransactionScreen({ isVisible, groupId, type, onDi
       <ValueStep
         isVisible={currentStep === "totalValue"}
         step={{total: 6, current: 5}}
-        transactionType={type}
         value={transaction.totalValue}
         onSelect={(selected) => setTransaction((prev) => ({ ...prev, totalValue: selected }))}
         onConfirm={() => setCurrentStep("description")}

@@ -31,6 +31,7 @@ export default function PaymentScreen({ isVisible, id, values, onDismiss }: Prop
   const [currentStep, setCurrentStep] = useState<UpdatePaymentSteps>('paymentType');
 
   const [entry, setEntry] = useState<UpdateEntryProps>({
+    type: values.type,
     paymentType: values.paymentType,
     paymentDate: values.paymentDate,
     paymentMethod: values.paymentMethod,

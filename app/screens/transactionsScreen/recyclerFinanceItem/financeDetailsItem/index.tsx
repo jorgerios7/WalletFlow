@@ -1,5 +1,5 @@
 import { PreferencesContext } from "@/app/context/PreferencesProvider";
-import { MixedTransactionEntry, Transactions, UpdateEntryProps } from "@/app/types/Finance";
+import { MixedTransactionEntry, Transactions, TransactionType, UpdateEntryProps } from "@/app/types/Finance";
 import { Colors } from "@/constants/Colors";
 import { Typography } from "@/constants/Typography";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -76,6 +76,7 @@ export default function FinanceDetailsItem({ data, dynamicBorder, onPressingEdit
                         transaction: data.transactionId as string,
                         entry: data.entrieId as string
                     }, {
+                        type: data.type as TransactionType,
                         paymentType: data.paymentType as string,
                         paymentDate: data.paymentDate as string,
                         paymentMethod: data.paymentMethod as string,

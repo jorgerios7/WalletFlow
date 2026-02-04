@@ -7,6 +7,7 @@ import {
   MixedTransactionEntry,
   PaymentScreenValues,
   ReportScreenValues,
+  TransactionType,
 } from '@/app/types/Finance';
 import ConfirmActionModal from '@/components/ui/confirmActionModal';
 import React, { useState } from 'react';
@@ -75,6 +76,7 @@ const TransactionsScreen = () => {
                 entry: id.entry
               },
               values: {
+                type: values.type,
                 paymentType: values.paymentType,
                 paymentDate: values.paymentDate,
                 paymentMethod: values.paymentMethod,
@@ -113,6 +115,7 @@ const TransactionsScreen = () => {
           entry: screenState.PaymentScreenValues.id.entry
         }}
         values={{
+          type: screenState.PaymentScreenValues.values.type as TransactionType,
           paymentType: screenState.PaymentScreenValues.values.paymentType,
           paymentDate: screenState.PaymentScreenValues.values.paymentDate,
           paymentMethod: screenState.PaymentScreenValues.values.paymentMethod,
