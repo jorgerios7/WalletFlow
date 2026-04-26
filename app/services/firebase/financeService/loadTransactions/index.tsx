@@ -4,7 +4,10 @@ import { collection, getDocs } from "firebase/firestore";
 import Balance from "./Balance";
 
 export default async function LoadTransactions(
-    date: string, groupId: string, onLoading: (loading: boolean) => void, onBalanceCalculation?: (balance: BalanceValues) => void
+    date: string,
+    groupId: string,
+    onLoading: (loading: boolean) => void,
+    onBalanceCalculation?: (balance: BalanceValues) => void,
 ): Promise<MixedTransactionEntry[] | undefined> {
 
     try {
